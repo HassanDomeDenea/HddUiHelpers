@@ -1,6 +1,5 @@
 {
   "name": "hdd-ui-helpers",
-  "module": "./src/index.ts",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest",
