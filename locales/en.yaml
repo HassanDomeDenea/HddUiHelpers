@@ -1,0 +1,28 @@
+Are you sure to delete n records?: Are you sure to delete {n} record? | Are you sure to delete {n} records?
+(n Records selected): ({n} Record selected) | ({n} Records selected)
+Showing start To end From filtered (Filtered From total): Showing {start} To {end} From {filtered} (Filtered From {total})
+n Record Deleted Successfully: '{n} Record Deleted Successfully | {n} Records Deleted Successfully'
+n Record Updated Successfully: '{n} Record Updated Successfully | {n} Records Updated Successfully'
+n Record Created Successfully: '{n} Record Created Successfully | {n} Records Created Successfully'
+Showing start To end From total: Showing {start} To {end} From total
+between: Between
+contains: Contains
+containsAll: Contains Words
+containsAny: Contains Any
+date: Date
+dateAfter: Date is after
+dateBefore: Date is before
+dateIs: Date is
+dateIsNot: Date is not
+endsWith: Ends with
+equals: Equals
+gt: Greater than
+gte: Greater than or equal to
+in: in
+lt: Less than
+lte: Less than or equal to
+notContains: Not contains
+notEquals: Not equals
+startsWith: Starts with
+multiSelectItemsSelectedLabel: "items selected"
+Choose to filter: Choose to filter

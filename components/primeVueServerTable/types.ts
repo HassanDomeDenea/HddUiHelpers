@@ -1,7 +1,15 @@
 import type {DataTableSortMeta} from 'primevue/datatable'
 import type {FormField} from '../FormWrapper/types'
 
-export type ColumnFetchType = 'main' | 'main_count' | 'relation' | 'relation_count' | 'custom' | 'json'
+export type ColumnFetchType =
+    'main'
+    | 'main_count'
+    | 'relation'
+    | 'relation_count'
+    | 'custom'
+    | 'json'
+    | 'json_array'
+    | 'relation_many'
 
 // Types
 export interface ColumnType<R extends RecordItem = RecordItem> {
@@ -64,9 +72,10 @@ export interface MultipleFilterType {
 
 export type PrimeVueServerTableFormField = FormField & {
     editable?: boolean,
+    multiEditable?: boolean,
     onlyEdit?: boolean,
-    default?: boolean | string | number | (() => any),
-    getter?: string
+    default?: boolean | string | number | (() => unknown),
+    getter?: string | ((any) => unknown)
 }
 
 export interface RequestDataPayloadType {

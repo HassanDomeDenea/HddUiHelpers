@@ -8,6 +8,7 @@ import SelectInput from '../components/inputs/SelectInput.vue'
 import TextInput from '../components/inputs/TextInput.vue'
 import TriCheckboxInput from '../components/inputs/TriCheckboxInput.vue'
 import type {I18n} from "vue-i18n";
+import YAML from "yaml";
 
 export interface PrimeVueServerUiOptions {
     axiosInstance: AxiosInstance
@@ -26,21 +27,16 @@ export default {
     install(app: App, options: Partial<PrimeVueServerUiOptions> = {}): void {
         const defaultAxios = options.axiosInstance ?? axios.create({})
         if (options.i18nInstance) {
-            options.i18nInstance.global.mergeLocaleMessage('ar', {
-                'Entries': 'مدخل',
-                'Show': 'عرض',
-                'No Data': 'لا توجد مدخلات',
-                'Search For': 'بحث عن',
-                'dir': 'rtl',
-                'All': 'الكل',
-                'Error Occurred': "حصل خطأ ما",
-                'Showing start To end From filtered (Filtered From total)': 'عرض {start} إلى {end} من  أصل {filtered} (مفلتر من {total})',
-                'Showing start To end From total': ' عرض {start} إلى {end} من أصل {total}',
-                'New': "جديد",
-                "Create Record": "إضافة مدخل",
-                "Create": "إضافة",
-            })
-            options.i18nInstance.global.mergeLocaleMessage('en', {})
+
+            const locales = import.meta.glob('../locales/*.yaml', {eager: true, query: '?raw', import: 'default'})
+
+            for (const [key, value] of Object.entries(locales)) {
+                const locale = key.split('/').pop()?.split('.')[0] // Extract locale name (e.g., "en", "fr")
+                if (locale) {
+                    options.i18nInstance.global.mergeLocaleMessage(locale, YAML.parse(value as string))
+                }
+            }
+
         }
         const routeNameResolver = options.routeNameResolver ?? function (name: string, parameter?: string | number) {
             return `/${name}${parameter !== undefined ? `/${parameter}` : ''}`

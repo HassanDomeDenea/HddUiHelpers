@@ -1,0 +1,70 @@
+Entries: مدخل
+Show: عرض
+No Data: لا توجد مدخلات
+Search For: بحث عن
+dir: rtl
+All: الكل
+Error Occurred: حصل خطأ ما
+Showing start To end From filtered (Filtered From total): عرض {start} إلى {end} من  أصل
+  {filtered} (مفلتر من {total})
+Showing start To end From total: عرض {start} إلى {end} من أصل {total}
+New: جديد
+Create Record: إضافة مدخل
+Create: إضافة
+Updated!: تم النحديث!
+Created!: تمت الإضافة!
+Edit: تعديل
+Update: تحديث
+Remove: إزالة
+Record Updated Successfully!: تم تحديث المدخل بنجاح
+contains: يحتوي على
+notContains: لا يحتوي على
+startsWith: يبدأ بـ
+Refresh Records: تحديث المدخلات
+Delete: مسح
+Cancel: إلغاء
+Confirmation: تأكيد
+Are you sure to delete n records?: هل أنت متأكد من حذف {n} مدخل؟
+Select All: تحديد الكل
+Deselect: إلغاء التحديد
+You must select one item only: يجب تحديد مدخل واحد فقط
+Unavailable in multi edit: غير متاح في التعديل المتعدد
+Edit All: تعديل الكل
+Different Values: قيم مختلفة
+gte: أكبر من او يساوي
+lte: اقل من او يساوي
+gt: أكبر من
+Error: خطأ
+Date: التاريخ
+dateIsOrBefore: التاريخ قبل او يساوي
+dateIsOrAfter: التاريخ بعد او يساوي
+lt: أقل من
+Logged in successfully!: تم تسجيل الدخول بنجاح!
+n Record Deleted Successfully: تم حذف {n} مدخل بنجاح
+n Record Created Successfully!: نم إضافة {n} مدخل بنجاح
+n Record Updated Successfully!: نم تحديث {n} مدخل بنجاح
+Record Created Successfully!: نم إضافة المدخل بنجاح
+dateIsNot: التاريخ ليس
+notEquals: لا يساوي
+Greater Or Equals: أكبر او يساوي
+Lesser Than: أصغر من
+Lesser Or Equals: أصغر او يساوي
+and: و
+equals: يساوي
+Submit: إرسال
+containsAny: يحتوي على أي من
+containsAll: يحتوي على كلمات
+endsWith: ينتهي ب
+dateBefore: التاريخ قبل
+dateAfter: التاريخ بعد
+dateIs: التاريخ هو
+Whoops!: عذراً!
+(n Records selected): (تم تحديد {n} عنصر)
+Edit Record: تعديل مدخل
+Clear Selection: إزالة المحدد
+Clear: إزالة
+Hit enter key to filter: إضغط (انتر) للبحث
+between: بين
+in: في
+multiSelectItemsSelectedLabel: عنصر تم اختياره
+Choose to filter: اختر للبحث

@@ -6,7 +6,7 @@ import {useToast} from 'primevue/usetoast'
 // import Queue from 'queue-promise'
 import debounce from 'lodash/debounce'
 import omit from 'lodash/omit'
-import type {FormField} from './types.ts'
+import isEqual from 'lodash/isEqual'
 import SelectInput from '../inputs/SelectInput.vue'
 import DatePickerInput from '../inputs/DatePickerInput.vue'
 import AutoCompleteInput from '../inputs/AutoCompleteInput.vue'
@@ -23,12 +23,18 @@ import UploadFilesInput from '../inputs/UploadFilesInput.vue'
 import {useI18n} from "vue-i18n";
 import ListBoxInput from "@/HddUiHelpers/components/inputs/ListBoxInput.vue";
 import usePrimeVueServerUi from "@/HddUiHelpers/utils/usePrimeVueServerUi";
+import BaseInput from "@/HddUiHelpers/components/inputs/BaseInput.vue";
+import {ray} from "vue-ray";
+import type {PrimeVueServerTableFormField} from "@/HddUiHelpers/components/primeVueServerTable/types";
+import clone from "lodash/clone";
+import type {AxiosResponse} from "axios";
 
 export interface FormWrapperProps {
-    fields?: FormField[]
+    fields?: PrimeVueServerTableFormField[]
     elementsNameDisablingAutoSave?: string[]
     inline?: boolean
     autoI18nLabelFromName?: boolean
+    watchForDirtyKeys?: boolean
     autoSave?: boolean
     autoSaveDelay?: number
     hasResetButton?: boolean
@@ -38,6 +44,7 @@ export interface FormWrapperProps {
     updateModelFromResponse?: boolean
     submitOnEnter?: boolean
     updateIdFromResponse?: boolean
+    hasMultiRecords?: boolean
     url: string
     filesFields?: string[]
     createText?: string
@@ -55,6 +62,7 @@ const props = withDefaults(defineProps<FormWrapperProps>(), {
     focusFirstOnError: true,
     submitOnEnter: true,
     hasResetButton: true,
+    hasMultiRecords: false,
     autoSaveDelay: 700,
 })
 const emits = defineEmits<{
@@ -65,6 +73,9 @@ const emits = defineEmits<{
 const {t} = useI18n()
 const submitButtonRef = ref()
 const form = defineModel({required: false, default: ref({}).value})
+const recordsList = defineModel('recordsList', {required: false, default: ref([]).value})
+const initialFormState = ref({});
+const dirtyFields = ref({});
 const errors = ref({})
 const lastErrorMessage = ref()
 const showSavedBadge = ref(false)
@@ -73,8 +84,39 @@ const isLoading = ref(false)
 const wrapperRef = ref()
 const toast = useToast()
 
+const multiEditableFields = computed(() => {
+    return props.fields.filter(e => e.multiEditable === true).map(e => e.name);
+})
+
+const differentValuesFields = computed(() => {
+    if (recordsList.value.length === 0) return [];
+    const keysToCheck = Object.keys(recordsList.value[0]);
+    const differingKeys: string[] = [];
+    keysToCheck.forEach(key => {
+        const firstValue = recordsList.value[0][key];
+
+        const allSame = recordsList.value.every(record =>
+            isEqual(record[key], firstValue)
+        );
+
+        if (!allSame) {
+            differingKeys.push(key);
+        }
+    });
+    return differingKeys;
+})
+
+function restoreFieldDefault(field: PrimeVueServerTableFormField) {
+
+    let value = typeof field.default === 'function' ? field.default() : field.default;
+    lodashSet(form.value, field.name, value)
+    for (let i = 0; i < recordsList.value.length; i++) {
+        lodashSet(recordsList.value[i], field.name, value)
+    }
+}
+
 function focusFirst() {
-    wrapperRef.value?.getElementsByTagName('input')[0].focus()
+    wrapperRef.value?.getElementsByTagName('input')[0]?.focus()
 }
 
 function focusSubmit() {
@@ -92,20 +134,46 @@ function clearSavedBadge() {
 
 const isChanged = ref(false)
 
-const { axios: api,} = usePrimeVueServerUi()
+const {axios: api,} = usePrimeVueServerUi()
 
 async function submit(): Promise<void> {
     if (isLoading.value)
         return
     isLoading.value = true
     errors.value = {}
-    let request
-    const payload: any = {...form.value}
-    if (typeof props.modifyAjax === 'function') {
-        props.modifyAjax(payload)
+    let request: Promise<AxiosResponse>
+    let payload: object;
+    if (props.hasMultiRecords) {
+        payload = [...recordsList.value]
+        for (let fieldName in dirtyFields.value) {
+            if (dirtyFields.value[fieldName]) {
+                let modifiedValue = lodashGet(form.value, fieldName);
+                payload = recordsList.value.map(record => {
+                    lodashSet(record, fieldName, modifiedValue)
+                    return record;
+                });
+            }
+        }
+        if (props.modifyAjax && (typeof props.modifyAjax === 'function' || Object.keys(props.modifyAjax).length > 0)) {
+            payload = recordsList.value.map(record => {
+                if (typeof props.modifyAjax === 'function') {
+                    props.modifyAjax(record)
+                } else {
+                    for (const key in props.modifyAjax) {
+                        record[key] = props.modifyAjax[key]
+                    }
+                }
+                return record;
+            })
+        }
     } else {
-        for (const key in props.modifyAjax) {
-            payload[key] = props.modifyAjax[key]
+        payload = {...form.value}
+        if (typeof props.modifyAjax === 'function') {
+            props.modifyAjax(payload)
+        } else {
+            for (const key in props.modifyAjax) {
+                payload[key] = props.modifyAjax[key]
+            }
         }
     }
     if (props.filesFields?.length > 0) {
@@ -138,10 +206,22 @@ async function submit(): Promise<void> {
             },
         )
     } else {
-        if (form.value.id) {
-            request = api.put(`${props.url}/${form.value.id}`, payload)
+        if (props.hasMultiRecords) {
+            if (form.value.id) {
+                request = api.put(`${props.url}`, {
+                    data: payload
+                })
+            } else {
+                request = api.post(`${props.url}/many`, {
+                    data: payload
+                })
+            }
         } else {
-            request = api.post(props.url, payload)
+            if (form.value.id) {
+                request = api.put(`${props.url}/${form.value.id}`, payload)
+            } else {
+                request = api.post(props.url, payload)
+            }
         }
     }
 
@@ -168,13 +248,19 @@ async function submit(): Promise<void> {
         .catch((err) => {
             errors.value = err.response?.data?.errors || {}
             lastErrorMessage.value = err.response?.data?.message || t('Error Occurred')
+            if (Object.keys(errors.value).length === 0) {
+                errors.value = {
+                    '': [lastErrorMessage.value]
+                }
+            }
+            // console.log(lastErrorMessage.value)
             toast.add({
                 severity: 'error',
                 summary: lastErrorMessage.value,
                 life: 3000,
                 group: 'notifications',
             })
-            console.error(err)
+            // console.error(err)
             if (props.focusFirstOnError) {
                 focusFirst()
             }
@@ -200,6 +286,7 @@ function reset() {
 const confirmChangesAfterDebounce = ref<() => void>()
 
 onMounted(() => {
+    resetStates();
     confirmChangesAfterDebounce.value = debounce((ignoreActiveElement: boolean | any = false) => {
         if (isChanged.value) {
             if (props.autoSave) {
@@ -212,15 +299,40 @@ onMounted(() => {
         }
     }, props.autoSaveDelay)
 })
-watch(form, () => {
+watch(form, (newForm) => {
     isChanged.value = true
     confirmChangesAfterDebounce.value?.()
+    if (props.watchForDirtyKeys) {
+        props.fields.forEach((field) => {
+            dirtyFields.value[field.name] = !isEqual(lodashGet(newForm, field.name), initialFormState.value[field.name]);
+        })
+    }
+    if (props.hasMultiRecords) {
+        props.fields.forEach((field) => {
+            if (multiEditableFields.value.includes(field.name) && !dirtyFields.value[field.name]) {
+                dirtyFields.value[field.name] = !isEqual(lodashGet(newForm, field.name), initialFormState.value[field.name]);
+            }
+        })
+    }
 }, {
     deep: true,
 })
 
 function clearChanges() {
     isChanged.value = false
+}
+
+function resetStates() {
+    dirtyFields.value = {};
+    initializeFormState()
+}
+
+function initializeFormState() {
+    let newState = {};
+    props.fields.forEach((field) => {
+        newState[field.name] = lodashGet(form.value, field.name)
+    });
+    initialFormState.value = clone(newState);
 }
 
 function onFieldEnterKeyPressed() {
@@ -241,6 +353,7 @@ function getFieldRef(fieldName: string) {
 }
 
 defineExpose({
+    resetStates,
     focusFirst,
     inEditMode,
     focusSubmit,
@@ -257,10 +370,30 @@ defineExpose({
         <div class="mb-4">
             <FormErrors :errors="errors"/>
         </div>
-        <!--    <pre>{{ form }}</pre> -->
+        <!--        <pre>{{ dirtyFields }}</pre>-->
+        <!--        <pre>{{ initialFormState }}</pre>-->
+        <!--        <pre>{{ recordsList }}</pre>-->
         <div ref="wrapperRef" class="space-y-4" :class="{ '[&_.form-control-label-selector]:w-[150px]': isInline }">
             <template v-for="field in fields" :key="field.name">
-                <template v-if="field.visible !== false">
+                <template v-if="hasMultiRecords && !multiEditableFields.includes(field.name)">
+                    <BaseInput :label="field.label ?? (autoI18nLabelFromName ? t(field.name) : field.name)"
+                               :inline="isInline">
+                        <Message severity="secondary" variant="simple" size="small">
+                            {{ t('Unavailable in multi edit') }}
+                        </Message>
+                    </BaseInput>
+                </template>
+                <template v-else-if="hasMultiRecords && differentValuesFields.includes(field.name)">
+                    <BaseInput :label="field.label ?? (autoI18nLabelFromName ? t(field.name) : field.name)"
+                               :inline="isInline">
+                        <Message severity="secondary" variant="simple" size="small">
+                            {{ t('Different Values') }}
+                            <Button size="small" variant="text" raised icon="pi pi-pencil" severity="warn"
+                                    v-tooltip="$t('Edit All')" @click="restoreFieldDefault(field)"></Button>
+                        </Message>
+                    </BaseInput>
+                </template>
+                <template v-else-if="field.visible !== false">
                     <template v-if="field.type === 'custom'">
                         <template v-if="field.namedModel">
                             <template v-if="field.entireFormAsModel">
