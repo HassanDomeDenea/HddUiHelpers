@@ -150,6 +150,10 @@ export function createListStore(
         })
     }
 
+    const isInitialized = computed(() => {
+        return localItems.value === null;
+    })
+
     if (options.subscribeToEvents) {
         options.subscribeToEvents(localItems)
     }
@@ -172,10 +176,25 @@ export function createListStore(
         return items.value.find(e => e[idPropertyName] === id)
     }
 
+    async function refreshIfNotInitialized() {
+        return new Promise<void>((resolve) => {
+            if (localItems.value === null) {
+                refresh()
+                    .then(() => {
+                        resolve();
+                    })
+            } else {
+                resolve();
+            }
+        })
+    }
+
     return {
         waitFirstLoad,
         getItemById,
         items,
+        isInitialized,
+        refreshIfNotInitialized,
         keyLabelItems,
         keyValueItems,
         isLoading,

@@ -11,6 +11,7 @@ const props = withDefaults(defineProps<{
     filter?: boolean
     multiple?: boolean
     checkmark?: boolean
+    scrollHeight?: string
 } & BaseInputProps>(), {
     optionLabelProperty: 'name',
     optionValueProperty: 'id',
@@ -59,6 +60,7 @@ defineExpose({focus})
             :option-value="optionValueProperty"
             :options="options"
             :checkmark="checkmark"
+            :scrollHeight="scrollHeight"
             class="w-full"
             :readonly="readonly"
             @change="emits('change', $event)"

@@ -151,6 +151,7 @@ const emits = defineEmits<{
     (e: 'rowCreated', row: T | T[])
     (e: 'rowUpdated', row: T | T[])
     (e: 'rowDeleted', row: string | number | (string | number)[])
+    (e: 'rowChanged', row: T | T[] | (string | number | (string | number)[]), type: 'create' | 'update' | 'delete')
     (e: 'refreshed', res: GetRecordsResponseType)
     (e: 'rowExpand', row: T)
     (e: 'rowCollapse', row: T)
@@ -577,6 +578,7 @@ function deleteRecords(item: T | T[]) {
                     life: 3000,
                 })
                 emits('rowDeleted', Array.isArray(item) ? ids : item.id)
+                emits('rowChanged', Array.isArray(item) ? ids : item.id, 'delete')
                 selectedRecords.value = selectedRecords.value.filter(i => !ids.includes(i.id))
                 refresh()
             } catch (err: any) {
@@ -648,12 +650,13 @@ function showEditDialog(item: T | T[]) {
     }
 }
 
-function onFormSubmitted(type: 'create' | 'update', item: T) {
+function onFormSubmitted(type: 'create' | 'update', item: T | T[]) {
     if (type === 'create') {
         emits('rowCreated', item)
     } else {
         emits('rowUpdated', item)
     }
+    emits('rowChanged', item, type)
     if (props.refreshAfterFormSubmit) {
         refresh()
     }
