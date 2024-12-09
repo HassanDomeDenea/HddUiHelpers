@@ -55,9 +55,11 @@ import MultiSelectColumnFilter from './MultiSelectColumnFilter.vue'
 import SelectColumnFilter from './SelectColumnFilter.vue'
 import type {DialogFormWrapperProps} from '../FormWrapper/DialogFormWrapper.vue'
 import DialogFormWrapper from '../FormWrapper/DialogFormWrapper.vue'
+import {printDomWithStyles} from "@/HddUiHelpers/utils/printDom";
 
 export interface PrimeVueServerTableProps<R extends RecordItem = RecordItem> {
     url?: string
+    tableTitle?: string
     routeName?: string
     includes?: string[]
     createRecordHeader?: string
@@ -91,6 +93,7 @@ export interface PrimeVueServerTableProps<R extends RecordItem = RecordItem> {
     createButtonLabel?: string
     compact?: boolean
     openable?: boolean
+    printableTable?: boolean
     selectable?: boolean
     showGridLines?: boolean
     withPaginator?: boolean
@@ -230,7 +233,7 @@ const recordsService = {
 const filters = ref<FiltersList>({global: {value: null, matchMode: 'contains'}})
 const toast = useToast()
 const confirm = useConfirm()
-const dt = ref()
+const dtRef = ref()
 const loading = ref(false)
 const totalRecords = ref(0)
 const totalWithoutFilters = ref(0)
@@ -604,6 +607,12 @@ function refresh() {
     getData()
 }
 
+function printTable() {
+    let element = dtRef.value.$el
+    console.log(element)
+    printDomWithStyles(element)
+}
+
 // Components Methods
 function calendarInputProps(filterCallback: () => void): InputHTMLAttributes {
     return {onKeydown: (e: KeyboardEvent) => e.key === 'Enter' ? filterCallback() : null}
@@ -802,7 +811,7 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                            v-model="dialogFormWrapperModelValue"/>
         <ContextMenu ref="contextMenuRef" :model="contextMenuModel" @hide="contextMenuSelectedProduct = undefined"/>
         <DataTable
-            ref="dt"
+            ref="dtRef"
             v-model:filters="filters"
             v-model:multi-sort-meta="sorts"
             v-model:selection="selectedRecords"
@@ -860,7 +869,10 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                         />
                     </div>
                     <div>
-                        <slot name="title" :records="records"/>
+
+                        <slot name="title" :records="records">
+                            {{ tableTitle }}
+                        </slot>
                     </div>
                     <div class="flex justify-end gap-1 flex-1">
                         <slot name="buttonsStart"/>
@@ -895,6 +907,11 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                             icon="i-mdi-edit"
                             :label="t('Edit')"
                             @click="editRecords(selectedRecords)"
+                        />
+                        <Button
+                            v-if="printableTable" :disabled="loading" size="small" severity="success" :loading="loading"
+                            v-tooltip.top="t('Print')"
+                            icon="pi pi-print" @click="printTable()"
                         />
                         <Button
                             v-if="hasRefreshButton" :disabled="loading" size="small" severity="info" :loading="loading"
