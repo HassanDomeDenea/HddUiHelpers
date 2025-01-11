@@ -1,5 +1,6 @@
 import type {DataTableSortMeta} from 'primevue/datatable'
 import type {FormField} from '../FormWrapper/types'
+import type {ColumnProps} from "primevue/column";
 
 export type ColumnFetchType =
     'main'
@@ -29,11 +30,15 @@ export interface ColumnType<R extends RecordItem = RecordItem> {
     formatter?: string | ((data: any, row: R) => string)
     source?: ColumnFetchType
     header?: string
+    printHeader?: string
     filterCheckboxLabel?: string
     selectFilterHeader?: string
     sortable?: boolean
     global?: boolean
     visible?: boolean
+    visibilityControl?: boolean
+    disabled?: boolean
+    printable?: boolean
     html?: boolean
     filterField?: string
     sortField?: string
@@ -43,7 +48,10 @@ export interface ColumnType<R extends RecordItem = RecordItem> {
     showFilterAddButton?: boolean
     showFilterApplyButton?: boolean
     showFilterClearButton?: boolean
-    filterMatchMode?: FilterMatchModeType
+    filterMatchMode?: FilterMatchModeType,
+    style?: string | object;
+    props?: ColumnProps,
+    widthPoint?: number
 }
 
 export type FilterMatchModeType =
@@ -115,9 +123,9 @@ export type FieldsOptionsList = {
 export interface GetRecordsResponseType {
     success: boolean
     data: {
-        data: any
-        total: any
-        total_without_filters: any
+        data: any[]
+        total: number
+        total_without_filters: number
     }
 
 }

@@ -11,14 +11,14 @@ export function createListStore(
     options: {
         refreshable?: boolean
         refreshTime?: number
-        websocketChangeEvent?: NamespacedEventName | string
+        websocketChangeEvent?: string
         sortBy?: boolean | string
         listenForWebsocket?: boolean
         hasActiveItems?: boolean
         idProperty?: string
         labelProperty?: string
         withoutPagination?: boolean
-        channelName?: ChannelNames
+        channelName?: string
         subscribeToEvents?: (localItems: Ref) => void
     } = {},
 ) {
@@ -162,14 +162,15 @@ export function createListStore(
         options.listenForWebsocket
         || (options.websocketChangeEvent && options.listenForWebsocket !== false)
     ) {
-        privateChannel('ServerListsChannel').listen(
-            (options.websocketChangeEvent ?? url) as NamespacedEventName,
-            () => {
-                if (localItems.value !== null) {
-                    refresh().then()
-                }
-            },
-        )
+        // TODO Enable Echo Provider
+        /* privateChannel('ServerListsChannel').listen(
+             (options.websocketChangeEvent ?? url) ,
+             () => {
+                 if (localItems.value !== null) {
+                     refresh().then()
+                 }
+             },
+         )*/
     }
 
     function getItemById(id: string, idPropertyName: string = 'id') {

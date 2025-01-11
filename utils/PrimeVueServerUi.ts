@@ -9,6 +9,11 @@ import TextInput from '../components/inputs/TextInput.vue'
 import TriCheckboxInput from '../components/inputs/TriCheckboxInput.vue'
 import type {I18n} from "vue-i18n";
 import YAML from "yaml";
+import {
+    primeVueServerUiDefaultAxiosSymbol,
+    primeVueServerUiRouteNameResolverSymbol,
+    primeVueServerUiDataTableRecordsService
+} from "./symbols";
 
 export interface PrimeVueServerUiOptions {
     axiosInstance: AxiosInstance
@@ -19,9 +24,6 @@ export interface PrimeVueServerUiOptions {
     location: 'right' | 'left'
 }
 
-export const primeVueServerUiDefaultAxiosSymbol = Symbol('primeVueServerUiDefaultAxiosSymbol')
-export const primeVueServerUiRouteNameResolverSymbol = Symbol('primeVueServerUiRouteNameResolverSymbol')
-export const primeVueServerUiDataTableRecordsService = Symbol('primeVueServerUiDataTableRecordsService')
 
 export default {
     install(app: App, options: Partial<PrimeVueServerUiOptions> = {}): void {

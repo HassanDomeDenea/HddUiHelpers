@@ -6,6 +6,7 @@ import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
+import type {ColumnProps} from 'primevue/column'
 import vTooltip from 'primevue/tooltip'
 
 import ucFirst from 'lodash/upperFirst'
@@ -33,7 +34,7 @@ import filter from 'lodash/filter'
 import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import unset from 'lodash/unset'
-import usePrimeVueServerUi from '../../utils/usePrimeVueServerUi.ts'
+import usePrimeVueServerUi from '../../utils/usePrimeVueServerUi'
 
 import type {
     ColumnType,
@@ -56,12 +57,17 @@ import SelectColumnFilter from './SelectColumnFilter.vue'
 import type {DialogFormWrapperProps} from '../FormWrapper/DialogFormWrapper.vue'
 import DialogFormWrapper from '../FormWrapper/DialogFormWrapper.vue'
 import {printDomWithStyles} from "@/HddUiHelpers/utils/printDom";
+import axios, {CanceledError} from "axios";
 
 export interface PrimeVueServerTableProps<R extends RecordItem = RecordItem> {
     url?: string
     tableTitle?: string
+    tableName?: string
     routeName?: string
     includes?: string[]
+    infiniteScroll?: boolean
+    itemSize?: number,
+    scrollHeight?: string
     createRecordHeader?: string
     rowClass?: ((row: R) => string | string[] | { string: boolean })
     isActiveRow?: ((row: R) => boolean)
@@ -74,6 +80,8 @@ export interface PrimeVueServerTableProps<R extends RecordItem = RecordItem> {
     keepFormOpenAfterCreate?: boolean
     refreshAfterFormSubmit?: boolean
     hasReorderColumn?: boolean
+    hasSequenceColumn?: boolean
+    sequenceColumnProps?: ColumnProps
     hasExpanderColumn?: boolean
     dataKeyId?: string
     deleteMultiSameDeleteSingleRoute?: boolean
@@ -85,15 +93,19 @@ export interface PrimeVueServerTableProps<R extends RecordItem = RecordItem> {
     autoI18nColumnsHeader?: boolean
     sortMode?: 'single' | 'multiple'
     toolsColumn?: boolean
+    toolsColumnProps?: ColumnProps
+    columnVisibilityButton?: boolean
     deletable?: boolean
     deleteConfirmationAsPopup?: boolean
     editable?: boolean
     multiEditable?: boolean
     creatable?: boolean
     createButtonLabel?: string
+    printDirection?: 'rtl' | 'ltr'
     compact?: boolean
     openable?: boolean
-    printableTable?: boolean
+    printable?: boolean
+    printAllRows?: boolean
     selectable?: boolean
     showGridLines?: boolean
     withPaginator?: boolean
@@ -127,9 +139,12 @@ const props = withDefaults(
         hasContextMenu: true,
         autoI18nColumnsHeader: true,
         sortMode: 'multiple',
+        scrollHeight: 'flex',
         showLoadingIndication: true,
         refreshAfterFormSubmit: true,
         toolsColumn: true,
+        infiniteScroll: false,
+        itemSize: 46,
         deleteConfirmationAsPopup: true,
         enableColumnSorting: true,
         hasRefreshButton: true,
@@ -174,6 +189,9 @@ const sorts = defineModel<(DataTableSortMeta & { source?: ColumnType<T>['source'
 })
 const isCollapsed = defineModel<boolean>('isCollapsed', {default: false})
 // Definitions
+
+const getRecordsAbortController = ref<AbortController>();
+
 const recordsService = {
     async getRecords(payload: RequestDataPayloadType) {
         if (props.customService?.getRecords)
@@ -188,7 +206,8 @@ const recordsService = {
         else
             return Promise.reject(new Error('Invalid Url or Route Name'))
 
-        return (await axiosInstance.get(path, {params: payload})).data
+        getRecordsAbortController.value = new AbortController()
+        return (await axiosInstance.get(path, {params: payload, signal: getRecordsAbortController.value.signal})).data
     },
     async deleteRecord(id: number) {
         if (props.customService?.deleteRecord)
@@ -478,6 +497,38 @@ async function getData() {
     }
 }
 
+async function getDataIntoVariable(perPage?: number): Promise<GetRecordsResponseType['data'] | false> {
+    if (props.url || props.routeName) {
+        try {
+            let res = await recordsService.getRecords({
+                ...requestDataPayload.value,
+                perPage: perPage ?? requestDataPayload.value.perPage
+            })
+            if (res.success) {
+                return res.data
+            }
+        } catch (error) {
+            if (error.code === "ERR_CANCELED") {
+                console.log("Cancelled")
+            } else {
+                console.error(error)
+                const msg = error.response?.data?.message || t('Error Occurred')
+                toast.add({
+                    severity: 'error',
+                    summary: msg,
+                    life: 3000,
+                    group: 'notifications',
+                })
+            }
+        }
+    } else {
+        // TODO: Local Table
+    }
+
+    return false;
+}
+
+
 async function onPage(event: DataTablePageEvent) {
     first.value = event.first
     await getData()
@@ -604,13 +655,32 @@ async function onRowsPerPageChanged() {
 }
 
 function refresh() {
-    getData()
+    if (!props.infiniteScroll) {
+        getData()
+    } else {
+        loadRecordsLazily({first: first.value, last: rowsPerPage.value})
+    }
 }
 
-function printTable() {
-    let element = dtRef.value.$el
-    console.log(element)
-    printDomWithStyles(element)
+const renderPrintNode = ref(false)
+const printNodeRef = ref()
+let recordsToPrint = ref<T[] | false>(false)
+
+async function printTable() {
+    if (props.printAllRows === true) {
+        recordsToPrint.value = [];
+        renderPrintNode.value = true;
+        let data = await getDataIntoVariable(-1)
+
+        recordsToPrint.value = data.data;
+    } else {
+        renderPrintNode.value = true;
+        recordsToPrint.value = false
+    }
+    await nextTick()
+    let element = printNodeRef.value
+    await printDomWithStyles(element)
+    renderPrintNode.value = false;
 }
 
 // Components Methods
@@ -629,7 +699,12 @@ onBeforeMount(() => {
     filters.value = createFilters()
 })
 onMounted(() => {
-    getData()
+    initiateVisibleColumns()
+    if (!props.infiniteScroll) {
+        getData()
+    } else {
+        records.value = undefined;
+    }
 })
 
 const dialogFormWrapperRef = ref<InstanceType<typeof DialogFormWrapper>>()
@@ -800,11 +875,182 @@ const formModel = computed(() => {
     return dialogFormWrapperRef.value?.form
 })
 
+const visibleColumns = ref<string[]>([])
+const visibleColumnsPopoverRef = ref();
+
+function initiateVisibleColumns() {
+    let savedHiddenCols = [], savedVisibleCols = [];
+    try {
+        savedHiddenCols = JSON.parse(localStorage.getItem('PrimeVueTableHiddenColumns_' + props.tableName || props.routeName || props.url) || "[]");
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (__) {
+
+    }
+    try {
+        savedVisibleCols = JSON.parse(localStorage.getItem('PrimeVueTableVisibleColumns_' + props.tableName || props.routeName || props.url) || "[]");
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (__) {
+
+    }
+    visibleColumns.value = props.columns.filter(col => savedVisibleCols.indexOf(col.name) > -1 || (col.visible !== false && savedHiddenCols.indexOf(col.name) < 0))
+        .map(col => col.name);
+}
+
+function saveVisibleColumnsState() {
+    let columns = props.columns.filter(col => col.visibilityControl !== false).map(col => col.name);
+    let hidden = columns.filter(col => visibleColumns.value.indexOf(col) < 0);
+    let visible = props.columns.filter(col => col.visibilityControl !== false && col.visible === false && visibleColumns.value.indexOf(col.field) > -1).map(col => col.name);
+
+
+    localStorage.setItem('PrimeVueTableHiddenColumns_' + props.tableName || props.routeName || props.url, JSON.stringify(hidden))
+    localStorage.setItem('PrimeVueTableVisibleColumns_' + props.tableName || props.routeName || props.url, JSON.stringify(visible))
+}
+
+const localItemSize = ref();
+watch(() => props.itemSize, (val) => {
+    localItemSize.value = val;
+}, {
+    immediate: true
+})
+const isLazyLoading = ref(false);
+const localVirtualScrollerOptions = computed(() => {
+    if (!props.infiniteScroll) return;
+    return {
+        itemSize: localItemSize.value,
+        delay: 50,
+        lazy: true,
+        showLoader: true,
+        autoSize: true,
+        loading: isLazyLoading.value,
+        onLazyLoad: loadRecordsLazily,
+    }
+})
+
+async function loadRecordsLazily(event) {
+    console.log(event);
+    !isLazyLoading.value && (isLazyLoading.value = true);
+    // let {first, last} = event;
+    first.value = event.first;
+    rowsPerPage.value = event.last;
+
+    if (getRecordsAbortController.value) {
+        getRecordsAbortController.value.abort()
+    }
+    let result = await getDataIntoVariable(event.last)
+    if (result) {
+        let newRecords: T[] = Array.from({length: result.total})
+        totalRecords.value = result.total
+        totalWithoutFilters.value = result.total_without_filters
+        Array.prototype.splice.apply(newRecords, [
+            ...[event.first, event.last - event.first],
+            ...result.data,
+        ]);
+        records.value = newRecords
+    } else {
+        // records.value = [...(records.value || [])]
+    }
+    isLazyLoading.value = false;
+}
+
+function checkColumnIsVisible(column) {
+    return column.type !== 'hidden' && !(column.visibilityControl !== false ? visibleColumns.value.indexOf(column.name) < 0 : (isBoolean(column.visible) ? !column.visible : false))
+}
+
+const columnsWidthPoints = computed(() => {
+    let points = 0;
+    if (props.hasSequenceColumn) {
+        points++;
+    }
+    if (props.hasReorderColumn) {
+        points++
+    }
+    if (props.selectable) {
+        points++
+    }
+    props.columns.forEach(column => {
+        let isVisible = checkColumnIsVisible(column)
+        if (isVisible) {
+            if (column.widthPoint !== undefined) {
+                points += column.widthPoint;
+            } else {
+                points += 2;
+            }
+        }
+    })
+
+    console.log(points);
+    let columnsWidth = {
+        _sequence: (1 / points) * 100,
+        _selectable: (1 / points) * 100,
+        _reorder: (1 / points) * 100,
+    }
+    props.columns.forEach(column => {
+        let isVisible = checkColumnIsVisible(column)
+        if (isVisible) {
+            columnsWidth[column.name] = ((column.widthPoint ?? 2) / points) * 100
+        }
+    })
+
+    return columnsWidth;
+})
+
+
 defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
 </script>
 
 <template>
     <div class="p-server-datatable-container max-w-full px-4">
+        <div class="hidden">
+            <div class="bg-white text-black" ref="printNodeRef" v-if="renderPrintNode">
+                <slot name="printPageHeader">
+                    <div class="text-xl my-2 font-bold text-center">
+                        {{ tableTitle }}
+                    </div>
+                </slot>
+
+                <div :dir="printDirection"
+                     :class="{'text-left ltr':printDirection==='ltr','text-right rtl':printDirection==='rtl'}">
+                    <table class="printable-table mt-3 mx-auto">
+                        <thead>
+                        <tr>
+                            <th v-if="hasSequenceColumn">#</th>
+                            <template v-for="column in columns">
+                                <th :key="column.name"
+                                    v-if=" column.printable!==false && checkColumnIsVisible(column)">
+                                    {{ column.printHeader || column.header }}
+                                </th>
+                            </template>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(row,rowIndex) in (recordsToPrint || records)" :key="row[dataKeyId]">
+                            <td v-if="hasSequenceColumn">{{ rowIndex + 1 }}</td>
+                            <template v-for="column in columns">
+                                <td :key="column.name"
+                                    v-if="column.printable!==false && checkColumnIsVisible(column)">
+                                    <slot :name="`${column.name.replace('.', '_')}ColumnBody`" :row="row as T"
+                                          :data="lodashGet(row, column.name)">
+                                        <div
+                                            :class="column.bodyClassFunction ? column.bodyClassFunction(lodashGet(row, column.name)) : ''">
+                                            <template v-if="column.html">
+                                                <div v-html="formatColumn(column, row)"/>
+                                            </template>
+                                            <template v-else>
+                                                {{ formatColumn(column, row) }}
+                                            </template>
+                                        </div>
+                                    </slot>
+                                </td>
+                            </template>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <slot name="printPageFooter"></slot>
+                </div>
+            </div>
+        </div>
         <!--        <pre>{{ globalFilterFields }}</pre>-->
         <DialogFormWrapper ref="dialogFormWrapperRef" v-bind="dialogFormWrapperOptions"
                            v-model:records-list="dialogFormWrapperRecordsListValue"
@@ -821,8 +1067,10 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
             context-menu
             :value="records"
             lazy
-            :paginator="withPaginator"
-            scrollable scroll-height="flex"
+            :virtual-scroller-options="localVirtualScrollerOptions"
+            :paginator="withPaginator && !infiniteScroll"
+            scrollable
+            :scroll-height="scrollHeight"
             paginator-position="top"
             :rows="rowsPerPage === -1 ? totalRecords : rowsPerPage"
             :data-key="dataKeyId"
@@ -848,6 +1096,11 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
             @row-unselect="onRowUnselect"
         >
             <template #header>
+                <slot name="title" :records="records">
+                    <div class="text-xl my-2 font-bold">
+                        {{ tableTitle }}
+                    </div>
+                </slot>
                 <div class="flex items-end w-full">
                     <div v-if="hasGlobalFilter" class="justify-content-between flex gap-1 flex-1">
                         <IconField>
@@ -870,9 +1123,7 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                     </div>
                     <div>
 
-                        <slot name="title" :records="records">
-                            {{ tableTitle }}
-                        </slot>
+
                     </div>
                     <div class="flex justify-end gap-1 flex-1">
                         <slot name="buttonsStart"/>
@@ -908,8 +1159,27 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                             :label="t('Edit')"
                             @click="editRecords(selectedRecords)"
                         />
+                        <template v-if="columnVisibilityButton">
+                            <Popover ref="visibleColumnsPopoverRef">
+                                <div
+                                    v-for="col in columns.filter(col=>col.visibilityControl !== false && col.disabled !== true && col.type !== 'hidden')"
+                                    :key="col.name"
+                                    class="flex items-center gap-2 pb-1">
+                                    <Checkbox :inputId="'ColumnVisibilityCheckbox_'+col.name" :value="col.name"
+                                              v-model="visibleColumns"
+                                              @change="saveVisibleColumnsState"/>
+                                    <label :for="'ColumnVisibilityCheckbox_'+col.name" class="px-1">{{
+                                            col.header || col.name
+                                        }}</label>
+                                </div>
+                            </Popover>
+                            <Button :label="t('Columns')" icon="pi pi-table" severity="help"
+                                    v-tooltip="t('Columns Control')"
+                                    @click="(evt)=>visibleColumnsPopoverRef.toggle(evt)"/>
+                        </template>
                         <Button
-                            v-if="printableTable" :disabled="loading" size="small" severity="success" :loading="loading"
+                            v-if="printable" :disabled="loading" size="small" severity="success"
+                            :loading="loading || renderPrintNode"
                             v-tooltip.top="t('Print')"
                             icon="pi pi-print" @click="printTable()"
                         />
@@ -978,12 +1248,32 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
             <Column v-if="hasExpanderColumn" expander style="width: 3rem"/>
             <Column
                 v-if="selectable"
-                selection-mode="multiple" header-style="width: 3rem"
-            />
+                selection-mode="multiple"
+                :header-style="{width:'3rem'}"
+            >
+                <template #loading>
+                    <div class="flex items-center"
+                         :style="{ height: itemSize+'px', 'flex-grow': '1', overflow: 'hidden' }">
+                        <Skeleton width="60%" height="1rem"/>
+                    </div>
+                </template>
+            </Column>
+            <Column header="#" v-if="hasSequenceColumn" style="width: 3rem"
+                    v-bind="sequenceColumnProps">
+                <template #body="{index}">
+                    {{ index + 1 }}
+                </template>
+                <template #loading>
+                    <div class="flex items-center"
+                         :style="{ height: itemSize+'px', 'flex-grow': '1', overflow: 'hidden' }">
+                        <Skeleton width="60%" height="1rem"/>
+                    </div>
+                </template>
+            </Column>
             <template v-for="column in columns" :key="column.name">
                 <Column
                     v-if="column.type !== 'hidden'"
-                    :hidden="isBoolean(column.visible) ? !column.visible : false"
+                    :hidden="column.visibilityControl !== false ? visibleColumns.indexOf(column.name) < 0  : (isBoolean(column.visible) ? !column.visible : false)"
                     :show-filter-operator="column.multipleFilters || false"
                     :field="column.name"
                     :header="
@@ -1004,6 +1294,8 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                     :sortable="isBoolean(column.sortable) ? column.sortable : enableColumnSorting"
                     :body-class="column.bodyClass"
                     :data-type="column.type || 'text'"
+                    :style="column.style"
+                    v-bind="column.props || {}"
                 >
                     <template
                         v-if="isBoolean(column.filterable) ? column.filterable : enableColumnFilters"
@@ -1105,9 +1397,16 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                             </div>
                         </slot>
                     </template>
+                    <template #loading>
+                        <div class="flex items-center"
+                             :style="{ height: itemSize+'px', 'flex-grow': '1', overflow: 'hidden' }">
+                            <Skeleton width="60%" height="1rem"/>
+                        </div>
+                    </template>
                 </Column>
             </template>
-            <Column v-if="toolsColumn" body-class="p-tools-cell" :align-frozen="t('dir')" :frozen="frozenToolsColumn">
+            <Column v-if="toolsColumn" body-class="p-tools-cell" :align-frozen="t('dir')" :frozen="frozenToolsColumn"
+                    v-bind="toolsColumnProps">
                 <template #header>
                     <i class="i-mdi-tools mx-auto"/>
                 </template>
@@ -1133,6 +1432,12 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                             <i class="i-mdi-trash"/>
                         </Button>
                         <slot name="toolsColumnExtraButton" :row="row.data"/>
+                    </div>
+                </template>
+                <template #loading>
+                    <div class="flex items-center"
+                         :style="{ height: itemSize+'px', 'flex-grow': '1', overflow: 'hidden' }">
+                        <Skeleton width="60%" height="1rem"/>
                     </div>
                 </template>
             </Column>
@@ -1208,6 +1513,18 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                 }
             }
         }
+    }
+}
+
+table.printable-table {
+    @apply border-collapse w-[calc(100%_-_1rem)] !box-content;
+    thead {
+        background: #ded9d9;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 4px;
     }
 }
 </style>
