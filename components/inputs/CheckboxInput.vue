@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { BaseInputProps } from './types'
+import uniqueId from 'lodash/uniqueId'
 import { ref } from 'vue'
 import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
 
 const props = withDefaults(defineProps<{} & BaseInputProps>(), {})
 const emits = defineEmits<{
@@ -20,7 +21,7 @@ function onLabelClicked() {
   }
 }
 
-function onCheckboxChange(evt) {
+function onCheckboxChange(evt: Event) {
   emits('change', evt)
 }
 
@@ -32,12 +33,20 @@ onMounted(() => {
   })
 })
 
+const fieldUniqueId = computed(() => {
+  return uniqueId(props.name ?? 'unnamed')
+})
+
 defineExpose({ focus })
 </script>
 
 <template>
-  <BaseInput v-bind="props" @label-clicked="onLabelClicked">
-    <Checkbox ref="inputRef" v-model="value" v-bind="{ disabled, readonly }" binary @change="onCheckboxChange" />
+  <BaseInput
+    v-bind="{ ...props, floatingLabel: false, infieldTopAlignedLabel: false }" :input-id="fieldUniqueId"
+
+    :floating-label="false" :infield-top-aligned-label="false"
+  >
+    <Checkbox ref="inputRef" v-model="value" :input-id="fieldUniqueId" v-bind="{ disabled, readonly }" binary @change="onCheckboxChange" />
   </BaseInput>
 </template>
 

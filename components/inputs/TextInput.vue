@@ -1,13 +1,12 @@
 <script setup lang="ts">
+import type { TextInputProps } from './types'
+import uniqueId from 'lodash/uniqueId'
 import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
 
-const props = withDefaults(defineProps<{
-  inputClass?: string
-  type?: string
-} & BaseInputProps>(), {
+const props = withDefaults(defineProps<TextInputProps>(), {
   type: 'text',
 })
+
 const emits = defineEmits<{
   blur: [e: FocusEvent]
   focus: [e: FocusEvent]
@@ -31,11 +30,19 @@ const inputTextPt = computed(() => {
   }
 })
 
+const fieldUniqueId = computed(() => {
+  return uniqueId(props.name ?? 'unnamed')
+})
+
 defineExpose({ focus })
 </script>
 
 <template>
-  <BaseInput v-bind="props" @label-clicked="focus">
+  <BaseInput
+    v-bind="props"
+    :input-id="fieldUniqueId"
+    @label-clicked="focus"
+  >
     <template #labelText>
       <slot name="label-text" />
     </template>
@@ -48,12 +55,16 @@ defineExpose({ focus })
       </slot>
     </template>
     <InputText
+      :id="fieldUniqueId"
       ref="inputRef"
       v-model="value"
+      v-keyfilter="filterPattern"
       :disabled="disabled"
       :placeholder="placeholder"
-      class="!w-full"
+      fluid
+      :invalid="!!error"
       :class="[inputClass]"
+      :aria-describedby="`${error ? `${fieldUniqueId}-error` : ''} ${$slots.helper || helperText ? `${fieldUniqueId}-desc` : ''}`"
       :pt="inputTextPt"
       @blur="emits('blur', $event)"
       @focus="emits('focus', $event)"
