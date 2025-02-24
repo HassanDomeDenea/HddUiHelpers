@@ -2,19 +2,34 @@ import type { BooleanSchema, DateSchema, NumberSchema, ObjectSchema, Schema, Str
 import type { UseHddFormOptions } from '../../utils/useHddForm'
 import type { AutocompleteInputProps, BaseInputProps, TextInputProps } from '../inputs/types'
 
+export type HddFormValues<T extends string> = Record<T, any>
+
 export type HddFormProps<TFieldName extends string = string, TFieldType extends FormFieldType = FormFieldType> = {
+  url?: string
+  urlMethod?: 'get' | 'post' | 'put' | 'delete'
+  formName?: string
+  onSuccess?: (data: any) => void
+  unifyLabelsWidth?: boolean | number
+  onSubmit?: UseHddFormOptions<TFieldName>['onSubmit']
   fields: HddFormField<TFieldName, TFieldType>[] | TFieldName[]
   summarizeErrorsAtTop?: boolean
   showFieldErrorBelowIt?: boolean
   showFieldErrorsPopover?: boolean
   inlineFields?: boolean
   iconAsAddon?: boolean
+  showRequiredAsterisk?: boolean
+  submitText?: string | false
+  submitIcon?: string
   /**
    * Fixed Labels Width in pixels
    */
   fixedLabelWidth?: number
 } & Pick<UseHddFormOptions<TFieldName>, 'defaultValidationMode'>
 & Pick<BaseInputProps, 'floatingLabel' | 'floatingLabelVariant' | 'infieldTopAlignedLabel' | 'iconAsAddon'>
+
+export interface FieldError {
+  message: string
+}
 
 export function createHddFormProps<TFieldName extends string = string, TFieldType extends FormFieldType = FormFieldType>(props: HddFormProps<TFieldName, TFieldType>): HddFormProps<TFieldName, TFieldType> {
   return props
@@ -32,7 +47,7 @@ export type FormFieldType =
   | 'number'
   | 'listbox'
 
-export type ValidationModeType = 'onBlur' | 'onValueUpdate' | 'onMount' | 'onSubmit'
+export type ValidationModeType = 'onBlur' | 'onValueUpdate' | 'onMount' | 'onSubmit' | 'none'
 
 type FieldDefaultValue = string | number | boolean | string[] | number[] | boolean[] | (() => any)
 
@@ -72,6 +87,7 @@ export interface HddFormField<N extends string = string, T extends FormFieldType
   validationMode?: ValidationModeType
   defaultValue?: FieldDefaultValue
   notes?: string
+  hidden?: boolean
   rules?: T extends 'text' | 'autocomplete' ? StringSchema : T extends 'number' ? NumberSchema : T extends 'checkbox' ? BooleanSchema : T extends 'date' ? DateSchema : Schema
   // rules?: Schema
 }

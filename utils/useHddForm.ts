@@ -1,5 +1,5 @@
 import type { WatchHandle } from 'vue'
-import type { FormFieldType, HddFormField, ValidationModeType } from '../components/FormWrapper/types'
+import type { FieldError, FormFieldType, HddFormField, ValidationModeType } from '../components/FormWrapper/types'
 import { flatten } from 'lodash-es'
 import cloneDeep from 'lodash/cloneDeep'
 import filter from 'lodash/filter'
@@ -17,13 +17,13 @@ export interface UseHddFormOptions<T extends string> {
    * @default false
    */
   watchFieldValuesDeep?: boolean
-  onSubmit?: (values: Record<T, any>) => void
+  onSubmit?: (values: Record<T, any>, context: {
+    setFieldErrors: (fieldName: T, errors: FieldError[] | string[]) => void
+    addFieldError: (fieldName: T, error: FieldError | string) => void
+    setMultiFieldsErrors: (errors: Record<T, FieldError[] | string[]>) => void
+  }) => void
   fieldValidatorGetFirstErrorOnly?: boolean
   validateOnInitialLoad?: boolean
-}
-
-interface FieldError {
-  message: string
 }
 
 interface FieldState {
@@ -159,11 +159,14 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
       }
     }
 
+    updateFieldStatusAfterErrorsChanged(fieldName, validateFormAlso)
     /* const r = string().required().min(3).label('name').validate('a').then((r) => {
-                  console.log(r)
-              }).catch((e: ValidationError) => {
-                  console.log(e.errors) */
+                              console.log(r)
+                          }).catch((e: ValidationError) => {
+                              console.log(e.errors) */
+  }
 
+  function updateFieldStatusAfterErrorsChanged(fieldName: T, validateFormAlso: boolean = true) {
     fieldsStates.value[fieldName].valid = fieldsStates.value[fieldName].errors.length === 0
     fieldsStates.value[fieldName].invalid = !fieldsStates.value[fieldName].valid
     fieldsStates.value[fieldName].error = fieldsStates.value[fieldName].errors[0]
@@ -192,19 +195,6 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     })
 
     updateFormState()
-  }
-
-  async function submitForm(): Promise<boolean> {
-    for (const i in validationModes.value) {
-      if (validationModes.value[i] === 'onSubmit') {
-        validateField(i, false)
-      }
-    }
-    updateFormState()
-    if (typeof options?.onSubmit === 'function' && formState.value.valid) {
-      options.onSubmit(currentValues.value)
-    }
-    return Promise.resolve(formState.value.valid)
   }
 
   function onBlur(fieldName: T) {
@@ -243,7 +233,26 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     }
   })
 
-  return {
+  function setFieldErrors(fieldName: T, errors: FieldError[] | string[]) {
+    fieldsStates.value[fieldName] = errors.map(e => typeof e === 'string' ? { message: e } : e)
+
+    updateFieldStatusAfterErrorsChanged(fieldName, true)
+  }
+
+  function setMultiFieldsErrors(fieldErrors: Record<T, FieldError[] | string[]>) {
+    for (const fieldName in fieldErrors) {
+      fieldsStates.value[fieldName].errors = fieldErrors[fieldName].map(e => typeof e === 'string' ? { message: e } : e)
+      updateFieldStatusAfterErrorsChanged(fieldName, false)
+    }
+  }
+
+  function addFieldError(fieldName: T, error: FieldError | string) {
+    fieldsStates.value[fieldName].errors.push(typeof error === 'string' ? { message: error } : error)
+
+    updateFieldStatusAfterErrorsChanged(fieldName, true)
+  }
+
+  const context = {
     currentValues,
     fieldNames,
     initialValues,
@@ -257,8 +266,26 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     validateField,
     validateAll,
     fieldsLabels,
+    setFieldErrors,
+    addFieldError,
+    setMultiFieldsErrors,
     requiredFieldsNames,
   }
+
+  async function submitForm(): Promise<boolean> {
+    for (const i in validationModes.value) {
+      if (validationModes.value[i] === 'onSubmit') {
+        validateField(i, false)
+      }
+    }
+    updateFormState()
+    if (typeof options?.onSubmit === 'function' && formState.value.valid) {
+      options.onSubmit(currentValues.value, context)
+    }
+    return Promise.resolve(formState.value.valid)
+  }
+
+  return context
 }
 
 export function objectIntoFields<T extends Record<string, any>>(fieldsObject: T) {

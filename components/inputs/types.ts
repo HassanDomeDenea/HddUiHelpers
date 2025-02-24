@@ -16,7 +16,9 @@ export interface BaseInputProps {
   infieldTopAlignedLabel?: boolean
   inputId?: string
   required?: boolean
+  showRequiredAsterisk?: boolean
   requiredInLabel?: boolean | undefined
+  formName?: string
   name?: string
   error?: string | boolean
   helperText?: string
