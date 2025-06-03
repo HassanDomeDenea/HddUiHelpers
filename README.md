@@ -6,7 +6,7 @@ To add to your project
 git submodule add https://github.com/HassanDomeDenea/HddUiHelpers.git resources/js/HddUiHelpers
 ```
 
-When pulling: 
+When pulling:
 
 ```bash
 git pull --recurse-submodules
@@ -26,4 +26,26 @@ git commit -m "Update HddUiHelpers submodule"
 
 # Push everything in one go
 git push --recurse-submodules=on-demand
+```
+
+Packages to install:
+
+```bash
+bun add -D unocss unplugin-vue-components unplugin-vue-router unplugin-auto-import unplugin-vue-components unocss @unhead/vue unplugin-vue-markdown @primevue/auto-import-resolver
+```
+
+```bash
+bun add axios lodash-es primevue vue-i18n vue-router
+```
+
+Add this to vite.config.ts
+
+```ts
+({
+    resolve: {
+        alias: {
+            'HddUiHelpers/': `${path.resolve(__dirname, 'resources/js/HddUiHelpers')}/`,
+        },
+    },
+})
 ```

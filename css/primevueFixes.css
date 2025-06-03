@@ -1,0 +1,7 @@
+.p-tooltip{
+    /*z-index: 1002!important;*/
+}
+
+.p-inputicon[data-pc-name='inputicon']{
+    z-index: 2;
+}

@@ -27,3 +27,36 @@ startsWith: Starts with
 multiSelectItemsSelectedLabel: "items selected"
 Choose to filter: Choose to filter
 Print: Print
+messages:
+  hello: Hello
+Search by: Search by
+Hit enter key to filter: Hit enter key to filter
+No: No
+Yes: Yes
+Search: Search
+Clear Filters: Clear Filters
+Clear: Clear
+Equals: Equals
+Not equals: Not equals
+Less than: Less than
+Less than or equals: Less than or equals
+Greater than or equals: Greater than or equals
+Between: Between
+Not Between: Not Between
+Date is: Date is
+Date is not: Date is not
+Date before: Date before
+Date after: Date after
+Date between: Date between
+Date not between: Date not between
+Starts with: Starts with
+Contains: Contains
+Contains words: Contains words
+Contains any word: Contains any word
+Not contains: Not contains
+Ends with: Ends with
+True value: True value
+False value: False value
+Specified: Specified
+Not specified: Not specified
+Filter By: Filter By
