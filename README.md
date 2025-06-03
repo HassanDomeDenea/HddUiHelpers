@@ -1,15 +1,29 @@
 # hdduihelpers
 
-To install dependencies:
+To add to your project
 
 ```bash
-bun install
+git submodule add https://github.com/HassanDomeDenea/HddUiHelpers.git resources/js/HddUiHelpers
 ```
 
-To run:
+When pulling: 
 
 ```bash
-bun run index.ts
+git pull --recurse-submodules
 ```
 
-This project was created using `bun init` in bun v1.1.38. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+When pushing:
+
+```bash
+
+# Commit the submodule changes
+git -C ./resources/js/HddUiHelpers add .
+git -C ./resources/js/HddUiHelpers commit -m "New Updates"
+
+# Commit the main repo to update submodule reference
+git add resources/js/HddUiHelpers
+git commit -m "Update HddUiHelpers submodule"
+
+# Push everything in one go
+git push --recurse-submodules=on-demand
+```
