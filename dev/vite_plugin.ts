@@ -9,6 +9,8 @@ import Components from 'unplugin-vue-components/vite'
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
 import UnoCSS from 'unocss/vite';
 import Markdown from 'unplugin-vue-markdown/vite';
+import VueI18n from '@intlify/unplugin-vue-i18n/vite'
+import path from 'node:path';
 
 export default function HddUiHelpersPlugin(): PluginOption {
     // Initialize other plugins
@@ -65,6 +67,13 @@ export default function HddUiHelpersPlugin(): PluginOption {
         }),
         Markdown({
             headEnabled: true,
+        }),
+        VueI18n({
+            // fullInstall:false,
+            include: [
+                path.resolve(__dirname, '../locales/*.yaml'),
+                path.resolve(__dirname, '../../../../lang/*.yaml')
+            ],
         }),
         HddUiHelpersActualPlugin,
     ];

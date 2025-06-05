@@ -31,11 +31,11 @@ git push --recurse-submodules=on-demand
 Packages to install:
 
 ```bash
-bun add -D unocss unplugin-vue-components unplugin-vue-router unplugin-auto-import unplugin-vue-components unocss @unhead/vue unplugin-vue-markdown @primevue/auto-import-resolver
+bun add -D unocss unplugin-vue-components unplugin-vue-router unplugin-auto-import unplugin-vue-components unocss @unhead/vue unplugin-vue-markdown @primevue/auto-import-resolver @intlify/unplugin-vue-i18n
 ```
 
 ```bash
-bun add axios lodash-es primevue vue-i18n vue-router
+bun add axios lodash-es primevue @primevue/themes vue-i18n vue-router pinia
 ```
 
 Add this to vite.config.ts
