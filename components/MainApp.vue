@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 /*useHead({
     title: computed(() => route.meta.title || 'HDD Clinic'),
     meta: [
@@ -21,19 +20,23 @@
     ],
 })*/
 
-// const { t } = useI18n()
+const { t } = useI18n()
+import MainFootbar from 'HddUiHelpers/components/bars/MainFootbar.vue';
+import MainNavbar from 'HddUiHelpers/components/bars/MainNavbar.vue';
 </script>
 
 <template>
+
     <main class="flex-1 overflow-auto">
-<!--        <Toast group="errors" :position="t('dir') === 'ltr' ? 'bottom-right' : 'bottom-left'" />
+        <Toast group="errors" :position="t('dir') === 'ltr' ? 'bottom-right' : 'bottom-left'" />
         <Toast group="notifications" :position="t('dir') === 'ltr' ? 'top-right' : 'top-left'" />
         <Toast :position="t('dir') === 'ltr' ? 'top-right' : 'top-left'" />
-        <ConfirmDialog />-->
+        <ConfirmDialog />
         <router-view v-slot="{ Component }">
             <keep-alive>
                 <component :is="Component" />
             </keep-alive>
         </router-view>
     </main>
+
 </template>

@@ -8,6 +8,7 @@ import YAML from 'yaml';
 import PrimevueComponents from './PrimevueComponents';
 import pinia from 'HddUiHelpers/plugins/pinia';
 import { i18n } from 'HddUiHelpers/plugins/i18n';
+import primevue from 'HddUiHelpers/plugins/primevue';
 
 export interface HddUiHelpers {
     axiosInstance: AxiosInstance;
@@ -27,7 +28,7 @@ export type HddUiHelpersPluginOptions = Partial<HddUiHelpers>
 
 export default {
     install(app: App, options: HddUiHelpersPluginOptions = {}) {
-        console.log('Here');
+
         app.use(pinia);
 
         app.use(i18n);
@@ -38,7 +39,7 @@ export default {
             return `/${name}${parameter !== undefined ? `/${parameter}` : ''}`;
         };
 
-        app.use(PrimevueComponents);
+        app.use(primevue);
 
         app.provide(HddUiHelpersSymbol, {
             axiosInstance: defaultAxiosInstance,

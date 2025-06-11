@@ -71,7 +71,7 @@ export default function HddUiHelpersPlugin(): PluginOption {
         VueI18n({
             // fullInstall:false,
             include: [
-                path.resolve(__dirname, '../locales/*.yaml'),
+                path.resolve(__dirname, '../lang/*.yaml'),
                 path.resolve(__dirname, '../../../../lang/*.yaml')
             ],
         }),
