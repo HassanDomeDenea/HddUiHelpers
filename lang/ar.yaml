@@ -72,31 +72,32 @@ Print: طباعة
 messages:
   hello: مرحبا
 Search by: ابحث بـ
-No: No
-Yes: Yes
-Search: Search
-Clear Filters: Clear Filters
-Equals: Equals
-Not equals: Not equals
-Less than: Less than
-Less than or equals: Less than or equals
-Greater than or equals: Greater than or equals
-Between: Between
-Not Between: Not Between
-Date is: Date is
-Date is not: Date is not
-Date before: Date before
-Date after: Date after
-Date between: Date between
-Date not between: Date not between
-Starts with: Starts with
-Contains: Contains
-Contains words: Contains words
-Contains any word: Contains any word
-Not contains: Not contains
-Ends with: Ends with
-True value: True value
-False value: False value
-Specified: Specified
-Not specified: Not specified
-Filter By: Filter By
+No: كلا
+Yes: نعم
+Search: البحث
+Clear Filters: إلغاء البحث
+Equals: يساوي
+Not equals: لا يساوي
+Less than: أقل من
+Less than or equals: أقل من أو يساوي
+Greater than or equals: أكبر من أو يساوي
+Between: بين
+Not Between: ليس بين
+Date is: التاريخ يساوي
+Date is not: التاريخ لا يساوي
+Date before: التاريخ قبل
+Date after: التاريخ بعد
+Date between: التاريخ بين
+Date not between: التاريخ ليس بين
+Starts with: يبدأ بـ
+Contains: يحتوي على
+Contains words: يحتوي على الكلمات
+Contains any word: يحتوي على أي كلمة
+Not contains: لا يحتوي على
+Ends with: ينتهي بـ
+True value: قيمة صحيحة
+False value: قيمة خاطئة
+Specified: محدد
+Not specified: غير محدد
+Filter By: البحث بـ
+textStart: right

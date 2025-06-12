@@ -16,7 +16,7 @@ const { isLoggedIn } = storeToRefs(useUserStore())*/
 </script>
 
 <template>
-  <nav class="flex justify-center text-xl mt-6 gap-4">
+  <nav class="flex justify-center text-xl mt-6 gap-4 bg-sky-200 rounded-t-2 border-t-sky-500 py-1 border-t-1">
     HDD 2025
   </nav>
 </template>

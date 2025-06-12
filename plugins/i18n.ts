@@ -7,13 +7,23 @@ export const i18n = createI18n({
     legacy: false,
     locale: documentMainLocale, // Default locale
     fallbackLocale: 'en', // Fallback locale
-    messages,
+    messages
 });
 
-// export const availableLocales = Object.keys(messages)
+export const availableLocales = Object.keys(messages || {});
 
 export default {
     install(app: App) {
         app.use(i18n);
-    },
+    }
 };
+
+export function setPageDirection() {
+    const direction = i18n.global.t('dir') || 'ltr';
+    const align = i18n.global.t('textStart') || 'left';
+    document.body.style.direction = direction;
+    document.body.style.textAlign = align;
+}
+
+setPageDirection();
+

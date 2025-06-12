@@ -20,7 +20,7 @@
     ],
 })*/
 
-const { t } = useI18n()
+const { t } = useI18n();
 import MainFootbar from 'HddUiHelpers/components/bars/MainFootbar.vue';
 import MainNavbar from 'HddUiHelpers/components/bars/MainNavbar.vue';
 </script>
@@ -40,3 +40,9 @@ import MainNavbar from 'HddUiHelpers/components/bars/MainNavbar.vue';
     </main>
 
 </template>
+
+<style>
+body {
+    @apply flex flex-col justify-stretch h-100vh font-tajawal;
+}
+</style>

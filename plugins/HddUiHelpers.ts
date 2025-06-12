@@ -22,7 +22,7 @@ export interface HddUiHelpersComposable {
     route: (name: string, parameter?: string | number) => string;
 }
 
-const HddUiHelpersSymbol: InjectionKey<HddUiHelpersComposable> = Symbol('HddUiHelpersSymbol');
+export const HddUiHelpersSymbol: InjectionKey<HddUiHelpersComposable> = Symbol('HddUiHelpersSymbol');
 
 export type HddUiHelpersPluginOptions = Partial<HddUiHelpers>
 
