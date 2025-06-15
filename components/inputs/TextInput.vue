@@ -34,7 +34,9 @@ const fieldUniqueId = computed(() => {
   return uniqueId(props.name ?? 'unnamed')
 })
 
-defineExpose({ focus })
+const hasError = computed(()=>!!props.error)
+
+defineExpose({ focus, hasError })
 </script>
 
 <template>
@@ -62,10 +64,12 @@ defineExpose({ focus })
       :disabled="disabled"
       :placeholder="placeholder"
       fluid
+      :size="size"
       :invalid="!!error"
       :class="[inputClass]"
       :aria-describedby="`${error ? `${fieldUniqueId}-error` : ''} ${$slots.helper || helperText ? `${fieldUniqueId}-desc` : ''}`"
       :pt="inputTextPt"
+      :autocomplete="autocomplete"
       @blur="emits('blur', $event)"
       @focus="emits('focus', $event)"
       @keydown="emits('keydown', $event)"

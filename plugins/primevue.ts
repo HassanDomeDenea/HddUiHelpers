@@ -1,4 +1,5 @@
-import Aura from '@primevue/themes/aura';
+import Aura from '@primeuix/themes/aura';
+
 import { ConfirmationService, ToastService } from 'primevue';
 import PrimeVue from 'primevue/config';
 import type { App } from 'vue';

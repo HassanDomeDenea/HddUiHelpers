@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
+
+const authStore = useBasicAuthStore();
 export interface NavbarMenuItemInterface {
     label: string;
     icon: string;
@@ -9,21 +12,33 @@ export interface NavbarMenuItemInterface {
     items?: NavbarMenuItemInterface[];
     shortcut?: string;
     command?: () => any;
+    auth?: boolean;
 }
 
-const { navbarClass = '!bg-sky-200 dark:!bg-gray-900', activeItemClass = 'bg-sky-100 dark:bg-gray-800 rounded-lg font-bold' } = defineProps<{
-    items: NavbarMenuItemInterface[];
-    navbarClass?: any;
-    activeItemClass?: any;
-}>();
+const { navbarClass = 'light:!bg-sky-200 light:!border-b-sky-300 ', activeItemClass = 'light:bg-sky-100 dark:bg-gray-800 rounded-lg font-bold',withDarkModeButton=true } =
+    defineProps<{
+        withDarkModeButton?: boolean,
+        items: NavbarMenuItemInterface[];
+        navbarClass?: any;
+        activeItemClass?: any;
+    }>();
+
+import { useDark, useToggle } from '@vueuse/core';
+const {t}=useI18n()
+const isDark = useDark({
+    valueLight: 'light',
+    valueDark: 'dark',
+});
+
+const toggleDark = useToggle(isDark);
 </script>
 
 <template>
-    <Menubar :model="items" :class="navbarClass">
+    <Menubar :model="items" :class="navbarClass" class="z-2">
         <template #start>
             <slot name="start"></slot>
         </template>
-        <template #item="{ item, label, props, hasSubmenu, root }">
+        <template #item="{ item,  props, hasSubmenu, root }">
             <component :is="item.to ? 'router-link' : 'a'" :to="item.to" v-bind="props.action" :class="item.class" :active-class="activeItemClass">
                 <i :class="item.icon" />
                 <span>{{ item.label }}</span>
@@ -42,7 +57,19 @@ const { navbarClass = '!bg-sky-200 dark:!bg-gray-900', activeItemClass = 'bg-sky
             </component>
         </template>
         <template #end>
-            <slot name="end"></slot>
+            <Button
+                v-if="withDarkModeButton"
+                :icon="isDark ? 'i-material-symbols:dark-mode' : 'i-material-symbols:dark-mode-outline'"
+                severity="secondary"
+                text
+                :title="t('Dark Mode')"
+                @click="toggleDark()"
+            />
+            <UserAvatar class="ms-1" v-if="authStore.user" :user="authStore.user"/>
+
+            <slot name="end">
+
+            </slot>
         </template>
     </Menubar>
 </template>

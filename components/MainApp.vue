@@ -20,9 +20,18 @@
     ],
 })*/
 
+import { useApiClient } from 'HddUiHelpers/stores/apiClient';
+
 const { t } = useI18n();
+const toast = useToast()
+const apiClient = useApiClient();
+apiClient.setI18n(i18n.global.t);
+apiClient.setToast(toast);
+
 import MainFootbar from 'HddUiHelpers/components/bars/MainFootbar.vue';
 import MainNavbar from 'HddUiHelpers/components/bars/MainNavbar.vue';
+import { i18n } from 'HddUiHelpers/plugins/i18n';
+import { useToast } from 'primevue/usetoast';
 </script>
 
 <template>
@@ -43,6 +52,6 @@ import MainNavbar from 'HddUiHelpers/components/bars/MainNavbar.vue';
 
 <style>
 body {
-    @apply flex flex-col justify-stretch h-100vh font-tajawal;
+    @apply flex flex-col justify-stretch min-h-100vh font-tajawal;
 }
 </style>

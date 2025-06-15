@@ -1,20 +1,19 @@
 import type { AxiosInstance } from 'axios';
-import type { App, InjectionKey, Plugin } from 'vue';
-import type { I18n } from 'vue-i18n';
-import axios from 'axios';
-import { inject } from 'vue';
-import { createI18n } from 'vue-i18n';
-import YAML from 'yaml';
-import PrimevueComponents from './PrimevueComponents';
-import pinia from 'HddUiHelpers/plugins/pinia';
 import { i18n } from 'HddUiHelpers/plugins/i18n';
+import pinia from 'HddUiHelpers/plugins/pinia';
 import primevue from 'HddUiHelpers/plugins/primevue';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient';
+import type { App, InjectionKey } from 'vue';
+import { inject } from 'vue';
+import type { ComposerTranslation, I18n } from 'vue-i18n';
+import YAML from 'yaml';
+import type { ToastServiceMethods } from 'primevue';
+import { useToast } from 'primevue/usetoast';
 
 export interface HddUiHelpers {
     axiosInstance: AxiosInstance;
     routeNameResolver: (name: string, parameter?: string | number) => string;
     i18nInstance: I18n<any>;
-
 }
 
 export interface HddUiHelpersComposable {
@@ -24,26 +23,27 @@ export interface HddUiHelpersComposable {
 
 export const HddUiHelpersSymbol: InjectionKey<HddUiHelpersComposable> = Symbol('HddUiHelpersSymbol');
 
-export type HddUiHelpersPluginOptions = Partial<HddUiHelpers>
+export type HddUiHelpersPluginOptions = Partial<HddUiHelpers>;
 
 export default {
     install(app: App, options: HddUiHelpersPluginOptions = {}) {
-
-        app.use(pinia);
-
         app.use(i18n);
-
-
-        const defaultAxiosInstance = options.axiosInstance ?? axios.create({});
-        const routeNameResolver = options.routeNameResolver ?? function(name: string, parameter?: string | number) {
-            return `/${name}${parameter !== undefined ? `/${parameter}` : ''}`;
-        };
+        app.use(pinia);
+        const apiClient = useApiClient();
+        if (options.axiosInstance) {
+            apiClient.setAxiosInstance(options.axiosInstance);
+        }
+        const routeNameResolver =
+            options.routeNameResolver ??
+            function (name: string, parameter?: string | number) {
+                return `/${name}${parameter !== undefined ? `/${parameter}` : ''}`;
+            };
 
         app.use(primevue);
 
         app.provide(HddUiHelpersSymbol, {
-            axiosInstance: defaultAxiosInstance,
-            route: routeNameResolver
+            axiosInstance: apiClient.axiosInstance,
+            route: routeNameResolver,
         });
 
         // Extend the locales
@@ -54,7 +54,7 @@ export default {
                 i18n.global.mergeLocaleMessage(locale, YAML.parse(value as string));
             }
         }
-    }
+    },
 };
 
 /*
@@ -66,10 +66,11 @@ export default function HddUiHelpersPlugin(options: HddUiHelpersPluginOptions = 
 */
 
 export function useHddUiHelpers(): HddUiHelpersComposable {
+    const apiClient = useApiClient();
     return inject(HddUiHelpersSymbol, {
-        axiosInstance: axios.create({}),
+        axiosInstance: apiClient.axiosInstance,
         route(name: string, parameter?: string | number) {
             return `/${name}${parameter !== undefined ? `/${parameter}` : ''}`;
-        }
+        },
     });
 }
