@@ -61,7 +61,7 @@ const activeMenuItem = computed(() => {
                         </template>
                     </Menu>
                 </div>
-                <div class="px-4 pt-2">
+                <div class="flex-grow px-4 pt-2">
                     <div v-if="activeMenuItem?.label" class="light:text-purple-900 ms-4 text-lg font-bold underline dark:text-purple-100">
                         {{ activeMenuItem.label }}:
                     </div>

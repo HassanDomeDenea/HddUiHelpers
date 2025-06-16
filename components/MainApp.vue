@@ -38,6 +38,7 @@ import { useToast } from 'primevue/usetoast';
 
     <main class="flex-1 overflow-auto">
         <Toast group="errors" :position="t('dir') === 'ltr' ? 'bottom-right' : 'bottom-left'" />
+        <Toast group="success" :position="t('dir') === 'ltr' ? 'bottom-right' : 'bottom-left'" />
         <Toast group="notifications" :position="t('dir') === 'ltr' ? 'top-right' : 'top-left'" />
         <Toast :position="t('dir') === 'ltr' ? 'top-right' : 'top-left'" />
         <ConfirmDialog />

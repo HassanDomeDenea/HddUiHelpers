@@ -55,12 +55,24 @@ export const useApiClient = defineStore('apiClient', () => {
         return axiosInstance.value.delete<T>(url, config);
     }
 
-    function toastError(message: string = '', options: ToastMessageOptions = {}) {
-        toast.value.add({
+    function toastError(title: string = '',message = '', options: ToastMessageOptions = {}) {
+        toast.value?.add({
+            group: 'errors',
             severity: 'error',
-            summary: message || t.value?.('Error Occurred') || 'Error Occurred',
+            summary: title || t.value?.('Error Occurred') || 'Error Occurred',
             detail: message,
             life: 3000,
+            ...options,
+        });
+    }
+
+    function toastSuccess(title: string = '',message = '', options: ToastMessageOptions = {}) {
+        toast.value?.add({
+            group: 'success',
+            severity: 'success',
+            summary: title || t.value?.('Successful') || 'Successful',
+            detail: message,
+            life: 2000,
             ...options,
         });
     }
@@ -69,6 +81,7 @@ export const useApiClient = defineStore('apiClient', () => {
         setToast,
         setI18n,
         toastError,
+        toastSuccess,
         request,
         axiosInstance,
         setAxiosInstance,
