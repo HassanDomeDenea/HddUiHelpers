@@ -28,6 +28,7 @@ const {
 }>();
 
 import { useDark, useToggle } from '@vueuse/core';
+import DarkModeButton from 'HddUiHelpers/components/misc/DarkModeButton.vue';
 
 const { t } = useI18n();
 const isDark = useDark({
@@ -67,14 +68,7 @@ function toggleDarkAndSave() {
             </component>
         </template>
         <template #end>
-            <Button
-                v-if="withDarkModeButton"
-                :icon="isDark ? 'i-material-symbols:dark-mode' : 'i-material-symbols:dark-mode-outline'"
-                severity="secondary"
-                text
-                :title="t('Dark Mode')"
-                @click="toggleDarkAndSave()"
-            />
+            <DarkModeButton v-if="withDarkModeButton" />
             <UserAvatar class="ms-1" v-if="authStore.user" :user="authStore.user" />
 
             <slot name="end"></slot>
