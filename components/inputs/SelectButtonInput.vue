@@ -2,8 +2,9 @@
 import { ref } from 'vue'
 import BaseInput from './BaseInput.vue'
 import type { BaseInputProps } from './types'
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   options: any[]
   optionLabelProperty?: string | null
   optionValueProperty?: string | null
@@ -20,12 +21,13 @@ const inputRef = ref()
 function focus() {
   inputRef.value.$el.focus()
 }
-
-defineExpose({ focus })
+const hasError = computed(()=>!!props.error)
+const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
+defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled })
 </script>
 
 <template>
-  <BaseInput :label="label" :icon="icon" :inline="inline">
+  <BaseInput ref="baseInputRef" :label="label" :icon="icon" :inline="inline">
     <SelectButton
       v-model="value"
       :allow-empty="clearable"
@@ -33,6 +35,7 @@ defineExpose({ focus })
       :options="options"
       :option-label="optionLabelProperty"
       :option-value="optionValueProperty"
+      :invalid="hasError"
     >
       <template #option="{ option }">
         <slot name="option" :option="option" />

@@ -1,3 +1,5 @@
+import type { PrimeVueLocaleOptions } from '@primevue/core/config';
+
 export default {
   ar: {
     accept: 'نعم',
@@ -183,6 +185,6 @@ export default {
       zoomOut: 'تصغير',
     },
   },
-}
+} as Record<string, PrimeVueLocaleOptions>
 
 export type CssDirection = 'left' | 'right'

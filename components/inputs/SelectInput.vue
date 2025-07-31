@@ -4,6 +4,7 @@ import type {SelectChangeEvent} from 'primevue/select'
 import Select from 'primevue/select'
 import BaseInput from './BaseInput.vue'
 import type {BaseInputProps} from './types'
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const props = withDefaults(defineProps<{
     options: any[]
@@ -29,25 +30,31 @@ const value = defineModel<any>('modelValue')
 
 const inputRef = ref()
 
-function focus() {
+function focus(_show:boolean=false) {
     if (!props.disabled) {
-        inputRef.value.show()
+        if(_show){
+            inputRef.value.show()
+        }else{
+            inputRef.value.$refs.focusInput.focus()
+        }
     }
 }
 
 function onInputBlur() {
 
 }
-
-defineExpose({focus})
+const hasError = computed(()=>!!props.error)
+const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
+defineExpose({focus, hasError, baseInputRef, disabled: props.disabled })
 </script>
 
 <template>
-    <BaseInput v-bind="props" @click="focus">
+    <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
 
         <Select
             ref="inputRef"
             v-model="value"
+            :size="size"
             :placeholder="placeholder"
             :filter="hasFilter"
             auto-option-focus
@@ -56,6 +63,7 @@ defineExpose({focus})
             :checkmark
             :options="options"
             :show-clear="clearable"
+            :invalid="hasError"
             :option-label="optionLabelProperty"
             :option-disabled="optionDisabledProperty"
             :option-value="optionValueProperty"

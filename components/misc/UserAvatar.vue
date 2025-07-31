@@ -42,6 +42,7 @@ const items = ref<MenuItem[]>([
             }).catch(error=>{
                 console.error(error)
                 apiClient.toastError()
+                window.location.reload();
             });
         }
     }

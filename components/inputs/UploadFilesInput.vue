@@ -3,6 +3,7 @@ import reduce from 'lodash/reduce'
 import BaseInput from './BaseInput.vue'
 import type {BaseInputProps} from './types'
 import {rotateImageFile} from '../../utils/filesManipulations'
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const props = withDefaults(defineProps<{
     accept?: string
@@ -161,12 +162,13 @@ async function onNewImagePreviewHide(imageIndex: number) {
     }
     currentNewImageRotate.value = 0
 }
-
-defineExpose({focus})
+const hasError = computed(()=>!!props.error)
+const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
+defineExpose({focus,hasError,baseInputRef,disabled:props.disabled})
 </script>
 
 <template>
-    <BaseInput v-bind="props" @click="focus">
+    <BaseInput v-bind="props" ref="baseInputRef" @click="focus">
         <template #labelText>
             <slot name="label-text"/>
         </template>
@@ -177,7 +179,8 @@ defineExpose({focus})
             <slot name="helper"/>
         </template>
         <div>
-            <input ref="fileInputRef" type="file" hidden :accept="filesToAccept" :multiple="true"
+            <input
+ref="fileInputRef" type="file" hidden :accept="filesToAccept" :multiple="true"
                    @change="onFileSelection">
             <div v-if="oldFiles?.length && newFiles?.length" class="font-bold mb-1">
                 {{ t("New Files") }}:
@@ -254,7 +257,8 @@ defineExpose({focus})
                         <template v-for="(item, itemIndex) in oldFiles" :key="itemIndex">
                             <div class="flex gap-1 items-start">
                                 <div class="relative">
-                                    <div v-if="oldFilesToBeRemovedStatus[item.id]"
+                                    <div
+v-if="oldFilesToBeRemovedStatus[item.id]"
                                          class="absolute inset-0 z-1 flex items-center justify-center pointer-events-none">
                                         <div
                                             class="size-40px bg-white/50 rounded-lg p-2 flex items-center justify-center">

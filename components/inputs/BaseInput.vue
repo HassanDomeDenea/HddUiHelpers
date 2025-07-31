@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useElementSize } from '@vueuse/core';
 import { FloatLabel, IftaLabel } from 'primevue';
+import { useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { BaseInputProps } from './types';
 
-const { hideLabelDoubleDots = true, error, showErrorMessage } = defineProps<BaseInputProps>();
+const { hideLabelDoubleDots = true, error, showErrorMessage, label, disabled } = defineProps<BaseInputProps>();
 const emits = defineEmits<{
     labelClicked: [event: MouseEvent];
 }>();
@@ -19,20 +21,32 @@ const slots = defineSlots<{
 const helperSlotRef = ref();
 const { t } = useI18n();
 const hasShowableError = computed(() => showErrorMessage && error);
+
+const labelRef = useTemplateRef('labelRef');
+const { width: labelWidth } = useElementSize(labelRef as any, undefined, {
+    box: 'border-box'
+});
+const defaultSlotRef = useTemplateRef('defaultSlotRef');
+defineExpose({ labelWidth, disabled, defaultSlotRef });
 </script>
 
 <template>
-    <div class="form-control-wrapper hdd-form-control" :class="{ 'flex items-center gap-2': inline, '!items-start': inline && ($slots.helper || hasShowableError) }">
+    <div
+        class="form-control-wrapper hdd-form-control"
+        :class="[wrapperClass,{ 'flex items-center gap-2': inline, '!items-start': inline && ($slots.helper || hasShowableError) }]"
+    >
         <template v-for="i in [0, 1, 2]" :key="i">
+
             <label
                 v-if="i === 1 && !floatingLabel && !infieldTopAlignedLabel"
+                ref="labelRef"
                 :for="inputId"
                 class="flex items-center gap-1"
                 :data-label-form-name="formName"
                 :style="[
                     labelStyle,
                     {
-                        minWidth: `var(--label-width-for-form-${formName})`,
+                        minWidth: toValue(labelMinWidth) ? toValue(labelMinWidth) + 'px' : '',
                     },
                 ]"
                 :class="[
@@ -53,14 +67,16 @@ const hasShowableError = computed(() => showErrorMessage && error);
                       v-html="(autoI18nLabel === true ? t(label) : label) + (!hideLabelDoubleDots ? ' :' : '')"
                     /> -->
                     <template v-if="label">
-                        <span :class="{ 'whitespace-pre': labelSingleLine }">{{ autoI18nLabel === true ? t(label) : label }}</span>
+                        <span
+                            :class="{ 'whitespace-pre': labelSingleLine }">{{ autoI18nLabel === true ? t(label) : label
+                            }}</span>
                         <Message
                             v-if="required && showRequiredAsterisk"
                             variant="simple"
                             size="small"
                             :severity="error ? 'error' : 'contrast'"
                             aria-hidden="true"
-                            ><strong>*</strong></Message
+                        ><strong>*</strong></Message
                         >
                         <span v-if="!hideLabelDoubleDots">:</span>
                     </template>
@@ -71,14 +87,14 @@ const hasShowableError = computed(() => showErrorMessage && error);
                 v-if="(!controlBeforeLabel && i === 2) || (controlBeforeLabel && i === 0)"
                 :class="[{ 'w-full': !controlBeforeLabel }, controlWrapperClass]"
             >
-                <InputGroup>
+                <InputGroup @keydown.enter="(evt) => (onLocalEnterKeyDown ? onLocalEnterKeyDown(evt) : null)">
                     <!--          <div class="w-full" :class="{ 'has-addon': $slots.addon }">
                       <InputIcon v-if="false" :class="icon" />
                       <slot name="default" />
                       <slot name="afterControl" />
                     </div> -->
                     <template v-if="!floatingLabel && !infieldTopAlignedLabel">
-                        <slot name="default" />
+                        <slot ref="defaultSlotRef" name="default" />
                     </template>
                     <template v-else>
                         <InputGroupAddon v-if="iconAsAddon">
@@ -90,14 +106,16 @@ const hasShowableError = computed(() => showErrorMessage && error);
                         >
                             <IconField v-if="icon && !iconAsAddon">
                                 <InputIcon v-if="icon" class="z-2" :class="[icon, iconClass]" />
-                                <slot name="default" />
+                                <slot ref="defaultSlotRef" name="default" />
                             </IconField>
                             <template v-else>
                                 <slot name="default" />
                             </template>
                             <label :for="inputId" class="z-2 flex items-center gap-1" :style="labelStyle">
                                 <template v-if="label">
-                                    <span :class="{ 'whitespace-pre': labelSingleLine }">{{ autoI18nLabel === true ? t(label) : label }}</span>
+                                    <span
+                                        :class="{ 'whitespace-pre': labelSingleLine }">{{ autoI18nLabel === true ? t(label) : label
+                                        }}</span>
                                     <Message
                                         v-if="required"
                                         variant="simple"
@@ -112,7 +130,14 @@ const hasShowableError = computed(() => showErrorMessage && error);
                             </label>
                         </component>
                     </template>
-                    <InputGroupAddon v-if="slots.addon?.length">
+                    <InputGroupAddon v-if="buttonAddon && (buttonAddon.showable?.({value:modelValue,control:controlComponent}) ?? true)" class="!min-w-unset">
+                        <Button
+                            v-tooltip.top="buttonAddon.tooltip"
+                            :size="size"
+                            v-bind="buttonAddon"
+                            @click="buttonAddon.command?.({event:$event, value:modelValue,control:controlComponent})" />
+                    </InputGroupAddon>
+                    <InputGroupAddon v-if="slots.addon">
                         <slot name="addon" />
                     </InputGroupAddon>
                 </InputGroup>

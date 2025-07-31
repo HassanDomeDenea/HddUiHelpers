@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import BaseInput from './BaseInput.vue'
 import type { BaseInputProps } from './types'
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const props = withDefaults(defineProps<{
   notSelectedValue?: 'null' | 'undefined'
@@ -18,7 +19,6 @@ function focus() {
   inputRef.value.$el.focus()
 }
 
-defineExpose({ focus })
 
 const isStated = computed(() => {
   return value.value === true || value.value === false
@@ -45,15 +45,20 @@ function onCheckboxStateChange() {
       break
   }
 }
+const hasError = computed(()=>!!props.error)
+const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
+
+defineExpose({ focus,hasError,baseInputRef })
+
 </script>
 
 <template>
-  <BaseInput v-bind="props" :label-class="`${labelClass} select-none`" @label-clicked.stop.prevent="onCheckboxStateChange">
+  <BaseInput ref="baseInputRef" v-bind="props" :label-class="`${labelClass} select-none`" @label-clicked.stop.prevent="onCheckboxStateChange">
     <!--    <pre>Is stated {{ isStated }}</pre> -->
     <!--    <pre>Is Indeterminate {{ isIndeterminate }}</pre> -->
     <Checkbox
       :model-value="isStated" :indeterminate="isIndeterminate" binary :class="{ 'p-checkbox-checked': isStated, 'p-checkbox-indeterminate': isIndeterminate }"
-      readonly
+      readonly :invalid="hasError"
       @click="onCheckboxStateChange"
     >
       <template #icon="slotProps">

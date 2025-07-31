@@ -5,13 +5,12 @@ Search For: بحث عن
 dir: rtl
 All: الكل
 Error Occurred: حصل خطأ ما
-Showing start To end From filtered (Filtered From total): عرض {start} إلى {end} من  أصل
-  {filtered} (مفلتر من {total})
+Showing start To end From filtered (Filtered From total): عرض {start} إلى {end} من  أصل {filtered} (مفلتر من {total})
 Showing start To end From total: عرض {start} إلى {end} من أصل {total}
 New: جديد
 Create Record: إضافة مدخل
 Create: إضافة
-Updated!: تم النحديث!
+Updated!: تم التحديث!
 Created!: تمت الإضافة!
 Edit: تعديل
 Update: تحديث
@@ -21,8 +20,9 @@ contains: يحتوي على
 notContains: لا يحتوي على
 startsWith: يبدأ بـ
 Refresh Records: تحديث المدخلات
-Delete: مسح
+Delete: حذف
 Cancel: إلغاء
+Close: إلغاء
 Confirmation: تأكيد
 Are you sure to delete n records?: هل أنت متأكد من حذف {n} مدخل؟
 Select All: تحديد الكل
@@ -39,6 +39,8 @@ Date: التاريخ
 dateIsOrBefore: التاريخ قبل او يساوي
 dateIsOrAfter: التاريخ بعد او يساوي
 lt: أقل من
+Create n Records: إضافة ({n}) مدخل
+Edit n Records: تعديل ({n}) مدخل
 Logged in successfully!: تم تسجيل الدخول بنجاح!
 n Record Deleted Successfully: تم حذف {n} مدخل بنجاح
 n Record Created Successfully!: نم إضافة {n} مدخل بنجاح
@@ -46,6 +48,8 @@ n Record Updated Successfully!: نم تحديث {n} مدخل بنجاح
 Record Created Successfully!: نم إضافة المدخل بنجاح
 dateIsNot: التاريخ ليس
 notEquals: لا يساوي
+Greater Than: أكبر من
+Greater than: أكبر من
 Greater Or Equals: أكبر او يساوي
 Lesser Than: أصغر من
 Lesser Or Equals: أصغر او يساوي
@@ -101,6 +105,7 @@ Specified: محدد
 Not specified: غير محدد
 Filter By: البحث بـ
 textStart: right
+textEnd: left
 Invalid Credentials: المدخلات غير صحيحة
 Unauthorized: غير مرخص
 Logged out successfully: تم تسجيل الخروج بنجاح
@@ -119,3 +124,44 @@ Enabled: تم التفعيل
 Disabled: تم الايقاف
 Arabic: عربي
 English: انجليزي
+Please Select from Side Menu: الرجاء الاختيار من القائمة الجانبية
+Id: المعرف
+No Records: لا توجد سجلات
+Language: اللغة
+Deleted: تم الحذف
+Deleted!: تم الحذف!
+Columns: الأعمدة
+Columns Control: التحكم بالأعمدة
+Print Current Page: طباعة الصفحة الحالية
+Print All Pages: طباعة كل الصفحات
+Dark: وضع ليلي
+Light: وضع نهاري
+"This action is unauthorized.": "هذا الاجراء غير مصرح به."
+"Unauthenticated.": "لم تقم بتسجيل الدخول."
+"?": "؟"
+",": "،"
+Apply: "تطبيق"
+In: في
+or: أو
+not between: ليس بين
+From: من
+To: إلى
+Filtering Method: طريقة الفلترة
+All Conditions: كل الشروط
+Any Condition: أي شرط
+Change Filtering Method: تغيير طريقة الفلترة
+Isolate into Group: عزل في مجموعة
+Filtering Options: خيارات الفلترة
+Date before or equals: التاريخ قبل او يساوي
+Date after or equals: التاريخ بعد او يساوي
+Date is or before: التاريخ يساوي او قبل
+Date is or after: التاريخ يساوي او بعد
+Ascending: تصاعدي
+Descending: تنازلي
+Support Math Operations: يدعم العمليات الحسابية
+Upload Image: رفع صورة
+Change Image: تغيير الصورة
+No Image Selected: لم يتم اختيار صورة
+Image Not Found: لم يتم العثور على الصورة
+Missing Image: الصورة مفقودة
+Are you sure to delete this image?: هل أنت متأكد من حذف هذه الصورة؟

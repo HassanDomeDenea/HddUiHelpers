@@ -4,6 +4,8 @@ Showing start To end From filtered (Filtered From total): Showing {start} To {en
 n Record Deleted Successfully: '{n} Record Deleted Successfully | {n} Records Deleted Successfully'
 n Record Updated Successfully: '{n} Record Updated Successfully | {n} Records Updated Successfully'
 n Record Created Successfully: '{n} Record Created Successfully | {n} Records Created Successfully'
+Create n Records: 'Create {n} Record | Create {n} Records'
+Edit n Records: 'Edit {n} Record | Edit {n} Records'
 Showing start To end From total: Showing {start} To {end} From total
 between: Between
 contains: Contains
@@ -65,12 +67,12 @@ Contracts: Contracts
 Contract Income: Contract Income
 Contract Incomes: Contract Incomes
 Other Incomes: Other Incomes
-textStar: left
 Invalid Credentials: Invalid Credentials
 Unauthorized: Unauthorized
 Logged out successfully: Logged out successfully
 Submit: Submit
 textStart: left
+textEnd: right
 Refresh: Refresh
 Logout: Logout
 Welcome,: Welcome,
@@ -81,3 +83,50 @@ Enabled: Enabled
 Disabled: Disabled
 Arabic: Arabic
 English: English
+Please Select from Side Menu: Please Select from Side Menu
+Id: ID
+Language: Language
+Deleted: Deleted
+Deleted!: Deleted!
+Columns: Columns
+Cancel: Cancel
+Close: Close
+Columns Control: Columns Control
+Print Current Page: Print Current Page
+Print All Pages: Print All Pages
+Record Updated Successfully!: Record Updated Successfully!
+Record Created Successfully!: Record Created Successfully!
+Created!: Created!
+Updated!: Updated!
+You must select one item only: You must select one item only
+Edit All: Edit All
+Dark: Dark
+Light: Light
+Greater Than: Greater Than
+Greater than: Greater than
+"?": "?"
+Apply: Apply
+",": ","
+In: In
+or: or
+not between: not between
+From: From
+To: To
+Filtering Method: Filtering Method
+All Conditions: All Conditions
+Any Condition: Any Condition
+Change Filtering Method: Change Filtering Method
+Isolate into Group:  Isolate into Group
+Date before or equals: Date before or equals
+Date after or equals: Date after or equals
+Date is or before: Date is or before
+Date is or after: Date is or after
+Ascending: Ascending
+Descending: Descending
+Support Math Operations: Support Math Operations
+Upload Image: Upload Image
+Change Image: Change Image
+No Image Selected: No Image Selected
+Image Not Found: Image Not Found
+Missing Image: Missing Image
+Are you sure to delete this image?: Are you sure to delete this image?

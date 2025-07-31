@@ -9,20 +9,22 @@ const { t } = useI18n();
 const authStore = useBasicAuthStore();
 const apiClient = useApiClient();
 const router = useRouter();
+const route = useRoute();
 const formBinds = ref<HddFormProps>({
     url: UserController.login(),
     unifyLabelsWidth: 120,
     submitSeverity: 'primary',
     submitText: t('Login'),
-    submitIcon: 'i-mdi-login',
+    submitIcon: 'i-mdi-user',
     size: 'small',
     fields: [
         { name: 'username', icon: 'i-mdi-user', label: t('Username'), binds: { inputClass: 'dir-ltr text-left' } },
         { name: 'password', icon: 'i-mdi-password', type:'password', label: t('Password'), binds: { inputClass: 'dir-ltr text-left' } },
     ],
     onSuccess: (data: { user: BasicUserData; token: string }) => {
+        console.log(route.query?.redirect_url)
+        router.push((route.query?.redirect_url ?? '/') as any);
         authStore.login(data.user, data.token);
-        router.push('/');
     },
 });
 
@@ -39,4 +41,5 @@ const formBinds = ref<HddFormProps>({
     </Panel>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

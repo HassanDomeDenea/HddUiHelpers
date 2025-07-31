@@ -14,10 +14,14 @@ onActivated(() => {
         currentMenu.value = route.query.menu;
     } else if (currentMenu.value) {
         router.replace({ query: { ...route.query, menu: currentMenu.value } });
+    }else{
+        currentMenu.value = items[0].name;
+        router.replace({ query: { ...route.query, menu: currentMenu.value } });
     }
 });
-const { items } = defineProps<{
+const { items,autoSelectFirst=true } = defineProps<{
     items: SettingsMenuItem[];
+    autoSelectFirst?: boolean;
 }>();
 const currentMenu = ref<string>();
 
@@ -62,7 +66,7 @@ const activeMenuItem = computed(() => {
                     </Menu>
                 </div>
                 <div class="flex-grow px-4 pt-2">
-                    <div v-if="activeMenuItem?.label" class="light:text-purple-900 ms-4 text-lg font-bold underline dark:text-purple-100">
+                    <div v-if="activeMenuItem?.label" class="light:text-purple-900 ms-4 text-lg font-bold underline-offset-6 dark:underline-amber-100 light:underline-amber-900 underline dark:text-purple-100">
                         {{ activeMenuItem.label }}:
                     </div>
                     <div v-else class="text-lg font-bold">

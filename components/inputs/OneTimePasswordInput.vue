@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import BaseInput from './BaseInput.vue'
 import type { BaseInputProps } from './types'
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const props = withDefaults(defineProps<{
   length?: number
@@ -25,16 +26,18 @@ watch(value, (val) => {
     emits('complete', val)
   }
 })
-
-defineExpose({ focus })
+const hasError = computed(()=>!!props.error)
+ const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
+defineExpose({ focus,hasError ,baseInputRef,disabled: props.disabled })
 </script>
 
 <template>
-  <BaseInput v-bind="props" @click="focus">
+  <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
     <InputOtp
       ref="inputRef"
       v-model="value"
       mask
+      :invalid="hasError"
       name="otp"
       autocomplete="off"
       integer-only

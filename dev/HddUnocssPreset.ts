@@ -57,6 +57,8 @@ export default definePreset(() => {
             ['text-success-1', 'text-green-800 dark:text-green-100'],
             ['text-warning-1', 'text-yellow-800 dark:text-yellow-100'],
             ['text-danger-1', 'text-red-800 dark:text-red-100'],
+            ['text-danger-2', 'text-red-700 dark:text-red-200'],
+            ['text-danger-3', 'text-red-600 dark:text-red-300'],
             ['text-info-1', 'text-cyan-800 dark:text-cyan-100'],
             // ['btn', 'px-4 py-1 rounded inline-block bg-teal-700 text-white cursor-pointer !outline-none hover:bg-teal-800 disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50'],
             // ['icon-btn', 'inline-block cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100 hover:text-teal-600'],

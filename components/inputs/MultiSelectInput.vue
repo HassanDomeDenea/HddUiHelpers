@@ -3,6 +3,7 @@ import {ref} from 'vue'
 import type {SelectChangeEvent} from 'primevue/select'
 import BaseInput from './BaseInput.vue'
 import type {BaseInputProps} from './types'
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const props = withDefaults(defineProps<{
     options: any[]
@@ -36,14 +37,14 @@ function focus() {
 function onInputBlur() {
 
 }
-
+ const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
 const {t} = useI18n()
-
-defineExpose({focus})
+const hasError = computed(()=>!!props.error)
+defineExpose({focus, hasError, baseInputRef, disabled: props.disabled})
 </script>
 
 <template>
-    <BaseInput v-bind="props" @click="focus">
+    <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
         <template v-if="$slots.addon" #addon>
             <slot name="addon"/>
         </template>
@@ -58,6 +59,8 @@ defineExpose({focus})
             :placeholder="placeholder"
             :auto-filter-focus="true"
             variant="filled"
+            :size="size"
+            :invalid="hasError"
             :display="display"
             :max-selected-labels="maxSelectedLabels"
             :selection-limit="selectionLimit"

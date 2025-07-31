@@ -14,6 +14,7 @@ export interface NavbarMenuItemInterface {
     shortcut?: string;
     command?: () => any;
     auth?: boolean;
+    permission?: string|string[];
 }
 
 const {
@@ -69,7 +70,7 @@ function toggleDarkAndSave() {
         </template>
         <template #end>
             <DarkModeButton v-if="withDarkModeButton" />
-            <UserAvatar class="ms-1" v-if="authStore.user" :user="authStore.user" />
+            <UserAvatar v-if="authStore.user" class="ms-1" :user="authStore.user" />
 
             <slot name="end"></slot>
         </template>

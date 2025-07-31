@@ -1,4 +1,4 @@
-import { flatten, merge } from 'lodash-es';
+import { flatten, set } from 'lodash-es';
 import cloneDeep from 'lodash/cloneDeep';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
@@ -8,6 +8,7 @@ import { ValidationError } from 'yup';
 import type { FieldError, FormFieldType, HddFormField, ValidationModeType } from '../components/FormWrapper/types';
 
 export interface UseHddFormOptions<T extends string> {
+    staticInitialValues?: MaybeRef<Record<T, any>>;
     fields?: (HddFormField<T> | T)[];
     values?: Record<T, any>;
     defaultValidationMode?: ValidationModeType;
@@ -51,7 +52,12 @@ interface FieldState {
 export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {}) {
     const fields = computed<HddFormField<T>[]>(() => {
         return (
-            options.fields?.map((e) => {
+            options.fields?.filter(e=>{
+                if ( typeof e === 'object' &&  ['separator','divider'].includes(e.type)){
+                    return false
+                }
+                return  true;
+            }).map((e) => {
                 if (typeof e === 'string') {
                     return { name: e };
                 } else {
@@ -60,6 +66,8 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
             }) ?? []
         );
     });
+
+    const staticInitialValues = toRef(options.staticInitialValues)
 
     const globalErrors = ref<FieldError[]>([]);
 
@@ -109,9 +117,12 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     });
 
     const initialValues = computed<Record<T, any | undefined>>(() => {
+        if(staticInitialValues.value){
+            return staticInitialValues.value as Record<T, any | undefined>
+        }
         return fields.value.reduce<Record<T, any | undefined>>(
             (cumulativeValue, field) => {
-                cumulativeValue[field.name] = typeof field.defaultValue === 'function' ? field.defaultValue() : field.defaultValue;
+                set(cumulativeValue,field.name.split('.'),typeof field.defaultValue === 'function' ? field.defaultValue() : field.defaultValue)
                 return cumulativeValue;
             },
             {} as Record<T, any | undefined>,
@@ -156,7 +167,7 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     }
 
     function setValue(fieldName: string, value: any) {
-        currentValues.value[fieldName] = value;
+        set(currentValues.value,fieldName.split('.'),value)
     }
 
     function validateField(fieldName: T, validateFormAlso = true) {
@@ -192,8 +203,7 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     }
 
     function updateFormState() {
-        console.log('updateFormState Called');
-        formState.value.errors = merge(globalErrors.value, flatten(map(fieldsStates.value, (e) => e.errors)));
+        formState.value.errors = [...globalErrors.value, ...flatten(map(fieldsStates.value, (e) => e.errors))];
         formState.value.error = formState.value.errors[0];
         formState.value.valid = formState.value.errors.length === 0;
         formState.value.invalid = !formState.value.valid;
@@ -261,8 +271,15 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
 
     function setMultiFieldsErrors(fieldErrors: Record<T, FieldError[] | string[]>) {
         for (const fieldName in fieldErrors) {
-            fieldsStates.value[fieldName].errors = fieldErrors[fieldName].map((e) => (typeof e === 'string' ? { message: e } : e));
-            updateFieldStatusAfterErrorsChanged(fieldName, false);
+            const mappedErrors = fieldErrors[fieldName].map((e) => (typeof e === 'string' ? { message: e } : e))
+            if(fieldsStates.value[fieldName]){
+                fieldsStates.value[fieldName].errors = mappedErrors;
+                updateFieldStatusAfterErrorsChanged(fieldName, false);
+            }else{
+                for (const i in mappedErrors){
+                    addGlobalError(mappedErrors[i],false)
+                }
+            }
         }
         updateFormState();
     }
@@ -273,9 +290,11 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
         updateFieldStatusAfterErrorsChanged(fieldName, true);
     }
 
-    function addGlobalError(error: FieldError | string) {
+    function addGlobalError(error: FieldError | string,autoValidateForm:boolean = true) {
         globalErrors.value.push(typeof error === 'string' ? { message: error } : error);
-        updateFormState();
+        if(autoValidateForm){
+            updateFormState();
+        }
     }
 
     function clearFieldError(fieldName: T) {
@@ -361,3 +380,5 @@ export function objectIntoFields<T extends Record<string, any>>(fieldsObject: T)
     }
     return carry;
 }
+
+export type HddFormComposer<T extends string = string> = ReturnType<typeof useHddForm<T>>

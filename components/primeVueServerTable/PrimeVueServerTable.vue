@@ -1175,6 +1175,7 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                             </Popover>
                             <Button :label="t('Columns')" icon="pi pi-table" severity="help"
                                     v-tooltip="t('Columns Control')"
+                                    :size=""
                                     @click="(evt)=>visibleColumnsPopoverRef.toggle(evt)"/>
                         </template>
                         <Button

@@ -1,6 +1,7 @@
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
 import { createRouter, createWebHistory } from 'vue-router';
 import { handleHotUpdate, routes } from 'vue-router/auto-routes';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
 
 routes.push({
     path: '/:pathMatch(.*)*',
@@ -14,10 +15,12 @@ export const router = createRouter({
 });
 
 export function setBasicRouterAuthGuard() {
+    const apiClient = useApiClient()
+    apiClient.setRouter(router)
     router.beforeEach((to, from, next) => {
         const authStore = useBasicAuthStore();
         if (to.meta.auth === true && !authStore.isLoggedIn) {
-            return next('/login');
+            return next({ path:'/login', query: { redirect_url: to.fullPath} });
         } else if (to.meta.auth === false && authStore.isLoggedIn) {
             return next('/');
         }

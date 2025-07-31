@@ -2,7 +2,7 @@ import type { ColumnProps } from 'primevue/column'
 import type { DataTableSortMeta } from 'primevue/datatable'
 import type { FormField } from '../FormWrapper/types'
 
-export type ColumnFetchType =
+ type ColumnFetchType =
   'main'
   | 'main_count'
   | 'relation'

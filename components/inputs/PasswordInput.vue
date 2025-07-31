@@ -3,6 +3,7 @@ import uniqueId from 'lodash/uniqueId';
 import type { PasswordProps } from 'primevue';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps } from './types';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const props = withDefaults(
     defineProps<
@@ -28,7 +29,7 @@ const value = defineModel<any>('modelValue', { required: true });
 const inputRef = ref();
 
 function focus() {
-    inputRef.value.$el.focus();
+    inputRef.value.$el.querySelector('input').focus();
 }
 
 const inputTextPt = computed(() => {
@@ -46,12 +47,12 @@ const fieldUniqueId = computed(() => {
 });
 
 const hasError = computed(() => !!props.error);
-
-defineExpose({ focus, hasError });
+const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
+defineExpose({ focus, hasError,baseInputRef,disabled:props.disabled  });
 </script>
 
 <template>
-    <BaseInput v-bind="props" :input-id="fieldUniqueId" @label-clicked="focus">
+    <BaseInput ref="baseInputRef" v-bind="props" :input-id="fieldUniqueId" @label-clicked="focus">
         <template #labelText>
             <slot name="label-text" />
         </template>
@@ -64,9 +65,9 @@ defineExpose({ focus, hasError });
             </slot>
         </template>
         <Password
-            :input-id="fieldUniqueId"
             ref="inputRef"
             v-model="value"
+            :input-id="fieldUniqueId"
             :disabled="disabled"
             :placeholder="placeholder"
             fluid
@@ -75,14 +76,14 @@ defineExpose({ focus, hasError });
             :class="[inputClass]"
             :aria-describedby="`${error ? `${fieldUniqueId}-error` : ''} ${$slots.helper || helperText ? `${fieldUniqueId}-desc` : ''}`"
             :pt="inputTextPt"
-            @blur="emits('blur', $event)"
-            @focus="emits('focus', $event)"
-            @keydown="emits('keydown', $event)"
             :hidden="false"
             :feedback="feedback"
             :variant="variant"
-            :toggleMask="toggleMask"
+            :toggle-mask="toggleMask"
             v-bind="originalProps"
+            @blur="emits('blur', $event)"
+            @focus="emits('focus', $event)"
+            @keydown="emits('keydown', $event)"
         />
     </BaseInput>
 </template>

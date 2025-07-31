@@ -4,7 +4,7 @@ import moment from 'moment'
 import BaseInput from './BaseInput.vue'
 import type { BaseInputProps } from './types'
 
-withDefaults(defineProps<{} & BaseInputProps>(), {})
+const props = withDefaults(defineProps<{} & BaseInputProps>(), {})
 const { t } = useI18n()
 const value = defineModel<[Date | string | null, Date | null | string] | null>('modelValue')
 const formattedValue = computed({
@@ -38,16 +38,17 @@ function onInputKeydown(evt: KeyboardEvent) {
     }
   }
 }
-
-defineExpose({ focus })
+const hasError = computed(()=>!!props.error)
+const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
+defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled })
 </script>
 
 <template>
-  <BaseInput :label="label" :icon="icon" @click="focus">
+  <BaseInput ref="baseInputRef" :label="label" :icon="icon" @click="focus">
     <DatePicker
       ref="inputRef"
       v-model="formattedValue"
-      :disabled
+      :disabled="disabled"
       selection-mode="range"
       :number-of-months="2"
       variant="filled"
@@ -55,6 +56,7 @@ defineExpose({ focus })
       show-button-bar
       class="w-full"
       show-icon
+      :invalid="hasError"
       :select-other-months="true"
       :placeholder="placeholder ?? t('Choose Date')"
       :manual-input="true"

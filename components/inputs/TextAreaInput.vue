@@ -2,12 +2,10 @@
 import {ref} from 'vue'
 import BaseInput from './BaseInput.vue'
 import type {BaseInputProps} from './types'
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
 
-// eslint-disable-next-line vue/define-macros-order
-const props = withDefaults(defineProps<{
-    inputClass?: string
-} & BaseInputProps>(), {})
+const props = defineProps<BaseInputProps>()
 
 const emits = defineEmits<{
     keydown: [e: KeyboardEvent]
@@ -21,16 +19,19 @@ const inputRef = ref()
 function focus() {
     inputRef.value.$el.focus()
 }
+const hasError = computed(()=>!!props.error)
+const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
 
-defineExpose({focus})
+defineExpose({focus,hasError,baseInputRef})
 </script>
 
 <template>
-    <BaseInput v-bind="props" @click="focus">
+    <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
     <Textarea
         ref="inputRef"
         v-model="value"
         :disabled="disabled"
+        :invalid="hasError"
         :placeholder="placeholder"
         class="w-full"
         auto-resize

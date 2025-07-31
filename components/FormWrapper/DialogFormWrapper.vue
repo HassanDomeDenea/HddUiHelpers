@@ -42,6 +42,7 @@ const inEditForm = computed(() => !!form.value.id)
 const formWrapperOptions = computed(() => {
     return {
         inline: true,
+
         hasMultiRecords: isMultiRecordsForm.value,
         hasResetButton: false,
         // hasResetButton: !inEditForm.value,

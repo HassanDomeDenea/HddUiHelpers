@@ -1,13 +1,18 @@
 import type { StyleValue } from 'vue';
+import type { ButtonProps } from 'primevue';
+import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
 
-export type classType = string | { [name: string]: boolean } | ({ [name: string]: boolean } | string)[];
+export type ElementClassType = string | { [name: string]: boolean } | ({ [name: string]: boolean } | string)[];
 
 export interface BaseInputProps {
     autocomplete?: string;
     icon?: string;
+    modelValue?: any;
     label?: string;
+    labelMinWidth?: MaybeRef<number>,
     variant?: string | 'outlined' | 'filled';
     iconAsAddon?: boolean;
+    onLocalEnterKeyDown?: (event: KeyboardEvent) => any;
     floatingLabel?: boolean;
     showErrorMessage?: boolean;
     /**
@@ -38,15 +43,19 @@ export interface BaseInputProps {
     labelClass?: string;
     labelStyle?: StyleValue;
     iconClass?: string;
-    inputClass?: classType;
+    inputClass?: ElementClassType;
+    wrapperClass?: any;
     controlWrapperClass?: any;
-    size?: 'small' | 'large';
+    size?: 'small' | 'large' | string;
+    buttonAddon?: ButtonProps & { tooltip?: string, command?: (event: { event: MouseEvent, value: any,control:any }) => void,showable?:(event:{value:any,control:any})=>boolean }
+    controlComponent?:any,
 }
 
 export type AutocompleteInputProps = {
-    url?: string;
-    options?: { name: string; id: string }[];
+    url?: string | UrlObject;
+    c?: { name: string; id: string }[];
     disabled?: boolean;
+    options?: any[];
     searchOnFocus?: boolean;
     optionLabelProperty?: string;
     helperText?: string;
@@ -59,13 +68,14 @@ export type AutocompleteInputProps = {
     clearOnDblClick?: boolean;
     hideListWhenEmpty?: boolean;
     formatter?: (option: any) => string;
-    inputClass?: classType;
-    panelClass?: classType;
+    inputClass?: ElementClassType;
+    panelClass?: ElementClassType;
 
     ajaxParams?: { [key: string]: any } | ((params: { [key: string]: any }) => void);
-    autoCompleteClass?: classType;
+    autoCompleteClass?: ElementClassType;
 } & BaseInputProps;
 export type TextInputProps = {
     type?: string;
+    lazy?: boolean;
     filterPattern?: RegExp;
 } & BaseInputProps;
