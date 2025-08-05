@@ -1,7 +1,7 @@
 // my-vite-plugin.ts
 import Vue from '@vitejs/plugin-vue';
 import VueRouter from 'unplugin-vue-router/vite';
-import { Plugin, PluginOption } from 'vite';
+import type { Plugin, PluginOption } from 'vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import { VueRouterAutoImports } from 'unplugin-vue-router';
 import { unheadVueComposablesImports } from '@unhead/vue';
@@ -92,7 +92,7 @@ export default function HddUiHelpersPlugin(): PluginOption {
                 fetchMode: 'no-cors',
             }),
             VueI18n({
-
+                compositionOnly: true,
                 fullInstall: false,
                 include: [
                     path.resolve(__dirname, '../locales/*.yaml'),

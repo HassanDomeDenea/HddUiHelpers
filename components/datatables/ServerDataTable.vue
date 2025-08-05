@@ -280,7 +280,7 @@ const mappedColumnsListToObject = computed(() => {
 });
 
 function getColumnBody(rowData: any, column: ServerDataTableColumn): string {
-    const _showable = toValue(column.showable);
+    const _showable = typeof column.showable === 'function' ? column.showable : toValue(column.showable);
     if (typeof _showable === 'function' || isBoolean(_showable)) {
         const showableValue = typeof _showable === 'function' ? _showable({ row: rowData }) : _showable;
         if (showableValue === false) {

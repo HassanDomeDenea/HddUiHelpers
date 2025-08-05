@@ -171,7 +171,7 @@ export interface ServerDataTableColumn<TType extends ServerDataTableColumnType =
     label?: string;
     printLabel?: string;
     formatter?: string | ((value: any, row: TRow, attributeName: string) => string);
-    showable?: MaybeRefOrGetter<((event: {row: TRow}) => boolean) | boolean>;
+    showable?: MaybeRef<boolean | string> | ((event: {row: TRow}) => boolean | string);
     sortable?: boolean;
     disabled?: boolean;
     cellHeadFilterable?: boolean;
