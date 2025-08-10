@@ -249,6 +249,13 @@ export function createListStore<TItem = any>(
         }
     });
 
+    const keyItemPairFlatItems = computed(() => {
+        if (!localItems.value) {
+            refresh().then();
+        }
+        return keyBy(flatList.value || [], idProperty);
+    });
+
     return {
         waitFirstLoad,
         items,
@@ -257,6 +264,7 @@ export function createListStore<TItem = any>(
         onFirstLoad,
         onRefresh,
         keyItemPairItems,
+        keyItemPairFlatItems,
         keyLabelPairItems,
         isLoading,
         refresh,

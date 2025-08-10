@@ -22,6 +22,7 @@ const props = withDefaults(defineProps<{
     clearable?: boolean
     disabledValues?: MaybeRefOrGetter<any[]>
     checkmark?: boolean
+    expanded?: boolean,
     hasFilter?: boolean
     display?: 'comma' | 'chip'
     selectionMode?: 'single' | 'multiple' | 'checkbox'
@@ -33,6 +34,7 @@ const props = withDefaults(defineProps<{
     clearable: false,
     checkmark: true,
     hasFilter: true,
+    expanded: false,
     display: 'comma',
     selectionMode: 'single'
 });
@@ -92,7 +94,7 @@ function convertOptionToTreeNodeIfNeeded(_option: any): TreeNodeWithId {
             label: _option[props.optionLabelProperty],
             selectable: !isDisabled,
             styleClass: isDisabled ? 'text-muted' : null,
-            children: _option[props.optionChildrenProperty]?.map(convertOptionToTreeNodeIfNeeded)
+            children: _option[props.optionChildrenProperty]?.map(convertOptionToTreeNodeIfNeeded) ?? []
         };
     }
 }
@@ -131,13 +133,18 @@ const localOptions = computed<TreeNodeWithId[]>(() => {
 });
 const inputRef = ref();
 
-function focus(_show: boolean = false) {
+function focus() {
     if (!props.disabled) {
-        if (_show) {
-            inputRef.value.show();
-        } else {
-            inputRef.value.$refs.focusInput.focus();
-        }
+        inputRef.value.onClick();
+        // console.log(inputRef.value.overlay)
+        // if (inputRef.value.overlay ) {
+        //     inputRef.value.hide();
+        // } else {
+        //     inputRef.value.show()
+        // }
+        // setTimeout(()=>{
+        //     console.log(inputRef.value.overlay)
+        // },500)
     }
 }
 
@@ -161,6 +168,31 @@ function setVisibleElementValue(value: any) {
         inputRef.value.d_value = {};
     }
 }
+const expandedKeys = ref({})
+
+function expandNode(node:TreeNode, childrenIncluded: boolean = true){
+    if (node.children && node.children.length) {
+        expandedKeys.value[node.key] = true;
+
+        if(childrenIncluded) {
+            for (const child of node.children) {
+                expandNode(child);
+            }
+        }
+    }
+}
+function expandAll(){
+    for (const node of localOptions.value) {
+        expandNode(node);
+    }
+    expandedKeys.value = { ...expandedKeys.value };
+}
+
+onMounted(()=>{
+    if(props.expanded){
+        expandAll()
+    }
+})
 
 const hasError = computed(() => !!props.error);
 const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
@@ -172,6 +204,7 @@ defineExpose({ focus, hasError, baseInputRef, setVisibleElementValue, disabled: 
         <TreeSelect
             ref="inputRef"
             v-model="localValue"
+            v-model:expanded-keys="expandedKeys"
             :size="size"
             :placeholder="placeholder"
             :filter="hasFilter"

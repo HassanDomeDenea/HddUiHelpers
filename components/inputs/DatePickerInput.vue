@@ -55,23 +55,45 @@ defineExpose({ focus, inputRef, hasError ,baseInputRef,disabled: props.disabled 
 
 <template>
     <BaseInput ref="baseInputRef" v-bind="props" :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown" @click="focus" >
-            <DatePicker
-                ref="inputRef"
-                v-model="localValue"
-                :placeholder="placeholder"
-                :date-format="localDateFormat"
-                class="w-full"
-                show-icon
-                :size="size"
-                :view="localView"
-                :disabled="disabled"
-                :readonly="readonly"
-                :invalid="hasError"
-                :manual-input="manualInput"
-                :show-button-bar="clearable"
-                @clear-click="()=>clearable &&( localValue=null)"
-            />
+            <div class="!w-full relative">
+                <DatePicker
+                    ref="inputRef"
+                    v-model="localValue"
+                    :placeholder="placeholder"
+                    :date-format="localDateFormat"
+                    class="!w-full"
+                    show-icon
+                    fluid
+                    :size="size"
+                    :view="localView"
+                    :disabled="disabled"
+                    :readonly="readonly"
+                    :invalid="hasError"
+                    :manual-input="manualInput"
+                    :show-button-bar="clearable"
+                    @clear-click="()=>clearable &&( localValue=null)"
+                />
+                <div class="clear-icon-container" :class="[size]" v-if="localValue">
+                    <i class="i-mdi:times clear-icon" @click.stop="localValue = null"></i>
+                </div>
+            </div>
     </BaseInput>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.clear-icon-container{
+    @apply z-1 absolute rtl:left-[var(--p-datepicker-dropdown-width)] ltr:right-[var(--p-datepicker-dropdown-width)] me-2 top-0 bottom-0 flex items-center;
+    //top: calc(calc(var(--p-inputtext-font-size) + var(--p-inputtext-padding-y)) / 2);
+
+    .clear-icon{
+        @apply cursor-pointer text-secondary-hoverable;
+    }
+
+    &.small{
+        @apply rtl:left-[var(--p-datepicker-dropdown-sm-width)] ltr:right-[var(--p-datepicker-dropdown-sm-width)];
+    }
+    &.large{
+        @apply rtl:left-[var(--p-datepicker-dropdown-lg-width)] ltr:right-[var(--p-datepicker-dropdown-lg-width)];
+    }
+}
+</style>

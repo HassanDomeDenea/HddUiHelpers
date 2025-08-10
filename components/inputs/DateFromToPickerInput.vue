@@ -82,7 +82,20 @@ const fromToLabelClass = computed(() => {
 
 const fromDateInputId = computed(() => uniqueId('DateFromToPicketInputId'))
 const toDateInputId = computed(() => uniqueId('DateFromToPicketInputId'))
+const dateInputBinds = computed(() => {
+    return {
+        placeholder: props.placeholder,
+        size: props.size,
+        disabled: props.disabled,
+        readonly: props.readonly,
+        error: props.error,
+        manualInput: props.manualInput,
+        clearable: props.clearable,
+        labelSingleLine: true,
+        inline:true,
 
+    }
+})
 const hasError = computed(() => !!props.error);
 const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
 defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled });
@@ -90,41 +103,9 @@ defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled });
 
 <template>
     <BaseInput ref="baseInputRef" v-bind="props" :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown" @click="focus">
-        <div class="flex gap-2 items-center">
-            <label :for="fromDateInputId" :class="[fromToLabelClass]">{{ t('From') }}</label>
-            <DatePicker
-                ref="inputRef"
-                v-model="fromDateValue"
-                :placeholder="placeholder"
-                :date-format="'yy-mm-dd'"
-                :input-id="fromDateInputId"
-                class="w-full"
-                show-icon
-                :size="size"
-                :disabled="disabled"
-                :readonly="readonly"
-                :invalid="hasError"
-                :manual-input="manualInput"
-                :show-button-bar="clearable"
-                @clear-click="()=>clearable &&( fromDateValue=null)"
-            />
-            <label :for="toDateInputId" :class="[fromToLabelClass]" class="ms-4">{{ t('To') }}</label>
-            <DatePicker
-                ref="inputRefTwo"
-                v-model="toDateValue"
-                :placeholder="placeholderTwo"
-                :date-format="'yy-mm-dd'"
-                class="w-full"
-                :input-id="toDateInputId"
-                show-icon
-                :size="size"
-                :disabled="disabled"
-                :readonly="readonly"
-                :invalid="hasError"
-                :manual-input="manualInput"
-                :show-button-bar="clearable"
-                @clear-click="()=>clearable &&( toDateValue=null)"
-            />
+        <div class="flex gap-6 items-center">
+            <DatePickerInput v-model="fromDateValue" :label="t('From')" v-bind="dateInputBinds"/>
+            <DatePickerInput v-model="toDateValue" :label="t('To')" v-bind="dateInputBinds"/>
         </div>
     </BaseInput>
 </template>

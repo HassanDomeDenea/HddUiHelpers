@@ -52,6 +52,7 @@ export default definePreset(() => {
             ['text-secondary-1', 'text-gray-800 dark:text-gray-100'],
             ['text-secondary-2', 'text-gray-700 dark:text-gray-200'],
             ['text-secondary-3', 'text-gray-600 dark:text-gray-300'],
+            ['text-secondary-hoverable', 'text-gray-400 hover:text-gray-600 dark:text-gray-700 hover:dark:text-gray-500'],
 
             ['text-primary-1', 'text-blue-800 dark:text-blue-100'],
             ['text-success-1', 'text-green-800 dark:text-green-100'],
