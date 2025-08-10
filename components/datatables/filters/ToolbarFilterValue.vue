@@ -16,6 +16,7 @@ import type ContextMenu from 'primevue/contextmenu';
 import Popover from 'primevue/popover';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { useFormatters } from 'HddUiHelpers/utils/useFormatters.ts';
+import moment from 'moment';
 
 const {
     columns,
@@ -39,7 +40,7 @@ const filter = defineModel<ServerDataTableToolbarFilterValue>('filter');
 const filterDivRef = useTemplateRef<HTMLElement>('filterDivRef');
 const { t } = useI18n();
 const column = computed(() => {
-    return columns.find((e) => (e.filterField ?? e.field ?? e.name) === filter.value.field);
+    return columns.find((e) => (e.filterField ?? e.fullFieldName) === filter.value.field);
 });
 const formatters = useFormatters()
 const label = computed(() => {
@@ -47,8 +48,15 @@ const label = computed(() => {
 });
 
 const formattedValue = computed(() => {
-    const originalValue = filter.value.value;
+    let originalValue = filter.value.value;
     const baseValue = getColumnCellFormatedText(originalValue, column.value, t);
+    if(column.value.type === 'date' && column.value.dateFormat){
+        if(Array.isArray(originalValue)){
+            originalValue = originalValue.map(e=>moment(e).format(column.value.dateFormat))
+        }else{
+            originalValue = moment(originalValue).format(column.value.dateFormat)
+        }
+    }
     switch (column.value.type) {
         case 'date':
             if (Array.isArray(originalValue)) {

@@ -46,8 +46,6 @@ watch(
     },
 );
 
-import MainFootbar from 'HddUiHelpers/components/bars/MainFootbar.vue';
-import MainNavbar from 'HddUiHelpers/components/bars/MainNavbar.vue';
 import { i18n, setPageDirection } from 'HddUiHelpers/plugins/i18n';
 import { useToast } from 'primevue/usetoast';
 import TopProgressBar from 'HddUiHelpers/components/misc/TopProgressBar.vue';

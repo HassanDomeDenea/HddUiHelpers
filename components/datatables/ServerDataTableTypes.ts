@@ -46,6 +46,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
     columns: (string | ServerDataTableColumn<ServerDataTableColumnType, T>)[] | string;
     fields?: HddFormField[];
     name?: string;
+    printingTitle?: string;
     title?: string;
     hasToolsColumn?: boolean;
     columnVisibilityButton?: boolean;
@@ -176,6 +177,7 @@ export interface ServerDataTableColumn<TType extends ServerDataTableColumnType =
     disabled?: boolean;
     cellHeadFilterable?: boolean;
     filterable?: boolean;
+    dateFormat?: 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mmA' | 'YYYY-MM-DD HH:mm' | 'YYYY-MM-DD HH:mm:ss'
     printable?: boolean;
     visible?: boolean;
     visibilityControl?: boolean;

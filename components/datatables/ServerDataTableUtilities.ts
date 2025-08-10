@@ -1,7 +1,7 @@
 import type { EventBusKey } from '@vueuse/core';
 import type { HddFormField, RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import type { ElementClassType } from 'HddUiHelpers/components/inputs/types.ts';
-import { replace, startCase } from 'lodash-es';
+import { replace, snakeCase, startCase } from 'lodash-es';
 import moment from 'moment';
 import type { ColumnFilterMatchModeOptions } from 'primevue';
 import type { ComposerTranslation } from 'vue-i18n';
@@ -221,4 +221,11 @@ export function isToolbarFilterEmpty(filter: ServerDataTableToolbarFilter | Serv
 
 export function serverDataTablePropFn<TRow extends RecordItem>(options: ServerDataTableProps<TRow>) : ServerDataTableProps<TRow> {
     return options as ServerDataTableProps<TRow>;
+}
+
+export function snakeCasePreserveDots(input) {
+    return input
+        .split('.')                         // split at dots
+        .map(part => snakeCase(part))    // apply snakeCase to each part
+        .join('.');                         // rejoin with dot
 }

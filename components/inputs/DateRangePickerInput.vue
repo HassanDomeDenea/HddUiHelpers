@@ -1,67 +1,67 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import moment from 'moment'
-import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
+import { ref } from 'vue';
+import moment from 'moment';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
-const props = withDefaults(defineProps<{} & BaseInputProps>(), {})
-const { t } = useI18n()
-const value = defineModel<[Date | string | null, Date | null | string] | null>('modelValue')
+const props = withDefaults(defineProps<{} & BaseInputProps>(), {});
+const { t } = useI18n();
+const value = defineModel<[Date | string | null, Date | null | string] | null>('modelValue');
 const formattedValue = computed({
-  get: () => {
-    return value.value?.map(e => e ? moment(e).toDate() : null)
-  },
-  set: (evt) => {
-    value.value = evt?.map(e => e ? moment(e).format('YYYY-MM-DD') : null)
-  },
-})
-const inputRef = ref()
+    get: () => {
+        return value.value?.map(e => e ? moment(e).toDate() : null);
+    },
+    set: (evt) => {
+        value.value = evt?.map(e => e ? moment(e).format('YYYY-MM-DD') : null);
+    }
+});
+const inputRef = ref();
 
 function focus() {
-  inputRef.value.$el.focus()
+    inputRef.value.$el.focus();
 }
 
 function onInputKeydown(evt: KeyboardEvent) {
-  if (evt.key === 'Enter') {
-    const target = evt.target as HTMLInputElement
-    const inputVal = target.value
-    if (inputVal.split('-').length === 3) {
-      const m = moment(inputVal)
-      if (m.isValid()) {
-        if (!value.value) {
-          value.value = [m.format('YYYY-MM-DD'), null]
+    if (evt.key === 'Enter') {
+        const target = evt.target as HTMLInputElement;
+        const inputVal = target.value;
+        if (inputVal.split('-').length === 3) {
+            const m = moment(inputVal);
+            if (m.isValid()) {
+                if (!value.value) {
+                    value.value = [m.format('YYYY-MM-DD'), null];
+                } else {
+                    value.value[0] = m.format('YYYY-MM-DD');
+                }
+            }
         }
-        else {
-          value.value[0] = m.format('YYYY-MM-DD')
-        }
-      }
     }
-  }
 }
-const hasError = computed(()=>!!props.error)
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
-defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled })
+
+const hasError = computed(() => !!props.error);
+const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
+defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled });
 </script>
 
 <template>
-  <BaseInput ref="baseInputRef" :label="label" :icon="icon" @click="focus">
-    <DatePicker
-      ref="inputRef"
-      v-model="formattedValue"
-      :disabled="disabled"
-      selection-mode="range"
-      :number-of-months="2"
-      variant="filled"
-      date-format="yy-mm-dd"
-      show-button-bar
-      class="w-full"
-      show-icon
-      :invalid="hasError"
-      :select-other-months="true"
-      :placeholder="placeholder ?? t('Choose Date')"
-      :manual-input="true"
-      input-class="text-center"
-      :pt="{
+    <BaseInput ref="baseInputRef" :label="label" :icon="icon" @click="focus">
+        <DatePicker
+            ref="inputRef"
+            v-model="formattedValue"
+            :disabled="disabled"
+            selection-mode="range"
+            :number-of-months="2"
+            variant="filled"
+            date-format="yy-mm-dd"
+            show-button-bar
+            class="w-full"
+            show-icon
+            :invalid="hasError"
+            :select-other-months="true"
+            :placeholder="placeholder ?? t('Choose Date')"
+            :manual-input="true"
+            input-class="text-center"
+            :pt="{
         pcInput: {
           root: {
             class: 'dir-ltr min-w-170px',
@@ -69,12 +69,18 @@ defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled })
           },
         },
       }"
-    >
-      <template #ww />
-    </DatePicker>
-  </BaseInput>
+        >
+            <template #ww />
+        </DatePicker>
+    </BaseInput>
 </template>
 
-<style scoped>
+<style lang="scss">
+.p-datepicker-next-button {
+    @apply rtl:rotate-180;
+}
 
+.p-datepicker-prev-button {
+    @apply rtl:rotate-180;
+}
 </style>

@@ -237,7 +237,7 @@ export function createListStore<TItem = any>(
             const accumulator: TItem[] = [];
 
             function _localMapper(_item: TItem, _accumulator: TItem[] = []) {
-                _accumulator.push(omit(_item, options.childrenProperty));
+                _accumulator.push(omit(_item as any, options.childrenProperty) as TItem);
                 _item[options.childrenProperty]?.map(e => _localMapper(e, _accumulator));
                 return _accumulator;
             }
@@ -264,6 +264,10 @@ export function createListStore<TItem = any>(
         includeInactive,
         inActiveAsDisabledItems
     };
+}
+
+export function isLocalListType(list: any): list is LocalListType {
+    return (list && list.keyObjectPair);
 }
 
 export type LocalListType<TId extends string = string, TItem = any> = {

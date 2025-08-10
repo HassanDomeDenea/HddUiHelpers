@@ -26,7 +26,7 @@ interface UserOptionProps {
     optionValue?: string;
     showAfterLabelDots?: boolean;
     successToastMessage?: string;
-    type?: 'switch' | 'checkbox' | 'text' | 'select' | 'image' | 'tree_select';
+    type?: 'switch' | 'checkbox' | 'text' | 'select' | 'image' | 'tree_select' | 'select_button';
 }
 
 const {
@@ -89,7 +89,7 @@ const currentValue = computed<any>({
                     selectInputRef.value.d_value = toValue(currentValue);
                 }
                 if (treeSelectInputRef.value) {
-                    treeSelectInputRef.value.setVisibleElementValue(toValue(currentValue))
+                    treeSelectInputRef.value.setVisibleElementValue(toValue(currentValue));
                 }
             });
     }
@@ -167,6 +167,15 @@ function onLabelClick() {
             </template>
         </label>
         <ToggleSwitch v-if="type === 'switch'" v-model="currentValue" :input-id="optionId" />
+        <SelectButtonInput
+            v-else-if="type === 'select_button'"
+            v-model="currentValue"
+            :input-id="optionId"
+            :class="{'flex-grow':controlFluid}"
+            :option-label="localOptionLabel"
+            :option-value="localOptionValue"
+            :size="size"
+            :options="computedOptions" />
         <Select
             v-else-if="type === 'select'"
             ref="selectInputRef"

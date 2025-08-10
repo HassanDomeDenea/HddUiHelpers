@@ -1,7 +1,6 @@
 import { get } from 'lodash-es';
-import type { InvoiceData } from '@/types/laravel_generated';
-import type { createLocalList } from 'HddUiHelpers/utils/dynamicListsUtilities.ts';
 import type { ColumnSelectOptions } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
+import { isLocalListType } from 'HddUiHelpers/utils/dynamicListsUtilities.ts';
 
 export const useFormatters = () => {
     const { t } = useI18n();
@@ -72,7 +71,13 @@ export function safeNumber(value: number, _default: number | null = 0) {
 export function formatListToSeverityTag({ value, options }: { value: any, options: ColumnSelectOptions }): {
     severity: any
 } {
-    return {
-        severity: options?.keyObjectPair?.[value]?.severity,
-    };
+    if (isLocalListType(options)) {
+        return {
+            severity: options?.keyObjectPair?.[value]?.severity
+        };
+    } else {
+        return {
+            severity: null,
+        };
+    }
 }

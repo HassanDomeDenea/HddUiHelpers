@@ -64,7 +64,7 @@ import {
     getFieldSlotName,
     getFilterMatchModesByTypeOptions,
     isToolbarFilterEmpty,
-    localeAlignToFrozenAlign
+    localeAlignToFrozenAlign, snakeCasePreserveDots
 } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
 import ToolbarFilterWrapper from 'HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue';
 import { useFormatters } from 'HddUiHelpers/utils/useFormatters.ts';
@@ -75,6 +75,7 @@ import Button from 'primevue/button';
 import Column from 'primevue/column';
 import Popover from 'primevue/popover';
 import CellContent from 'HddUiHelpers/components/datatables/CellContent.vue';
+import moment from 'moment';
 
 const emits = defineEmits<{
     rowClick: [row: T, index: number, original: Event];
@@ -234,7 +235,7 @@ const mappedColumns = computed<ServerDataTableColumn[]>(() => {
             return { name: column, field: column, label: column, fullFieldName: column };
         }
         if (column.relation) {
-            column.relation = snakeCase(column.relation);
+            column.relation = snakeCasePreserveDots(column.relation);
             column.fullFieldName = column.relation + '.' + column.field;
         } else {
             column.fullFieldName = column.field ?? column.name;
@@ -311,6 +312,9 @@ function getColumnBody(rowData: any, column: ServerDataTableColumn): string {
     }
     if (column.type === 'price') {
         return formatters.formatPrice(value, typeof column.currency === 'string' ? column.currency : column.currency ? rowData : undefined);
+    }
+    if(column.type === 'date' && column.dateFormat){
+        return moment(value).format(column.dateFormat);
     }
     if (column.type === 'boolean') {
         if (column.renderType === 'yesNoIconBadge') return value;
@@ -1285,7 +1289,7 @@ defineExpose({
                 <slot name="printPageHeader" :records="slotProps.records" :extra="slotProps.extra">
                     <slot name="title" :records="slotProps.records" :extra="slotProps.extra">
                         <div class="my-2 text-center text-lg font-bold">
-                            {{ title }}
+                            {{ printingTitle ?? title }}
                         </div>
                     </slot>
                 </slot>

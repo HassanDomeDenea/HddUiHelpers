@@ -35,7 +35,7 @@ const resolveRenderTypeProps = computed(() => {
     </template>
     <template v-else-if="column.renderType === 'tag'">
         <Tag
-            v-bind="typeof resolveRenderTypeProps === 'function'?  resolveRenderTypeProps({value: get(row,column.field), text: renderedData, row: row,options: column.selectOptions}) : resolveRenderTypeProps"
+            v-bind="typeof resolveRenderTypeProps === 'function'?  resolveRenderTypeProps({value: get(row,column.fullFieldName), text: renderedData, row: row,options: column.selectOptions}) : resolveRenderTypeProps"
             :value="renderedData" />
     </template>
     <template v-else-if="column.renderType === 'yesNoIconBadge'">
