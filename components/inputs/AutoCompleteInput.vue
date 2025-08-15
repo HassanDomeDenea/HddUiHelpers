@@ -102,11 +102,11 @@ async function search(event: { query: string; offset?: number; limit?: number; o
         if (event.offset) items.value.push(...response.data.data.items);
         else items.value = response.data.data.items;
 
-        if (props.hideListWhenEmpty && items.value.length < 1) {
+        /*if (props.hideListWhenEmpty && items.value.length < 1) {
             nextTick(() => {
                 inputRef.value.overlayVisible = false;
             });
-        }
+        }*/
         hasMore.value = response.data.data.hasMore;
         total.value = response.data.data.total;
         isLoadingMore.value = false;
@@ -276,6 +276,7 @@ v-if="clearable && dynamicValue" :disabled="disabled" size="small" severity="dan
         <div class="w-full" @dblclick="onInputContainerDblclick">
             <AutoComplete
                 ref="inputRef"
+                :show-empty-message="!hideListWhenEmpty"
                 :model-value="noManualInput ? manualInput : dynamicValue"
                 :fluid="true"
                 class="!w-full"

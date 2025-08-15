@@ -2,14 +2,14 @@
 import HddForm from 'HddUiHelpers/components/FormWrapper/HddForm.vue';
 import type { HddFormField, HddFormProps, RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import {
-    appendToUrl,
+    appendToUrl, getColumnName,
     getColumnTitle,
     getFieldSlotName
 } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
 import BaseInput from 'HddUiHelpers/components/inputs/BaseInput.vue';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
 import type { HddFormComposer } from 'HddUiHelpers/utils/useHddForm.ts';
-import { get, set } from 'lodash-es';
+import { get, set, startCase } from 'lodash-es';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
 import lodashSet from 'lodash/set';
@@ -106,7 +106,13 @@ const hddFormRef = useTemplateRef<ComponentExposed<typeof HddForm>>('hddFormRef'
 
 const mappedFormFields = computed(() => {
     return [
-        ...(fields ?? []),
+        ...(fields ?? [])
+        .map((field)=>{
+            if(!field.label){
+                field.label = t(startCase(field.name ))
+            }
+            return field;
+        }),
         ...(columns
             ?.filter((column) => column.inForm !== false && (isEditing ? column.editable !== false : column.creatable !== false))
             .map(columnToField) ?? [])

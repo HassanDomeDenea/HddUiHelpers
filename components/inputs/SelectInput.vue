@@ -5,6 +5,7 @@ import Select from 'primevue/select'
 import BaseInput from './BaseInput.vue'
 import type {BaseInputProps} from './types'
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import isBoolean from 'lodash/isBoolean';
 
 const props = withDefaults(defineProps<{
     options: any[]
@@ -21,7 +22,7 @@ const props = withDefaults(defineProps<{
     optionValueProperty: 'id',
     clearable: false,
     checkmark: true,
-    hasFilter: true,
+    hasFilter: undefined,
 })
 const emits = defineEmits<{
     change: [event: SelectChangeEvent]
@@ -40,6 +41,14 @@ function focus(_show:boolean=false) {
     }
 }
 
+const guessHasFilter = computed(()=>{
+    if (isBoolean(props.hasFilter)){
+        return props.hasFilter
+    }else{
+        return  props.options.length > 7
+    }
+})
+
 function onInputBlur() {
 
 }
@@ -56,9 +65,9 @@ defineExpose({focus, hasError, baseInputRef, disabled: props.disabled })
             v-model="value"
             :size="size"
             :placeholder="placeholder"
-            :filter="hasFilter"
+            :filter="guessHasFilter"
             auto-option-focus
-            :auto-filter-focus="hasFilter"
+            :auto-filter-focus="guessHasFilter"
             reset-filter-on-hide
             :checkmark
             :options="options"

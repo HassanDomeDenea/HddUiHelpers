@@ -100,7 +100,7 @@ export const useApiClient = defineStore('apiClient', () => {
 
     function toastRequestError(error: AxiosError) {
 
-        let message = (error.response?.data as any)?.message || error.message || t.value?.('Error Occurred') || 'Error Occurred';
+        let message = (error.response?.data as any)?.message || ((error.response?.data as any)?.data as any)?.message || error.message || t.value?.('Error Occurred') || 'Error Occurred';
         if(error.status===403 && message === 'This action is unauthorized.'){
             message= t.value?.(message);
         }

@@ -130,12 +130,12 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
                             </label>
                         </component>
                     </template>
-                    <InputGroupAddon v-if="buttonAddon && (buttonAddon.showable?.({value:modelValue,control:controlComponent}) ?? true)" class="!min-w-unset">
+                    <InputGroupAddon v-if="buttonAddon && (toValue(buttonAddon).showable?.({value:modelValue,control:controlComponent}) ?? true)" class="!min-w-unset">
                         <Button
-                            v-tooltip.top="buttonAddon.tooltip"
+                            v-tooltip.top="toValue(buttonAddon).tooltip"
                             :size="size"
-                            v-bind="buttonAddon"
-                            @click="buttonAddon.command?.({event:$event, value:modelValue,control:controlComponent})" />
+                            v-bind="toValue(buttonAddon)"
+                            @click="toValue(buttonAddon).command?.({event:$event, value:modelValue,control:controlComponent})" />
                     </InputGroupAddon>
                     <InputGroupAddon v-if="slots.addon">
                         <slot name="addon" />

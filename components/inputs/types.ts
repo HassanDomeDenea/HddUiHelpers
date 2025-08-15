@@ -47,7 +47,7 @@ export interface BaseInputProps {
     wrapperClass?: any;
     controlWrapperClass?: any;
     size?: 'small' | 'large' | string;
-    buttonAddon?: ButtonProps & { tooltip?: string, command?: (event: { event: MouseEvent, value: any,control:any }) => void,showable?:(event:{value:any,control:any})=>boolean }
+    buttonAddon?: MaybeRefOrGetter<ButtonProps & { tooltip?: string, command?: (event: { event: MouseEvent, value: any,control:any }) => void,showable?:(event:{value:any,control:any})=>boolean }>
     controlComponent?:any,
 }
 
