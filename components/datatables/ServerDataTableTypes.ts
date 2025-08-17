@@ -281,6 +281,7 @@ export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> 
     submitPayloadTransformer?: (payload: object) => object;
     autoLabelsWidth?: boolean | number;
     closeOnEsc?: MaybeRef<boolean>;
+    fieldsContainerClass?   : any,
     createRecordHeader?: string;
     editRecordHeader?: string;
     deleteRecordHeader?: string;

@@ -5,7 +5,9 @@ import type {BaseInputProps} from './types'
 import type { ComponentExposed } from 'vue-component-type-helpers';
 
 
-const props = defineProps<BaseInputProps>()
+const props = defineProps<BaseInputProps & {
+    initialRows?: number
+}>()
 
 const emits = defineEmits<{
     keydown: [e: KeyboardEvent]
@@ -32,6 +34,7 @@ defineExpose({focus,hasError,baseInputRef})
         v-model="value"
         :disabled="disabled"
         :invalid="hasError"
+        :rows="initialRows"
         :placeholder="placeholder"
         class="w-full"
         auto-resize

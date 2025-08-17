@@ -29,6 +29,7 @@ const {
     showRequiredAsterisk = false,
     inlineFields = true,
     size,
+    fieldsContainerClass,
     formName,
     urlMethod = 'post',
     submitText = '',
@@ -317,182 +318,184 @@ function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown)
                     </template>
                 </Message>
             </div>
-            <template v-for="field in formFields" :key="field.name">
-                <template
-                    v-if="!field.hidden && (typeof field.showable === 'function' ? field.showable({row:currentValues}) : !toValue(field.showable))">
-                    <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
-                    <slot :name="`${getFieldSlotName(field)}ControlBody`">
-                        <div class="mb-2">
-                            <div class="flex items-center gap-1">
-                                <div class="flex-grow">
-                                    <slot
-                                        name="fieldInput"
-                                        :field="field"
-                                        :current-values="currentValues"
-                                        :set-ref="setFieldRef"
-                                        :binds="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                    >
-                                        <template v-if="!field.type || field.type === 'text'">
-                                            <TextInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+            <div :class="fieldsContainerClass">
+                <template v-for="field in formFields" :key="field.name">
+                    <template
+                        v-if="!field.hidden && (typeof field.showable === 'function' ? field.showable({row:currentValues}) : !toValue(field.showable))">
+                        <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
+                        <slot :name="`${getFieldSlotName(field)}ControlBody`">
+                            <div class="mb-2">
+                                <div class="flex items-center gap-1">
+                                    <div class="flex-grow">
+                                        <slot
+                                            name="fieldInput"
+                                            :field="field"
+                                            :current-values="currentValues"
+                                            :set-ref="setFieldRef"
+                                            :binds="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                        >
+                                            <template v-if="!field.type || field.type === 'text'">
+                                                <TextInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
 
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'checkbox'">
-                                            <CheckboxInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'radio'">
-                                            <RadioButtonInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                :options="resolveFieldOptions(field.options,currentValues)"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'switch'">
-                                            <ToggleSwitchInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'password'">
-                                            <PasswordInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'phone'">
-                                            <PhoneInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'select'">
-                                            <SelectInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                :options="resolveFieldOptions(field.options,currentValues)"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'tree_select'">
-                                            <TreeSelectInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                :options="resolveFieldOptions(field.options,currentValues)"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'multiselect'">
-                                            <MultiSelectInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                :options="resolveFieldOptions(field.options,currentValues)"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'listbox'">
-                                            <ListBoxInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                :options="resolveFieldOptions(field.options,currentValues)"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'number'">
-                                            <NumberInput
-                                                :model-value="get(currentValues,field.name)"
-                                                allow-empty
-                                                :immediate-update="!field.lazy"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'price'">
-                                            <NumberInput
-                                                :model-value="get(currentValues,field.name)"
-                                                allow-empty
-                                                use-grouping
-                                                :text-addon="field.currency"
-                                                :immediate-update="!field.lazy"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'math'">
-                                            <MathInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'textarea'">
-                                            <TextAreaInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...omit(generalInputsProps, ['onKeydown']), ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                                @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'date'">
-                                            <DatePickerInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'autocomplete'">
-                                            <AutoCompleteInput
-                                                :model-value="get(currentValues,field.name)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                :url="typeof field.url === 'function' ? field.url({row: currentValues}) : toValue(field.url)"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'server_select'">
-                                            <InfiniteSelectInput
-                                                :model-value="get(currentValues,field.name)"
-                                                :filter-placeholder="t('Search For')+ ': '+t(field.label)"
-                                                :url="typeof field.url === 'function' ? field.url({row: currentValues}) : toValue(field.url)"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                        <template v-else-if="field.type === 'server_multi_select'">
-                                            <InfiniteMultiSelectInput
-                                                :model-value="get(currentValues,field.name)"
-                                                :filter-placeholder="t('Search For')+ ': '+t(field.label)"
-                                                :url="field.url"
-                                                v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                                                @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
-                                            />
-                                        </template>
-                                    </slot>
-                                </div>
-                                <template v-if="showFieldErrorsPopover">
-                                    <div
-                                        class="self-start ltr:pr-2 rtl:pl-2"
-                                        :class="{ 'pt-7': !inlineFields, 'pt-1': inlineFields }">
-                                        <Button severity="warn" text size="small">
-                                            <i class="i-heroicons-exclamation-triangle-20-solid text-2xl" />
-                                        </Button>
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'checkbox'">
+                                                <CheckboxInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'radio'">
+                                                <RadioButtonInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    :options="resolveFieldOptions(field.options,currentValues)"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'switch'">
+                                                <ToggleSwitchInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'password'">
+                                                <PasswordInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'phone'">
+                                                <PhoneInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'select'">
+                                                <SelectInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    :options="resolveFieldOptions(field.options,currentValues)"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'tree_select'">
+                                                <TreeSelectInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    :options="resolveFieldOptions(field.options,currentValues)"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'multiselect'">
+                                                <MultiSelectInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    :options="resolveFieldOptions(field.options,currentValues)"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'listbox'">
+                                                <ListBoxInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    :options="resolveFieldOptions(field.options,currentValues)"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'number'">
+                                                <NumberInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    allow-empty
+                                                    :immediate-update="!field.lazy"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'price'">
+                                                <NumberInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    allow-empty
+                                                    use-grouping
+                                                    :text-addon="field.currency"
+                                                    :immediate-update="!field.lazy"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'math'">
+                                                <MathInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'textarea'">
+                                                <TextAreaInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...omit(generalInputsProps, ['onKeydown']), ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                    @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'date'">
+                                                <DatePickerInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'autocomplete'">
+                                                <AutoCompleteInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    :url="typeof field.url === 'function' ? field.url({row: currentValues}) : toValue(field.url)"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'server_select'">
+                                                <InfiniteSelectInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    :filter-placeholder="t('Search For')+ ': '+t(field.label)"
+                                                    :url="typeof field.url === 'function' ? field.url({row: currentValues}) : toValue(field.url)"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                            <template v-else-if="field.type === 'server_multi_select'">
+                                                <InfiniteMultiSelectInput
+                                                    :model-value="get(currentValues,field.name)"
+                                                    :filter-placeholder="t('Search For')+ ': '+t(field.label)"
+                                                    :url="field.url"
+                                                    v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                                                    @update:model-value="set(currentValues,fieldNamePaths[field.name],$event)"
+                                                />
+                                            </template>
+                                        </slot>
                                     </div>
-                                </template>
+                                    <template v-if="showFieldErrorsPopover">
+                                        <div
+                                            class="self-start ltr:pr-2 rtl:pl-2"
+                                            :class="{ 'pt-7': !inlineFields, 'pt-1': inlineFields }">
+                                            <Button severity="warn" text size="small">
+                                                <i class="i-heroicons-exclamation-triangle-20-solid text-2xl" />
+                                            </Button>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
-                        </div>
-                    </slot>
-                    <slot :name="`${getFieldSlotName(field)}AfterControl`"></slot>
+                        </slot>
+                        <slot :name="`${getFieldSlotName(field)}AfterControl`"></slot>
+                    </template>
                 </template>
-            </template>
+            </div>
         </div>
         <slot name="buttons-area">
             <div class="mt-4">

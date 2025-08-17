@@ -4,6 +4,7 @@ import { FloatLabel, IftaLabel } from 'primevue';
 import { useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { BaseInputProps } from './types';
+import omit from 'lodash/omit';
 
 const { hideLabelDoubleDots = true, error, showErrorMessage, label, disabled } = defineProps<BaseInputProps>();
 const emits = defineEmits<{
@@ -134,7 +135,7 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
                         <Button
                             v-tooltip.top="toValue(buttonAddon).tooltip"
                             :size="size"
-                            v-bind="toValue(buttonAddon)"
+                            v-bind="omit(toValue(buttonAddon),['command','tooltip'])"
                             @click="toValue(buttonAddon).command?.({event:$event, value:modelValue,control:controlComponent})" />
                     </InputGroupAddon>
                     <InputGroupAddon v-if="slots.addon">

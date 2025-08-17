@@ -42,6 +42,7 @@ export type HddFormProps<TFieldName extends string = string, TFieldType extends 
     fields?: HddFormField<TFieldName, TFieldType>[] | TFieldName[];
     urlMethod?: UrlMethod;
     formName?: string;
+    fieldsContainerClass?: any,
     submitPayloadTransformer?: (payload: any, form: HddFormComposer) => any;
     size?: 'small' | 'large';
     onSuccess?: (data: any) => void;

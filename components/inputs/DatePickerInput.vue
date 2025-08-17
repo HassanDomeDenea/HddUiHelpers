@@ -73,7 +73,7 @@ defineExpose({ focus, inputRef, hasError ,baseInputRef,disabled: props.disabled 
                     :show-button-bar="clearable"
                     @clear-click="()=>clearable &&( localValue=null)"
                 />
-                <div class="clear-icon-container" :class="[size]" v-if="localValue">
+                <div v-if="clearable && localValue" class="clear-icon-container" :class="[size]">
                     <i class="i-mdi:times clear-icon" @click.stop="localValue = null"></i>
                 </div>
             </div>

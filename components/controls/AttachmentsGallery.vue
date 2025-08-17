@@ -2,12 +2,24 @@
 import type { UseSortableOptions } from '@vueuse/integrations/useSortable'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
 import downloadJs from 'downloadjs'
+import { get } from 'lodash-es';
+import debounce from 'lodash/debounce';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import MediaController from '@/wayfinder/actions/HassanDomeDenea/HddLaravelHelpers/Controllers/MediaController.ts';
+
+
+type AttachmentModelType = any;
 
 const props = withDefaults(defineProps<{
-  attachments: any[]
+  attachments: AttachmentModelType[]
   nameProperty?: string
   sizeProperty?: string
   srcProperty?: string
+    idProperty?: string
+    descriptionInputPlaceholder?:string,
+    withDescription?:boolean,
+    withDateInput?:boolean,
+    canEditDate?:boolean,
     loading?: boolean,
     thumbnailSize?: number
   thumbProperty?: string
@@ -15,9 +27,11 @@ const props = withDefaults(defineProps<{
   mimeTypeProperty?: string
   originalOrderProperty?: string
   orderProperty?: string
+    autoSubmitChanges?: boolean
   orderChangedProperty?: string
   downloadProperty?: string
   dateProperty?: string
+  descriptionProperty?: string
   captionProperty?: string
   sortable?: boolean
   rotateDisabled?: boolean
@@ -28,7 +42,9 @@ const props = withDefaults(defineProps<{
 }>(), {
   originalOrderProperty: 'order_original',
   orderProperty: 'order',
+    idProperty: 'id',
   orderChangedProperty: 'order_changed',
+    descriptionProperty: 'description',
   captionProperty: 'caption',
   dateProperty: 'date',
   downloadProperty: 'download_url',
@@ -40,14 +56,19 @@ const props = withDefaults(defineProps<{
   sizeProperty: 'size',
   srcProperty: 'original_url',
   thumbProperty: 'thumb_url',
+    canEditDate:true,
     toolbarButtons:true,
     scalable:true,
     zoomable:true,
 })
 
+
 const emits = defineEmits<{
     sorted: [event: { oldIndex: number, newIndex: number, indexesChanges: { [number: number]: number } }]
     toggled:[state: boolean]
+    dateChanged:[file:AttachmentModelType, newDate:string]
+    descriptionChanged:[file:AttachmentModelType, newDate:string]
+    transformationApplied: [file: AttachmentModelType, newRotation: number]
     shown:[],
     hidden:[],
 }>()
@@ -244,27 +265,66 @@ function close(){
     isVisible.value = false;
 }
 
+// Update file properties
+
+const apiClient = useApiClient();
+function onFileDateUpdated(file: AttachmentModelType,newDate:string){
+    if(props.canEditDate){
+        emits('dateChanged',file,newDate)
+    }
+    if(props.autoSubmitChanges && file[idProperty]){
+        apiClient.request({
+            ...MediaController.download(file[idProperty],),
+            data: {
+                date: newDate
+    }
+        })
+    }
+}
+// Update date
+const onFileDescriptionUpdated = debounce(function (file: AttachmentModelType,newDescription:string){
+    if(props.canEditDate){
+        emits('descriptionChanged',file,newDescription)
+    }
+    if(autoSubmitChanges){
+
+    }
+},500)
+
 </script>
 
 <template>
   <div ref="mainWrapper">
     <div ref="sortableWrapper" class="flex gap-4 items-stretch p-4 flex-wrap">
-      <div
-        v-for="(image, index) of attachments" :key="index"
-        class="border-inset flex items-center justify-center relative group border-2 p-1 rounded-lg light:border-teal-800 dark:border-teal-200 border-solid"
-        :style="{width: (thumbnailSize || 60)+'px', height: (thumbnailSize || 60)+'px'}"
-      >
-        <div
-          class="absolute inset-0 hidden group-hover:flex hover:visible items-center justify-center light:bg-gray-100/45 dark:bg-gray-900/45 cursor-pointer "
-          @click="previewImage(index)"
-        >
-          <i class="i-mdi:eye light:text-teal-700 dark:text-teal-200" :style="{fontSize: Math.max((thumbnailSize || 60) / 5, 12)+'px'}" />
-        </div>
-        <img
-          :src="image[hasThumbnails ? thumbProperty : srcProperty]" :alt="image.alt" style="cursor: pointer"
-          class="max-w-100% max-h-100% mx-auto my-auto "
-        >
-      </div>
+        <template  v-for="(image, index) of attachments" :key="index">
+         <div :style="{width: (thumbnailSize || 60)+'px'}" class="space-y-2">
+             <div
+                 class="border-inset flex items-center justify-center relative group border-2 p-1 rounded-lg light:border-teal-800 dark:border-teal-200 border-solid"
+                 :style="{width: (thumbnailSize || 60)+'px', height: (thumbnailSize || 60)+'px'}"
+             >
+                 <div
+                     class="absolute inset-0 hidden group-hover:flex hover:visible items-center justify-center light:bg-gray-100/45 dark:bg-gray-900/45 cursor-pointer "
+                     @click="previewImage(index)"
+                 >
+                     <i class="i-mdi:eye light:text-teal-700 dark:text-teal-200" :style="{fontSize: Math.max((thumbnailSize || 60) / 5, 12)+'px'}" />
+                 </div>
+                 <img
+                     :src="image[hasThumbnails ? thumbProperty : srcProperty]" :alt="image.alt" style="cursor: pointer"
+                     class="max-w-100% max-h-100% mx-auto my-auto "
+                 >
+             </div>
+             <div v-if="withDescription">
+                 <TextAreaInput
+:model-value="get(image,descriptionProperty)" :placeholder="descriptionInputPlaceholder ?? t('Description')" :initial-rows="1"
+                                @update:model-value="onFileDescriptionUpdated(image,$event)"/>
+             </div>
+             <div v-if="withDateInput">
+                 <DatePickerInput
+size="small" :clearable="false" :model-value="get(image,dateProperty)" :disabled="!canEditDate"
+                 @update:model-value="onFileDateUpdated(image,$event)"/>
+             </div>
+         </div>
+        </template>
         <div
 v-if="loading"
             class="border-inset flex items-center justify-center relative group border-2 p-1 rounded-lg light:border-teal-800/50 dark:border-teal-200/50 border-dashed"

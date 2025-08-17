@@ -229,3 +229,6 @@ export function snakeCasePreserveDots(input) {
         .map(part => snakeCase(part))    // apply snakeCase to each part
         .join('.');                         // rejoin with dot
 }
+
+
+export const TWO_COLUMNS_FORM_CLASS_ON_MD = 'md:grid md:grid-cols-2 md:gap-x-8 [&>*:nth-child(odd)]:md:border-ie [&>*:nth-child(odd)]:md:border-dotted [&>*:nth-child(odd)]:light:md:border-gray-300 [&>*:nth-child(odd)]:dark:md:border-gray-700 [&>*:nth-child(odd)]:md:pe-8'

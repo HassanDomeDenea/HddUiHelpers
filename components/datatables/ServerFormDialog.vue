@@ -23,6 +23,7 @@ const {
     editUrl,
     deleteUrl,
     singleEditUrl,
+    fieldsContainerClass,
     keepFormOpenAfterCreate = false,
     dialogClass,
     dialogContentStyle,
@@ -171,6 +172,7 @@ const hddFormOptions = computed(() => {
             url: urlLink,
             method: urlMethod
         },
+        fieldsContainerClass,
         unifyLabelsWidth: autoLabelsWidth,
         autoFocusFirstOnMount: false,
         submitSeverity: submitSeverity ?? (isEditing.value ? 'success' : 'primary'),
