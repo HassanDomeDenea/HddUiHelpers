@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<{
     withDescription?:boolean,
     withDateInput?:boolean,
     canEditDate?:boolean,
-    loading?: boolean,
+    canEditDescription?:boolean,
     thumbnailSize?: number
   thumbProperty?: string
     hasThumbnails?: boolean
@@ -57,6 +57,7 @@ const props = withDefaults(defineProps<{
   srcProperty: 'original_url',
   thumbProperty: 'thumb_url',
     canEditDate:true,
+    canEditDescription:true,
     toolbarButtons:true,
     scalable:true,
     zoomable:true,
@@ -67,7 +68,7 @@ const emits = defineEmits<{
     sorted: [event: { oldIndex: number, newIndex: number, indexesChanges: { [number: number]: number } }]
     toggled:[state: boolean]
     dateChanged:[file:AttachmentModelType, newDate:string]
-    descriptionChanged:[file:AttachmentModelType, newDate:string]
+    descriptionChanged:[file:AttachmentModelType, newDescription:string]
     transformationApplied: [file: AttachmentModelType, newRotation: number]
     shown:[],
     hidden:[],
@@ -75,6 +76,7 @@ const emits = defineEmits<{
 
 const {t}=useI18n()
 const mainWrapper = useTemplateRef<HTMLDivElement>('mainWrapper')
+const loading = defineModel<boolean>('loading',{ default: false })
 const isVisible = ref(false)
 const activeIndex = ref(0)
 const showCaption = ref(false)
@@ -270,24 +272,47 @@ function close(){
 const apiClient = useApiClient();
 function onFileDateUpdated(file: AttachmentModelType,newDate:string){
     if(props.canEditDate){
-        emits('dateChanged',file,newDate)
-    }
-    if(props.autoSubmitChanges && file[idProperty]){
-        apiClient.request({
-            ...MediaController.download(file[idProperty],),
-            data: {
-                date: newDate
-    }
-        })
+        if(props.autoSubmitChanges && file[props.idProperty]){
+            loading.value=true
+            apiClient.request({
+                ...MediaController.updateDate(file[props.idProperty],),
+                data: {
+                    date: newDate
+                }
+            })
+                .then(() => {
+                    emits('dateChanged',file,newDate)
+                })
+                .catch(apiClient.toastRequestError)
+                .finally(()=>{
+                    loading.value = false;
+                })
+        }else{
+            emits('dateChanged',file,newDate)
+        }
     }
 }
 // Update date
 const onFileDescriptionUpdated = debounce(function (file: AttachmentModelType,newDescription:string){
-    if(props.canEditDate){
-        emits('descriptionChanged',file,newDescription)
-    }
-    if(autoSubmitChanges){
-
+    if(props.canEditDescription){
+        if(props.autoSubmitChanges && file[props.idProperty]){
+            loading.value=true
+            apiClient.request({
+                ...MediaController.updateDescription(file[props.idProperty],),
+                data: {
+                    description: newDescription
+                }
+            })
+                .then(() => {
+                    emits('descriptionChanged',file,newDescription)
+                })
+                .catch(apiClient.toastRequestError)
+                .finally(()=>{
+                    loading.value = false;
+                })
+        }else{
+            emits('descriptionChanged',file,newDescription)
+        }
     }
 },500)
 
@@ -320,7 +345,7 @@ const onFileDescriptionUpdated = debounce(function (file: AttachmentModelType,ne
              </div>
              <div v-if="withDateInput">
                  <DatePickerInput
-size="small" :clearable="false" :model-value="get(image,dateProperty)" :disabled="!canEditDate"
+                     size="small" :clearable="false" :model-value="get(image,dateProperty)" :disabled="!canEditDate"
                  @update:model-value="onFileDateUpdated(image,$event)"/>
              </div>
          </div>
