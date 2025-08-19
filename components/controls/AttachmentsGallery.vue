@@ -10,6 +10,10 @@ import MediaController from '@/wayfinder/actions/HassanDomeDenea/HddLaravelHelpe
 
 type AttachmentModelType = any;
 
+interface TransformationEvent {
+    rotation?: number;
+}
+
 const props = withDefaults(defineProps<{
   attachments: AttachmentModelType[]
   nameProperty?: string
@@ -69,9 +73,10 @@ const emits = defineEmits<{
     toggled:[state: boolean]
     dateChanged:[file:AttachmentModelType, newDate:string]
     descriptionChanged:[file:AttachmentModelType, newDescription:string]
-    transformationApplied: [file: AttachmentModelType, newRotation: number]
+    transformationApplied: [file: AttachmentModelType, event: TransformationEvent]
     shown:[],
     hidden:[],
+    changed:[],
 }>()
 
 const {t}=useI18n()
@@ -100,6 +105,8 @@ const responsiveOptions = ref([
   },
 ])
 
+const activeFile = computed<AttachmentModelType|null>(()=>props.attachments[activeIndex.value]);
+
 watch(() => isVisible.value, (state) => {
 
   if (state) {
@@ -116,9 +123,8 @@ watch(() => isVisible.value, (state) => {
 })
 
 watch(activeIndex,()=>{
-    imageTransformationsApplied.value=false
-    scale.value=1;
-    rotate.value=0;
+    function resetTransformation();
+    scale.value= 1;
 })
 
 function onGalleryMaskClick(event: PointerEvent) {
@@ -231,6 +237,11 @@ const hasGalleryThumbnailsNavigationButtons = computed(() => {
 const rotate = ref(0)
 const scale = ref(1)
 
+function resetTransformation(){
+    imageTransformationsApplied.value=false
+    rotate.value= 0;
+}
+
 
 const imageTransformationStyle = computed(()=> {
     return {transition:'transform 0.15s', transform: 'rotate(' + rotate.value + 'deg) scale(' + scale.value + ')' };
@@ -282,6 +293,7 @@ function onFileDateUpdated(file: AttachmentModelType,newDate:string){
             })
                 .then(() => {
                     emits('dateChanged',file,newDate)
+                    emits('changed')
                 })
                 .catch(apiClient.toastRequestError)
                 .finally(()=>{
@@ -305,6 +317,7 @@ const onFileDescriptionUpdated = debounce(function (file: AttachmentModelType,ne
             })
                 .then(() => {
                     emits('descriptionChanged',file,newDescription)
+                    emits('changed')
                 })
                 .catch(apiClient.toastRequestError)
                 .finally(()=>{
@@ -316,6 +329,39 @@ const onFileDescriptionUpdated = debounce(function (file: AttachmentModelType,ne
     }
 },500)
 
+function saveManipulations(file: AttachmentModelType){
+    if(props.savableTransformation){
+
+        let newRotation = rotate.value % 360;
+        if(newRotation < 0){
+            newRotation = 360 - newRotation;
+        }
+        const payload: TransformationEvent = {
+            rotation: rotate.value % 360
+        };
+            if(props.autoSubmitChanges && file[props.idProperty]){
+                loading.value=true
+                apiClient.request({
+                    ...MediaController.manipulate(file[props.idProperty],),
+                    data: payload
+                })
+                    .then(() => {
+                        resetTransformation()
+                        emits('transformationApplied',file,payload)
+                        emits('changed')
+                    })
+                    .catch(apiClient.toastRequestError)
+                    .finally(()=>{
+                        loading.value = false;
+                    })
+            }else{
+                emits('transformationApplied',file,payload)
+            }
+    }
+}
+
+
+defineExpose({resetTransformation})
 </script>
 
 <template>
@@ -332,6 +378,9 @@ const onFileDescriptionUpdated = debounce(function (file: AttachmentModelType,ne
                      @click="previewImage(index)"
                  >
                      <i class="i-mdi:eye light:text-teal-700 dark:text-teal-200" :style="{fontSize: Math.max((thumbnailSize || 60) / 5, 12)+'px'}" />
+                 </div>
+                 <div v-if="loading" class="absolute top-0 bottom-0 left-0 right-0 z-100">
+                     <Skeleton class="!w-full !h-full"></Skeleton>
                  </div>
                  <img
                      :src="image[hasThumbnails ? thumbProperty : srcProperty]" :alt="image.alt" style="cursor: pointer"
@@ -394,7 +443,9 @@ v-if="loading"
                     <Button v-if="zoomable" rounded severity="contrast" variant="text" :disabled="isZoomInDisabled" icon="i-fa:search-plus" @click="zoomIn"></Button>
                 </div>
                 <div v-if="savableTransformation && imageTransformationsApplied && (imageIsRotate)" class="flex justify-center">
-                    <Button icon="i-material-symbols:save-rounded" variant="outlined" rounded :label="t('Save Changes')" size="small"></Button>
+                    <Button
+icon="i-material-symbols:save-rounded" variant="outlined" rounded :label="t('Save Changes')" size="small"
+                    @click="saveManipulations(activeFile)"></Button>
                 </div>
             </div>
         </template>
