@@ -6,7 +6,8 @@ import { get } from 'lodash-es';
 import debounce from 'lodash/debounce';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
 import MediaController from '@/wayfinder/actions/HassanDomeDenea/HddLaravelHelpers/Controllers/MediaController.ts';
-
+import { useConfirm } from 'primevue/useconfirm';
+import moment from 'moment'
 
 type AttachmentModelType = any;
 
@@ -26,6 +27,7 @@ const props = withDefaults(defineProps<{
     canEditDate?:boolean,
     canEditDescription?:boolean,
     thumbnailSize?: number
+    includeTimeWithDate?: boolean
   thumbProperty?: string
     hasThumbnails?: boolean
   mimeTypeProperty?: string
@@ -41,6 +43,7 @@ const props = withDefaults(defineProps<{
   rotateDisabled?: boolean
   zoomable?: boolean
   scalable?: boolean
+    deletable?: boolean
     toolbarButtons?: boolean,
     savableTransformation?: boolean,
 }>(), {
@@ -54,7 +57,7 @@ const props = withDefaults(defineProps<{
   downloadProperty: 'download_url',
   nameProperty: 'file_name',
   mimeTypeProperty: 'mime_type',
-  sortable: false,
+    deletable: false,
     thumbnailSize: 60,
     hasThumbnails:true,
   sizeProperty: 'size',
@@ -63,6 +66,7 @@ const props = withDefaults(defineProps<{
     canEditDate:true,
     canEditDescription:true,
     toolbarButtons:true,
+    sortable:false,
     scalable:true,
     zoomable:true,
 })
@@ -74,8 +78,11 @@ const emits = defineEmits<{
     dateChanged:[file:AttachmentModelType, newDate:string]
     descriptionChanged:[file:AttachmentModelType, newDescription:string]
     transformationApplied: [file: AttachmentModelType, event: TransformationEvent]
+    delete: [file: AttachmentModelType]
     shown:[],
     hidden:[],
+    confirming:[],
+    confirmed:[],
     changed:[],
 }>()
 
@@ -123,7 +130,7 @@ watch(() => isVisible.value, (state) => {
 })
 
 watch(activeIndex,()=>{
-    function resetTransformation();
+    resetTransformation();
     scale.value= 1;
 })
 
@@ -179,26 +186,26 @@ function previewImage(index) {
 
 const sortableWrapper = ref<HTMLElement | null>(null)
 if (props.sortable) {
-  useSortable(sortableWrapper, images, {
+  useSortable(sortableWrapper, props.attachments, {
     onUpdate(e: { oldIndex: number, newIndex: number }) {
       const smallerIndex = Math.min(e.oldIndex, e.newIndex)
       const largerIndex = Math.max(e.oldIndex, e.newIndex)
       const indexesChanges = {} // Key is old index, value is new index
-      moveArrayElement(images.value, e.oldIndex, e.newIndex)
+      moveArrayElement(props.attachments, e.oldIndex, e.newIndex)
       const toIndex = e.newIndex
       const fromIndex = e.oldIndex
 
       nextTick(() => {
-        images.value.forEach((e, index) => {
+        props.attachments.forEach((e, index) => {
           if (index >= smallerIndex || index <= largerIndex) {
-            if (images.value[index][props.originalOrderProperty] === undefined) {
-              images.value[index][props.originalOrderProperty] = images.value[index][props.orderProperty]
+            if (props.attachments[index][props.originalOrderProperty] === undefined) {
+              props.attachments[index][props.originalOrderProperty] = props.attachments[index][props.orderProperty]
             }
-            images.value[index][props.orderProperty] = index
-            images.value[index][props.orderChangedProperty] = index !== images.value[index][props.originalOrderProperty]
+            props.attachments[index][props.orderProperty] = index
+            props.attachments[index][props.orderChangedProperty] = index !== props.attachments[index][props.originalOrderProperty]
           }
         })
-        for (let i = 0; i < images.value.length; i++) {
+        for (let i = 0; i < props.attachments.length; i++) {
           if (i === toIndex) {
             indexesChanges[fromIndex] = toIndex
           }
@@ -217,9 +224,7 @@ if (props.sortable) {
           oldIndex: e.oldIndex,
           indexesChanges,
         })
-        /* do something */
       })
-      // console.log(e)
     },
   } as UseSortableOptions)
 }
@@ -360,6 +365,48 @@ function saveManipulations(file: AttachmentModelType){
     }
 }
 
+const confirm = useConfirm()
+function confirmDelete(file: AttachmentModelType){
+        emits('confirming')
+        confirm.require({
+            group:'dismissable',
+            header: t('Delete Confirmation'),
+            message: t('Are you sure you want to delete this file?'),
+            icon:'i-material-symbols:warning-outline-rounded',
+            acceptProps:{
+                severity:'danger',
+                icon: 'i-line-md:confirm',
+            },
+            acceptClass: 'font-bold',
+            rejectProps:{
+                severity:'secondary',
+                // icon: 'i-line-md:cancel',
+            },
+            accept(){
+                if(props.autoSubmitChanges && file[props.idProperty]){
+                    loading.value=true
+                    apiClient.request({
+                        ...MediaController.destroy(file[props.idProperty],),
+                    })
+                        .then(() => {
+                            emits('changed')
+                        })
+                        .catch(apiClient.toastRequestError)
+                        .finally(()=>{
+                            loading.value = false;
+                        })
+                }else{
+                    emits('delete',file)
+                }
+                    emits('confirmed')
+            },
+            reject(){
+                emits('confirmed')
+            }
+        })
+
+}
+
 
 defineExpose({resetTransformation})
 </script>
@@ -373,8 +420,14 @@ defineExpose({resetTransformation})
                  class="border-inset flex items-center justify-center relative group border-2 p-1 rounded-lg light:border-teal-800 dark:border-teal-200 border-solid"
                  :style="{width: (thumbnailSize || 60)+'px', height: (thumbnailSize || 60)+'px'}"
              >
+                 <div v-if="deletable" class="absolute top-0 rtl:left-0 ltr:right-0 z-2">
+                     <Button
+v-tooltip="t('Delete')" icon="i-mdi-trash" severity="danger" text size="small"
+                             raised
+                     @click="confirmDelete(image)"></Button>
+                 </div>
                  <div
-                     class="absolute inset-0 hidden group-hover:flex hover:visible items-center justify-center light:bg-gray-100/45 dark:bg-gray-900/45 cursor-pointer "
+                     class="absolute inset-0 hidden group-hover:flex hover:visible items-center justify-center light:bg-gray-100/45 dark:bg-gray-900/45 cursor-pointer z-1"
                      @click="previewImage(index)"
                  >
                      <i class="i-mdi:eye light:text-teal-700 dark:text-teal-200" :style="{fontSize: Math.max((thumbnailSize || 60) / 5, 12)+'px'}" />

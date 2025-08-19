@@ -354,6 +354,7 @@ function deleteRecord(item: TRecord|TRecord[]) {
         cnt = item.length;
     }
     const _popupTarget = toValue(popupTarget);
+    emits('visible',true)
     confirm.require({
         message: deleteRecordMessage  ?? t('Are you sure to delete n records?', { n: cnt }, cnt),
         header: deleteRecordHeader ?? t('Confirmation'),
@@ -400,7 +401,12 @@ function deleteRecord(item: TRecord|TRecord[]) {
                 console.error(error);
                 apiClient.toastRequestError(error);
             }
-        }
+        },
+        onShow:()=>{
+            emits('visible',true)
+    },        onHide:()=>{
+            emits('visible',false)
+    }
     });
 }
 

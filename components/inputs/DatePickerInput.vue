@@ -11,6 +11,7 @@ const props = withDefaults(
             manualInput?: boolean;
             isYearOnly?: boolean;
             clearable?: boolean;
+            showTime?: boolean;
             dateFormat?: string;
             formatAsString?: boolean;
         } & BaseInputProps
@@ -61,6 +62,9 @@ defineExpose({ focus, inputRef, hasError ,baseInputRef,disabled: props.disabled 
                     v-model="localValue"
                     :placeholder="placeholder"
                     :date-format="localDateFormat"
+                    hide-on-date-time-select
+                    :show-time="showTime"
+                    hour-format="12"
                     class="!w-full"
                     show-icon
                     fluid

@@ -91,6 +91,7 @@ const emits = defineEmits<{
     rowReorder: [event: DataTableRowReorderEvent];
     refreshed: [res: GetRecordsResponseType];
     rowChanged: [row: T | T[] | (string | number)[], type: 'create' | 'update' | 'delete'];
+    dialogsVisibility: [status: boolean];
 }>();
 
 const {
@@ -926,6 +927,7 @@ const ServerFormDialogOptions = computed(() => {
         size: size,
         columns: mappedColumns.value.filter((e) => e.inForm === true),
         onSubmitted: onFormSubmitted,
+        onVisible:(status)=>emits('dialogsVisibility',status),
         ...(formProps ?? {})
     } as ServerFormDialogProps;
 });
