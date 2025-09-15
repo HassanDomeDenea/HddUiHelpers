@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { UseSortableOptions } from '@vueuse/integrations/useSortable'
-import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
 import downloadJs from 'downloadjs'
 import { get } from 'lodash-es';
 import debounce from 'lodash/debounce';
@@ -8,6 +6,7 @@ import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
 import MediaController from '@/wayfinder/actions/HassanDomeDenea/HddLaravelHelpers/Controllers/MediaController.ts';
 import { useConfirm } from 'primevue/useconfirm';
 import moment from 'moment'
+import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts';
 
 type AttachmentModelType = any;
 
@@ -120,14 +119,19 @@ watch(() => isVisible.value, (state) => {
     window.addEventListener('click', onGalleryMaskClick)
     window.addEventListener('keydown', onGalleryKeyboardPress)
       emits('shown')
+      updateDialogVisibility(true)
   }
   else {
     window.removeEventListener('click', onGalleryMaskClick)
     window.removeEventListener('keydown', onGalleryKeyboardPress)
       emits('hidden')
+      updateDialogVisibility(false)
   }
   emits('toggled',state)
 })
+
+const {updateDialogVisibility} = useStackableDialog()
+
 
 watch(activeIndex,()=>{
     resetTransformation();
@@ -184,6 +188,7 @@ function previewImage(index) {
   isVisible.value = true;
 }
 
+/*
 const sortableWrapper = ref<HTMLElement | null>(null)
 if (props.sortable) {
   useSortable(sortableWrapper, props.attachments, {
@@ -228,6 +233,7 @@ if (props.sortable) {
     },
   } as UseSortableOptions)
 }
+*/
 
 const windowHeightComputed = computed(() => {
   return windowSize.height.value
@@ -236,9 +242,9 @@ const windowWidthComputed = computed(() => {
   return windowSize.width.value
 })
 
-const hasGalleryThumbnailsNavigationButtons = computed(() => {
+/*const hasGalleryThumbnailsNavigationButtons = computed(() => {
   return (windowSize.width.value - 150 - (props.attachments?.length * 55)) < 0
-})
+})*/
 const rotate = ref(0)
 const scale = ref(1)
 
@@ -337,10 +343,10 @@ const onFileDescriptionUpdated = debounce(function (file: AttachmentModelType,ne
 function saveManipulations(file: AttachmentModelType){
     if(props.savableTransformation){
 
-        let newRotation = rotate.value % 360;
+        /*let newRotation = rotate.value % 360;
         if(newRotation < 0){
             newRotation = 360 - newRotation;
-        }
+        }*/
         const payload: TransformationEvent = {
             rotation: rotate.value % 360
         };
@@ -368,6 +374,7 @@ function saveManipulations(file: AttachmentModelType){
 const confirm = useConfirm()
 function confirmDelete(file: AttachmentModelType){
         emits('confirming')
+        updateDialogVisibility(true)
         confirm.require({
             group:'dismissable',
             header: t('Delete Confirmation'),
@@ -398,10 +405,15 @@ function confirmDelete(file: AttachmentModelType){
                 }else{
                     emits('delete',file)
                 }
-                    emits('confirmed')
+                emits('confirmed')
+                updateDialogVisibility(false)
             },
             reject(){
+                updateDialogVisibility(false)
                 emits('confirmed')
+            },
+            onHide(){
+                updateDialogVisibility(false)
             }
         })
 

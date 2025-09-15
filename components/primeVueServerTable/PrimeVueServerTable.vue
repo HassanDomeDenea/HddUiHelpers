@@ -500,7 +500,7 @@ async function getData() {
 async function getDataIntoVariable(perPage?: number): Promise<GetRecordsResponseType['data'] | false> {
     if (props.url || props.routeName) {
         try {
-            let res = await recordsService.getRecords({
+            const res = await recordsService.getRecords({
                 ...requestDataPayload.value,
                 perPage: perPage ?? requestDataPayload.value.perPage
             })
@@ -664,13 +664,13 @@ function refresh() {
 
 const renderPrintNode = ref(false)
 const printNodeRef = ref()
-let recordsToPrint = ref<T[] | false>(false)
+const recordsToPrint = ref<T[] | false>(false)
 
 async function printTable() {
     if (props.printAllRows === true) {
         recordsToPrint.value = [];
         renderPrintNode.value = true;
-        let data = await getDataIntoVariable(-1)
+        const data = await getDataIntoVariable(-1)
 
         recordsToPrint.value = data.data;
     } else {
@@ -678,7 +678,7 @@ async function printTable() {
         recordsToPrint.value = false
     }
     await nextTick()
-    let element = printNodeRef.value
+    const element = printNodeRef.value
     await printDomWithStyles(element)
     renderPrintNode.value = false;
 }
@@ -897,9 +897,9 @@ function initiateVisibleColumns() {
 }
 
 function saveVisibleColumnsState() {
-    let columns = props.columns.filter(col => col.visibilityControl !== false).map(col => col.name);
-    let hidden = columns.filter(col => visibleColumns.value.indexOf(col) < 0);
-    let visible = props.columns.filter(col => col.visibilityControl !== false && col.visible === false && visibleColumns.value.indexOf(col.field) > -1).map(col => col.name);
+    const columns = props.columns.filter(col => col.visibilityControl !== false).map(col => col.name);
+    const hidden = columns.filter(col => visibleColumns.value.indexOf(col) < 0);
+    const visible = props.columns.filter(col => col.visibilityControl !== false && col.visible === false && visibleColumns.value.indexOf(col.field) > -1).map(col => col.name);
 
 
     localStorage.setItem('PrimeVueTableHiddenColumns_' + props.tableName || props.routeName || props.url, JSON.stringify(hidden))
@@ -936,9 +936,9 @@ async function loadRecordsLazily(event) {
     if (getRecordsAbortController.value) {
         getRecordsAbortController.value.abort()
     }
-    let result = await getDataIntoVariable(event.last)
+    const result = await getDataIntoVariable(event.last)
     if (result) {
-        let newRecords: T[] = Array.from({length: result.total})
+        const newRecords: T[] = Array.from({length: result.total})
         totalRecords.value = result.total
         totalWithoutFilters.value = result.total_without_filters
         Array.prototype.splice.apply(newRecords, [
@@ -968,7 +968,7 @@ const columnsWidthPoints = computed(() => {
         points++
     }
     props.columns.forEach(column => {
-        let isVisible = checkColumnIsVisible(column)
+        const isVisible = checkColumnIsVisible(column)
         if (isVisible) {
             if (column.widthPoint !== undefined) {
                 points += column.widthPoint;
@@ -979,13 +979,13 @@ const columnsWidthPoints = computed(() => {
     })
 
     console.log(points);
-    let columnsWidth = {
+    const columnsWidth = {
         _sequence: (1 / points) * 100,
         _selectable: (1 / points) * 100,
         _reorder: (1 / points) * 100,
     }
     props.columns.forEach(column => {
-        let isVisible = checkColumnIsVisible(column)
+        const isVisible = checkColumnIsVisible(column)
         if (isVisible) {
             columnsWidth[column.name] = ((column.widthPoint ?? 2) / points) * 100
         }
@@ -1001,22 +1001,24 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
 <template>
     <div class="p-server-datatable-container max-w-full px-4">
         <div class="hidden">
-            <div class="bg-white text-black" ref="printNodeRef" v-if="renderPrintNode">
+            <div v-if="renderPrintNode" ref="printNodeRef" class="bg-white text-black">
                 <slot name="printPageHeader">
                     <div class="text-xl my-2 font-bold text-center">
                         {{ tableTitle }}
                     </div>
                 </slot>
 
-                <div :dir="printDirection"
+                <div
+:dir="printDirection"
                      :class="{'text-left ltr':printDirection==='ltr','text-right rtl':printDirection==='rtl'}">
                     <table class="printable-table mt-3 mx-auto">
                         <thead>
                         <tr>
                             <th v-if="hasSequenceColumn">#</th>
                             <template v-for="column in columns">
-                                <th :key="column.name"
-                                    v-if=" column.printable!==false && checkColumnIsVisible(column)">
+                                <th
+v-if=" column.printable!==false && checkColumnIsVisible(column)"
+                                    :key="column.name">
                                     {{ column.printHeader || column.header }}
                                 </th>
                             </template>
@@ -1026,9 +1028,11 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                         <tr v-for="(row,rowIndex) in (recordsToPrint || records)" :key="row[dataKeyId]">
                             <td v-if="hasSequenceColumn">{{ rowIndex + 1 }}</td>
                             <template v-for="column in columns">
-                                <td :key="column.name"
-                                    v-if="column.printable!==false && checkColumnIsVisible(column)">
-                                    <slot :name="`${column.name.replace('.', '_')}ColumnBody`" :row="row as T"
+                                <td
+v-if="column.printable!==false && checkColumnIsVisible(column)"
+                                    :key="column.name">
+                                    <slot
+:name="`${column.name.replace('.', '_')}ColumnBody`" :row="row as T"
                                           :data="lodashGet(row, column.name)">
                                         <div
                                             :class="column.bodyClassFunction ? column.bodyClassFunction(lodashGet(row, column.name)) : ''">
@@ -1052,7 +1056,8 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
             </div>
         </div>
         <!--        <pre>{{ globalFilterFields }}</pre>-->
-        <DialogFormWrapper ref="dialogFormWrapperRef" v-bind="dialogFormWrapperOptions"
+        <DialogFormWrapper
+ref="dialogFormWrapperRef" v-bind="dialogFormWrapperOptions"
                            v-model:records-list="dialogFormWrapperRecordsListValue"
                            v-model="dialogFormWrapperModelValue"/>
         <ContextMenu ref="contextMenuRef" :model="contextMenuModel" @hide="contextMenuSelectedProduct = undefined"/>
@@ -1063,7 +1068,7 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
             v-model:selection="selectedRecords"
             v-model:expanded-rows="expandedRecords"
             v-model:first="first"
-            v-model:contextMenuSelection="contextMenuSelectedProduct"
+            v-model:context-menu-selection="contextMenuSelectedProduct"
             context-menu
             :value="records"
             lazy
@@ -1165,28 +1170,30 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                                     v-for="col in columns.filter(col=>col.visibilityControl !== false && col.disabled !== true && col.type !== 'hidden')"
                                     :key="col.name"
                                     class="flex items-center gap-2 pb-1">
-                                    <Checkbox :inputId="'ColumnVisibilityCheckbox_'+col.name" :value="col.name"
-                                              v-model="visibleColumns"
+                                    <Checkbox
+v-model="visibleColumns" :input-id="'ColumnVisibilityCheckbox_'+col.name"
+                                              :value="col.name"
                                               @change="saveVisibleColumnsState"/>
                                     <label :for="'ColumnVisibilityCheckbox_'+col.name" class="px-1">{{
                                             col.header || col.name
                                         }}</label>
                                 </div>
                             </Popover>
-                            <Button :label="t('Columns')" icon="pi pi-table" severity="help"
-                                    v-tooltip="t('Columns Control')"
+                            <Button
+v-tooltip="t('Columns Control')" :label="t('Columns')" icon="pi pi-table"
+                                    severity="help"
                                     :size=""
                                     @click="(evt)=>visibleColumnsPopoverRef.toggle(evt)"/>
                         </template>
                         <Button
-                            v-if="printable" :disabled="loading" size="small" severity="success"
+                            v-if="printable" v-tooltip.top="t('Print')" :disabled="loading" size="small"
+                            severity="success"
                             :loading="loading || renderPrintNode"
-                            v-tooltip.top="t('Print')"
                             icon="pi pi-print" @click="printTable()"
                         />
                         <Button
-                            v-if="hasRefreshButton" :disabled="loading" size="small" severity="info" :loading="loading"
-                            v-tooltip.top="t('Refresh Records')"
+                            v-if="hasRefreshButton" v-tooltip.top="t('Refresh Records')" :disabled="loading" size="small" severity="info"
+                            :loading="loading"
                             icon="pi pi-refresh" @click="refresh()"
                         />
                         <slot name="buttonsEnd"/>
@@ -1244,7 +1251,8 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
             <template #expansion="{ data }">
                 <slot name="expander" :row="data"/>
             </template>
-            <Column v-if="hasReorderColumn" row-reorder style="width: 33px;flex-grow:1;flex-basis: 33px"
+            <Column
+v-if="hasReorderColumn" row-reorder style="width: 33px;flex-grow:1;flex-basis: 33px"
                     :reorderable-column="false"/>
             <Column v-if="hasExpanderColumn" expander style="width: 3rem"/>
             <Column
@@ -1253,19 +1261,22 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                 :header-style="{width:'3rem'}"
             >
                 <template #loading>
-                    <div class="flex items-center"
+                    <div
+class="flex items-center"
                          :style="{ height: itemSize+'px', 'flex-grow': '1', overflow: 'hidden' }">
                         <Skeleton width="60%" height="1rem"/>
                     </div>
                 </template>
             </Column>
-            <Column header="#" v-if="hasSequenceColumn" style="width: 3rem"
+            <Column
+v-if="hasSequenceColumn" header="#" style="width: 3rem"
                     v-bind="sequenceColumnProps">
                 <template #body="{index}">
                     {{ index + 1 }}
                 </template>
                 <template #loading>
-                    <div class="flex items-center"
+                    <div
+class="flex items-center"
                          :style="{ height: itemSize+'px', 'flex-grow': '1', overflow: 'hidden' }">
                         <Skeleton width="60%" height="1rem"/>
                     </div>
@@ -1302,7 +1313,8 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                         v-if="isBoolean(column.filterable) ? column.filterable : enableColumnFilters"
                         #filter="{ filterModel, filterCallback }"
                     >
-                        <slot :name="`${column.name.replace('.', '_')}ColumnFilter`"
+                        <slot
+:name="`${column.name.replace('.', '_')}ColumnFilter`"
                               :slot-props="{ filterModel, filterCallback }">
                             <DatePicker
                                 v-if="column.type === 'date'"
@@ -1385,7 +1397,8 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                         </slot>
                     </template>
                     <template #body="{ data }">
-                        <slot :name="`${column.name.replace('.', '_')}ColumnBody`" :row="data as T"
+                        <slot
+:name="`${column.name.replace('.', '_')}ColumnBody`" :row="data as T"
                               :data="lodashGet(data, column.name)">
                             <div
                                 :class="column.bodyClassFunction ? column.bodyClassFunction(lodashGet(data, column.name)) : ''">
@@ -1399,14 +1412,16 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                         </slot>
                     </template>
                     <template #loading>
-                        <div class="flex items-center"
+                        <div
+class="flex items-center"
                              :style="{ height: itemSize+'px', 'flex-grow': '1', overflow: 'hidden' }">
                             <Skeleton width="60%" height="1rem"/>
                         </div>
                     </template>
                 </Column>
             </template>
-            <Column v-if="toolsColumn" body-class="p-tools-cell" :align-frozen="t('dir')" :frozen="frozenToolsColumn"
+            <Column
+v-if="toolsColumn" body-class="p-tools-cell" :align-frozen="t('dir')" :frozen="frozenToolsColumn"
                     v-bind="toolsColumnProps">
                 <template #header>
                     <i class="i-mdi-tools mx-auto"/>
@@ -1436,7 +1451,8 @@ defineExpose({refresh, showCreateDialog, showEditDialog, formModel})
                     </div>
                 </template>
                 <template #loading>
-                    <div class="flex items-center"
+                    <div
+class="flex items-center"
                          :style="{ height: itemSize+'px', 'flex-grow': '1', overflow: 'hidden' }">
                         <Skeleton width="60%" height="1rem"/>
                     </div>

@@ -7,17 +7,17 @@ import type {
     UrlObject,
     UrlWithParameterFunction
 } from 'HddUiHelpers/components/FormWrapper/types.ts';
-import type { ButtonProps, DialogEmits, DialogProps } from 'primevue';
+import type { BadgeProps, ButtonProps, DialogEmits, DialogProps, MessageProps } from 'primevue';
 import type { ColumnProps } from 'primevue/column';
 import type { DataTableFilterMeta, DataTableFilterMetaData, DataTableRowReorderEvent } from 'primevue/datatable';
 import type { MenuItem } from 'primevue/menuitem';
 import type { LocalListType } from 'HddUiHelpers/utils/dynamicListsUtilities.ts';
 
-type ObjectKeys<T> = {
+/*type ObjectKeys<T> = {
     [K in keyof T]: T[K] extends object
         ? K
         : never;
-}[keyof T];
+}[keyof T];*/
 
 export type FilterMatchModes = DataTableFilterMetaData['matchMode'];
 
@@ -38,6 +38,8 @@ export type ServerDataTableColumnType =
 export type MenuItemAndButton = Omit<MenuItem, 'icon'> & {
     onlyIconButton?: boolean;
     severity?: ButtonProps['severity'];
+    badge?: string|((row:unknown)=>string|null)
+    badgeSeverity?: BadgeProps['severity']|((row:unknown)=>BadgeProps['severity']|null)
     command?: (...args: any) => any;
     icon?: string | ((...args: any) => string);
 };
@@ -49,6 +51,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
     printingTitle?: string;
     title?: string;
     hasToolsColumn?: boolean;
+    inlineEditMode?: 'row' | 'cell' | 'none';
     columnVisibilityButton?: boolean;
     withLoadingMask?: boolean;
     printable?: boolean;
@@ -57,6 +60,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
     footerImageUrl?: string;
     printableRows?: boolean | ((row: T) => boolean);
     noMultiSortBadges?: boolean;
+    refreshOnActivated?: boolean;
     noBody?: boolean;
     showOnlySortedIcon?: boolean;
     withDataView?: boolean;
@@ -147,6 +151,15 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
     onRowOpen?: (row: T) => void;
     rowDeletable?: (row: T) => boolean;
     rowEditable?: (row: T) => boolean;
+
+    /** Table corners will be rounded. */
+    rounded?: boolean;
+
+    /** General color variant of the table. */
+    tableSeverity?: 'none' | MessageProps['severity'];
+
+    /** Background color of the header. */
+    headerSeverity?: string | ButtonProps['severity'];
 }
 
 export type ServerDataTableColumnRenderType = 'chip' | 'chips' | 'yesNoIconBadge' | 'tag';
@@ -176,8 +189,9 @@ export interface ServerDataTableColumn<TType extends ServerDataTableColumnType =
     sortable?: boolean;
     disabled?: boolean;
     cellHeadFilterable?: boolean;
+    inlineEditable?: boolean,
     filterable?: boolean;
-    dateFormat?: 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mmA' | 'YYYY-MM-DD HH:mm' | 'YYYY-MM-DD HH:mm:ss'
+    dateFormat?: 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mmA' | 'YYYY-MM-DD HH:mm' | 'YYYY-MM-DD HH:mm:ss' | 'date' | 'datetime'
     printable?: boolean;
     visible?: boolean;
     visibilityControl?: boolean;

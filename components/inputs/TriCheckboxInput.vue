@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import BaseInput from './BaseInput.vue'
 import type { BaseInputProps } from './types'
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{
   notSelectedValue?: 'null' | 'undefined'
@@ -45,20 +46,22 @@ function onCheckboxStateChange() {
       break
   }
 }
-const hasError = computed(()=>!!props.error)
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
 
-defineExpose({ focus,hasError,baseInputRef })
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({ focus,...exposed })
 
 </script>
 
 <template>
-  <BaseInput ref="baseInputRef" v-bind="props" :label-class="`${labelClass} select-none`" @label-clicked.stop.prevent="onCheckboxStateChange">
+  <BaseInput v-bind="baseInputForwardedProps" :label-class="`${labelClass} select-none`" @label-clicked.stop.prevent="onCheckboxStateChange">
     <!--    <pre>Is stated {{ isStated }}</pre> -->
     <!--    <pre>Is Indeterminate {{ isIndeterminate }}</pre> -->
     <Checkbox
+        v-bind="generalInputProps"
+        :input-id="fieldUniqueId"
       :model-value="isStated" :indeterminate="isIndeterminate" binary :class="{ 'p-checkbox-checked': isStated, 'p-checkbox-indeterminate': isIndeterminate }"
-      readonly :invalid="hasError"
+      readonly
       @click="onCheckboxStateChange"
     >
       <template #icon="slotProps">

@@ -46,7 +46,7 @@ watch(
     },
 );
 
-import { i18n, setPageDirection } from 'HddUiHelpers/plugins/i18n';
+import { setPageDirection } from 'HddUiHelpers/plugins/i18n';
 import { useToast } from 'primevue/usetoast';
 import TopProgressBar from 'HddUiHelpers/components/misc/TopProgressBar.vue';
 import DismissableConfirmDialog from 'HddUiHelpers/components/modified/DismissableConfirmDialog.vue';

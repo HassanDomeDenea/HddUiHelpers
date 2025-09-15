@@ -1,4 +1,5 @@
-import { definePreset, Preset, presetIcons, presetTypography, transformerDirectives, transformerVariantGroup } from 'unocss';
+import type { Preset} from 'unocss';
+import { definePreset, presetIcons, presetTypography, transformerDirectives, transformerVariantGroup } from 'unocss';
 
 export default definePreset(() => {
     return {
@@ -22,6 +23,7 @@ export default definePreset(() => {
             // ...
         ],
         shortcuts: [
+            ['TWO_COLUMNS_FORM_CLASS_ON_MD','md:grid md:grid-cols-2 md:gap-x-8 [&>*:nth-child(odd)]:md:border-ie [&>*:nth-child(odd)]:md:border-dotted [&>*:nth-child(odd)]:light:md:border-gray-300 [&>*:nth-child(odd)]:dark:md:border-gray-700 [&>*:nth-child(odd)]:md:pe-8'],
             ['bg-secondary-0', 'bg-gray-50 dark:bg-gray-900'],
             ['bg-secondary-1', 'bg-gray-100 dark:bg-gray-800'],
             ['bg-secondary-2', 'bg-gray-200 dark:bg-gray-700'],
@@ -64,14 +66,33 @@ export default definePreset(() => {
             // ['btn', 'px-4 py-1 rounded inline-block bg-teal-700 text-white cursor-pointer !outline-none hover:bg-teal-800 disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50'],
             // ['icon-btn', 'inline-block cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100 hover:text-teal-600'],
             ['text-muted', `light:text-gray-700 dark:text-gray-400`],
-            ['text-success', `light:text-green-500 dark:text-green-400`],
+            //['text-success', `light:text-green-500 dark:text-green-400`],
             ['text-warning', `light:text-yellow-600 dark:text-orange-400`],
             ['text-danger', `light:text-red-600 dark:text-red-400`],
             ['bg-danger', `light:bg-red-500 light:text-white dark:bg-red-400 dark:text-black`],
+
+            // Based on Primevue Message Text Color
+            ['text-success',`text-[var(--p-message-success-color)]`],
+            ['text-info',`text-[var(--p-message-info-color)]`],
+            ['text-warn',`text-[var(--p-message-warn-color)]`],
+            ['text-error',`text-[var(--p-message-error-color)]`],
+            ['text-secondary',`text-[var(--p-message-secondary-color)]`],
+            ['text-contrast',`text-[var(--p-message-contrast-color)]`],
+
             /*[/^m-start-(.*)$/, ([, n]) => `ltr:ml-${n} rtl:mr-${n}`],
             [/^m-end-(.*)$/, ([, n]) => `ltr:mr-${n} rtl:ml-${n}`],
             [/^rounded-side-start-(.*)$/, ([, n]) => `ltr:(rounded-tl-${n} rounded-bl-${n}) rtl:(rounded-tr-${n} rounded-br-${n})`],
             [/^rounded-side-end-(.*)$/, ([, n]) => `ltr:(rounded-tr-${n} rounded-br-${n}) rtl:(rounded-tl-${n} rounded-bl-${n})`],*/
+        ],
+        safelist:[
+            'text-success',
+            'text-info',
+            'text-warn',
+            'text-error',
+            'text-secondary',
+            'text-contrast',
+            // 'w-[75vw]',
+            // 'max-w-[90vw]'
         ],
     } as Preset;
 });

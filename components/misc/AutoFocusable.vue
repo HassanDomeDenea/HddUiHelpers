@@ -20,7 +20,7 @@ onMounted(() => {
 });
 
 function focus(){
-    let comp = slotComponentRef.value;
+    const comp = slotComponentRef.value;
     if (comp) {
         if (comp.focus && comp.focus()) {
             //
@@ -40,7 +40,7 @@ function setRef(el: any) {
 </script>
 
 <template>
-    <slot :setRef="setRef"></slot>
+    <slot :set-ref="setRef"></slot>
 </template>
 
 <style scoped></style>

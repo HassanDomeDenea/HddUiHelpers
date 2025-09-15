@@ -65,6 +65,7 @@ export type HddFormProps<TFieldName extends string = string, TFieldType extends 
      * Fixed Labels Width in pixels
      */
     fixedLabelWidth?: number;
+    isEditing?: boolean;
 } & Pick<UseHddFormOptions<TFieldName>, 'defaultValidationMode'> &
     Pick<BaseInputProps, 'floatingLabel' | 'floatingLabelVariant' | 'infieldTopAlignedLabel' | 'iconAsAddon'>;
 
@@ -160,9 +161,9 @@ export type HddFormField<N extends string = string, T extends FormFieldType = Fo
     hidden?: boolean;
     rules?: any;
     autocomplete?: string;
-    showable?: MaybeRef<((event: { row: TRow }) => boolean) | boolean>;
+    showable?: MaybeRef<((event: { row: TRow,isEditing:boolean }) => boolean) | boolean>;
     url?: ((event: { row: TRow }) => string | UrlObject) | MaybeRef<string | UrlObject>;
-
+    editable?: MaybeRef<boolean>;
     //rules?:HddFormFieldSchema<T>
     // rules?: Schema
 }

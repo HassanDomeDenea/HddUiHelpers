@@ -5,6 +5,7 @@ import type { BaseInputProps } from './types';
 import moment from 'moment';
 import DatePicker from 'primevue/datepicker'
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 const props = withDefaults(
     defineProps<
         {
@@ -47,19 +48,22 @@ function onDateLocalEnterKeyDown(event: KeyboardEvent){
         event.stopPropagation()
     }
 }
-const hasError = computed(() => !!props.error);
+
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
 const localDateFormat = computed(() => (props.isYearOnly ? 'yy' : (props.dateFormat ?? 'yy-mm-dd')));
 const localView = computed(() => (props.isYearOnly ? 'year' : undefined));
- const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
-defineExpose({ focus, inputRef, hasError ,baseInputRef,disabled: props.disabled });
+defineExpose({ focus, inputRef, ...exposed });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown" @click="focus" >
+    <BaseInput v-bind="baseInputForwardedProps" :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown" @click="focus" >
             <div class="!w-full relative">
                 <DatePicker
+                    v-bind="generalInputProps"
                     ref="inputRef"
                     v-model="localValue"
+                    :input-id="fieldUniqueId"
                     :placeholder="placeholder"
                     :date-format="localDateFormat"
                     hide-on-date-time-select
@@ -67,12 +71,7 @@ defineExpose({ focus, inputRef, hasError ,baseInputRef,disabled: props.disabled 
                     hour-format="12"
                     class="!w-full"
                     show-icon
-                    fluid
-                    :size="size"
                     :view="localView"
-                    :disabled="disabled"
-                    :readonly="readonly"
-                    :invalid="hasError"
                     :manual-input="manualInput"
                     :show-button-bar="clearable"
                     @clear-click="()=>clearable &&( localValue=null)"

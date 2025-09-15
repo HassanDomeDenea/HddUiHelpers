@@ -47,18 +47,18 @@ export function createListStore<TItem = any>(
 
     const apiClient = useApiClient();
 
-    const items = computed(() => {
+    const items = computed<TItem[]>(() => {
         if (!localItems.value) {
             refresh().then();
         }
-        return localItems.value ?? [] as TItem[];
+        return (localItems.value ?? []) as TItem[];
     });
     const activeItems = computed(() => {
         return (items.value || []).filter((e: any) => e[isActiveProperty] === true);
     });
     const inActiveAsDisabledItems = computed(() => {
         return (items.value || []).map((e: any) => {
-            e.disabled = !e[isActiveProperty];
+            e[disabledProperty] = !e[isActiveProperty];
             return e;
         });
     });
@@ -232,7 +232,7 @@ export function createListStore<TItem = any>(
         }
     }
 
-    const flatList = computed(() => {
+    const flatList = computed<TItem[]>(() => {
         if (options.childrenProperty) {
             const accumulator: TItem[] = [];
 
@@ -253,7 +253,8 @@ export function createListStore<TItem = any>(
         if (!localItems.value) {
             refresh().then();
         }
-        return keyBy(flatList.value || [], idProperty);
+
+        return keyBy( flatList.value, idProperty);
     });
 
     return {
@@ -278,14 +279,15 @@ export function isLocalListType(list: any): list is LocalListType {
     return (list && list.keyObjectPair);
 }
 
-export type LocalListType<TId extends string = string, TItem = any> = {
-    object: { [p: TId]: string };
-    keyObjectPair: { [p: TId]: TItem };
+export type LocalListType<TId extends string|number = string, TItem = any> = {
+    object: { [p in TId]: string };
+    keyObjectPair: { [p in TId]: TItem };
+    keyLabelPairItems: { [p in TId]: TItem };
     list: TItem[];
     getById: (id: TId) => TItem | undefined;
 }
 
-export function createLocalList<R, K extends { name: string; id: R } = { name: string; id: R }>(
+export function createLocalList<R extends string|number, K extends { name: string; id: R } = { name: string; id: R }>(
     list: K[]
 ): LocalListType<R, K> {
     return {
@@ -296,6 +298,10 @@ export function createLocalList<R, K extends { name: string; id: R } = { name: s
         }, {}),
         keyObjectPair: list.reduce((carry: any, currentValue) => {
             carry[currentValue.id] = currentValue;
+            return carry;
+        }, {}),
+        keyLabelPairItems: list.reduce((carry: any, currentValue) => {
+            carry[currentValue.id] = currentValue.name;
             return carry;
         }, {}),
         getById: (id: R) => {

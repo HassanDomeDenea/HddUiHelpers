@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import moment from 'moment';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{} & BaseInputProps>(), {});
 const { t } = useI18n();
@@ -38,17 +39,18 @@ function onInputKeydown(evt: KeyboardEvent) {
     }
 }
 
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
-defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled });
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" :label="label" :icon="icon" @click="focus">
+    <BaseInput v-bind="baseInputForwardedProps" @click="focus">
         <DatePicker
+            v-bind="generalInputProps"
             ref="inputRef"
             v-model="formattedValue"
-            :disabled="disabled"
+            :input-id="fieldUniqueId"
             selection-mode="range"
             :number-of-months="2"
             variant="filled"
@@ -56,7 +58,6 @@ defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled });
             show-button-bar
             class="w-full"
             show-icon
-            :invalid="hasError"
             :select-other-months="true"
             :placeholder="placeholder ?? t('Choose Date')"
             :manual-input="true"

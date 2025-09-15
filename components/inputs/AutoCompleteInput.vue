@@ -7,6 +7,7 @@ import BaseInput from './BaseInput.vue';
 import type { AutocompleteInputProps } from './types';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<AutocompleteInputProps>(), {
     optionLabelProperty: 'name',
@@ -243,22 +244,18 @@ function clear() {
 function getOptionText(option : any) {
     return props.formatter ? props.formatter(option) : option[props.optionLabelProperty];
 }
-
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
 defineExpose({
     focus,
     deselectAndMoveCaretToEnd,
     showList,
     hideList,
-    hasError,
-    baseInputRef,
-    disabled: props.disabled
+    ...exposed,
 });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props">
+    <BaseInput v-bind="baseInputForwardedProps">
         <template #labelText>
             <slot name="label-text" />
         </template>
@@ -275,23 +272,21 @@ v-if="clearable && dynamicValue" :disabled="disabled" size="small" severity="dan
         </template>
         <div class="w-full" @dblclick="onInputContainerDblclick">
             <AutoComplete
+                v-bind="generalInputProps"
                 ref="inputRef"
+                :input-id="fieldUniqueId"
                 :show-empty-message="!hideListWhenEmpty"
                 :model-value="noManualInput ? manualInput : dynamicValue"
-                :fluid="true"
                 class="!w-full"
-                :size="size"
                 :class="autoCompleteClass"
                 :placeholder="placeholder"
                 :input-class="inputClass"
                 :panel-class="panelClass"
-                :invalid="hasError"
                 :suggestions="items"
                 :option-label="optionLabelProperty"
                 auto-option-focus
                 :complete-on-focus="props.searchOnFocus"
                 scroll-height="18rem"
-                :disabled="disabled"
                 :force-selection="noManualInput"
                 :pt="{
                     pcInput: { root: { name } },

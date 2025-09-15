@@ -1,7 +1,9 @@
 <script setup lang="ts" generic="TRecord extends RecordItem = RecordItem">
-import ServerFormDialog, { type ServerFormDialogProps } from 'HddUiHelpers/components/datatables/ServerFormDialog.vue';
+import ServerFormDialog from 'HddUiHelpers/components/datatables/ServerFormDialog.vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { type DynamicServerFormDialogEventBus, dynamicServerFormDialogKey } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
+import type { RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
+import type { ServerFormDialogProps } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
 
 const dynamicDialogRef = useTemplateRef<ComponentExposed<typeof ServerFormDialog>>('dynamicDialogRef');
 
@@ -47,15 +49,6 @@ function onHidden() {
     isVisible.value = false;
 }
 
-function onEscapeKeydown(event: KeyboardEvent) {
-    if (event.code === 'Escape') {
-        event.stopImmediatePropagation();
-        event.preventDefault();
-        if (localOptions.value.closeOnEsc !== false) {
-            dynamicDialogRef.value?.close()
-        }
-    }
-}
 </script>
 
 <template>

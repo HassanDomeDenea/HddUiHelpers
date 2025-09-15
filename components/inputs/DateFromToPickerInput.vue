@@ -6,6 +6,8 @@ import type { BaseInputProps } from './types';
 import DatePicker from 'primevue/datepicker';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import uniqueId from 'lodash/uniqueId';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { pick } from 'lodash-es';
 
 const props = withDefaults(
     defineProps<
@@ -26,14 +28,6 @@ const props = withDefaults(
 
 const { t } = useI18n();
 const value = defineModel<[Date | string | null, Date | null | string] | null>('modelValue');
-const formattedValue = computed({
-    get: () => {
-        return value.value?.[0];
-    },
-    set: (evt) => {
-
-    }
-});
 
 const fromDateValue = computed({
     get: () => {
@@ -58,7 +52,6 @@ const toDateValue = computed({
 });
 
 const inputRef = ref();
-const inputRefTwo = ref();
 
 function focus() {
     inputRef.value.$el.focus();
@@ -71,40 +64,22 @@ function onDateLocalEnterKeyDown(event: KeyboardEvent){
     }
 }
 
-const fromToLabelClass = computed(() => {
-    if (props.size === 'small') {
-        return 'text-sm';
-    } else if (props.size === 'large') {
-        return 'text-lg';
-    }
-    return '';
-});
-
-const fromDateInputId = computed(() => uniqueId('DateFromToPicketInputId'))
-const toDateInputId = computed(() => uniqueId('DateFromToPicketInputId'))
+const {exposed,baseInputForwardedProps,fieldUniqueId} = useHddBaseInputUtils(props);
 const dateInputBinds = computed(() => {
     return {
-        placeholder: props.placeholder,
-        size: props.size,
-        disabled: props.disabled,
-        readonly: props.readonly,
-        error: props.error,
-        manualInput: props.manualInput,
-        clearable: props.clearable,
+        ...pick(props,['placeholder','size','disabled','readonly','error','manualInput','clearable']),
         labelSingleLine: true,
         inline:true,
 
     }
 })
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
-defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled });
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown" @click="focus">
+    <BaseInput v-bind="baseInputForwardedProps" :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown" @click="focus">
         <div class="flex gap-6 items-center">
-            <DatePickerInput v-model="fromDateValue" :label="t('From')" v-bind="dateInputBinds"/>
+            <DatePickerInput ref="inputRef" v-model="fromDateValue" :label="t('From')" v-bind="dateInputBinds" :unique-id="fieldUniqueId"/>
             <DatePickerInput v-model="toDateValue" :label="t('To')" v-bind="dateInputBinds"/>
         </div>
     </BaseInput>

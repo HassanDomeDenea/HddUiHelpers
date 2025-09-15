@@ -4,6 +4,7 @@ import BaseInput from './BaseInput.vue'
 import type { BaseInputProps } from './types'
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { get } from 'lodash-es';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{
   options: any[]
@@ -36,21 +37,20 @@ const optionLabelClass = computed(()=>{
 function focus() {
   inputRef.value.$el.focus()
 }
-const hasError = computed(()=>!!props.error)
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
-defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled })
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({ focus, ...exposed})
 </script>
 
 <template>
-  <BaseInput ref="baseInputRef" v-bind="props">
+  <BaseInput v-bind="baseInputForwardedProps">
     <SelectButton
+        v-bind="generalInputProps"
       v-model="value"
       :allow-empty="clearable"
-      :disabled="disabled"
-      :options="options"
       :option-label="optionLabelProperty"
       :option-value="optionValueProperty"
-      :invalid="hasError"
+
     >
       <template #option="{ option }">
         <slot name="option" :option="option">

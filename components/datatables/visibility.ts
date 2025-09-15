@@ -1,6 +1,6 @@
 import type { ServerDataTableColumn } from 'HddUiHelpers/components/datatables/ServerDataTable.vue';
 import { isBoolean } from 'lodash-es';
-import Popover from 'primevue/popover';
+import type Popover from 'primevue/popover';
 import { ref } from 'vue';
 import { getColumnName } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
 
@@ -27,8 +27,6 @@ export const useServerDataTableColumnVisibility = function (tableName: MaybeRef<
     }
 
     function saveVisibleColumnsState() {
-        console.log("Here")
-        console.log(visibleColumns.value)
         const hidden = localColumns.value
             .filter((col) => col.visibilityControl !== false)
             .map((col) => col.name || col.field)

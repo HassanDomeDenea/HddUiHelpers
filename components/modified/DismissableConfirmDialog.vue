@@ -5,29 +5,29 @@
         :class="cx('root')"
         :modal="modal"
         :header="header"
-        :blockScroll="blockScroll"
-        :appendTo="appendTo"
+        :block-scroll="blockScroll"
+        :append-to="appendTo"
         :position="position"
         :breakpoints="breakpoints"
-        :closeOnEscape="closeOnEscape"
+        :close-on-escape="closeOnEscape"
         :draggable="draggable"
-        @update:visible="onHide"
         dismissable-mask
         :pt="pt"
         :unstyled="unstyled"
+        @update:visible="onHide"
     >
         <template v-if="$slots.container" #container="slotProps">
-            <slot name="container" :message="confirmation" :closeCallback="slotProps.onclose" :acceptCallback="accept" :rejectCallback="reject" />
+            <slot name="container" :message="confirmation" :close-callback="slotProps.onclose" :accept-callback="accept" :reject-callback="reject" />
         </template>
         <template v-if="!$slots.container">
             <template v-if="!$slots.message">
                 <slot name="icon">
-                    <component v-if="$slots.icon" :is="$slots.icon" :class="cx('icon')" />
+                    <component :is="$slots.icon" v-if="$slots.icon" :class="cx('icon')" />
                     <span v-else-if="confirmation.icon" :class="[confirmation.icon, cx('icon')]" v-bind="ptm('icon')" />
                 </slot>
                 <span :class="cx('message')" v-bind="ptm('message')">{{ message }}</span>
             </template>
-            <component v-else :is="$slots.message" :message="confirmation"></component>
+            <component :is="$slots.message" v-else :message="confirmation"></component>
         </template>
         <template v-if="!$slots.container" #footer>
             <Button
@@ -35,10 +35,10 @@
                 :autofocus="autoFocusReject"
                 :unstyled="unstyled"
                 :text="confirmation.rejectProps?.text || false"
-                @click="reject()"
                 v-bind="confirmation.rejectProps"
                 :label="rejectLabel"
                 :pt="ptm('pcRejectButton')"
+                @click="reject()"
             >
                 <template v-if="rejectIcon || $slots.rejecticon" #icon="iconProps">
                     <slot name="rejecticon">
@@ -46,7 +46,7 @@
                     </slot>
                 </template>
             </Button>
-            <Button :label="acceptLabel" :class="[cx('pcAcceptButton'), confirmation.acceptClass]" :autofocus="autoFocusAccept" :unstyled="unstyled" @click="accept()" v-bind="confirmation.acceptProps" :pt="ptm('pcAcceptButton')">
+            <Button :label="acceptLabel" :class="[cx('pcAcceptButton'), confirmation.acceptClass]" :autofocus="autoFocusAccept" :unstyled="unstyled" v-bind="confirmation.acceptProps" :pt="ptm('pcAcceptButton')" @click="accept()">
                 <template v-if="acceptIcon || $slots.accepticon" #icon="iconProps">
                     <slot name="accepticon">
                         <span :class="[acceptIcon, iconProps.class]" v-bind="ptm('pcAcceptButton')['icon']" data-pc-section="acceptbuttonicon" />
@@ -65,6 +65,10 @@ import BaseConfirmDialog from 'primevue/confirmdialog';
 
 export default {
     name: 'DismissableConfirmDialog',
+    components: {
+        Dialog,
+        Button
+    },
     extends: BaseConfirmDialog,
     confirmListener: null,
     closeListener: null,
@@ -73,58 +77,6 @@ export default {
             visible: false,
             confirmation: null
         };
-    },
-    mounted() {
-        this.confirmListener = (options) => {
-            if (!options) {
-                return;
-            }
-
-            if (options.group === this.group) {
-                this.confirmation = options;
-
-                if (this.confirmation.onShow) {
-                    this.confirmation.onShow();
-                }
-
-                this.visible = true;
-            }
-        };
-
-        this.closeListener = () => {
-            this.visible = false;
-            this.confirmation = null;
-        };
-
-        ConfirmationEventBus.on('confirm', this.confirmListener);
-        ConfirmationEventBus.on('close', this.closeListener);
-    },
-    beforeUnmount() {
-        ConfirmationEventBus.off('confirm', this.confirmListener);
-        ConfirmationEventBus.off('close', this.closeListener);
-    },
-    methods: {
-        accept() {
-            if (this.confirmation.accept) {
-                this.confirmation.accept();
-            }
-
-            this.visible = false;
-        },
-        reject() {
-            if (this.confirmation.reject) {
-                this.confirmation.reject();
-            }
-
-            this.visible = false;
-        },
-        onHide() {
-            if (this.confirmation.onHide) {
-                this.confirmation.onHide();
-            }
-
-            this.visible = false;
-        }
     },
     computed: {
         appendTo() {
@@ -182,9 +134,57 @@ export default {
             return this.confirmation ? this.confirmation.closeOnEscape : true;
         }
     },
-    components: {
-        Dialog,
-        Button
+    mounted() {
+        this.confirmListener = (options) => {
+            if (!options) {
+                return;
+            }
+
+            if (options.group === this.group) {
+                this.confirmation = options;
+
+                if (this.confirmation.onShow) {
+                    this.confirmation.onShow();
+                }
+
+                this.visible = true;
+            }
+        };
+
+        this.closeListener = () => {
+            this.visible = false;
+            this.confirmation = null;
+        };
+
+        ConfirmationEventBus.on('confirm', this.confirmListener);
+        ConfirmationEventBus.on('close', this.closeListener);
+    },
+    beforeUnmount() {
+        ConfirmationEventBus.off('confirm', this.confirmListener);
+        ConfirmationEventBus.off('close', this.closeListener);
+    },
+    methods: {
+        accept() {
+            if (this.confirmation.accept) {
+                this.confirmation.accept();
+            }
+
+            this.visible = false;
+        },
+        reject() {
+            if (this.confirmation.reject) {
+                this.confirmation.reject();
+            }
+
+            this.visible = false;
+        },
+        onHide() {
+            if (this.confirmation.onHide) {
+                this.confirmation.onHide();
+            }
+
+            this.visible = false;
+        }
     }
 };
 </script>

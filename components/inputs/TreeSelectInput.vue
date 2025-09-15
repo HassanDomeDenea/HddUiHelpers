@@ -8,6 +8,7 @@ import type { TreeNode } from 'primevue/treenode';
 import reduce from 'lodash/reduce';
 import { carets } from '@unocss/preset-wind4/rules';
 import { get, isEmpty } from 'lodash-es';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 type TreeNodeWithId = TreeNode & {
     id?: any
@@ -135,16 +136,18 @@ const inputRef = ref();
 
 function focus() {
     if (!props.disabled) {
-        inputRef.value.onClick();
+
         // console.log(inputRef.value.overlay)
         // if (inputRef.value.overlay ) {
         //     inputRef.value.hide();
         // } else {
         //     inputRef.value.show()
         // }
-        // setTimeout(()=>{
-        //     console.log(inputRef.value.overlay)
-        // },500)
+        setTimeout(()=>{
+            const target = inputRef.value.$refs.focusInput
+            inputRef.value.onClick({target});
+
+        },500)
     }
 }
 
@@ -194,28 +197,26 @@ onMounted(()=>{
     }
 })
 
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
-defineExpose({ focus, hasError, baseInputRef, setVisibleElementValue, disabled: props.disabled });
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({ focus, ...exposed, setVisibleElementValue, });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
+    <BaseInput v-bind="baseInputForwardedProps" @click="focus">
         <TreeSelect
+            v-bind="generalInputProps"
             ref="inputRef"
             v-model="localValue"
             v-model:expanded-keys="expandedKeys"
-            :size="size"
+            :input-id="fieldUniqueId"
             :placeholder="placeholder"
             :filter="hasFilter"
             :options="localOptions"
             :show-clear="clearable"
-            :invalid="hasError"
             class="!w-full"
             :selection-mode="selectionMode"
             scroll-height="18rem"
-            :disabled="disabled"
-            :readonly="readonly"
             :display="display"
             @blur="onInputBlur"
             @change="emits('change', $event)"

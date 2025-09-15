@@ -4,6 +4,7 @@ import type {SelectChangeEvent} from 'primevue/select'
 import BaseInput from './BaseInput.vue'
 import type {BaseInputProps} from './types'
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{
     options: any[]
@@ -35,14 +36,14 @@ function onInputBlur() {
 
 }
 
-const {t} = useI18n()
-const hasError = computed(()=>!!props.error)
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
-defineExpose({focus,hasError,baseInputRef,disabled:props.disabled})
+
+const {exposed,baseInputForwardedProps,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({focus,...exposed})
 </script>
 
 <template>
-    <BaseInput v-bind="props" ref="baseInputRef" @click="focus">
+    <BaseInput v-bind="baseInputForwardedProps" @click="focus">
         <template v-if="$slots.addon" #addon>
             <slot name="addon"/>
         </template>
@@ -52,21 +53,18 @@ defineExpose({focus,hasError,baseInputRef,disabled:props.disabled})
             </slot>
         </template>
         <Listbox
+            v-bind="generalInputProps"
             ref="inputRef"
             v-model="value"
             :filter="filter"
             :placeholder="placeholder"
-            :disabled="disabled"
             :multiple="multiple"
-
             :option-label="optionLabelProperty"
             :option-value="optionValueProperty"
             :options="options"
-            :invalid="hasError"
             :checkmark="checkmark"
             :scroll-height="scrollHeight"
             class="w-full"
-            :readonly="readonly"
             @change="emits('change', $event)"
 
         />

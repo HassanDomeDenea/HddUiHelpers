@@ -273,7 +273,7 @@ function focusFirstWithError(): boolean | null {
 }
 
 function focusFirst() {
-    Object.values(fieldRefs.value).filter((e) => !e.disabled)[0]?.focus();
+    Object.values(fieldRefs.value).filter((e) => !e?.disabled)[0]?.focus();
 }
 
 function setFieldRef(el: any, name: string) {
@@ -321,7 +321,9 @@ function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown)
             <div :class="fieldsContainerClass">
                 <template v-for="field in formFields" :key="field.name">
                     <template
-                        v-if="!field.hidden && (typeof field.showable === 'function' ? field.showable({row:currentValues}) : !toValue(field.showable))">
+                        v-if="!field.hidden
+                        && (typeof field.showable === 'function' ? field.showable({row:currentValues,isEditing:isEditing === true}) : !toValue(field.showable))
+                        && !(isEditing && field.editable===false)">
                         <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
                         <slot :name="`${getFieldSlotName(field)}ControlBody`">
                             <div class="mb-2">
@@ -502,6 +504,7 @@ function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown)
                 <div class="flex items-center justify-between gap-2">
                     <slot name="beforeFooter" :is-submitting="isSubmitting"></slot>
                     <Button
+                        :name="localFormName+'_submit'"
                         :size="size"
                         :loading="isSubmitting"
                         :disabled="isSubmitting || (formState.invalid && defaultValidationMode === 'onValueUpdate')"

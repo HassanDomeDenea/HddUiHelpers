@@ -6,6 +6,7 @@ import BaseInput from './BaseInput.vue'
 import type {BaseInputProps} from './types'
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import isBoolean from 'lodash/isBoolean';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{
     options: any[]
@@ -52,18 +53,20 @@ const guessHasFilter = computed(()=>{
 function onInputBlur() {
 
 }
-const hasError = computed(()=>!!props.error)
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
-defineExpose({focus, hasError, baseInputRef, disabled: props.disabled })
+
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({focus, ...exposed })
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
+    <BaseInput v-bind="baseInputForwardedProps" @click="focus">
 
         <Select
+            v-bind="generalInputProps"
             ref="inputRef"
             v-model="value"
-            :size="size"
+            :input-id="fieldUniqueId"
             :placeholder="placeholder"
             :filter="guessHasFilter"
             auto-option-focus
@@ -72,14 +75,11 @@ defineExpose({focus, hasError, baseInputRef, disabled: props.disabled })
             :checkmark
             :options="options"
             :show-clear="clearable"
-            :invalid="hasError"
             :option-label="optionLabelProperty"
             :option-disabled="optionDisabledProperty"
             :option-value="optionValueProperty"
             class="!w-full"
             scroll-height="18rem"
-            :disabled="disabled"
-            :readonly="readonly"
             @blur="onInputBlur"
             @change="emits('change', $event)"
         >

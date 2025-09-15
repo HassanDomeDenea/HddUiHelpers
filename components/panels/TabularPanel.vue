@@ -14,12 +14,14 @@ import PrimeVueTabs from 'primevue/tabs';
 import { startCase } from 'lodash-es';
 
 const {
+    basedOnRouteQuery = true,
     queryName = 'tab',
     initialTab,
     lazy = true,
     keepAlive = true,
     tabs
 } = defineProps<{
+    basedOnRouteQuery?: boolean,
     queryName?: string;
     initialTab?: string;
     lazy?: any;
@@ -29,8 +31,8 @@ const {
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
-const currentTab = ref((route.query[queryName] as string) ?? initialTab ?? tabs[0]?.name);
-const routeTabName = computed(() => route.query[queryName] as string);
+const currentTab = ref((basedOnRouteQuery ? route.query[queryName] as string : undefined) ?? initialTab ?? tabs[0]?.name);
+const routeTabName = computed(() => basedOnRouteQuery ? route.query[queryName] as string : undefined);
 
 const tabNames = computed(() => tabs.map((tab) => tab.name));
 
@@ -42,6 +44,9 @@ function setTabIfValid(tabName: string) {
 }
 
 function updateTabFromRoute() {
+    if(!basedOnRouteQuery){
+        return;
+    }
     if (typeof route.query[queryName] === 'string') {
         setTabIfValid(route.query[queryName]);
     } else if (currentTab.value) {
@@ -56,6 +61,9 @@ onActivated(() => {
 });
 
 watch(currentTab, (_tabName) => {
+    if(!basedOnRouteQuery){
+        return;
+    }
     if (routeTabName.value) {
         router.push({ query: { ...route.query, [queryName]: _tabName } });
     } else {

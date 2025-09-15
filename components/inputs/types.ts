@@ -7,6 +7,7 @@ export type ElementClassType = string | { [name: string]: boolean } | ({ [name: 
 export interface BaseInputProps {
     autocomplete?: string;
     icon?: string;
+    uniqueId?: string;
     modelValue?: any;
     label?: string;
     labelMinWidth?: MaybeRef<number>,

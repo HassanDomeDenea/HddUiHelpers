@@ -118,7 +118,7 @@ function onOperatorChanges(newOperator: 'and' | 'or') {
     }
 }
 
-function onWrapperContextMenu(event: PointerEvent) {
+function onWrapperContextMenu() {
     if(isPrinting) return
 }
 

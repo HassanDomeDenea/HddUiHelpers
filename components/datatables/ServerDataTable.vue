@@ -3,6 +3,7 @@ import type { RecordItem, ServerDataTableColumnPayload } from 'HddUiHelpers/comp
 
 import PrintPaperForServerDataTable from 'HddUiHelpers/components/datatables/PrintPaperForServerDataTable.vue';
 import type {
+    DataTableCellEditCompleteEvent,
     DataTableFilterMeta,
     DataTableFilterMetaData,
     DataTableOperatorFilterMetaData,
@@ -38,13 +39,12 @@ import type { GetRecordsResponseType } from 'HddUiHelpers/components/primeVueSer
 import type { AxiosError, AxiosRequestConfig } from 'axios';
 import type { VirtualScrollerProps } from 'primevue';
 import type { MenuItem } from 'primevue/menuitem';
-import type { VirtualScrollerLazyEvent } from 'primevue/virtualscroller';
 
 import { useDebounceFn } from '@vueuse/core';
 import ServerFormDialog from 'HddUiHelpers/components/datatables/ServerFormDialog.vue';
 import { useServerDataTableColumnVisibility } from 'HddUiHelpers/components/datatables/visibility.ts';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
-import { get, isString, reduce, set, snakeCase, unset } from 'lodash-es';
+import { find, get, isFunction, isString, reduce, set, unset } from 'lodash-es';
 import cloneDeep from 'lodash/cloneDeep';
 import map from 'lodash/map';
 import ContextMenu from 'primevue/contextmenu';
@@ -76,6 +76,8 @@ import Column from 'primevue/column';
 import Popover from 'primevue/popover';
 import CellContent from 'HddUiHelpers/components/datatables/CellContent.vue';
 import moment from 'moment';
+import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts';
+import InlineCellEdit from 'HddUiHelpers/components/datatables/InlineCellEdit.vue';
 
 const emits = defineEmits<{
     rowClick: [row: T, index: number, original: Event];
@@ -111,6 +113,7 @@ const {
     primaryKey = 'id' as keyof T,
     scrollHeight = 'flex',
     scrollable,
+
     initialSortDirection = 'asc',
     initialSortField,
     initialSorts,
@@ -148,6 +151,7 @@ const {
     extraContextMenuOptions,
     rowHover = true,
     onRowClick,
+    onRowOpen,
     selectable,
     selectAllToolbarButton = true,
     toolbarButtonsOnlyIcons = false,
@@ -181,7 +185,10 @@ const {
     allowMultipleToolbarFiltersForSameField = false,
     showGridLines = true,
     withLoadingMask = true,
-    noMultiSortBadges = false
+    noMultiSortBadges = false,
+    rounded= true,
+    tableSeverity="info",
+    inlineEditMode='none',
 } = defineProps<ServerDataTableProps<T>>();
 
 const tableName = computed(() => 'HddServerDataTable_' + (name ?? (typeof url === 'object' ? url.url : url)));
@@ -241,7 +248,7 @@ const mappedColumns = computed<ServerDataTableColumn[]>(() => {
         } else {
             column.fullFieldName = column.field ?? column.name;
         }
-        if (!column.type && column.selectOptions !== undefined) {
+        if ((!column.type || column.type ==='select') && column.selectOptions !== undefined) {
             column.type = 'select';
             if (column.renderTypeProps && !column.renderType) {
                 column.renderType = 'tag';
@@ -250,6 +257,17 @@ const mappedColumns = computed<ServerDataTableColumn[]>(() => {
         if (true === column.hiddenButCanBeVisible) {
             column.visibilityControl = true;
             column.visible = false;
+        }
+        if(column.type ==='date'){
+            if(column.dateFormat){
+                if(column.dateFormat === 'date'){
+                    column.dateFormat = 'YYYY-MM-DD';
+                }else if(column.dateFormat === 'datetime'){
+                    column.dateFormat = 'YYYY-MM-DD hh:mmA';
+                }
+            }else{
+                column.dateFormat = 'YYYY-MM-DD';
+            }
         }
         return column;
     }) as ServerDataTableColumn[];
@@ -315,7 +333,7 @@ function getColumnBody(rowData: any, column: ServerDataTableColumn): string {
         return formatters.formatPrice(value, typeof column.currency === 'string' ? column.currency : column.currency ? rowData : undefined);
     }
     if(column.type === 'date' && column.dateFormat){
-        return moment(value).format(column.dateFormat);
+        return value ? moment(value).format(column.dateFormat) : null;
     }
     if (column.type === 'boolean') {
         if (column.renderType === 'yesNoIconBadge') return value;
@@ -475,6 +493,19 @@ const hasFilters = computed(() => {
     }
     return false;
 });
+const hasFilledGlobalFilter = computed(() => {
+        const filter = filters.value['_global'];
+        if(!filter){
+            return  false;
+        }
+        if (isMultipleFilterType(filter)) {
+            const index = filter.constraints?.findIndex((x) => x.value !== null && x.value !== '');
+            if (index > -1) return true;
+        }else {
+            if (filter?.value !== null && filter?.value !== '') return true;
+        }
+    return false;
+});
 
 function clearFilters() {
     clearToolbarFilters(false);
@@ -609,6 +640,7 @@ const filledToolbarColumnNames = computed(() => {
     return toolbarFilters.value.fields.filter((e) => isToolbarFilterValue(e)).map((filter) => filter.field);
 });
 
+/*
 function makeToolbarFiltersFixed(_filters: ServerDataTableToolbarFilter[]) {
     if (!_filters.length) return [];
     return _filters.map((filter) => {
@@ -626,6 +658,7 @@ function makeToolbarFiltersFixed(_filters: ServerDataTableToolbarFilter[]) {
         }
     });
 }
+*/
 
 function addMissingIds<TFilters extends ServerDataTableToolbarFilter>(_filters: TFilters): TFilters {
     if (isToolbarFilterValue(_filters)) {
@@ -703,7 +736,7 @@ const globalFilterNames = computed(
         globalFilterFields ??
         map(
             filter(mappedColumns.value, (i) => i.globalFilter !== false),
-            (column) => column.filterField ?? column.field
+            (column) => column.filterField ?? column.fullFieldName
         )
 );
 
@@ -752,7 +785,7 @@ async function getData(specificPerPage: number | null = null, specificPage: numb
     return apiClient.request<ApiResponseData<ResponseData>>({
         ...(typeof url === 'object' ? url : { url, method: 'get' }),
         params: {
-            globalFilters: globalFilterNames.value,
+            globalFilters: hasFilledGlobalFilter.value ? globalFilterNames.value : [],
             page: specificPage || currentPage.value,
             perPage: hasPagination ? specificPerPage || perPage.value : -1,
             // perPage: specificPerPage || perPage.value,
@@ -850,7 +883,9 @@ const localVirtualScrollerOptions = computed(() => {
     } as VirtualScrollerProps;
 });
 
-async function loadRecordsLazily(event: VirtualScrollerLazyEvent) {
+// async function loadRecordsLazily(event: VirtualScrollerLazyEvent) {
+
+async function loadRecordsLazily() {
 }
 
 // Visibility
@@ -860,13 +895,14 @@ const { checkColumnIsVisible, visibleColumns, visibleColumnsPopoverRef, saveVisi
 // Deletions
 const isDeleting = ref(false);
 const idsBeingDeleted = ref([]);
-
+const {updateDialogVisibility: updateDeleteDialogVisibility} = useStackableDialog()
 function deleteRecords(item: T | T[]) {
     if (!item) return;
     let cnt = 1;
     if (Array.isArray(item)) {
         cnt = item.length;
     }
+    updateDeleteDialogVisibility(true)
     confirm.require({
         message: t('Are you sure to delete n records?', { n: cnt }, cnt),
         header: t('Confirmation'),
@@ -906,8 +942,15 @@ function deleteRecords(item: T | T[]) {
                 apiClient.toastRequestError(error);
             }
             isDeleting.value = false;
+            updateDeleteDialogVisibility(false)
             idsBeingDeleted.value = [];
-        }
+        },
+        reject(){
+            updateDeleteDialogVisibility(false)
+        },
+        onHide(){
+            updateDeleteDialogVisibility(false)
+        },
     });
 }
 
@@ -983,7 +1026,7 @@ function showEditDialog(item: T | T[]) {
 // Row Click
 
 const hasRowClickEventListener = computed(() => {
-    return !!onRowClick;
+    return !!onRowClick || (openOnClick && onRowOpen);
 });
 
 function onLocalRowClick(evt: DataTableRowClickEvent) {
@@ -993,15 +1036,21 @@ function onLocalRowClick(evt: DataTableRowClickEvent) {
     const path = evt.originalEvent.composedPath() as HTMLElement[];
     const toggleButton = path.find((e) => e.classList?.contains('p-datatable-row-toggle-button'));
     const editableColumn = path.find((e) => e.classList?.contains('p-editable-column'));
-    const checkboxColumn = path.find((e) => e.classList?.contains('p-selection-column'));
+    const checkboxColumn = path.find((e) =>  e.classList?.contains('p-selection-column'));
+
     const anyButton = path.find((e) => e.classList?.contains('p-button'));
     if (toggleButton || editableColumn || checkboxColumn || anyButton) {
         return;
     }
+
     emits('rowClick', evt.data, evt.index, evt.originalEvent);
-    if (!onRowClick && withExpansion && expandOnRowClick) {
+    const onRowClickOrOpenEnabled = onRowClick || (onRowOpen && openOnClick);
+    const isClickedOnCheckboxCell =  (evt.originalEvent.target as HTMLDivElement).getAttribute('data-p-selection-column') === 'true';
+
+
+    if (!onRowClickOrOpenEnabled && withExpansion && expandOnRowClick) {
         toggleRowExpansion(evt.data);
-    } else if (!onRowClick && selectable && selectOnRowClick) {
+    } else if ((isClickedOnCheckboxCell || !onRowClickOrOpenEnabled) && selectable && selectOnRowClick) {
         toggleRowSelection(evt.data);
     } else if (!onRowClick && openOnClick && openable) {
         emits('rowOpen', evt.data);
@@ -1066,9 +1115,12 @@ const contextMenuModel = computed<MenuItem[]>(() => {
                     e.icon = () => e.icon2(contextMenuSelectedRecord.value);
                 }
 
+                const badgeResult = isFunction(e.badge) ? e.badge(contextMenuSelectedRecord.value) : e.badge;
                 if (typeof e.label === 'function') {
                     e.label2 = e.label;
-                    e.label = () => e.label2(contextMenuSelectedRecord.value);
+                    e.label = () => e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : '');
+                }else{
+                    e.label = e.label + (badgeResult ? ` (${badgeResult})` : '');
                 }
                 return e as MenuItem;
             })
@@ -1265,10 +1317,31 @@ defineExpose({
     ServerFormDialogRef,
     printWithCustomConfig
 });
+
+const dataTableComputedClass = computed(() => {
+    const classList = [];
+        if(tableSeverity && tableSeverity!== 'none'){
+            classList.push(`p-datatable-${tableSeverity}`);
+            classList.push(`p-datatable-header-${tableSeverity}`);
+        }
+    return classList;
+})
+
+// Inline editing
+
+function onCellEditComplete(event: DataTableCellEditCompleteEvent){
+        const oldValue = event.value
+        const newValue = event.newValue
+        if(oldValue !== newValue){
+            ServerFormDialogRef.value.updateDirectly(event.data,[event.field,event.newValue])
+        }
+}
+
+
 </script>
 
 <template>
-    <div class="HddServerDataTableWrapper h-full">
+    <div class="HddServerDataTableWrapper h-full" :class="{'rounded-table': rounded}">
         <ServerFormDialog ref="ServerFormDialogRef" v-bind="ServerFormDialogOptions">
             <template
                 v-for="field in ServerFormDialogRef?.mappedFormFields"
@@ -1308,7 +1381,7 @@ defineExpose({
                 <ProgressSpinner class="!size-12" />
             </div>-->
             <slot name="title" :records="records">
-                <div class="my-1 text-center text-lg font-bold">
+                <div class="my-1 text-center text-xl font-bold" :class="{['text-'+tableSeverity]: tableSeverity && tableSeverity !== 'none'}">
                     {{ title }}
                 </div>
             </slot>
@@ -1480,7 +1553,7 @@ defineExpose({
                             :size="toolbarButtonsSize ?? size"
                             severity="success"
                             :loading="isPrinting"
-                            icon="pi pi-print"
+                            icon="i-mdi-printer"
                             @contextmenu.prevent="printTableOnContextMenu"
                             @click="printTable()"
                         />
@@ -1537,6 +1610,7 @@ defineExpose({
             :show-gridlines="showGridLines"
             show-headers
             highlight-on-select
+            :edit-mode="inlineEditMode"
             :context-menu="withContextMenu"
             :value="records"
             :virtual-scroller-options="localVirtualScrollerOptions"
@@ -1558,7 +1632,7 @@ defineExpose({
                 ]
             "
             :row-hover="rowHover"
-            :class="{ 'compact-table': isCompact }"
+            :class="[ {'compact-table' : isCompact} ,dataTableComputedClass]"
             :select-all="isAllSelected"
             :removable-sort="removableSort"
             :sort-mode="sortMode"
@@ -1575,6 +1649,7 @@ defineExpose({
             @row-reorder="onRowReorder"
             @row-contextmenu="(evt) => (withContextMenu ? onRowContextMenu(evt) : undefined)"
             @row-click="onLocalRowClick"
+            @cell-edit-complete="onCellEditComplete"
         >
             <template v-if="$slots.header" #header>
                 <slot name="header" :records="records" :extra="extraData"></slot>
@@ -1696,6 +1771,16 @@ defineExpose({
                             },
                         }"
                     >
+                        <template v-if="column.inlineEditable" #editor="{data,field,editorSaveCallback}">
+                            <InlineCellEdit
+                                :row="data" :field-name="field ?? 'text'"
+                                :type="column.type"
+                                :field="find(fields,['name',column.fullFieldName])"
+                                :column="column"
+                                :size="size"
+                                :submit-callback="editorSaveCallback"
+                            />
+                        </template>
                         <template v-if="column.footer" #footer>
                             <span
                                 v-html="typeof column.footer === 'string' ? column.footer : column.footer(records)"></span>
@@ -1793,6 +1878,8 @@ defineExpose({
                                     :size="toolButtonsSize ?? size"
                                     :label="btn.onlyIconButton === true ? undefined : isString(btn.label) ? btn.label : btn.label(row.data)"
                                     :severity="btn.severity"
+                                    :badge="isFunction(btn.badge) ? btn.badge(row.data) : btn.badge"
+                                    :badge-severity="isFunction(btn.badgeSeverity) ? btn.badgeSeverity(row.data) : btn.badgeSeverity"
                                     :icon="typeof btn.icon === 'function' ? btn.icon(row.data) : btn.icon"
                                     @click="btn.command?.(row.data)"
                                 ></Button>
@@ -1816,9 +1903,10 @@ defineExpose({
             </template>
         </DataView>
     </div>
+
 </template>
 
-<style>
+<style lang="scss">
 .HddServerDataTableWrapper {
     .compact-table {
         .p-datatable-header-cell {
@@ -1869,9 +1957,69 @@ defineExpose({
         }
     }
 
+
+    $table_severities: success, info, warn, error,secondary,contrast;
+
+    @each $severity in $table_severities {
+        .p-datatable-header-#{$severity} thead.p-datatable-thead th{
+            background-color: var(--p-message-#{$severity}-background);
+            border-color: var(--p-message-#{$severity}-border-color);
+            &.p-datatable-column-sorted{
+                background-color: color-mix(in srgb,var(--p-message-#{$severity}-background) 70%, var(--p-datatable-header-cell-selected-background) 30%);
+            }
+            &.p-datatable-frozen-column{
+                background-color: color-mix(in srgb,var(--p-message-#{$severity}-background) 70%, var(--p-datatable-header-cell-background) 30%);
+                backdrop-filter: blur(30px);
+            }
+        }
+        .p-datatable-#{$severity}{
+            .p-datatable-tbody > tr > td{
+                border-color: var(--p-message-#{$severity}-border-color);
+            }
+        }
+    }
+
+    &.rounded-table{
+        table.p-datatable-table{
+
+            thead.p-datatable-thead>tr{
+                th:first-child{
+                    @apply rounded-ss-xl;
+                }
+                th:last-child{
+                    @apply rounded-se-xl;
+                }
+            }
+
+        }
+    }
+
     .p-datatable-hoverable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover {
         .p-datatable-frozen-column {
             background: var(--p-datatable-row-hover-background) !important;
+        }
+    }
+
+    .p-datatable-gridlines .p-datatable-thead > tr > th,
+    .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody > tr > td{
+        &:first-child {
+            border-inline-start-width: 1px;
+        }
+    }
+
+
+    .p-datatable-tbody > tr.p-datatable-row-selected{
+        .p-datatable-frozen-column{
+            background-color: inherit;
+            backdrop-filter: blur(30px);
+        }
+    }
+    tr.p-datatable-contextmenu-row-selected{
+        td.p-datatable-frozen-column{
+            border-top-width: 1px!important;
+            border-bottom-width: 1px!important;
+            border-bottom: 1px solid var(--p-datatable-row-focus-ring-color);
+            border-top: 1px solid var(--p-datatable-row-focus-ring-color);
         }
     }
 }

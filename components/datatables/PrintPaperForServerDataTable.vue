@@ -187,18 +187,25 @@ const anyColumnHasFooter = computed(() => {
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 table.printable-table {
-    @apply !box-content w-[calc(100%_-_1rem)] border-collapse;
+    @apply '!box-content' w-[calc(100%_-_1rem)] border-separate border-spacing-0;
 
-    thead {
-        background: #ded9d9;
-    }
-
-    th,
-    td {
+    th, td {
         border: 1px solid black;
         padding: 0.25rem;
     }
+
+    thead {
+        background: #e7e3e3;
+
+        th:first-child{
+            @apply rounded-ss-lg;
+        }
+        th:last-child{
+            @apply rounded-se-lg;
+        }
+    }
+
 }
 </style>

@@ -1,4 +1,4 @@
-import type { EventBusKey } from '@vueuse/core';
+import  { EventBusKey, useEventBus } from '@vueuse/core';
 import type { HddFormField, RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import type { ElementClassType } from 'HddUiHelpers/components/inputs/types.ts';
 import { replace, snakeCase, startCase } from 'lodash-es';
@@ -231,4 +231,6 @@ export function snakeCasePreserveDots(input) {
 }
 
 
-export const TWO_COLUMNS_FORM_CLASS_ON_MD = 'md:grid md:grid-cols-2 md:gap-x-8 [&>*:nth-child(odd)]:md:border-ie [&>*:nth-child(odd)]:md:border-dotted [&>*:nth-child(odd)]:light:md:border-gray-300 [&>*:nth-child(odd)]:dark:md:border-gray-700 [&>*:nth-child(odd)]:md:pe-8'
+//Those classes are shortcuts in HDD unocss preset.
+// @unocss-include
+export const TWO_COLUMNS_FORM_CLASS_ON_MD =  'TWO_COLUMNS_FORM_CLASS_ON_MD' // 'md:grid md:grid-cols-2 md:gap-x-8 [&>*:nth-child(odd)]:md:border-ie [&>*:nth-child(odd)]:md:border-dotted [&>*:nth-child(odd)]:light:md:border-gray-300 [&>*:nth-child(odd)]:dark:md:border-gray-700 [&>*:nth-child(odd)]:md:pe-8'

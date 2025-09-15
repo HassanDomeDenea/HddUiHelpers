@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
+import DarkModeButton from 'HddUiHelpers/components/misc/DarkModeButton.vue';
 
 const authStore = useBasicAuthStore();
 
@@ -28,21 +29,7 @@ const {
     activeItemClass?: any;
 }>();
 
-import { useDark, useToggle } from '@vueuse/core';
-import DarkModeButton from 'HddUiHelpers/components/misc/DarkModeButton.vue';
 
-const { t } = useI18n();
-const isDark = useDark({
-    valueLight: 'light',
-    valueDark: 'dark',
-});
-
-const toggleDark = useToggle(isDark);
-
-function toggleDarkAndSave() {
-    toggleDark();
-    authStore.changeOption('darkMode', isDark.value ? 'dark' : 'light');
-}
 </script>
 
 <template>

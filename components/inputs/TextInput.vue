@@ -3,6 +3,7 @@ import uniqueId from 'lodash/uniqueId';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import BaseInput from './BaseInput.vue';
 import type { TextInputProps } from './types';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<TextInputProps>(), {
     type: 'text',
@@ -45,24 +46,19 @@ const inputTextPt = computed(() => {
     };
 });
 
-const fieldUniqueId = computed(() => {
-    return uniqueId(props.name ?? 'unnamed');
-});
-
 function onInputChange() {
     if (props.lazy) {
         value.value = localValue.value;
     }
 }
 
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
 
-defineExpose({ focus, hasError, baseInputRef });
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" :input-id="fieldUniqueId" @label-clicked="focus">
+    <BaseInput ref="baseInputRef" v-bind="baseInputForwardedProps" @label-clicked="focus">
         <template #labelText>
             <slot name="label-text" />
         </template>
@@ -77,13 +73,10 @@ defineExpose({ focus, hasError, baseInputRef });
         <InputText
             :id="fieldUniqueId"
             ref="inputRef"
+            v-bind="generalInputProps"
             v-keyfilter="filterPattern"
             :model-value="lazy ? localValue : value"
-            :disabled="disabled"
             :placeholder="placeholder"
-            fluid
-            :size="size"
-            :invalid="!!error"
             :class="[inputClass]"
             :aria-describedby="`${error ? `${fieldUniqueId}-error` : ''} ${$slots.helper || helperText ? `${fieldUniqueId}-desc` : ''}`"
             :pt="inputTextPt"

@@ -4,6 +4,7 @@ import type { InputNumberInputEvent } from 'primevue/inputnumber';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps, ElementClassType } from './types';
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(
     defineProps<
@@ -50,14 +51,13 @@ function onInput(event: InputNumberInputEvent) {
         value.value = event.value;
     }
 }
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
 
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
-const hasError = computed(() => !!props.error);
-defineExpose({ focus, select, hasError, baseInputRef, disabled: props.disabled });
+defineExpose({ focus, select, ...exposed });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
+    <BaseInput  v-bind="baseInputForwardedProps" @click="focus">
         <template #labelText>
             <slot name="label-text" />
         </template>
@@ -74,16 +74,14 @@ defineExpose({ focus, select, hasError, baseInputRef, disabled: props.disabled }
         <InputNumber
             ref="inputRef"
             v-model="value"
-            :size="size"
-            :disabled="disabled"
+            :input-id="fieldUniqueId"
             :use-grouping="useGrouping"
-            :readonly="readonly"
             class="w-full"
             :max-fraction-digits="precision"
             type="number"
             :class="inputClass"
-            :invalid="hasError"
             v-bind="{
+                ...generalInputProps,
                 showButtons,
                 min,
                 suffix,

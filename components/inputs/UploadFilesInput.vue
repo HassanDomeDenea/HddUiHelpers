@@ -4,6 +4,7 @@ import BaseInput from './BaseInput.vue'
 import type {BaseInputProps} from './types'
 import {rotateImageFile} from '../../utils/filesManipulations'
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{
     accept?: string
@@ -162,13 +163,13 @@ async function onNewImagePreviewHide(imageIndex: number) {
     }
     currentNewImageRotate.value = 0
 }
-const hasError = computed(()=>!!props.error)
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
-defineExpose({focus,hasError,baseInputRef,disabled:props.disabled})
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({focus,...exposed})
 </script>
 
 <template>
-    <BaseInput v-bind="props" ref="baseInputRef" @click="focus">
+    <BaseInput v-bind="baseInputForwardedProps"  @click="focus">
         <template #labelText>
             <slot name="label-text"/>
         </template>
@@ -180,7 +181,8 @@ defineExpose({focus,hasError,baseInputRef,disabled:props.disabled})
         </template>
         <div>
             <input
-ref="fileInputRef" type="file" hidden :accept="filesToAccept" :multiple="true"
+                :id="fieldUniqueId" ref="fileInputRef"
+:name="generalInputProps.name" type="file" hidden :accept="filesToAccept" :multiple="true"
                    @change="onFileSelection">
             <div v-if="oldFiles?.length && newFiles?.length" class="font-bold mb-1">
                 {{ t("New Files") }}:

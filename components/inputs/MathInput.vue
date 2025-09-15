@@ -5,6 +5,7 @@ import { ref } from 'vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps, ElementClassType } from './types';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(
     defineProps<
@@ -104,14 +105,13 @@ function hasMathOperatorNotFirst(str: string) {
     // This regex checks for + - / * that are NOT the first character
     return /[^]{1}.*[+\-/*]/.test(str.slice(1));
 }
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
 
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
-const hasError = computed(() => !!props.error);
-defineExpose({ focus, select, hasError, baseInputRef, disabled: props.disabled, hasMathOperatorNotFirst });
+defineExpose({ focus,...exposed, select,hasMathOperatorNotFirst });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
+    <BaseInput v-bind="baseInputForwardedProps" @click="focus">
         <template #labelText>
             <slot name="label-text" />
         </template>
@@ -126,15 +126,12 @@ defineExpose({ focus, select, hasError, baseInputRef, disabled: props.disabled, 
         <InputGroup>
             <IconField>
                 <InputText
+                    v-bind="generalInputProps"
+                    :id="fieldUniqueId"
                     ref="inputRef"
                     v-model="localValue"
-                    :size="size"
-                    :disabled="disabled"
-                    fluid
-                    :readonly="readonly"
                     :style="{ ['padding' + (targetDir === 'ltr' ? 'Right' : 'Left')]: '20px' }"
                     :class="inputClass"
-                    :invalid="hasError"
                     @keydown.enter.prevent="onInputKeydownEnter"
                     @keydown.up.prevent="onInputKeydownUp"
                     @keydown.down.prevent="onInputKeydownDown"

@@ -11,6 +11,7 @@ import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import type { ApiResponseData, InfiniteScrollResponseData } from '@/types/laravel_generated';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import type Select from 'primevue/select';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(
     defineProps<
@@ -226,15 +227,14 @@ function onSelectChange(evt: SelectChangeEvent) {
 function onSelectFilterInput(evt: SelectFilterEvent) {
     search({ query: evt.value });
 }
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
 
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
-defineExpose({ focus, clear, hasError, baseInputRef, disabled: props.disabled,selectedItem });
+defineExpose({ focus,...exposed, clear, disabled: props.disabled,selectedItem });
 </script>
 
 <template>
     <BaseInput
-ref="baseInputRef" v-bind="props" :control-component="{selectedItem}"
+v-bind="baseInputForwardedProps" :control-component="{selectedItem}"
     @label-clicked="inputRef?.show()">
         <template #labelText>
             <slot name="label-text" />
@@ -248,9 +248,9 @@ ref="baseInputRef" v-bind="props" :control-component="{selectedItem}"
             </slot>
         </template>
         <PSelect
+            v-bind="generalInputProps"
             ref="inputRef"
-            :invalid="hasError"
-            :size="size"
+            :input-id="fieldUniqueId"
             :model-value="selectedItemId"
             :placeholder="placeholder"
             :filter="true"
@@ -266,8 +266,6 @@ ref="baseInputRef" v-bind="props" :control-component="{selectedItem}"
             :option-label="optionLabelProperty"
             :option-value="optionValueProperty"
             scroll-height="18rem"
-            :disabled="disabled"
-            :readonly="readonly"
             :pt="{
                 pcFilter: {
                     root: {

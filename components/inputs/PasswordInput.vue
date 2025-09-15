@@ -4,6 +4,7 @@ import type { PasswordProps } from 'primevue';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps } from './types';
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(
     defineProps<
@@ -42,17 +43,13 @@ const inputTextPt = computed(() => {
     };
 });
 
-const fieldUniqueId = computed(() => {
-    return uniqueId(props.name ?? 'unnamed');
-});
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
 
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
-defineExpose({ focus, hasError,baseInputRef,disabled:props.disabled  });
+defineExpose({ focus, ...exposed  });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" :input-id="fieldUniqueId" @label-clicked="focus">
+    <BaseInput v-bind="baseInputForwardedProps" @label-clicked="focus">
         <template #labelText>
             <slot name="label-text" />
         </template>
@@ -65,14 +62,11 @@ defineExpose({ focus, hasError,baseInputRef,disabled:props.disabled  });
             </slot>
         </template>
         <Password
+            v-bind="{...generalInputProps,...originalProps}"
             ref="inputRef"
             v-model="value"
             :input-id="fieldUniqueId"
-            :disabled="disabled"
             :placeholder="placeholder"
-            fluid
-            :size="size"
-            :invalid="!!error"
             :class="[inputClass]"
             :aria-describedby="`${error ? `${fieldUniqueId}-error` : ''} ${$slots.helper || helperText ? `${fieldUniqueId}-desc` : ''}`"
             :pt="inputTextPt"
@@ -80,7 +74,6 @@ defineExpose({ focus, hasError,baseInputRef,disabled:props.disabled  });
             :feedback="feedback"
             :variant="variant"
             :toggle-mask="toggleMask"
-            v-bind="originalProps"
             @blur="emits('blur', $event)"
             @focus="emits('focus', $event)"
             @keydown="emits('keydown', $event)"

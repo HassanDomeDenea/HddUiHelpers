@@ -42,7 +42,7 @@ onBeforeUnmount(() => {
 });
 
 const appendTo = computed(() => (confirmation.value ? confirmation.value.appendTo : 'body'));
-const target = computed(() => (confirmation.value ? confirmation.value.target : null));
+// const target = computed(() => (confirmation.value ? confirmation.value.target : null));
 const modal = computed(() => (confirmation.value ? (confirmation.value.modal == null ? true : confirmation.value.modal) : true));
 const header = computed(() => (confirmation.value ? confirmation.value.header : null));
 const message = computed(() => (confirmation.value ? confirmation.value.message : null));

@@ -3,6 +3,7 @@ import type { BaseInputProps } from './types';
 import uniqueId from 'lodash/uniqueId';
 import { ref } from 'vue';
 import BaseInput from './BaseInput.vue';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{} & BaseInputProps>(), {});
 const emits = defineEmits<{
@@ -34,28 +35,23 @@ onMounted(() => {
     });
 });
 
-const fieldUniqueId = computed(() => {
-    return uniqueId(props.name ?? 'unnamed');
-});
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
-defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled });
+
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({ focus,...exposed });
 </script>
 
 <template>
     <BaseInput
-        ref="baseInputRef"
-        v-bind="{ ...props, floatingLabel: false, infieldTopAlignedLabel: false }"
-        :input-id="fieldUniqueId"
+        v-bind="baseInputForwardedProps"
         :floating-label="false"
         :infield-top-aligned-label="false"
     >
         <Checkbox
             ref="inputRef"
+            v-bind="generalInputProps"
             v-model="value"
-            :invalid="hasError"
             :input-id="fieldUniqueId"
-            v-bind="{ disabled, readonly }"
             binary
             @change="onCheckboxChange"
         />

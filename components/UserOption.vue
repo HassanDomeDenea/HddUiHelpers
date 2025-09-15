@@ -4,7 +4,7 @@ import { useApiClient } from 'HddUiHelpers/stores/apiClient';
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
 import { uniqueId } from 'lodash-es';
 import map from 'lodash/map';
-import type { FileUploadUploadEvent, TreeSelect } from 'primevue';
+import type { FileUploadUploadEvent } from 'primevue';
 import { FileUpload } from 'primevue';
 import Select from 'primevue/select';
 import { useConfirm } from 'primevue/useconfirm';

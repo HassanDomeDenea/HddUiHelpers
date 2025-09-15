@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { BaseInputProps } from './types';
-import uniqueId from 'lodash/uniqueId';
 import BaseInput from './BaseInput.vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import { get, set, snakeCase, startCase } from 'lodash-es';
 import { RadioButton } from 'primevue';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{
     options: (string | Record<string, any>)[]
@@ -62,42 +61,35 @@ const mappedOptions = computed(() => {
     });
 });
 
-const fieldUniqueId = computed(() => {
-    return uniqueId(props.name ?? 'unnamed');
-});
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
 
-
-defineExpose({ focus, hasError, baseInputRef, disabled: props.disabled });
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>
     <BaseInput
-        ref="baseInputRef"
-        v-bind="{ ...props, floatingLabel: false, infieldTopAlignedLabel: false }"
-        :input-id="fieldUniqueId"
+        v-bind="{ ...baseInputForwardedProps,}"
         :floating-label="false"
         :infield-top-aligned-label="false"
         @label-clicked="onLabelClicked"
     >
-        <RadioButtonGroup v-model="value" :name="name" class="flex flex-wrap gap-5">
+        <RadioButtonGroup v-model="value" :name="name" :invalid="generalInputProps.invalid" class="flex flex-wrap gap-5">
             <template v-for="option in mappedOptions" :key="option">
                 <div class="flex items-center gap-2">
                     <RadioButton
                         ref="inputRefs"
                         :value="get(option,optionValueProperty)"
                         :size="size"
-                        :invalid="hasError"
+                        :invalid="generalInputProps.invalid"
                         :input-id="fieldUniqueId+'_'+snakeCase(get(option,optionValueProperty))"
-                        v-bind="{ disabled, readonly }"
-                        :disabled="disabled || get(option,optionDisabledProperty)"
+                        :readonly="generalInputProps.readonly"
+                        :disabled="generalInputProps.disabled || get(option,optionDisabledProperty)"
                         @change="emits('change', $event)"
                     />
                     <label
                         class="select-none"
                         :class="{'cursor-pointer': value !== get(option,optionValueProperty) && !(disabled || get(option,optionDisabledProperty))
-                    ,'text-sm': size === 'small', 'text-lg': size === 'large' }"
+                                    ,'text-sm p-block-[var(--p-inputtext-sm-padding-y)]': size === 'small', 'text-lg p-block-[var(--p-inputtext-lg-padding-y)]': size === 'large' }"
                         :for="fieldUniqueId+'_'+snakeCase(get(option,optionValueProperty))"
                     >
                         {{ autoTranslateLabels ? t(startCase(get(option, optionLabelProperty))) : get(option, optionLabelProperty)

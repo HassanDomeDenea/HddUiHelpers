@@ -10,6 +10,7 @@ import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import type { ApiResponseData, InfiniteScrollResponseData } from '@/types/laravel_generated';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import type Select from 'primevue/select';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(
     defineProps<
@@ -285,13 +286,13 @@ function onSelectFilterInput(evt: SelectFilterEvent) {
     search({ query: evt.value });
 }
 
-const hasError = computed(() => !!props.error);
-const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef');
-defineExpose({ focus, clear, hasError, baseInputRef, disabled: props.disabled });
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({ focus, clear, ...exposed});
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" @label-clicked="inputRef?.show()">
+    <BaseInput  v-bind="baseInputForwardedProps" @label-clicked="inputRef?.show()">
         <template #labelText>
             <slot name="label-text" />
         </template>
@@ -304,15 +305,15 @@ defineExpose({ focus, clear, hasError, baseInputRef, disabled: props.disabled })
             </slot>
         </template>
         <MultiSelect
+            v-bind="generalInputProps"
             ref="inputRef"
+            :input-id="fieldUniqueId"
             :model-value="selectedItemIds"
             :placeholder="placeholder"
             :auto-filter-focus="true"
             :variant="variant"
-            :size="size"
             :filter-fields="localFilterFields"
             :filter-placeholder="filterPlaceholder"
-            :invalid="hasError"
             :display="display"
             :max-selected-labels="maxSelectedLabels"
             :selection-limit="selectionLimit"
@@ -326,8 +327,6 @@ defineExpose({ focus, clear, hasError, baseInputRef, disabled: props.disabled })
             class="!w-full"
             scroll-height="18rem"
             :loading="isInitiallyLoading"
-            :disabled="disabled"
-            :readonly="readonly"
             :pt="{
                 pcFilter: {
                     root: {

@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import BaseInput from './BaseInput.vue'
 import type { BaseInputProps } from './types'
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{
   length?: number
@@ -26,26 +27,25 @@ watch(value, (val) => {
     emits('complete', val)
   }
 })
-const hasError = computed(()=>!!props.error)
- const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
-defineExpose({ focus,hasError ,baseInputRef,disabled: props.disabled })
+
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
+defineExpose({ focus,...exposed })
 </script>
 
 <template>
-  <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
+  <BaseInput v-bind="baseInputForwardedProps" @click="focus">
     <InputOtp
-      ref="inputRef"
+        v-bind="generalInputProps"
+        ref="inputRef"
       v-model="value"
+      :input-id="fieldUniqueId"
       mask
-      :invalid="hasError"
-      name="otp"
       autocomplete="off"
       integer-only
-      :disabled="disabled"
       :length="length"
       class="w-full dir-ltr"
       :placeholder="placeholder"
-      fluid
       :pt="{
         pcInput: {
           root: {

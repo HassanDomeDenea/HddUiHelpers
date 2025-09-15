@@ -2,8 +2,7 @@
 import HddForm from 'HddUiHelpers/components/FormWrapper/HddForm.vue';
 import type { HddFormField, HddFormProps, RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import {
-    appendToUrl, getColumnName,
-    getColumnTitle,
+    appendToUrl, getColumnTitle,
     getFieldSlotName
 } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
 import BaseInput from 'HddUiHelpers/components/inputs/BaseInput.vue';
@@ -12,10 +11,10 @@ import type { HddFormComposer } from 'HddUiHelpers/utils/useHddForm.ts';
 import { get, set, startCase } from 'lodash-es';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
-import lodashSet from 'lodash/set';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import type { ServerDataTableColumn, ServerFormDialogProps } from './ServerDataTableTypes.ts';
 import { useConfirm } from 'primevue/useconfirm';
+import { useStackableDialog, } from 'HddUiHelpers/stores/stackableDialogs.ts';
 
 const {
     url,
@@ -41,7 +40,6 @@ const {
     focusFieldOnShown,
     focusFirstOnEdit = true,
     focusFirstOnCreate = true,
-    closeOnEsc = true,
     popupTarget,
     deleteRecordMessage,
     deleteRecordHeader,
@@ -183,6 +181,7 @@ const hddFormOptions = computed(() => {
         size: 'small',
         inlineFields: inlineFields,
         fields: mappedFormFields.value,
+        isEditing: isEditing.value,
         onSuccess: (data: any) => {
             emits('submitted', data.data, isEditing ? 'update' : 'create');
             if (isEditing.value || !keepFormOpenAfterCreate) {
@@ -202,6 +201,8 @@ const hddFormOptions = computed(() => {
                             : t('n Record Created Successfully!', { n: multiEditRecords.value.length }, multiEditRecords.value.length)
                 );
             }
+
+            withoutDialog.value=false;
         }
     } as HddFormProps;
 });
@@ -249,7 +250,7 @@ function editMulti(rows: TRecord[]) {
     });
 }
 
-function edit(row: TRecord) {
+function edit(row: TRecord,showDialog = true) {
     isEditing.value = true;
     recordToEdit.value = row;
     initialValues.value = cloneDeep(row);
@@ -266,10 +267,14 @@ function edit(row: TRecord) {
             }
         }
     }
-    nextTick(() => {
-        isVisible.value = true;
-    });
+    if(showDialog){
+        nextTick(() => {
+            isVisible.value = true;
+        });
+    }
 }
+
+
 
 function cancel() {
     isVisible.value = false;
@@ -277,8 +282,11 @@ function cancel() {
 
 function onResetButtonClicked() {
 }
+const dialogRef=useTemplateRef('dialogRef');
+const {isClosable, dialogStackIndex} = useStackableDialog({dialogVisibilityRef:isVisible,dialogRef: dialogRef})
 
-function onHidden() {
+
+function onDialogHidden() {
     isEditing.value = false;
     initialValues.value = undefined;
     idToCreate.value = undefined;
@@ -290,12 +298,16 @@ function onHidden() {
     emits('visible', false);
 }
 
-function onShown() {
+function onDialogShown() {
     if (!focusFieldOnShown) {
         if (isEditing.value) {
-            focusFirstOnEdit && focusFirst();
+            if(focusFirstOnEdit){
+                focusFirst()
+            }
         } else {
-            focusFirstOnCreate && focusFirst();
+            if(focusFirstOnCreate){
+                focusFirst()
+            }
         }
     } else {
         focusField(focusFieldOnShown, 100);
@@ -346,6 +358,7 @@ function focusField(name: string, waitFor: number = 0) {
 }
 
 const confirm = useConfirm();
+const {updateDialogVisibility: updateDeleteDialogVisibility} = useStackableDialog()
 
 function deleteRecord(item: TRecord|TRecord[]) {
     if (!item) return;
@@ -355,6 +368,7 @@ function deleteRecord(item: TRecord|TRecord[]) {
     }
     const _popupTarget = toValue(popupTarget);
     emits('visible',true)
+    updateDeleteDialogVisibility(true)
     confirm.require({
         message: deleteRecordMessage  ?? t('Are you sure to delete n records?', { n: cnt }, cnt),
         header: deleteRecordHeader ?? t('Confirmation'),
@@ -401,13 +415,40 @@ function deleteRecord(item: TRecord|TRecord[]) {
                 console.error(error);
                 apiClient.toastRequestError(error);
             }
+            updateDeleteDialogVisibility(false)
+
         },
-        onShow:()=>{
-            emits('visible',true)
-    },        onHide:()=>{
-            emits('visible',false)
+        reject(){
+            updateDeleteDialogVisibility(false)
+        },     onHide:()=>{
+            updateDeleteDialogVisibility(false)
     }
     });
+}
+
+const withoutDialog = ref(false)
+
+
+/**
+ *  Update directly the record without opening the form.
+ *  Values are passed as an array of [fieldName, value] pairs.
+ */
+function updateDirectly(row:TRecord, ...values: [string, any][]){
+    withoutDialog.value=true;
+    try {
+        edit(row)
+        nextTick(()=>{
+            setTimeout(()=>{
+                values.forEach(([fieldName, value]) => {
+                    setValue(fieldName, value);
+                })
+                    form.value.submitForm()
+            })
+        })
+    }catch (e){
+        console.error(e)
+        withoutDialog.value=false;
+    }
 }
 
 defineExpose({
@@ -417,6 +458,7 @@ defineExpose({
     create,
     editMulti,
     edit,
+    updateDirectly,
     deleteRecord,
     delete: deleteRecord,
     close
@@ -425,17 +467,18 @@ defineExpose({
 
 <template>
     <Dialog
+        ref="dialogRef"
         v-model:visible="isVisible"
         dismissable-mask
-        modal
+        :modal="!withoutDialog"
         keep-in-viewport
-        :close-on-escape="toValue(closeOnEsc)"
+        :close-on-escape="isClosable"
         :content-style="dialogContentStyle"
         :draggable="false"
         class="w-580px"
-        :class="dialogClass"
-        @show="onShown"
-        @after-hide="onHidden"
+        :class="[dialogClass,{'!hidden':withoutDialog}]"
+        @show="onDialogShown"
+        @after-hide="onDialogHidden"
     >
         <template #header>
             <slot name="header" :row="recordToEdit ?? initialValues">

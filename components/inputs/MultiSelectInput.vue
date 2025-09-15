@@ -4,6 +4,7 @@ import type {SelectChangeEvent} from 'primevue/select'
 import BaseInput from './BaseInput.vue'
 import type {BaseInputProps} from './types'
 import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<{
     options: any[]
@@ -37,14 +38,14 @@ function focus() {
 function onInputBlur() {
 
 }
- const baseInputRef = useTemplateRef<ComponentExposed<typeof BaseInput>>('baseInputRef')
+const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+
 const {t} = useI18n()
-const hasError = computed(()=>!!props.error)
-defineExpose({focus, hasError, baseInputRef, disabled: props.disabled})
+defineExpose({focus, ...exposed})
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="props" @click="focus">
+    <BaseInput v-bind="baseInputForwardedProps" @click="focus">
         <template v-if="$slots.addon" #addon>
             <slot name="addon"/>
         </template>
@@ -54,13 +55,13 @@ defineExpose({focus, hasError, baseInputRef, disabled: props.disabled})
             </slot>
         </template>
         <MultiSelect
+            v-bind="generalInputProps"
             ref="inputRef"
             v-model="value"
+            :input-id="fieldUniqueId"
             :placeholder="placeholder"
             :auto-filter-focus="true"
             variant="filled"
-            :size="size"
-            :invalid="hasError"
             :display="display"
             :max-selected-labels="maxSelectedLabels"
             :selection-limit="selectionLimit"
@@ -72,8 +73,6 @@ defineExpose({focus, hasError, baseInputRef, disabled: props.disabled})
             :option-value="optionValueProperty"
             class="!w-full"
             scroll-height="18rem"
-            :disabled="disabled"
-            :readonly="readonly"
             @blur="onInputBlur"
             @change="emits('change', $event)"
         />

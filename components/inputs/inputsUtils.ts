@@ -1,5 +1,100 @@
 import type { BaseInputProps } from 'HddUiHelpers/components/inputs/types'
+import type { MaybeRef } from 'vue';
+import { pick } from 'lodash-es';
+import type BaseInput from 'HddUiHelpers/components/inputs/BaseInput.vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import uniqueId from 'lodash/uniqueId';
 
 export const DefaultBasInputProps: Partial<BaseInputProps> = {
   hideLabelDoubleDots: true,
 } as Partial<BaseInputProps>
+
+
+// This array takes the keys of the BaseInputProps type and makes it a const array
+const baseInputPropsKeys = [
+    'autocomplete',
+    'icon',
+    'uniqueId',
+    'modelValue',
+    'label',
+    'labelMinWidth',
+    'variant',
+    'iconAsAddon',
+    'onLocalEnterKeyDown',
+    'floatingLabel',
+    'showErrorMessage',
+    'floatingLabelVariant',
+    'infieldTopAlignedLabel',
+    'inputId',
+    'required',
+    'showRequiredAsterisk',
+    'requiredInLabel',
+    'formName',
+    'name',
+    'error',
+    'helperText',
+    'placeholder',
+    'autoI18nLabel',
+    'disabled',
+    'readonly',
+    'inline',
+    'controlBeforeLabel',
+    'labelSingleLine',
+    'hideLabelDoubleDots',
+    'ignoreLabelSelector',
+    'labelClass',
+    'labelStyle',
+    'iconClass',
+    'inputClass',
+    'wrapperClass',
+    'controlWrapperClass',
+    'size',
+    'buttonAddon',
+    'controlComponent',
+] as const;
+
+export const useHddBaseInputUtils = function(props: Readonly<BaseInputProps>){
+
+
+    const hasError = computed(() => !!props.error);
+    const baseInputRef = ref<ComponentExposed<typeof BaseInput>>();
+
+    const fieldUniqueId = computed(() => {
+        return props.uniqueId ?? uniqueId(props.name ?? 'unnamed');
+    });
+
+    const baseInputForwardedProps = computed(()=>{
+        return {
+            inputId: fieldUniqueId.value,
+            ref: (el: any)=>baseInputRef.value = el,
+            ...pick(props,baseInputPropsKeys),
+        }
+    })
+
+    const exposed = {
+        hasError,
+        baseInputRef,
+        disabled: props.disabled,
+    }
+
+    const generalInputProps = computed(()=>{
+        return {
+            fluid: true,
+            size: props.size as "large" | "small",
+            name: props.name,
+            invalid: hasError.value,
+            disabled: props.disabled,
+            readonly: props.readonly,
+        };
+    })
+
+    return {
+        exposed,
+        baseInputRef,
+        fieldUniqueId,
+        hasError,
+        baseInputForwardedProps,
+        generalInputProps,
+    }
+}
+
