@@ -1,56 +1,57 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
-import type { ComponentExposed } from 'vue-component-type-helpers';
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { ref } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
-const props = withDefaults(defineProps<{
-  notSelectedValue?: 'null' | 'undefined'
-} & BaseInputProps>(), {
-  notSelectedValue: 'null',
-  controlBeforeLabel: true,
-  hideLabelDoubleDots: true,
-})
-const value = defineModel<any>('modelValue')
+const props = withDefaults(
+  defineProps<
+    {
+      notSelectedValue?: 'null' | 'undefined';
+    } & BaseInputProps
+  >(),
+  {
+    notSelectedValue: 'null',
+    controlBeforeLabel: true,
+    hideLabelDoubleDots: true,
+  },
+);
+const value = defineModel<any>('modelValue');
 
-const inputRef = ref()
+const inputRef = ref();
 
 function focus() {
-  inputRef.value.$el.focus()
+  inputRef.value.$el.focus();
 }
 
-
 const isStated = computed(() => {
-  return value.value === true || value.value === false
-})
+  return value.value === true || value.value === false;
+});
 const isIndeterminate = computed(() => {
-  return value.value === false
-})
+  return value.value === false;
+});
 
 function onCheckboxStateChange() {
-  if (props.disabled)
-    return
+  if (props.disabled) return;
   switch (value.value) {
     case true:
-      value.value = false
-      break
+      value.value = false;
+      break;
     case false:
-      value.value = props.notSelectedValue === 'null' ? null : undefined
-      break
+      value.value = props.notSelectedValue === 'null' ? null : undefined;
+      break;
     case '':
     case undefined:
     case null:
     default:
-      value.value = true
-      break
+      value.value = true;
+      break;
   }
 }
 
-const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
-defineExpose({ focus,...exposed })
-
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>
@@ -58,15 +59,18 @@ defineExpose({ focus,...exposed })
     <!--    <pre>Is stated {{ isStated }}</pre> -->
     <!--    <pre>Is Indeterminate {{ isIndeterminate }}</pre> -->
     <Checkbox
-        v-bind="generalInputProps"
-        :input-id="fieldUniqueId"
-      :model-value="isStated" :indeterminate="isIndeterminate" binary :class="{ 'p-checkbox-checked': isStated, 'p-checkbox-indeterminate': isIndeterminate }"
+      v-bind="generalInputProps"
+      :input-id="fieldUniqueId"
+      :model-value="isStated"
+      :indeterminate="isIndeterminate"
+      binary
+      :class="{ 'p-checkbox-checked': isStated, 'p-checkbox-indeterminate': isIndeterminate }"
       readonly
       @click="onCheckboxStateChange"
     >
       <template #icon="slotProps">
         <i v-if="slotProps.checked" class="pi pi-check text-[var(--p-checkbox-icon-checked-color)]" />
-        <i v-if="slotProps.indeterminate" class="pi pi-times dark:text-red-700 light:text-red-100" />
+        <i v-if="slotProps.indeterminate" class="pi pi-times light:text-red-100 dark:text-red-700" />
       </template>
     </Checkbox>
     <template #labelText>
@@ -90,7 +94,7 @@ defineExpose({ focus,...exposed })
 </template>
 
 <style lang="scss">
-.p-checkbox-indeterminate{
+.p-checkbox-indeterminate {
   .p-checkbox-box {
     @apply dark:(border-red-400 bg-red-400) light:(border-red-500 bg-red-500);
   }

@@ -1,23 +1,22 @@
 <script setup lang="ts">
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 import { ref } from 'vue';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps } from './types';
-import type { ComponentExposed } from 'vue-component-type-helpers';
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(
-    defineProps<
-        {
-            mask?: string;
-        } & BaseInputProps
-    >(),
+  defineProps<
     {
-        placeholder: '07x xxxx xxxx',
-        mask: '999 9999 9999',
-    },
+      mask?: string;
+    } & BaseInputProps
+  >(),
+  {
+    placeholder: '07x xxxx xxxx',
+    mask: '999 9999 9999',
+  },
 );
 const emits = defineEmits<{
-    keydown: [e: KeyboardEvent];
+  keydown: [e: KeyboardEvent];
 }>();
 const value = defineModel<any>('modelValue');
 const { t } = useI18n();
@@ -25,33 +24,33 @@ const { t } = useI18n();
 const inputRef = ref();
 
 function focus() {
-    inputRef.value.$el.focus();
+  inputRef.value.$el.focus();
 }
 
 function onKeyDown(e: KeyboardEvent) {
-    emits('keydown', e);
+  emits('keydown', e);
 }
 
-const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
-defineExpose({ focus, ...exposed});
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-    <BaseInput  v-bind="baseInputForwardedProps" @click="focus">
-        <InputMask
-            v-bind="generalInputProps"
-            :id="fieldUniqueId"
-            ref="inputRef"
-            v-model="value"
-            :auto-clear="false"
-            class="dir-ltr"
-            :class="t('dir') === 'rtl' ? 'text-right' : 'text-left'"
-            :placeholder="placeholder"
-            :mask="mask"
-            @keydown="onKeyDown"
-        />
-    </BaseInput>
+  <BaseInput v-bind="baseInputForwardedProps" @click="focus">
+    <InputMask
+      v-bind="generalInputProps"
+      :id="fieldUniqueId"
+      ref="inputRef"
+      v-model="value"
+      :auto-clear="false"
+      class="dir-ltr"
+      :class="t('dir') === 'rtl' ? 'text-right' : 'text-left'"
+      :placeholder="placeholder"
+      :mask="mask"
+      @keydown="onKeyDown"
+    />
+  </BaseInput>
 </template>
 
 <style scoped></style>
