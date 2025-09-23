@@ -1,56 +1,54 @@
 <script setup lang="ts">
-import {ref} from 'vue'
-import BaseInput from './BaseInput.vue'
-import type {BaseInputProps} from './types'
-import type { ComponentExposed } from 'vue-component-type-helpers';
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { ref } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
-
-const props = defineProps<BaseInputProps & {
-    initialRows?: number
-}>()
+const props = defineProps<
+  BaseInputProps & {
+    initialRows?: number;
+  }
+>();
 
 const emits = defineEmits<{
-    keydown: [e: KeyboardEvent]
-    change: [e: any]
-}>()
+  keydown: [e: KeyboardEvent];
+  change: [e: any];
+}>();
 
-const value = defineModel<any>('modelValue')
+const value = defineModel<any>('modelValue');
 
-const inputRef = ref()
+const inputRef = ref();
 
 function focus() {
-    inputRef.value.$el.focus()
+  inputRef.value.$el.focus();
 }
 
-const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
-defineExpose({focus,...exposed})
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-    <BaseInput  v-bind="baseInputForwardedProps" @click="focus">
+  <BaseInput v-bind="baseInputForwardedProps" @click="focus">
     <Textarea
-        v-bind="generalInputProps"
-        :id="fieldUniqueId"
-        ref="inputRef"
-        v-model="value"
-        :rows="initialRows"
-        :placeholder="placeholder"
-        class="w-full"
-        auto-resize
-        :pt="{
+      v-bind="generalInputProps"
+      :id="fieldUniqueId"
+      ref="inputRef"
+      v-model="value"
+      :rows="initialRows"
+      :placeholder="placeholder"
+      class="w-full"
+      auto-resize
+      :pt="{
         root: {
           name,
           class: inputClass,
         },
       }"
-        @change="emits('change', $event)"
-        @keydown="emits('keydown', $event)"
+      @change="emits('change', $event)"
+      @keydown="emits('keydown', $event)"
     />
-    </BaseInput>
+  </BaseInput>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

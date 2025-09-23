@@ -1,14 +1,14 @@
 <script setup lang="ts">
 defineProps<{
-    content: string
+  content: string;
 }>();
 </script>
 
 <script lang="ts">
 export default {
-    render() {
-        console.log(this.$slots)
-        return [this.$slots.default()]
-    }
-}
+  render() {
+    console.log(this.$slots);
+    return [this.$slots.default()];
+  },
+};
 </script>

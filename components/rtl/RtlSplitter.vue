@@ -1,9 +1,9 @@
 <script>
-import { getVNodeProp } from '@primevue/core/utils'
-import { getHeight, getOuterHeight, getOuterWidth, getWidth } from '@primeuix/utils/dom'
-import { isArray } from '@primeuix/utils/object'
+import { getHeight, getOuterHeight, getOuterWidth, getWidth } from '@primeuix/utils/dom';
+import { isArray } from '@primeuix/utils/object';
+import { getVNodeProp } from '@primevue/core/utils';
 
-import BaseSplitter from './RtlBaseSplitter.vue'
+import BaseSplitter from './RtlBaseSplitter.vue';
 
 export default {
   name: 'RtlSplitter',
@@ -28,351 +28,345 @@ export default {
   data() {
     return {
       prevSize: null,
-    }
+    };
   },
   computed: {
     panels() {
-      const panels = []
+      const panels = [];
 
       this.$slots.default().forEach((child) => {
         if (this.isSplitterPanel(child)) {
-          panels.push(child)
-        }
-        else if (Array.isArray(child.children)) {
+          panels.push(child);
+        } else if (Array.isArray(child.children)) {
           child.children.forEach((nestedChild) => {
             if (this.isSplitterPanel(nestedChild)) {
-              panels.push(nestedChild)
+              panels.push(nestedChild);
             }
-          })
+          });
         }
-      })
+      });
 
-      return panels
+      return panels;
     },
     gutterStyle() {
-      if (this.horizontal)
-        return { width: `${this.gutterSize}px` }
-      else return { height: `${this.gutterSize}px` }
+      if (this.horizontal) return { width: `${this.gutterSize}px` };
+      else return { height: `${this.gutterSize}px` };
     },
     horizontal() {
-      return this.layout === 'horizontal'
+      return this.layout === 'horizontal';
     },
     getPTOptions() {
       return {
         context: {
           nested: this.$parentInstance?.nestedState,
         },
-      }
+      };
     },
   },
   mounted() {
     if (this.panels && this.panels.length) {
-      let initialized = false
+      let initialized = false;
 
       if (this.isStateful()) {
-        initialized = this.restoreState()
+        initialized = this.restoreState();
       }
 
       if (!initialized) {
-        const children = [...this.$el.children].filter(child => child.getAttribute('data-pc-name') === 'splitterpanel')
-        const _panelSizes = []
+        const children = [...this.$el.children].filter((child) => child.getAttribute('data-pc-name') === 'splitterpanel');
+        const _panelSizes = [];
 
         this.panels.map((panel, i) => {
-          const panelInitialSize = panel.props && panel.props.size ? panel.props.size : null
-          const panelSize = panelInitialSize || 100 / this.panels.length
+          const panelInitialSize = panel.props && panel.props.computedSize ? panel.props.computedSize : null;
+          const panelSize = panelInitialSize || 100 / this.panels.length;
 
-          _panelSizes[i] = panelSize
-          children[i].style.flexBasis = `calc(${panelSize}% - ${(this.panels.length - 1) * this.gutterSize}px)`
-        })
+          _panelSizes[i] = panelSize;
+          children[i].style.flexBasis = `calc(${panelSize}% - ${(this.panels.length - 1) * this.gutterSize}px)`;
+        });
 
-        this.panelSizes = _panelSizes
-        this.prevSize = Number.parseFloat(_panelSizes[0]).toFixed(4)
+        this.panelSizes = _panelSizes;
+        this.prevSize = Number.parseFloat(_panelSizes[0]).toFixed(4);
       }
     }
   },
   beforeUnmount() {
-    this.clear()
-    this.unbindMouseListeners()
+    this.clear();
+    this.unbindMouseListeners();
   },
   methods: {
     isSplitterPanel(child) {
-      return child.type.name === 'SplitterPanel'
+      return child.type.name === 'SplitterPanel';
     },
     onResizeStart(event, index, isKeyDown) {
-      this.gutterElement = event.currentTarget || event.target.parentElement
-      this.size = this.horizontal ? getWidth(this.$el) : getHeight(this.$el)
+      this.gutterElement = event.currentTarget || event.target.parentElement;
+      this.computedSize = this.horizontal ? getWidth(this.$el) : getHeight(this.$el);
 
       if (!isKeyDown) {
-        this.dragging = true
-        this.startPos = this.layout === 'horizontal' ? event.pageX || event.changedTouches[0].pageX : event.pageY || event.changedTouches[0].pageY
+        this.dragging = true;
+        this.startPos = this.layout === 'horizontal' ? event.pageX || event.changedTouches[0].pageX : event.pageY || event.changedTouches[0].pageY;
       }
 
-      this.prevPanelElement = this.gutterElement.previousElementSibling
-      this.nextPanelElement = this.gutterElement.nextElementSibling
+      this.prevPanelElement = this.gutterElement.previousElementSibling;
+      this.nextPanelElement = this.gutterElement.nextElementSibling;
 
       if (isKeyDown) {
-        this.prevPanelSize = this.horizontal ? getOuterWidth(this.prevPanelElement, true) : getOuterHeight(this.prevPanelElement, true)
-        this.nextPanelSize = this.horizontal ? getOuterWidth(this.nextPanelElement, true) : getOuterHeight(this.nextPanelElement, true)
-      }
-      else {
-        this.prevPanelSize = (100 * (this.horizontal ? getOuterWidth(this.prevPanelElement, true) : getOuterHeight(this.prevPanelElement, true))) / this.size
-        this.nextPanelSize = (100 * (this.horizontal ? getOuterWidth(this.nextPanelElement, true) : getOuterHeight(this.nextPanelElement, true))) / this.size
+        this.prevPanelSize = this.horizontal ? getOuterWidth(this.prevPanelElement, true) : getOuterHeight(this.prevPanelElement, true);
+        this.nextPanelSize = this.horizontal ? getOuterWidth(this.nextPanelElement, true) : getOuterHeight(this.nextPanelElement, true);
+      } else {
+        this.prevPanelSize =
+          (100 * (this.horizontal ? getOuterWidth(this.prevPanelElement, true) : getOuterHeight(this.prevPanelElement, true))) / this.size;
+        this.nextPanelSize =
+          (100 * (this.horizontal ? getOuterWidth(this.nextPanelElement, true) : getOuterHeight(this.nextPanelElement, true))) / this.size;
       }
 
-      this.prevPanelIndex = index
-      this.$emit('resizestart', { originalEvent: event, sizes: this.panelSizes })
-      this.$refs.gutter[index].setAttribute('data-p-gutter-resizing', true)
-      this.$el.setAttribute('data-p-resizing', true)
+      this.prevPanelIndex = index;
+      this.$emit('resizestart', { originalEvent: event, sizes: this.panelSizes });
+      this.$refs.gutter[index].setAttribute('data-p-gutter-resizing', true);
+      this.$el.setAttribute('data-p-resizing', true);
     },
     onResize(event, step, isKeyDown) {
-      let newPos, newPrevPanelSize, newNextPanelSize
+      let newPos, newPrevPanelSize, newNextPanelSize;
       if (isKeyDown) {
         if (this.horizontal) {
-          newPrevPanelSize = (100 * (this.prevPanelSize + step)) / this.size
-          newNextPanelSize = (100 * (this.nextPanelSize - step)) / this.size
+          newPrevPanelSize = (100 * (this.prevPanelSize + step)) / this.size;
+          newNextPanelSize = (100 * (this.nextPanelSize - step)) / this.size;
+        } else {
+          newPrevPanelSize = (100 * (this.prevPanelSize - step)) / this.size;
+          newNextPanelSize = (100 * (this.nextPanelSize + step)) / this.size;
         }
-        else {
-          newPrevPanelSize = (100 * (this.prevPanelSize - step)) / this.size
-          newNextPanelSize = (100 * (this.nextPanelSize + step)) / this.size
-        }
-      }
-      else {
-        if (this.horizontal)
-          newPos = (event.pageX * 100) / this.size - (this.startPos * 100) / this.size
-        else newPos = (event.pageY * 100) / this.size - (this.startPos * 100) / this.size
+      } else {
+        if (this.horizontal) newPos = (event.pageX * 100) / this.size - (this.startPos * 100) / this.size;
+        else newPos = (event.pageY * 100) / this.size - (this.startPos * 100) / this.size;
 
         if (this.horizontal && window.getComputedStyle(this.$refs.root).direction === 'rtl') {
-          newPos = -newPos
+          newPos = -newPos;
         }
 
-        newPrevPanelSize = this.prevPanelSize + newPos
-        newNextPanelSize = this.nextPanelSize - newPos
+        newPrevPanelSize = this.prevPanelSize + newPos;
+        newNextPanelSize = this.nextPanelSize - newPos;
       }
 
       if (this.validateResize(newPrevPanelSize, newNextPanelSize)) {
-        this.prevPanelElement.style.flexBasis = `calc(${newPrevPanelSize}% - ${(this.panels.length - 1) * this.gutterSize}px)`
-        this.nextPanelElement.style.flexBasis = `calc(${newNextPanelSize}% - ${(this.panels.length - 1) * this.gutterSize}px)`
-        this.panelSizes[this.prevPanelIndex] = newPrevPanelSize
-        this.panelSizes[this.prevPanelIndex + 1] = newNextPanelSize
-        this.prevSize = Number.parseFloat(newPrevPanelSize).toFixed(4)
+        this.prevPanelElement.style.flexBasis = `calc(${newPrevPanelSize}% - ${(this.panels.length - 1) * this.gutterSize}px)`;
+        this.nextPanelElement.style.flexBasis = `calc(${newNextPanelSize}% - ${(this.panels.length - 1) * this.gutterSize}px)`;
+        this.panelSizes[this.prevPanelIndex] = newPrevPanelSize;
+        this.panelSizes[this.prevPanelIndex + 1] = newNextPanelSize;
+        this.prevSize = Number.parseFloat(newPrevPanelSize).toFixed(4);
       }
 
-      this.$emit('resize', { originalEvent: event, sizes: this.panelSizes })
+      this.$emit('resize', { originalEvent: event, sizes: this.panelSizes });
     },
     onResizeEnd(event) {
       if (this.isStateful()) {
-        this.saveState()
+        this.saveState();
       }
 
-      this.$emit('resizeend', { originalEvent: event, sizes: this.panelSizes })
-      this.$refs.gutter.forEach(gutter => gutter.setAttribute('data-p-gutter-resizing', false))
-      this.$el.setAttribute('data-p-resizing', false)
-      this.clear()
+      this.$emit('resizeend', { originalEvent: event, sizes: this.panelSizes });
+      this.$refs.gutter.forEach((gutter) => gutter.setAttribute('data-p-gutter-resizing', false));
+      this.$el.setAttribute('data-p-resizing', false);
+      this.clear();
     },
     repeat(event, index, step) {
-      this.onResizeStart(event, index, true)
-      this.onResize(event, step, true)
+      this.onResizeStart(event, index, true);
+      this.onResize(event, step, true);
     },
     setTimer(event, index, step) {
       if (!this.timer) {
         this.timer = setInterval(() => {
-          this.repeat(event, index, step)
-        }, 40)
+          this.repeat(event, index, step);
+        }, 40);
       }
     },
     clearTimer() {
       if (this.timer) {
-        clearInterval(this.timer)
-        this.timer = null
+        clearInterval(this.timer);
+        this.timer = null;
       }
     },
     onGutterKeyUp() {
-      this.clearTimer()
-      this.onResizeEnd()
+      this.clearTimer();
+      this.onResizeEnd();
     },
     onGutterKeyDown(event, index) {
       switch (event.code) {
         case 'ArrowLeft': {
           if (this.layout === 'horizontal') {
-            this.setTimer(event, index, this.step * -1)
+            this.setTimer(event, index, this.step * -1);
           }
 
-          event.preventDefault()
-          break
+          event.preventDefault();
+          break;
         }
 
         case 'ArrowRight': {
           if (this.layout === 'horizontal') {
-            this.setTimer(event, index, this.step)
+            this.setTimer(event, index, this.step);
           }
 
-          event.preventDefault()
-          break
+          event.preventDefault();
+          break;
         }
 
         case 'ArrowDown': {
           if (this.layout === 'vertical') {
-            this.setTimer(event, index, this.step * -1)
+            this.setTimer(event, index, this.step * -1);
           }
 
-          event.preventDefault()
-          break
+          event.preventDefault();
+          break;
         }
 
         case 'ArrowUp': {
           if (this.layout === 'vertical') {
-            this.setTimer(event, index, this.step)
+            this.setTimer(event, index, this.step);
           }
 
-          event.preventDefault()
-          break
+          event.preventDefault();
+          break;
         }
 
         default:
           // no op
-          break
+          break;
       }
     },
     onGutterMouseDown(event, index) {
-      this.onResizeStart(event, index)
-      this.bindMouseListeners()
+      this.onResizeStart(event, index);
+      this.bindMouseListeners();
     },
     onGutterTouchStart(event, index) {
-      this.onResizeStart(event, index)
-      this.bindTouchListeners()
-      event.preventDefault()
+      this.onResizeStart(event, index);
+      this.bindTouchListeners();
+      event.preventDefault();
     },
     onGutterTouchMove(event) {
-      this.onResize(event)
-      event.preventDefault()
+      this.onResize(event);
+      event.preventDefault();
     },
     onGutterTouchEnd(event) {
-      this.onResizeEnd(event)
-      this.unbindTouchListeners()
-      event.preventDefault()
+      this.onResizeEnd(event);
+      this.unbindTouchListeners();
+      event.preventDefault();
     },
     bindMouseListeners() {
       if (!this.mouseMoveListener) {
-        this.mouseMoveListener = event => this.onResize(event)
-        document.addEventListener('mousemove', this.mouseMoveListener)
+        this.mouseMoveListener = (event) => this.onResize(event);
+        document.addEventListener('mousemove', this.mouseMoveListener);
       }
 
       if (!this.mouseUpListener) {
         this.mouseUpListener = (event) => {
-          this.onResizeEnd(event)
-          this.unbindMouseListeners()
-        }
+          this.onResizeEnd(event);
+          this.unbindMouseListeners();
+        };
 
-        document.addEventListener('mouseup', this.mouseUpListener)
+        document.addEventListener('mouseup', this.mouseUpListener);
       }
     },
     bindTouchListeners() {
       if (!this.touchMoveListener) {
-        this.touchMoveListener = event => this.onResize(event.changedTouches[0])
-        document.addEventListener('touchmove', this.touchMoveListener)
+        this.touchMoveListener = (event) => this.onResize(event.changedTouches[0]);
+        document.addEventListener('touchmove', this.touchMoveListener);
       }
 
       if (!this.touchEndListener) {
         this.touchEndListener = (event) => {
-          this.resizeEnd(event)
-          this.unbindTouchListeners()
-        }
+          this.resizeEnd(event);
+          this.unbindTouchListeners();
+        };
 
-        document.addEventListener('touchend', this.touchEndListener)
+        document.addEventListener('touchend', this.touchEndListener);
       }
     },
     validateResize(newPrevPanelSize, newNextPanelSize) {
-      if (newPrevPanelSize > 100 || newPrevPanelSize < 0)
-        return false
-      if (newNextPanelSize > 100 || newNextPanelSize < 0)
-        return false
+      if (newPrevPanelSize > 100 || newPrevPanelSize < 0) return false;
+      if (newNextPanelSize > 100 || newNextPanelSize < 0) return false;
 
-      const prevPanelMinSize = getVNodeProp(this.panels[this.prevPanelIndex], 'minSize')
+      const prevPanelMinSize = getVNodeProp(this.panels[this.prevPanelIndex], 'minSize');
 
       if (this.panels[this.prevPanelIndex].props && prevPanelMinSize && prevPanelMinSize > newPrevPanelSize) {
-        return false
+        return false;
       }
 
-      const newPanelMinSize = getVNodeProp(this.panels[this.prevPanelIndex + 1], 'minSize')
+      const newPanelMinSize = getVNodeProp(this.panels[this.prevPanelIndex + 1], 'minSize');
 
       if (this.panels[this.prevPanelIndex + 1].props && newPanelMinSize && newPanelMinSize > newNextPanelSize) {
-        return false
+        return false;
       }
 
-      return true
+      return true;
     },
     unbindMouseListeners() {
       if (this.mouseMoveListener) {
-        document.removeEventListener('mousemove', this.mouseMoveListener)
-        this.mouseMoveListener = null
+        document.removeEventListener('mousemove', this.mouseMoveListener);
+        this.mouseMoveListener = null;
       }
 
       if (this.mouseUpListener) {
-        document.removeEventListener('mouseup', this.mouseUpListener)
-        this.mouseUpListener = null
+        document.removeEventListener('mouseup', this.mouseUpListener);
+        this.mouseUpListener = null;
       }
     },
     unbindTouchListeners() {
       if (this.touchMoveListener) {
-        document.removeEventListener('touchmove', this.touchMoveListener)
-        this.touchMoveListener = null
+        document.removeEventListener('touchmove', this.touchMoveListener);
+        this.touchMoveListener = null;
       }
 
       if (this.touchEndListener) {
-        document.removeEventListener('touchend', this.touchEndListener)
-        this.touchEndListener = null
+        document.removeEventListener('touchend', this.touchEndListener);
+        this.touchEndListener = null;
       }
     },
     clear() {
-      this.dragging = false
-      this.size = null
-      this.startPos = null
-      this.prevPanelElement = null
-      this.nextPanelElement = null
-      this.prevPanelSize = null
-      this.nextPanelSize = null
-      this.gutterElement = null
-      this.prevPanelIndex = null
+      this.dragging = false;
+      this.computedSize = null;
+      this.startPos = null;
+      this.prevPanelElement = null;
+      this.nextPanelElement = null;
+      this.prevPanelSize = null;
+      this.nextPanelSize = null;
+      this.gutterElement = null;
+      this.prevPanelIndex = null;
     },
     isStateful() {
-      return this.stateKey != null
+      return this.stateKey != null;
     },
     getStorage() {
       switch (this.stateStorage) {
         case 'local':
-          return window.localStorage
+          return window.localStorage;
 
         case 'session':
-          return window.sessionStorage
+          return window.sessionStorage;
 
         default:
-          throw new Error(`${this.stateStorage} is not a valid value for the state storage, supported values are "local" and "session".`)
+          throw new Error(`${this.stateStorage} is not a valid value for the state storage, supported values are "local" and "session".`);
       }
     },
     saveState() {
       if (isArray(this.panelSizes)) {
-        this.getStorage().setItem(this.stateKey, JSON.stringify(this.panelSizes))
+        this.getStorage().setItem(this.stateKey, JSON.stringify(this.panelSizes));
       }
     },
     restoreState() {
-      const storage = this.getStorage()
-      const stateString = storage.getItem(this.stateKey)
+      const storage = this.getStorage();
+      const stateString = storage.getItem(this.stateKey);
 
       if (stateString) {
-        this.panelSizes = JSON.parse(stateString)
-        const children = [...this.$el.children].filter(child => child.getAttribute('data-pc-name') === 'splitterpanel')
+        this.panelSizes = JSON.parse(stateString);
+        const children = [...this.$el.children].filter((child) => child.getAttribute('data-pc-name') === 'splitterpanel');
 
         children.forEach((child, i) => {
-          child.style.flexBasis = `calc(${this.panelSizes[i]}% - ${(this.panels.length - 1) * this.gutterSize}px)`
-        })
+          child.style.flexBasis = `calc(${this.panelSizes[i]}% - ${(this.panels.length - 1) * this.gutterSize}px)`;
+        });
 
-        return true
+        return true;
       }
 
-      return false
+      return false;
     },
   },
-}
+};
 </script>
 
 <template>
@@ -392,7 +386,16 @@ export default {
         @touchmove="onGutterTouchMove($event, i)"
         @touchend="onGutterTouchEnd($event, i)"
       >
-        <div :class="cx('gutterHandle')" tabindex="0" :style="[gutterStyle]" :aria-orientation="layout" :aria-valuenow="prevSize" v-bind="ptm('gutterHandle')" @keyup="onGutterKeyUp" @keydown="onGutterKeyDown($event, i)" />
+        <div
+          :class="cx('gutterHandle')"
+          tabindex="0"
+          :style="[gutterStyle]"
+          :aria-orientation="layout"
+          :aria-valuenow="prevSize"
+          v-bind="ptm('gutterHandle')"
+          @keyup="onGutterKeyUp"
+          @keydown="onGutterKeyDown($event, i)"
+        />
       </div>
     </template>
   </div>

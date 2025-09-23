@@ -136,11 +136,11 @@ Print Current Page: طباعة الصفحة الحالية
 Print All Pages: طباعة كل الصفحات
 Dark: وضع ليلي
 Light: وضع نهاري
-"This action is unauthorized.": "هذا الاجراء غير مصرح به."
-"Unauthenticated.": "لم تقم بتسجيل الدخول."
-"?": "؟"
-",": "،"
-Apply: "تطبيق"
+'This action is unauthorized.': 'هذا الاجراء غير مصرح به.'
+'Unauthenticated.': 'لم تقم بتسجيل الدخول.'
+'?': '؟'
+',': '،'
+Apply: 'تطبيق'
 In: في
 or: أو
 not between: ليس بين
@@ -172,3 +172,6 @@ Are you sure you want to delete this file?: هل أنت متأكد من حذف �
 Delete Confirmation: تأكيد الحذف
 HDD Scanner is not running or installed. Try to download the following link, install it, run it and try again: برنامج HDD  للماسح الضوئي غير مشغل او مثبت. يرجى تنزيله من الرابط التالي، تثبيته، تشغليه ومن ثم المحاولة لاحقاً
 Download Now: التحميل الآن
+Edit History: سجل التعديل
+No Editing History: لا يوجد سجل تعديل
+By: بواسطة

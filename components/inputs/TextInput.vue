@@ -1,93 +1,90 @@
 <script setup lang="ts">
-import uniqueId from 'lodash/uniqueId';
-import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 import BaseInput from './BaseInput.vue';
 import type { TextInputProps } from './types';
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 
 const props = withDefaults(defineProps<TextInputProps>(), {
-    type: 'text',
+  type: 'text',
 });
 
 const emits = defineEmits<{
-    blur: [e: FocusEvent];
-    focus: [e: FocusEvent];
-    keydown: [e: KeyboardEvent];
+  blur: [e: FocusEvent];
+  focus: [e: FocusEvent];
+  keydown: [e: KeyboardEvent];
 }>();
 const value = defineModel<any>('modelValue', { required: true });
 const localValue = ref(null);
 
 if (props.lazy) {
-    watch(
-        value,
-        (_value) => {
-            localValue.value = _value;
-        },
-        {
-            immediate: true,
-        },
-    );
+  watch(
+    value,
+    (_value) => {
+      localValue.value = _value;
+    },
+    {
+      immediate: true,
+    },
+  );
 }
-
 
 const inputRef = ref();
 
 function focus() {
-    inputRef.value.$el.focus();
+  inputRef.value.$el.focus();
 }
 
 const inputTextPt = computed(() => {
-    return {
-        root: {
-            readonly: props.readonly,
-            type: props.type,
-            name: props.name,
-        },
-    };
+  return {
+    root: {
+      readonly: props.readonly,
+      type: props.type,
+      name: props.name,
+    },
+  };
 });
 
 function onInputChange() {
-    if (props.lazy) {
-        value.value = localValue.value;
-    }
+  if (props.lazy) {
+    value.value = localValue.value;
+  }
 }
 
-const {exposed,baseInputForwardedProps,fieldUniqueId,generalInputProps} = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-    <BaseInput ref="baseInputRef" v-bind="baseInputForwardedProps" @label-clicked="focus">
-        <template #labelText>
-            <slot name="label-text" />
-        </template>
-        <template v-if="$slots.addon" #addon>
-            <slot name="addon" />
-        </template>
-        <template v-if="$slots.helper || helperText" #helper>
-            <slot name="helper">
-                <div v-html="helperText" />
-            </slot>
-        </template>
-        <InputText
-            :id="fieldUniqueId"
-            ref="inputRef"
-            v-bind="generalInputProps"
-            v-keyfilter="filterPattern"
-            :model-value="lazy ? localValue : value"
-            :placeholder="placeholder"
-            :class="[inputClass]"
-            :aria-describedby="`${error ? `${fieldUniqueId}-error` : ''} ${$slots.helper || helperText ? `${fieldUniqueId}-desc` : ''}`"
-            :pt="inputTextPt"
-            :autocomplete="autocomplete"
-            @update:model-value="lazy ? (localValue = $event) : (value = $event)"
-            @blur="emits('blur', $event)"
-            @focus="emits('focus', $event)"
-            @change="onInputChange"
-            @keydown="emits('keydown', $event)"
-        />
-    </BaseInput>
+  <BaseInput ref="baseInputRef" v-bind="baseInputForwardedProps" @label-clicked="focus">
+    <template #labelText>
+      <slot name="label-text" />
+    </template>
+    <template v-if="$slots.addon" #addon>
+      <slot name="addon" />
+    </template>
+    <template v-if="$slots.helper || helperText" #helper>
+      <slot name="helper">
+        <div v-html="helperText" />
+      </slot>
+    </template>
+    <InputText
+      :id="fieldUniqueId"
+      ref="inputRef"
+      v-bind="generalInputProps"
+      v-keyfilter="filterPattern"
+      :model-value="lazy ? localValue : value"
+      :placeholder="placeholder"
+      :class="[inputClass]"
+      :aria-describedby="`${error ? `${fieldUniqueId}-error` : ''} ${$slots.helper || helperText ? `${fieldUniqueId}-desc` : ''}`"
+      :pt="inputTextPt"
+      :autocomplete="autocomplete"
+      @update:model-value="lazy ? (localValue = $event) : (value = $event)"
+      @blur="emits('blur', $event)"
+      @focus="emits('focus', $event)"
+      @change="onInputChange"
+      @keydown="emits('keydown', $event)"
+    />
+  </BaseInput>
 </template>
 
 <style scoped></style>

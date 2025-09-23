@@ -35,17 +35,17 @@ bun add -D unocss unplugin-vue-components unplugin-vue-router unplugin-auto-impo
 ```
 
 ```bash
-bun add axios lodash-es primevue @primeuix/themes vue-i18n vue-router pinia moment lodash-es nprogress @vueuse/components @vueuse/core jsonpath sortablejs @vueuse/integrations downloadjs 
+bun add axios lodash-es primevue @primeuix/themes vue-i18n vue-router pinia moment lodash-es nprogress @vueuse/components @vueuse/core jsonpath sortablejs @vueuse/integrations downloadjs
 ```
 
 Add this to vite.config.ts
 
 ```ts
 ({
-    resolve: {
-        alias: {
-            'HddUiHelpers/': `${path.resolve(__dirname, 'resources/js/HddUiHelpers')}/`,
-        },
+  resolve: {
+    alias: {
+      'HddUiHelpers/': `${path.resolve(__dirname, 'resources/js/HddUiHelpers')}/`,
     },
-})
+  },
+});
 ```
