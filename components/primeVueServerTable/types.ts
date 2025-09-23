@@ -1,142 +1,130 @@
-import type { ColumnProps } from 'primevue/column'
-import type { DataTableSortMeta } from 'primevue/datatable'
-import type { FormField } from '../FormWrapper/types'
+import type { ColumnProps } from 'primevue/column';
+import type { DataTableSortMeta } from 'primevue/datatable';
+import type { FormField } from '../FormWrapper/types';
 
- type ColumnFetchType =
-  'main'
-  | 'main_count'
-  | 'relation'
-  | 'relation_count'
-  | 'custom'
-  | 'json'
-  | 'json_array'
-  | 'relation_many'
+type ColumnFetchType = 'main' | 'main_count' | 'relation' | 'relation_count' | 'custom' | 'json' | 'json_array' | 'relation_many';
 
 // Types
 export interface ColumnType<R extends RecordItem = RecordItem> {
-  name: string
-  type?: 'date' | 'numeric' | 'text' | 'hidden' | 'select' | 'boolean'
-  isMultiSelect?: boolean
-  selectOptions?: { name: string, id: string }[] | {
-    list: { name: string, id: string }[]
-    object: { [k in string]: string }
-  }
-  selectOptionsKeyed?: { [k in string]: string }
-  emptyValuePlaceholder?: string
-  selectValueProperty?: string
-  selectLabelProperty?: string
-  bodyClass?: string
-  bodyClassFunction?: (value: any) => string | string[]
-  formatter?: string | ((data: any, row: R) => string)
-  source?: ColumnFetchType
-  header?: string
-  printHeader?: string
-  filterCheckboxLabel?: string
-  selectFilterHeader?: string
-  sortable?: boolean
-  global?: boolean
-  visible?: boolean
-  visibilityControl?: boolean
-  disabled?: boolean
-  printable?: boolean
-  html?: boolean
-  filterField?: string
-  sortField?: string
-  multipleFilters?: boolean
-  filterable?: boolean
-  showFilterMatchModes?: boolean
-  showFilterAddButton?: boolean
-  showFilterApplyButton?: boolean
-  showFilterClearButton?: boolean
-  filterMatchMode?: FilterMatchModeType
-  style?: string | object
-  props?: ColumnProps
-  widthPoint?: number
+  name: string;
+  type?: 'date' | 'numeric' | 'text' | 'hidden' | 'select' | 'boolean';
+  isMultiSelect?: boolean;
+  selectOptions?:
+    | { name: string; id: string }[]
+    | {
+        list: { name: string; id: string }[];
+        object: { [k in string]: string };
+      };
+  selectOptionsKeyed?: { [k in string]: string };
+  emptyValuePlaceholder?: string;
+  selectValueProperty?: string;
+  selectLabelProperty?: string;
+  bodyClass?: string;
+  bodyClassFunction?: (value: any) => string | string[];
+  formatter?: string | ((data: any, row: R) => string);
+  source?: ColumnFetchType;
+  header?: string;
+  printHeader?: string;
+  filterCheckboxLabel?: string;
+  selectFilterHeader?: string;
+  sortable?: boolean;
+  global?: boolean;
+  visible?: boolean;
+  visibilityControl?: boolean;
+  disabled?: boolean;
+  printable?: boolean;
+  html?: boolean;
+  filterField?: string;
+  sortField?: string;
+  multipleFilters?: boolean;
+  filterable?: boolean;
+  showFilterMatchModes?: boolean;
+  showFilterAddButton?: boolean;
+  showFilterApplyButton?: boolean;
+  showFilterClearButton?: boolean;
+  filterMatchMode?: FilterMatchModeType;
+  style?: string | object;
+  props?: ColumnProps;
+  widthPoint?: number;
 }
 
-export type FilterMatchModeType =
-  'startsWith'
-  | 'contains'
-  | 'dateIs'
-  | 'dateIsNot'
-  | 'dateBefore'
-  | 'dateAfter'
-  | 'containsAny'
-  | 'containsAll'
+export type FilterMatchModeType = 'startsWith' | 'contains' | 'dateIs' | 'dateIsNot' | 'dateBefore' | 'dateAfter' | 'containsAny' | 'containsAll';
 
 export interface RecordItem {
-  id: number | string
+  id: number | string;
 }
 
 export interface FilterType {
-  value: string | null
-  matchMode: FilterMatchModeType
+  value: string | null;
+  matchMode: FilterMatchModeType;
 }
 
 export interface MultipleFilterType {
-  operator: 'and' | 'or'
-  constraints: FilterType[]
+  operator: 'and' | 'or';
+  constraints: FilterType[];
 }
 
 export type PrimeVueServerTableFormField = FormField & {
-  editable?: boolean
-  multiEditable?: boolean
-  onlyEdit?: boolean
-  default?: boolean | string | number | (() => unknown)
-  getter?: string | ((value: any) => unknown)
-}
+  editable?: boolean;
+  multiEditable?: boolean;
+  onlyEdit?: boolean;
+  default?: boolean | string | number | (() => unknown);
+  getter?: string | ((value: any) => unknown);
+};
 
 export interface RequestDataPayloadType {
-  first: number
-  perPage: number
-  sorts?: DataTableSortMeta[]
-  filters: FiltersList
-  fixedFilters: Partial<FiltersList>
-  groupedFilters?: GroupedFilterConstraints
-  fields: FieldsOptionsList[]
-  globalFilters?: string[]
-  includes?: string[]
+  first: number;
+  perPage: number;
+  sorts?: DataTableSortMeta[];
+  filters: FiltersList;
+  fixedFilters: Partial<FiltersList>;
+  groupedFilters?: GroupedFilterConstraints;
+  fields: FieldsOptionsList[];
+  globalFilters?: string[];
+  includes?: string[];
 }
 
 export interface GroupedFilterConstraints<T extends boolean = false> {
-  isGroup?: T
-  operator?: 'and' | 'or'
-  constraints?: T extends true ? GroupedFilterConstraints[] : never
-  column: T extends false ? string : never
-  value: T extends false ? any : never
-  matchMode: T extends false ? FilterMatchModeType : never
+  isGroup?: T;
+  operator?: 'and' | 'or';
+  constraints?: T extends true ? GroupedFilterConstraints[] : never;
+  column: T extends false ? string : never;
+  value: T extends false ? any : never;
+  matchMode: T extends false ? FilterMatchModeType : never;
 }
 
 export interface FiltersList {
-  global: FilterType
+  global: FilterType;
 
-  [name: string]: FilterType | MultipleFilterType
+  [name: string]: FilterType | MultipleFilterType;
 }
 
 export type FieldsOptionsList = {
-  name: string
-  source: ColumnFetchType
-  sortSource?: ColumnFetchType
-  filterSource?: ColumnFetchType
-}[]
+  name: string;
+  source: ColumnFetchType;
+  sortSource?: ColumnFetchType;
+  filterSource?: ColumnFetchType;
+}[];
 
 export interface GetRecordsResponseType {
-  success: boolean
+  success: boolean;
   data: {
-    data: any[]
-    total: number
-    total_without_filters: number
-  }
-
+    data: any[];
+    total: number;
+    total_without_filters: number;
+  };
 }
 
 export interface RecordsServiceType {
-  getRecords: (payload: RequestDataPayloadType, options?: {
-    url?: string
-    routeName?: string
-  }) => Promise<GetRecordsResponseType>
-  deleteRecord: (id: number | string, options?: { url?: string, routeName?: string }) => Promise<null>
-  deleteRecordsMulti: (ids: (number | string)[], options?: { url?: string, routeName?: string }) => Promise<null>
+  getRecords: (
+    payload: RequestDataPayloadType,
+    options?: {
+      url?: string;
+      routeName?: string;
+    },
+  ) => Promise<GetRecordsResponseType>;
+  deleteRecord: (id: number | string, options?: { url?: string; routeName?: string }) => Promise<null>;
+  deleteRecordsMulti: (ids: (number | string)[], options?: { url?: string; routeName?: string }) => Promise<null>;
 }
 
 export const FilterMatchMode = {
@@ -146,4 +134,4 @@ export const FilterMatchMode = {
   CONTAINS: 'contains',
   DATE_IS: 'dateIs',
   EQUALS: 'equals',
-}
+};
