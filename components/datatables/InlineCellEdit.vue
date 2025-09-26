@@ -45,19 +45,25 @@ const onTextAreaKeyDown: (e: KeyboardEvent) => void = function (e) {
     e.stopPropagation();
   }
 };
+
+const computedBinds = computed(()=>{
+  return {
+    ...column.inlineEditableBinds ?? {}
+  }
+})
 </script>
 
 <template>
   <template v-if="computedType === 'text'">
-    <TextInput v-model="computedModal" class="text-red-200" :size="size" :disabled="isLoading" @keydown.enter="startLoading" />
+    <TextInput v-model="computedModal" class="text-red-200" :size="size" :disabled="isLoading" v-bind="computedBinds" @keydown.enter="startLoading"/>
   </template>
   <template v-if="computedType === 'textarea'">
-    <TextAreaInput v-model="computedModal" class="text-red-200" :size="size" :disabled="isLoading" @keydown="onTextAreaKeyDown" />
+    <TextAreaInput v-model="computedModal" class="text-red-200" :size="size" :disabled="isLoading" v-bind="computedBinds" @keydown="onTextAreaKeyDown"/>
   </template>
   <template v-if="computedType === 'boolean'">
     <div class="flex items-center gap-2">
       <!--            <span>{{computedLabel }}</span>-->
-      <CheckboxInput v-model="computedModal" :size="size" :disabled="isLoading" @change="submit" />
+      <CheckboxInput v-model="computedModal" :size="size" :disabled="isLoading" v-bind="computedBinds" @change="submit"/>
     </div>
   </template>
 </template>

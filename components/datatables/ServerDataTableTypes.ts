@@ -187,6 +187,7 @@ export interface ServerDataTableColumn<TType extends ServerDataTableColumnType =
   sortable?: boolean;
   disabled?: boolean;
   cellHeadFilterable?: boolean;
+  inlineEditableBinds?: {[k: string]: any};
   inlineEditable?: boolean;
   auditHistory?: boolean;
   filterable?: boolean;

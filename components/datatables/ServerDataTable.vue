@@ -102,7 +102,7 @@ const {
   filterDisplayLayout,
   removableSort = true,
   initialTotalRecords = 0,
-  sortMode = 'multiple',
+  sortMode,
   initialRecords = null,
   columns,
   fields = [],
@@ -208,6 +208,7 @@ const computedNoMultiSortBadges = computed(() => noMultiSortBadges ?? globalConf
 const computedColumnVisibilityButton = computed(() => columnVisibilityButton ?? globalConfig.value.columnVisibilityButton);
 const computedWithToolbarFilters = computed(() => withToolbarFilters ?? globalConfig.value.withToolbarFilters);
 const computedFilterDisplayLayout = computed(() => filterDisplayLayout ?? globalConfig.value.filterDisplayLayout ?? 'menu');
+const computedSortMode = computed(() => sortMode ?? globalConfig.value.sortMode ?? 'multiple');
 
 onActivated(() => {
   if (refreshOnActivated) {
@@ -1392,6 +1393,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
               {{ printingTitle ?? title }}
             </div>
           </slot>
+          <slot name="subTitle"></slot>
         </slot>
       </template>
       <template #printPageFooter="slotProps">
@@ -1411,6 +1413,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
           {{ title }}
         </div>
       </slot>
+      <slot name="subTitle"></slot>
       <div class="flex justify-between">
         <div>
           <div class="flex justify-between">
