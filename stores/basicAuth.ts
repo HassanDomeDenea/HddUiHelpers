@@ -10,7 +10,7 @@ import { safeRequest } from 'HddUiHelpers/utils/safeTry';
 import { each } from 'lodash-es';
 import cloneDeep from 'lodash/cloneDeep';
 import { defineStore } from 'pinia';
-
+const reverbHostName = import.meta.env.VITE_REVERB_HOST;
 export const useBasicAuthStore = defineStore('basicAuth', () => {
   const user = ref<BasicUserData | null>(null);
   const hddUiHelpers = useHddUiHelpers();
@@ -41,7 +41,7 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
   function login(_user: BasicUserData, _token: string) {
     user.value = _user;
     resetOptions(_user.options);
-    globalOptions.value = _user.global_options;
+    globalOptions.value = _user.global_options ?? ({} as GlobalOptionData);
     authorizationToken.value = _token;
   }
 
@@ -129,6 +129,7 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
       (val) => {
         if (val) {
           configureEcho({
+            // wsHost: reverbHostName,
             broadcaster: 'reverb',
             auth: {
               headers: {
@@ -161,6 +162,8 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
           if (echoIsConfigured()) {
             configureEcho({
               broadcaster: 'reverb',
+              // wsHost: reverbHostName,
+
               auth: {
                 headers: {
                   Authorization: null,

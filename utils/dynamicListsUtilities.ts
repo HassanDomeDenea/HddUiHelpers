@@ -72,9 +72,9 @@ export function createListStore<TItem = any>(
         write: (v: any) => JSON.stringify(v),
       },
     });
-    console.log(listNameFromUrl);
-    console.log('dynamic_lists_' + listNameFromUrl);
-    console.log(localItems.value);
+    //console.log(listNameFromUrl);
+    //console.log('dynamic_lists_' + listNameFromUrl);
+    //console.log(localItems.value);
   }
   if (!localItems) {
     localItems = ref<null | TItem[]>(null);
@@ -236,7 +236,7 @@ export function createListStore<TItem = any>(
       'App.Models',
       [`.${options.modelName}Created`, `.${options.modelName}Updated`, `.${options.modelName}Deleted`, `.${options.modelName}Restored`],
       (_event: unknown) => {
-        console.log(_event);
+        //console.log(_event);
         debouncedRefresh();
       },
     );

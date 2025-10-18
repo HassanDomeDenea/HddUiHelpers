@@ -56,7 +56,7 @@ const localIsGlobal = computed(() => isGlobal !== false);
 const currentValue = computed<any>({
   get() {
     return localIsGlobal.value === true
-      ? authStore.globalOptions[option as keyof GlobalOptionData]
+      ? authStore.globalOptions?.[option as keyof GlobalOptionData]
       : authStore.options[option as keyof UserOptionsData];
   },
   set(value) {
@@ -84,7 +84,8 @@ const currentValue = computed<any>({
           });
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error(error);
         if (selectInputRef.value) {
           selectInputRef.value.d_value = toValue(currentValue);
         }
