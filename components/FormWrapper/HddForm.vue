@@ -71,13 +71,14 @@ const hddFormOptions = reactive({
   onSubmit: (values, context) => {
     emits('submit', values, context);
     if (url) {
-      submitToUrl()
-        .then((result) => {
+      return submitToUrl()
+        .then((result: unknown) => {
           if (onSuccess) {
             onSuccess(result);
           }
+          return result;
         })
-        .catch((error) => {
+        .catch((error: Error) => {
           console.error(error);
           if (onFailure) {
             onFailure(error);
@@ -87,7 +88,7 @@ const hddFormOptions = reactive({
   },
 } as UseHddFormOptions<T>);
 
-const containerRef = templateRef('containerRef');
+const containerRef = useTemplateRef('containerRef');
 const form = useHddForm<T>(hddFormOptions as UseHddFormOptions<T>);
 
 const isSubmitting = ref(false);
@@ -100,10 +101,10 @@ async function submitToUrl(): Promise<any> {
 
     let payload = form.currentValues.value;
     if (submitPayloadTransformer) {
-      payload = submitPayloadTransformer(cloneDeep(payload), form);
+      payload = submitPayloadTransformer(cloneDeep(payload), form as any);
     }
     try {
-      let res;
+      let res: any;
       if (typeof url === 'object') {
         res = await apiClient.request(url, payload, false);
       } else {
@@ -139,7 +140,7 @@ async function submitToUrl(): Promise<any> {
         }
       }
       isSubmitting.value = false;
-      return reject(error);
+      return reject(error as Error);
     }
   });
 }
@@ -318,11 +319,13 @@ function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown)
     <div>
       <div v-if="summarizeErrorsAtTop && formState.invalid">
         <Message :size="size" severity="error" class="mb-2 mt-1 text-right" icon="i-heroicons-exclamation-triangle-20-solid !size-8 !text-4xl">
-          <template v-for="error in formState.errors" :key="error">
-            <li>
-              {{ error.message }}
-            </li>
-          </template>
+          <ul class="list-disc ps-4">
+            <template v-for="error in formState.errors" :key="error">
+              <li>
+                {{ error.message }}
+              </li>
+            </template>
+          </ul>
         </Message>
       </div>
       <div :class="fieldsContainerClass">
@@ -486,9 +489,17 @@ function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown)
                         <InfiniteMultiSelectInput
                           :model-value="get(currentValues, field.name)"
                           :filter-placeholder="t('Search For') + ': ' + t(field.label)"
-                          :url="field.url"
+                          :url="typeof field.url === 'function' ? field.url({ row: currentValues }) : toValue(field.url)"
                           v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
                           @update:model-value="set(currentValues, fieldNamePaths[field.name], $event)"
+                        />
+                      </template>
+                      <template v-else-if="field.type === 'editor'">
+                        <TipTapEditorInput
+                          :model-value="get(currentValues, field.name)"
+                          v-bind="{ ...omit(generalInputsProps, ['onKeydown']), ...generalInputBindsByField(field) }"
+                          @update:model-value="set(currentValues, fieldNamePaths[field.name], $event)"
+                          @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
                         />
                       </template>
                     </slot>

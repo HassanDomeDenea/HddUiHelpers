@@ -47,6 +47,8 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   columnVisibilityButton?: boolean | undefined;
   withLoadingMask?: boolean;
   printable?: boolean;
+  printTableAsInView?: boolean;
+  customPrintMethod?: () => void;
   firstPageHeaderImageUrl?: string;
   headerImageUrl?: string;
   footerImageUrl?: string;
@@ -104,6 +106,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   singleEditUrl?: UrlWithParameterFunction;
   editUrl?: string | UrlObject;
   url?: string | UrlObject;
+  createUrl?: string | UrlObject;
   reorderable?: boolean;
   orderableColumnName?: keyof T;
   withExpansion?: boolean;
@@ -159,6 +162,11 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
 
   /**Used to generate a href for open button or contextmenu */
   openButtonUrl?: (record: T) => string;
+
+  rowGroupMode?: string | 'subheader' | 'rowspan';
+  groupRowsBy?: string;
+  rowGroupHeaderFormatter?: true | ((value: any, row: T) => string);
+  rowGroupHeaderClass?: any;
 }
 
 export type ServerDataTableColumnRenderType = 'chip' | 'chips' | 'yesNoIconBadge' | 'tag';
@@ -182,12 +190,12 @@ export interface ServerDataTableColumn<TType extends ServerDataTableColumnType =
   isMultiSelect?: boolean;
   label?: string;
   printLabel?: string;
-  formatter?: string | ((value: any, row: TRow, attributeName: string) => string);
+  formatter?: string | ((value: unknown, row: TRow, attributeName: string) => string | string[]);
   showable?: MaybeRef<boolean | string> | ((event: { row: TRow }) => boolean | string);
   sortable?: boolean;
   disabled?: boolean;
   cellHeadFilterable?: boolean;
-  inlineEditableBinds?: {[k: string]: any};
+  inlineEditableBinds?: { [k: string]: any };
   inlineEditable?: boolean;
   auditHistory?: boolean;
   filterable?: boolean;
@@ -221,8 +229,8 @@ export interface ServerDataTableColumn<TType extends ServerDataTableColumnType =
     | string[]
     | {
         string: boolean;
-      }
-    | ((row: TRow, column: ServerDataTableColumn<TType>) => string | string[] | { string: boolean });
+      };
+  bodyClassFunction?: (data: unknown, row: TRow, column: ServerDataTableColumn<TType>) => string | string[] | { string: boolean };
   bodyStyle?: any;
   headerClass?: any;
   headerStyle?: any;
@@ -279,7 +287,7 @@ export interface ServerDataTablePaginationResponse {
 
 export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> {
   url?: UrlObject | UrlWithParameterFunction | string;
-  createUrlMethod?: 'post' | 'put';
+  createUrlMethod?: 'post' | 'put' | 'delete' | 'get';
   singleEditUrl?: UrlWithParameterFunction;
   focusFieldOnShown?: string;
   editUrl?: string | UrlObject | UrlWithParameterFunction;
@@ -317,6 +325,13 @@ export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> 
   onHidden?: () => void;
   onVisible?: (isVisible: boolean) => void;
   onSubmitted?: (row: TRecord | TRecord[] | (string | number)[], type: 'create' | 'update') => void;
+
+  submitAndOpenProps?: (event: { isEditing: boolean }) => Partial<ButtonProps>;
+  submitAndOpenButton?: boolean;
+  submitAndOpenText?: string | ((event: { isEditing: boolean }) => string);
+  submitAndOpenIcon?: string | ((event: { isEditing: boolean }) => string);
+  submitAndOpenSeverity?: ButtonProps['severity'];
+  dismissableMask?: boolean;
 }
 
 export type DynamicDialogRefInjectionType = ComputedRef<{
@@ -344,6 +359,7 @@ export interface PrintPaperForServerDataTableProps<TRecord extends RecordItem = 
   footerImageUrl?: MaybeRefOrGetter<string | null>;
   hasSequenceColumn?: boolean;
   showPageCounter?: boolean;
+  hasSorts?: boolean;
   showCurrentPrintTime?: boolean;
   primaryKey?: keyof TRecord;
   printDirection?: 'ltr' | 'rtl';

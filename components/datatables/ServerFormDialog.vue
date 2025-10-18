@@ -20,11 +20,17 @@ const {
   deleteUrl,
   singleEditUrl,
   fieldsContainerClass,
+  dismissableMask = true,
   keepFormOpenAfterCreate = false,
   dialogClass,
   dialogContentStyle,
   columns,
   size,
+  submitAndOpenProps,
+  submitAndOpenButton,
+  submitAndOpenText,
+  submitAndOpenIcon = 'i-garden:check-double-fill-12',
+  submitAndOpenSeverity = 'info',
   successMessageTitle,
   successMessageText,
   submitSeverity,
@@ -51,6 +57,7 @@ const emits = defineEmits<{
   shown: [];
   visible: [isVisible: boolean];
   submitted: [row: TRecord | TRecord[] | (string | number)[], type: 'create' | 'update' | 'delete'];
+  submitAndOpen: [row: TRecord | TRecord[] | (string | number)[], type: 'create' | 'update' | 'delete'];
 }>();
 
 const { t } = useI18n();
@@ -125,7 +132,7 @@ const hddFormOptions = computed(() => {
     if (singleEditUrl && idToEdit.value) {
       urlLink = singleEditUrl(idToEdit.value).url;
     } else if (editUrl) {
-      if (typeof editUrl === 'function' && idToEdit.value) {
+      if (typeof editUrl === 'function') {
         const _tempUrl = editUrl(idToEdit.value);
         urlLink = _tempUrl.url;
         urlMethod = _tempUrl.method;
@@ -180,6 +187,11 @@ const hddFormOptions = computed(() => {
     inlineFields: inlineFields,
     fields: mappedFormFields.value,
     isEditing: isEditing.value,
+    onFailure(error: unknown) {
+      if (withoutDialog.value) {
+        apiClient.toastRequestError(error);
+      }
+    },
     onSuccess: (data: any) => {
       emits('submitted', data.data, isEditing ? 'update' : 'create');
       if (isEditing.value || !keepFormOpenAfterCreate) {
@@ -455,9 +467,25 @@ function updateDirectly(row: TRecord, ...values: [string, any][]) {
       });
     });
   } catch (e) {
-    console.error(e);
     withoutDialog.value = false;
+    apiClient.toastError(e);
   }
+}
+
+const generalSlotProps = computed(() => {
+  return {
+    row: recordToEdit.value ?? initialValues.value,
+    submit: form.value?.submitForm,
+    cancel: cancel,
+  };
+});
+
+function submitAndOpen() {
+  form.value.submitForm().then((response) => {
+    if (response) {
+      emits('submitAndOpen', response.data ?? response, isEditing ? 'update' : 'create');
+    }
+  });
 }
 
 defineExpose({
@@ -480,7 +508,7 @@ defineExpose({
   <Dialog
     ref="dialogRef"
     v-model:visible="isVisible"
-    dismissable-mask
+    :dismissable-mask="dismissableMask"
     :modal="!withoutDialog"
     keep-in-viewport
     :close-on-escape="isClosable"
@@ -576,24 +604,55 @@ defineExpose({
     </HddForm>
     <template #footer>
       <div class="mt-2 flex w-full justify-between">
-        <Button
-          :size="size"
-          :loading="hddFormRef?.isSubmitting"
-          :label="t('Cancel')"
-          icon="i-material-symbols:close"
-          severity="secondary"
-          outlined
-          @click="cancel"
-        />
-        <Button
-          :size="size"
-          :loading="hddFormRef?.isSubmitting"
-          :disabled="hddFormRef?.isSubmitting"
-          :label="hddFormOptions.submitText || t('Submit')"
-          :icon="hddFormOptions.submitIcon"
-          :severity="hddFormOptions.submitSeverity"
-          @click="form.submitForm()"
-        />
+        <div>
+          <slot name="beforeCancelButton" v-bind="generalSlotProps"></slot>
+          <Button
+            :size="size"
+            :loading="hddFormRef?.isSubmitting"
+            :label="t('Cancel')"
+            icon="i-material-symbols:close"
+            severity="secondary"
+            outlined
+            @click="cancel"
+          />
+          <slot name="afterCancel" v-bind="generalSlotProps"></slot>
+        </div>
+        <div class="flex flex-wrap gap-1">
+          <slot name="beforeSubmitButton" v-bind="generalSlotProps"></slot>
+          <Button
+            :size="size"
+            :loading="hddFormRef?.isSubmitting"
+            :disabled="hddFormRef?.isSubmitting"
+            :label="hddFormOptions.submitText || t('Submit')"
+            :icon="hddFormOptions.submitIcon"
+            :severity="hddFormOptions.submitSeverity"
+            @click="form.submitForm()"
+          />
+          <Button
+            v-if="submitAndOpenButton"
+            :size="size"
+            :loading="hddFormRef?.isSubmitting"
+            :disabled="hddFormRef?.isSubmitting"
+            :label="
+              submitAndOpenText
+                ? typeof submitAndOpenText === 'function'
+                  ? submitAndOpenText({ isEditing: isEditing })
+                  : submitAndOpenText
+                : t('Submit & Open')
+            "
+            :icon="
+              submitAndOpenIcon
+                ? typeof submitAndOpenIcon === 'function'
+                  ? submitAndOpenIcon({ isEditing: isEditing })
+                  : submitAndOpenIcon
+                : undefined
+            "
+            :severity="submitAndOpenSeverity"
+            v-bind="submitAndOpenProps"
+            @click="submitAndOpen"
+          />
+          <slot name="afterSubmitButton" v-bind="generalSlotProps"></slot>
+        </div>
       </div>
     </template>
   </Dialog>

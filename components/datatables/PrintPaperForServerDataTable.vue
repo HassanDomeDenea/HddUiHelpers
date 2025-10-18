@@ -10,6 +10,7 @@ import {
   isToolbarFilterEmpty,
 } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
 import type { RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
 import { printDomWithStyles } from 'HddUiHelpers/utils/printDom.ts';
 import { ref } from 'vue';
 import type { PrintPaperForServerDataTableProps } from './ServerDataTableTypes.ts';
@@ -37,7 +38,7 @@ const extraDataToPrint = ref();
 const renderPrintNode = ref(false);
 const printNodeRef = useTemplateRef<HTMLDivElement>('printNodeRef');
 const isPrinting = defineModel<boolean>('isPrinting', { default: false });
-
+const authStore = useBasicAuthStore();
 async function print(printAllRows: boolean = false, requestConfig: AxiosRequestConfig = {}) {
   isPrinting.value = true;
   try {
@@ -96,8 +97,8 @@ const anyColumnHasFooter = computed(() => {
 <template>
   <div class="hidden">
     <div v-if="renderPrintNode" ref="printNodeRef" class="bg-white text-black">
-      <div v-if="headerImageUrl" hidden class="flex items-center justify-center text-3xl font-bold">
-        <img :src="headerImageUrl" style="width: 100%" />
+      <div v-if="toValue(headerImageUrl)" hidden class="flex items-center justify-center text-3xl font-bold">
+        <img :src="toValue(headerImageUrl)" style="width: 100%" :alt="authStore.user.global_options.city_name" />
       </div>
       <slot name="printPageHeader" :records="recordsToPrint" :extra="extraDataToPrint">
         <div class="my-2 text-center text-xl font-bold">
@@ -136,7 +137,7 @@ const anyColumnHasFooter = computed(() => {
                 <th>
                   <div class="flex items-center gap-1">
                     <span class="flex-grow-1">{{ column.printLabel ?? getColumnTitle(column, t) }}</span>
-                    <span v-if="sortsIntoObject[column.sortField ?? column.fullFieldName]">
+                    <span v-if="hasSorts && sortsIntoObject[column.sortField ?? column.fullFieldName]">
                       <i v-if="sortsIntoObject[column.sortField ?? column.fullFieldName] === 'asc'" class="i-mdi:sort-ascending scale-y-[-1]"></i>
                       <i v-else class="i-mdi:sort-descending scale-y-[-1]"></i>
                     </span>

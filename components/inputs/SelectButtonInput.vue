@@ -59,8 +59,8 @@ defineExpose({ focus, ...exposed });
       <template #option="{ option }">
         <slot name="option" :option="option">
           <div class="flex gap-1" :class="[optionLabelClass]">
-            <i v-if="get(option, optionIconProperty)" :class="get(option, optionIconProperty)"></i>
-            {{ get(option, optionLabelProperty) }}
+            <i v-if="get(option, optionIconProperty)" :class="get(option, optionIconProperty)" class="me-1"></i>
+            <span>{{ get(option, optionLabelProperty) }}</span>
           </div>
         </slot>
       </template>

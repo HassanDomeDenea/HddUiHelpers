@@ -75,6 +75,7 @@ export type FormFieldType =
   | 'image'
   | 'text'
   | 'server_select'
+  | 'server_multi_select'
   | 'textarea'
   | 'password'
   | 'select'
@@ -92,7 +93,8 @@ export type FormFieldType =
   | 'phone'
   | 'listbox'
   | 'divider'
-  | 'separator';
+  | 'separator'
+  | 'editor';
 
 export type ValidationModeType = 'onBlur' | 'onValueUpdate' | 'onMount' | 'onSubmit' | 'none';
 

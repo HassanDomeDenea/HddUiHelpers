@@ -23,20 +23,6 @@ export default function HddUiHelpersPlugin(): PluginOption {
 
   // Base plugins that are always needed
   const basePlugins = [
-    Vue({
-      include: [/\.vue$/, /\.md$/],
-      // Disable template compilation caching in dev mode for faster updates
-      template: {
-        compilerOptions: {
-          // Reduce compilation overhead
-          whitespace: 'condense',
-        },
-        transformAssetUrls: {
-          base: null,
-          includeAbsolute: false,
-        },
-      },
-    }),
     VueRouter({
       routesFolder: [
         {
@@ -50,6 +36,20 @@ export default function HddUiHelpersPlugin(): PluginOption {
       importMode: isDev ? 'async' : 'sync',
       routeBlockLang: 'yaml',
       // Disable dts generation in dev mode for faster updates
+    }),
+    Vue({
+      include: [/\.vue$/, /\.md$/],
+      // Disable template compilation caching in dev mode for faster updates
+      template: {
+        compilerOptions: {
+          // Reduce compilation overhead
+          whitespace: 'condense',
+        },
+        transformAssetUrls: {
+          base: null,
+          includeAbsolute: false,
+        },
+      },
     }),
     HddUiHelpersActualPlugin,
   ];

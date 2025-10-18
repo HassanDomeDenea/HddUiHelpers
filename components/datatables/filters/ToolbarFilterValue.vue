@@ -191,7 +191,7 @@ defineExpose({ focus });
       <i
         v-if="!isPrinting"
         v-show="!filter.isFixed"
-        class="i-mdi-close text-danger-3 hover:text-danger-2 cursor-pointer"
+        class="i-mdi-close text-danger-3 hover:text-danger-2 cursor-pointer print:hidden"
         tabindex="-1"
         :title="t('Remove')"
         @click.stop="emits('remove', filter.field)"

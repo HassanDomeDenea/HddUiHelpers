@@ -1,5 +1,15 @@
 <script setup lang="ts">
+import DynamicServerFormDialog from 'HddUiHelpers/components/datatables/DynamicServerFormDialog.vue';
+import DynamicComponentMounter from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue';
+import TopProgressBar from 'HddUiHelpers/components/misc/TopProgressBar.vue';
+import DismissableConfirmDialog from 'HddUiHelpers/components/modified/DismissableConfirmDialog.vue';
+import { setPageDirection } from 'HddUiHelpers/plugins/i18n';
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
+import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales.ts';
+import { usePrimeVue } from 'primevue';
 import { defaultOptions as PrimeVueDefaultOptions } from 'primevue/config';
+import { useToast } from 'primevue/usetoast';
+
 /*useHead({
     title: computed(() => route.meta.title || 'HDD Clinic'),
     meta: [
@@ -49,16 +59,6 @@ watch(
     immediate: true,
   },
 );
-
-import DynamicServerFormDialog from 'HddUiHelpers/components/datatables/DynamicServerFormDialog.vue';
-import DynamicComponentMounter from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue';
-import TopProgressBar from 'HddUiHelpers/components/misc/TopProgressBar.vue';
-import DismissableConfirmDialog from 'HddUiHelpers/components/modified/DismissableConfirmDialog.vue';
-import { setPageDirection } from 'HddUiHelpers/plugins/i18n';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
-import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales.ts';
-import { usePrimeVue } from 'primevue';
-import { useToast } from 'primevue/usetoast';
 </script>
 
 <template>

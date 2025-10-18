@@ -1,5 +1,7 @@
+import { echo, echoIsConfigured } from '@laravel/echo-vue';
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios from 'axios';
+import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers.ts';
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
 import { defineStore } from 'pinia';
 import type { ToastMessageOptions, ToastServiceMethods } from 'primevue';
@@ -23,7 +25,7 @@ export const useApiClient = defineStore('apiClient', () => {
   const t = ref<ComposerTranslation | null>(null);
   const toast = ref<ToastServiceMethods | null>(null);
   const router = ref<Router>();
-
+  const hddUiHelpers = useHddUiHelpers();
   function setRouter(_router: Router) {
     router.value = _router;
   }
@@ -40,6 +42,7 @@ export const useApiClient = defineStore('apiClient', () => {
   const isLoading = computed(() => activeRequests.value > 0);
   const uploadProgress = ref(0);
   const isUploading = ref(false);
+
   const instance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL || '/',
     withCredentials: false,
@@ -52,6 +55,10 @@ export const useApiClient = defineStore('apiClient', () => {
     if (authStore.authorizationToken) {
       config.headers.Authorization = `Bearer ${authStore.authorizationToken}`;
     }
+    if (hddUiHelpers.withBroadcasting && echoIsConfigured()) {
+      config.headers['X-Socket-ID'] = echo().socketId();
+    }
+
     return config;
   });
   instance.interceptors.response.use(

@@ -4,7 +4,7 @@ import ContextMenu from 'primevue/contextmenu';
 import type { MenuItem } from 'primevue/menuitem';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 
-export interface SummeryDataPanelItem {
+export interface SummaryDataPanelItem {
   label: string;
   value: string | number | boolean | null;
   labelClass?: any;
@@ -13,7 +13,7 @@ export interface SummeryDataPanelItem {
   wrapperClass?: any;
   hidden?: boolean;
   noPrint?: boolean;
-  appendButton?: ButtonProps;
+  appendButton?: ButtonProps & { href?: string };
   appendContextMenu?: MenuItem[];
 }
 
@@ -21,7 +21,7 @@ const { labelWidth = 150, severity = 'contrast' } = defineProps<{
   title?: string;
   labelWidth?: number | true;
   severity?: ButtonProps['severity'];
-  items?: SummeryDataPanelItem[];
+  items?: SummaryDataPanelItem[];
   minimumAfterLabelSpace?: number;
 }>();
 const itemLabelRefs = useTemplateRef<HTMLSpanElement[]>('itemLabelRefs');
@@ -39,7 +39,7 @@ watch(
     },
 );*/
 
-function onItemContextMenu(event: MouseEvent, item: SummeryDataPanelItem, itemIndex: number) {
+function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIndex: number) {
   if (item.appendContextMenu) {
     itemContextMenusRefs[itemIndex].show(event);
     event.preventDefault();
@@ -67,6 +67,7 @@ function onItemContextMenu(event: MouseEvent, item: SummeryDataPanelItem, itemIn
         <span :class="['font-bold', item.valueClass]" v-html="item.value"></span>
         <Button
           v-if="item.appendButton"
+          v-tooltip.top="item.appendButton.tooltip"
           :icon="item.appendButton.icon ? `${item.appendButton.icon} !min-w-0.5rem` : null"
           size="small"
           text
@@ -75,6 +76,8 @@ function onItemContextMenu(event: MouseEvent, item: SummeryDataPanelItem, itemIn
           :loading="item.appendButton.loading"
           :disabled="item.appendButton.disabled"
           :label="item.appendButton.label"
+          :href="item.appendButton.href"
+          :as="item.appendButton.href ? 'a' : undefined"
           :title="item.appendButton.title"
           @click="item.appendButton.onClick"
           @contextmenu="onItemContextMenu($event, item, itemIndex)"

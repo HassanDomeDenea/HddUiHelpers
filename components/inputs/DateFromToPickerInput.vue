@@ -22,7 +22,7 @@ const props = withDefaults(
     formatAsString: true,
   },
 );
-
+const emits = defineEmits<{ changed: [newRange: [Date | string | null, Date | null | string] | null] }>();
 const { t } = useI18n();
 const value = defineModel<[Date | string | null, Date | null | string] | null>('modelValue');
 
@@ -34,6 +34,9 @@ const fromDateValue = computed({
     const newRange = value.value ?? [null, null];
     newRange[0] = evt && props.formatAsString ? moment(evt).format(props.outputDateFormat) : evt;
     value.value = newRange;
+    nextTick(() => {
+      emits('changed', newRange);
+    });
   },
 });
 
@@ -45,6 +48,9 @@ const toDateValue = computed({
     const newRange = value.value ?? [null, null];
     newRange[1] = evt && props.formatAsString ? moment(evt).format(props.outputDateFormat) : evt;
     value.value = newRange;
+    nextTick(() => {
+      emits('changed', newRange);
+    });
   },
 });
 
@@ -64,8 +70,10 @@ function onDateLocalEnterKeyDown(event: KeyboardEvent) {
 const { exposed, baseInputForwardedProps, fieldUniqueId } = useHddBaseInputUtils(props);
 const dateInputBinds = computed(() => {
   return {
-    ...pick(props, ['placeholder', 'size', 'disabled', 'readonly', 'error', 'manualInput', 'clearable']),
     labelSingleLine: true,
+    ...pick(props, ['placeholder', 'size', 'disabled', 'readonly', 'error', 'manualInput', 'clearable']),
+    placeholder: props.placeholder ?? t('Unspecified'),
+    withSuggestionsButtons: true,
     inline: true,
   };
 });

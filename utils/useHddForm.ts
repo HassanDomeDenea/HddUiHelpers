@@ -25,7 +25,7 @@ export interface UseHddFormOptions<T extends string> {
       addFieldError: (fieldName: T, error: FieldError | string) => void;
       setMultiFieldsErrors: (errors: Record<T, FieldError[] | string[]>) => void;
     },
-  ) => void;
+  ) => Promise<any>;
   fieldValidatorGetFirstErrorOnly?: boolean;
   validateOnInitialLoad?: boolean;
 }
@@ -340,7 +340,7 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     requiredFieldsNames,
   };
 
-  async function submitForm(): Promise<boolean> {
+  async function submitForm(): Promise<any> {
     let shouldValidateForm = false;
     for (const i in validationModes.value) {
       if (validationModes.value[i] === 'onSubmit') {
@@ -353,7 +353,7 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
       updateFormState();
     }
     if (typeof options?.onSubmit === 'function' && !shouldValidateForm) {
-      options.onSubmit(currentValues.value, context);
+      return options.onSubmit(currentValues.value, context);
     }
     return Promise.resolve(formState.value.valid);
   }

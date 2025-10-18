@@ -14,38 +14,48 @@ export interface HddUiHelpers {
   routeNameResolver: (name: string, parameter?: string | number) => string;
   i18nInstance: I18n<any>;
   commonServerDataTableProps: Partial<ServerDataTableProps>;
+  withBroadcasting: boolean;
+  presenceUsersChannel: string | null;
 }
 
 export interface HddUiHelpersComposable {
   axiosInstance: AxiosInstance;
   route: (name: string, parameter?: string | number) => string;
   commonServerDataTableProps: Partial<ServerDataTableProps>;
+  withBroadcasting: boolean;
+  presenceUsersChannel: string | null;
 }
 
-export const HddUiHelpersSymbol: InjectionKey<HddUiHelpersComposable> = Symbol('HddUiHelpersSymbol');
+export const HddUiHelpersSymbol: InjectionKey<Partial<HddUiHelpersComposable>> = Symbol('HddUiHelpersSymbol');
 
 export type HddUiHelpersPluginOptions = Partial<HddUiHelpers>;
 
 export default {
   install(app: App, options: HddUiHelpersPluginOptions = {}) {
+    const routeNameResolver =
+      options.routeNameResolver ??
+      function (name: string, parameter?: string | number) {
+        return `/${name}${parameter !== undefined ? `/${parameter}` : ''}`;
+      };
+    const initiallyProvidedValues = {
+      route: routeNameResolver,
+      commonServerDataTableProps: options.commonServerDataTableProps ?? {},
+      withBroadcasting: options.withBroadcasting ?? false,
+      presenceUsersChannel: options.presenceUsersChannel ?? null,
+    };
+    app.provide(HddUiHelpersSymbol, initiallyProvidedValues);
+
     app.use(i18n);
     app.use(pinia);
     const apiClient = useApiClient();
     if (options.axiosInstance) {
       apiClient.setAxiosInstance(options.axiosInstance);
     }
-    const routeNameResolver =
-      options.routeNameResolver ??
-      function (name: string, parameter?: string | number) {
-        return `/${name}${parameter !== undefined ? `/${parameter}` : ''}`;
-      };
 
     app.use(primevue);
-
     app.provide(HddUiHelpersSymbol, {
+      ...initiallyProvidedValues,
       axiosInstance: apiClient.axiosInstance,
-      route: routeNameResolver,
-      commonServerDataTableProps: options.commonServerDataTableProps ?? {},
     });
 
     // Extend the locales
@@ -69,11 +79,14 @@ export default function HddUiHelpersPlugin(options: HddUiHelpersPluginOptions = 
 
 export function useHddUiHelpers(): HddUiHelpersComposable {
   const apiClient = useApiClient();
-  return inject(HddUiHelpersSymbol, {
+  return {
     axiosInstance: apiClient.axiosInstance,
     route(name: string, parameter?: string | number) {
       return `/${name}${parameter !== undefined ? `/${parameter}` : ''}`;
     },
     commonServerDataTableProps: {},
-  });
+    withBroadcasting: false,
+    presenceUsersChannel: null,
+    ...inject(HddUiHelpersSymbol),
+  };
 }

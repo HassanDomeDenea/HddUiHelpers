@@ -157,7 +157,7 @@ export function getFilterMatchModesByTypeOptions(t: ComposerTranslation) {
   } as Record<ServerDataTableColumn['type'] & string, ColumnFilterMatchModeOptions[]>;
 }
 
-export function getColumnCellFormatedText(value: any, column: ServerDataTableColumn, t: ComposerTranslation): string {
+export function getColumnCellFormatedText(value: any, column: ServerDataTableColumn, t: ComposerTranslation): string | string[] {
   let fieldName = column.field;
   if (typeof column.formatter === 'string') {
     fieldName = column.formatter;

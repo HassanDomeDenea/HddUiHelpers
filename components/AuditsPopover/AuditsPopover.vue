@@ -12,14 +12,23 @@ const popoverRef = useTemplateRef<ComponentExposed<typeof Popover>>('popoverRef'
 const audits = ref<AuditData[]>([]);
 const field = ref();
 const formatter = ref<(value: any) => string>(null);
+const classFormatter = ref<(value: any) => any>(null);
 const apiClient = useApiClient();
 const { t } = useI18n();
 const { startLoading, endLoading, isLoading } = useLoader();
-async function showFor(clickEvent: PointerEvent, model: string, id: string | number, _field: string, _formatter: (value: any) => string = null) {
+async function showFor(
+  clickEvent: PointerEvent,
+  model: string,
+  id: string | number,
+  _field: string,
+  _formatter: (value: any) => string = null,
+  _classFormatter: (value: any) => any = null,
+) {
   audits.value = [];
   popoverRef.value.show(clickEvent);
   field.value = _field;
   formatter.value = _formatter;
+  classFormatter.value = _classFormatter;
   apiClient
     .get('/api/audits', {
       params: {
@@ -41,10 +50,12 @@ async function showAudits(
   url: string | UrlObject,
   _field: string,
   _formatter: (value: any) => string = null,
+  _classFormatter: (value: any) => any = null,
   urlAppendedPath: string = 'audits',
 ) {
   field.value = _field;
   formatter.value = _formatter;
+  classFormatter.value = _classFormatter;
   popoverRef.value.hide();
   await nextTick(() => {
     popoverRef.value.show(clickEvent);
@@ -79,9 +90,9 @@ defineExpose({ showFor, showAudits });
           <ProgressSpinner class="!size-8" />
         </div>
       </template>
-      <ul v-else-if="audits.length > 0" class="max-h-sm list-disc overflow-y-auto ps-4">
+      <ul v-else-if="audits.length > 0" class="max-h-xs list-disc overflow-y-auto ps-4">
         <li v-for="item in audits" :key="item.id">
-          <span class="me-2 inline-block font-bold">
+          <span class="me-2 inline-block font-bold" :class="classFormatter ? classFormatter(item.new_value) : ''">
             {{ formatter ? formatter(item.new_value) : item.new_value }}
           </span>
           <span v-tooltip.sm="item.user?.name ? t('By') + ': ' + item.user?.name : undefined" class="dir-ltr inline-block text-xs">

@@ -81,3 +81,8 @@ export function formatListToSeverityTag({ value, options }: { value: any; option
     };
   }
 }
+
+export function formatReceiptNumberByFirstLetter(value: string): string {
+  const splitted = value.split('-');
+  return splitted[0][0] + '-' + splitted[1];
+}

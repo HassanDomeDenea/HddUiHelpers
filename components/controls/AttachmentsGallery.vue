@@ -46,6 +46,9 @@ const props = withDefaults(
     deletable?: boolean;
     toolbarButtons?: boolean;
     savableTransformation?: boolean;
+    zoomStep?: number;
+    minZoom?: number;
+    maxZoom?: number;
   }>(),
   {
     originalOrderProperty: 'order_original',
@@ -70,6 +73,9 @@ const props = withDefaults(
     sortable: false,
     scalable: true,
     zoomable: true,
+    zoomStep: 0.1,
+    minZoom: 0.5,
+    maxZoom: 5,
   },
 );
 
@@ -79,6 +85,7 @@ const emits = defineEmits<{
   dateChanged: [file: AttachmentModelType, newDate: string];
   descriptionChanged: [file: AttachmentModelType, newDescription: string];
   transformationApplied: [file: AttachmentModelType, event: TransformationEvent];
+  deleted: [file: AttachmentModelType];
   delete: [file: AttachmentModelType];
   shown: [];
   hidden: [];
@@ -245,24 +252,42 @@ const windowWidthComputed = computed(() => {
   return (windowSize.width.value - 150 - (props.attachments?.length * 55)) < 0
 })*/
 const rotate = ref(0);
+const translateX = ref(0);
+const translateY = ref(0);
 const scale = ref(1);
+
+const panningState = ref({
+  isPanning: false,
+  startX: 0,
+  startY: 0,
+});
 
 function resetTransformation() {
   imageTransformationsApplied.value = false;
   rotate.value = 0;
+  translateX.value = 0;
+  translateY.value = 0;
+  panningState.value = {
+    isPanning: false,
+    startX: 0,
+    startY: 0,
+  };
 }
 
 const imageTransformationStyle = computed(() => {
-  return { transition: 'transform 0.15s', transform: 'rotate(' + rotate.value + 'deg) scale(' + scale.value + ')' };
+  return {
+    transition: panningState.value.isPanning ? 'none' : 'transform 0.15s',
+    transform: 'rotate(' + rotate.value + 'deg) scale(' + scale.value + ') translate(' + translateX.value + 'px, ' + translateY.value + 'px)',
+  };
 });
 const imageIsRotate = computed(() => {
   return rotate.value % 360 !== 0;
 });
 const isZoomOutDisabled = computed(() => {
-  return scale.value <= 0.5;
+  return scale.value <= props.minZoom;
 });
 const isZoomInDisabled = computed(() => {
-  return scale.value >= 1.5;
+  return scale.value >= props.maxZoom;
 });
 const imageTransformationsApplied = ref(false);
 function rotateRight() {
@@ -274,11 +299,11 @@ function rotateLeft() {
   imageTransformationsApplied.value = true;
 }
 function zoomOut() {
-  scale.value -= 0.1;
+  scale.value -= props.zoomStep;
   imageTransformationsApplied.value = true;
 }
 function zoomIn() {
-  scale.value += 0.1;
+  scale.value += props.zoomStep;
   imageTransformationsApplied.value = true;
 }
 function close() {
@@ -396,6 +421,7 @@ function confirmDelete(file: AttachmentModelType) {
           })
           .then(() => {
             emits('changed');
+            emits('deleted', file);
           })
           .catch(apiClient.toastRequestError)
           .finally(() => {
@@ -416,6 +442,81 @@ function confirmDelete(file: AttachmentModelType) {
     },
   });
 }
+
+const onMainImageWheel = (e: WheelEvent) => {
+  e.preventDefault();
+  const delta = e.deltaY > 0 ? -props.zoomStep : props.zoomStep;
+
+  scale.value = Math.min(props.maxZoom, Math.max(props.minZoom, scale.value + delta));
+};
+
+const onMainImageMouseDown = (e: MouseEvent) => {
+  e.preventDefault();
+  panningState.value.isPanning = true;
+  panningState.value.startX = e.clientX - translateX.value;
+  panningState.value.startY = e.clientY - translateY.value;
+};
+
+const onMainImageMouseMove = (e: MouseEvent) => {
+  if (!panningState.value.isPanning) return;
+  translateX.value = e.clientX - panningState.value.startX;
+  translateY.value = e.clientY - panningState.value.startY;
+  console.log('Here', translateX.value, translateY.value);
+};
+
+const onMainImageMouseUp = () => (panningState.value.isPanning = false);
+const onMainImageClick = () => {
+  if (!panningState.value.isPanning) {
+    showCaption.value = !showCaption.value;
+  }
+};
+
+//TODO: Refine Touch Support
+/*onMounted(() => {
+  const el = container.value
+  if (!el) return
+
+  // Touch support
+  let lastTouchDistance = 0
+  let lastTouchCenter = { x: 0, y: 0 }
+
+  const getDistance = (touches: TouchList) => {
+    const [a, b] = [touches[0], touches[1]]
+    return Math.sqrt((a.pageX - b.pageX) ** 2 + (a.pageY - b.pageY) ** 2)
+  }
+
+  const getCenter = (touches: TouchList) => {
+    const [a, b] = [touches[0], touches[1]]
+    return { x: (a.pageX + b.pageX) / 2, y: (a.pageY + b.pageY) / 2 }
+  }
+
+  el.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      state.isPanning = true
+      state.startX = e.touches[0].clientX - state.translateX
+      state.startY = e.touches[0].clientY - state.translateY
+    } else if (e.touches.length === 2) {
+      lastTouchDistance = getDistance(e.touches)
+      lastTouchCenter = getCenter(e.touches)
+    }
+  })
+
+  el.addEventListener('touchmove', (e) => {
+    e.preventDefault()
+    if (e.touches.length === 1 && state.isPanning) {
+      state.translateX = e.touches[0].clientX - state.startX
+      state.translateY = e.touches[0].clientY - state.startY
+    } else if (e.touches.length === 2) {
+      const newDistance = getDistance(e.touches)
+      const scaleChange = newDistance / lastTouchDistance
+      state.scale = Math.min(props.maxZoom, Math.max(props.minZoom, state.scale * scaleChange))
+      lastTouchDistance = newDistance
+      lastTouchCenter = getCenter(e.touches)
+    }
+  })
+
+  el.addEventListener('touchend', () => (state.isPanning = false))
+})*/
 
 defineExpose({ resetTransformation });
 </script>
@@ -554,7 +655,7 @@ defineExpose({ resetTransformation });
         <i v-if="hasGalleryThumbnailsNavigationButtons" class="rtl:i-mdi-chevron-left ltr:i-mdi-chevron-right text-3xl" />
       </template>-->
       <template #item="slotProps">
-        <div class="light:bg-gray-50/95 relative dark:bg-slate-900/95" :style="imageTransformationStyle">
+        <div class="light:bg-gray-50/95 relative touch-none dark:bg-slate-900/95" :style="imageTransformationStyle">
           <slot name="viewerImageIcons" :item="slotProps.item" :active-index="activeIndex" />
           <template v-if="slotProps.item.mime_type === 'application/pdf'">
             <embed
@@ -574,10 +675,16 @@ defineExpose({ resetTransformation });
           </template>
           <template v-else>
             <img
+              class="select-none"
               :src="slotProps.item[srcProperty]"
               :alt="slotProps.item.name"
               style="max-width: 100%; max-height: calc(100vh - 130px); display: block"
-              @click="showCaption = !showCaption"
+              @wheel="onMainImageWheel"
+              @mousedown="onMainImageMouseDown"
+              @mousemove="onMainImageMouseMove"
+              @mouseup="onMainImageMouseUp"
+              @mouseleave="onMainImageMouseUp"
+              @click="onMainImageClick"
             />
           </template>
         </div>
@@ -613,9 +720,16 @@ defineExpose({ resetTransformation });
 </template>
 
 <style lang="scss">
+.p-galleria-thumbnails {
+  @apply z-1 shadow-inset shadow-op-100 light:shadow-zinc-950 shadow dark:shadow-zinc-50;
+}
 .p-galleria-thumbnail-item.p-galleria-thumbnail-item-current.p-galleria-thumbnail-item-active {
   img {
     //border-width: 2px !important;
   }
+}
+
+.p-galleria-item {
+  @apply backdrop-blur-md;
 }
 </style>

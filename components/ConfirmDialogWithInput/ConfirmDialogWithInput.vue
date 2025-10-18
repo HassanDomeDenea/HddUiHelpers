@@ -177,6 +177,7 @@ const inputsType = computed(() => {
         :class="[confirmation.rejectClass]"
         :autofocus="autoFocusReject"
         :text="confirmation.rejectProps?.text || false"
+        severity="secondary"
         v-bind="confirmation.rejectProps"
         :label="rejectLabel"
         @click="reject()"

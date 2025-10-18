@@ -35,7 +35,7 @@ bun add -D unocss unplugin-vue-components unplugin-vue-router unplugin-auto-impo
 ```
 
 ```bash
-bun add axios lodash-es primevue @primeuix/themes vue-i18n vue-router pinia moment lodash-es nprogress @vueuse/components @vueuse/core jsonpath sortablejs @vueuse/integrations downloadjs
+bun add axios lodash-es primevue @primeuix/themes vue-i18n vue-router pinia moment lodash-es nprogress @vueuse/components @vueuse/core jsonpath sortablejs @vueuse/integrations downloadjs quill @tiptap/extension-text-style @tiptap/starter-kit @tiptap/vue-3 @tiptap/extension-list @tiptap/extension-table 
 ```
 
 Add this to vite.config.ts

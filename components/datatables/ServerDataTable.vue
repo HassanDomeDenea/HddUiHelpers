@@ -38,6 +38,7 @@ import type { AxiosError, AxiosRequestConfig } from 'axios';
 import type { VirtualScrollerProps } from 'primevue';
 import type { MenuItem } from 'primevue/menuitem';
 
+import type { MaybeElement } from '@vueuse/core';
 import { useDebounceFn } from '@vueuse/core';
 import ServerFormDialog from 'HddUiHelpers/components/datatables/ServerFormDialog.vue';
 import { useServerDataTableColumnVisibility } from 'HddUiHelpers/components/datatables/visibility.ts';
@@ -71,6 +72,7 @@ import {
 import ToolbarFilterWrapper from 'HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue';
 import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers.ts';
 import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts';
+import { printDomWithStyles } from 'HddUiHelpers/utils/printDom.ts';
 import { useFormatters } from 'HddUiHelpers/utils/useFormatters.ts';
 import filter from 'lodash/filter';
 import isBoolean from 'lodash/isBoolean';
@@ -133,6 +135,7 @@ const {
   hasGlobalFilter = true,
   hasRefreshButton = true,
   url,
+  createUrl,
   reorderUrl,
   rowDeletable,
   rowEditable,
@@ -188,11 +191,14 @@ const {
   allowMultipleToolbarFiltersForSameField = false,
   showGridLines = true,
   withLoadingMask = true,
+  customPrintMethod,
+  printTableAsInView = false,
   noMultiSortBadges,
   rounded = true,
   columnVisibilityButton = undefined,
   tableSeverity = 'info',
   inlineEditMode = 'none',
+  rowGroupMode = 'subheader',
   transformResponseData,
 } = defineProps<ServerDataTableProps<T>>();
 
@@ -246,6 +252,12 @@ const isAllSelected = ref(false);
 const formatters = useFormatters();
 const apiClient = useApiClient();
 const confirm = useConfirm();
+
+// Template Refs
+const wrapperRef = useTemplateRef('wrapperRef');
+const headerSegmentRef = useTemplateRef<MaybeElement>('headerSegmentRef');
+const datatableRef = useTemplateRef<MaybeElement>('datatableRef');
+
 // Columns
 
 const mappedColumns = computed<ServerDataTableColumn[]>(() => {
@@ -316,7 +328,7 @@ const mappedColumnsListToObject = computed(() => {
   return obj;
 });
 
-function getColumnBody(rowData: any, column: ServerDataTableColumn): string {
+function getColumnBody(rowData: any, column: ServerDataTableColumn): string | string[] {
   const _showable = typeof column.showable === 'function' ? column.showable : toValue(column.showable);
   if (typeof _showable === 'function' || isBoolean(_showable)) {
     const showableValue = typeof _showable === 'function' ? _showable({ row: rowData }) : _showable;
@@ -445,9 +457,9 @@ const sortField = ref(initialSortField);
 const sortOrder = ref<-1 | 1 | undefined>(sortDirectionToOrder(initialSortDirection));
 
 const mappedSorts = computed<ServerDataTableStandardSort[]>(() => {
-  if (sortMode === 'single' && sortField.value) {
+  if (computedSortMode.value === 'single' && sortField.value) {
     return [{ field: sortField.value, direction: sortOrder.value === -1 ? 'desc' : 'asc' }];
-  } else if (sortMode === 'multiple' && multiSorts.value?.length) {
+  } else if (computedSortMode.value === 'multiple' && multiSorts.value?.length) {
     return multiSorts.value.map(
       (item: DataTableSortMeta) =>
         ({
@@ -798,25 +810,28 @@ function setCustomGetDataConfig(config: AxiosRequestConfig, autoRefresh: boolean
 }
 
 async function getData(specificPerPage: number | null = null, specificPage: number | null = null, requestConfig: AxiosRequestConfig = {}) {
-  return apiClient.request<ApiResponseData<ResponseData>>({
-    ...(typeof url === 'object' ? url : { url, method: 'get' }),
-    params: {
-      globalFilters: hasFilledGlobalFilter.value ? globalFilterNames.value : [],
-      page: specificPage || currentPage.value,
-      perPage: hasPagination ? specificPerPage || perPage.value : -1,
-      // perPage: specificPerPage || perPage.value,
-      sorts: mappedSorts.value,
-      fields: columnsRequestPayloadMapped.value,
-      filters: filters.value,
-      fixedFilters: fixedFilters,
-      groupedFilters: toolbarFilters.value,
-      fixedGroupedFilters: {
-        operator: 'and',
-        fields: fixedToolbarFilters,
-      },
+  const payload = {
+    globalFilters: hasFilledGlobalFilter.value ? globalFilterNames.value : [],
+    page: specificPage || currentPage.value,
+    perPage: hasPagination ? specificPerPage || perPage.value : -1,
+    // perPage: specificPerPage || perPage.value,
+    sorts: mappedSorts.value,
+    fields: columnsRequestPayloadMapped.value,
+    filters: filters.value,
+    fixedFilters: fixedFilters,
+    groupedFilters: toolbarFilters.value,
+    fixedGroupedFilters: {
+      operator: 'and',
+      fields: fixedToolbarFilters,
     },
-    ...requestConfig,
     ...computedExtraGetDataPayload.value,
+  };
+  const urlObject = typeof url === 'object' ? url : { url, method: 'get' };
+  return apiClient.request<ApiResponseData<ResponseData>>({
+    ...urlObject,
+    params: urlObject.method === 'get' ? payload : undefined,
+    data: urlObject.method === 'post' ? payload : undefined,
+    ...requestConfig,
     ...customGetDataConfig.value,
   });
 }
@@ -978,7 +993,7 @@ function deleteRecords(item: T | T[]) {
 const ServerFormDialogRef = useTemplateRef<ComponentExposed<typeof ServerFormDialog>>('ServerFormDialogRef');
 const ServerFormDialogOptions = computed(() => {
   return {
-    url: url,
+    url: createUrl ?? url,
     primaryKey: primaryKey,
     singleDeleteUrl: singleDeleteUrl,
     deleteUrl: deleteUrl,
@@ -1283,6 +1298,7 @@ const printPaperProps = computed(() => {
     headerImageUrl: headerImageUrl,
     footerImageUrl: footerImageUrl,
     extraData: extraData,
+    hasSorts: globalSortable.value,
     getData: getData,
     toolbarFilters: isToolbarFilterEmpty(fixedToolbarFilters)
       ? toolbarFilters.value
@@ -1303,7 +1319,23 @@ const isPrinting = ref(false);
 const printPaperForServerDataTableRef = useTemplateRef<ComponentExposed<typeof PrintPaperForServerDataTable>>('printPaperForServerDataTableRef');
 
 function printTable(allPage: boolean = false) {
-  printPaperForServerDataTableRef.value?.print(allPage);
+  if (customPrintMethod) {
+    customPrintMethod();
+  } else if (printTableAsInView) {
+    printDomWithStyles(wrapperRef.value, {
+      pageCounter: true,
+      leftMargin: 8,
+      rightMargin: 8,
+      topMargin: 8,
+      bottomMargin: 8,
+      showPrintTime: true,
+      firstPageHeaderImageUrl: firstPageHeaderImageUrl,
+      headerImageUrl: headerImageUrl,
+      footerImageUrl: footerImageUrl,
+    });
+  } else {
+    printPaperForServerDataTableRef.value?.print(allPage);
+  }
 }
 
 function printTableOnContextMenu(event: MouseEvent) {
@@ -1325,6 +1357,7 @@ function endLoading() {
 }
 
 defineExpose({
+  records,
   refresh,
   startLoading,
   endLoading,
@@ -1365,15 +1398,23 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
       event,
       url,
       column.field ?? column.name,
-      (_value) => (typeof column.formatter === 'function' ? column.formatter(_value, row) : _value),
+      (_value) => (typeof column.formatter === 'function' ? column.formatter(_value, row, column.field ?? column.name) : _value),
+      () => (column.type === 'textarea' ? 'whitespace-pre-wrap' : ''),
       `${get(row, primaryKey)}/audits`,
     );
   }
 }
+
+// Element Sizes
+const wrapperSize = useElementSize(wrapperRef);
+const headerSegmentSize = useElementSize(headerSegmentRef);
+const computedTableHeight = computed(() => {
+  return scrollable ? wrapperSize.height.value - headerSegmentSize.height.value + 'px' : undefined;
+});
 </script>
 
 <template>
-  <div class="HddServerDataTableWrapper h-full" :class="{ 'rounded-table': rounded }">
+  <div ref="wrapperRef" class="HddServerDataTableWrapper h-full" :class="{ 'rounded-table': rounded }">
     <ServerFormDialog ref="ServerFormDialogRef" v-bind="ServerFormDialogOptions">
       <template v-for="field in ServerFormDialogRef?.mappedFormFields" #[`${getFieldSlotName(field)}BeforeControl`]>
         <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
@@ -1383,6 +1424,18 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
       </template>
       <template v-for="field in ServerFormDialogRef?.mappedFormFields" #[`${getFieldSlotName(field)}AfterControl`]>
         <slot :name="`${getFieldSlotName(field)}AfterControl`"></slot>
+      </template>
+      <template #beforeCancelButton="slotProps">
+        <slot name="beforeCancelButton" v-bind="slotProps"></slot>
+      </template>
+      <template #afterCancel="slotProps">
+        <slot name="afterCancel" v-bind="slotProps"></slot>
+      </template>
+      <template #beforeSubmitButton="slotProps">
+        <slot name="beforeSubmitButton" v-bind="slotProps"></slot>
+      </template>
+      <template #afterSubmitButton="slotProps">
+        <slot name="afterSubmitButton" v-bind="slotProps"></slot>
       </template>
     </ServerFormDialog>
     <PrintPaperForServerDataTable v-bind="printPaperProps" ref="printPaperForServerDataTableRef" v-model:is-printing="isPrinting">
@@ -1404,7 +1457,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
     </PrintPaperForServerDataTable>
     <ContextMenu ref="contextMenuRef" :model="contextMenuModel" @hide="contextMenuSelectedRecord = undefined" />
     <AuditsPopover ref="auditsPopoverRef" />
-    <div class="p-1">
+    <div ref="headerSegmentRef" class="p-1">
       <!--            <div class="absolute top-0 right-0 left-0 flex justify-center">
                 <ProgressSpinner class="!size-12" />
             </div>-->
@@ -1426,6 +1479,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
                 <Button
                   v-if="hasFilters"
                   v-tooltip.top="t('Clear Filters')"
+                  class="print:hidden"
                   :size="computedSize"
                   type="button"
                   icon="i-mdi-filter-off w-8"
@@ -1436,7 +1490,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
                 />
                 <template v-if="computedWithToolbarFilters">
                   <Popover ref="toolbarFiltersPopoverRef">
-                    <div class="max-h-screen overflow-y-auto">
+                    <div class="overflow-y-auto" style="max-height: calc(100vh - 100px)">
                       <div class="flex max-h-screen flex-col items-center gap-y-1 py-1">
                         <template v-for="column in toolbarFilterableColumns" :key="column.field">
                           <Button
@@ -1482,6 +1536,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
                   <Button
                     v-if="computedWithToolbarFilters"
                     v-tooltip.top="t('Filter')"
+                    class="print:hidden"
                     :size="toolbarButtonsSize ?? computedSize"
                     severity="help"
                     icon="i-mdi-filter"
@@ -1492,7 +1547,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
             </div>
           </div>
         </div>
-        <div class="flex justify-end gap-1">
+        <div class="flex justify-end gap-1 print:hidden">
           <slot name="buttonsStart" />
           <Button
             v-if="creatable"
@@ -1615,7 +1670,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
       </div>
     </div>
     <DataTable
-      v-model:first="firstRowIndex"
+      ref="datatableRef"
       v-model:context-menu-selection="contextMenuSelectedRecord"
       v-model:filters="filters"
       v-model:selection="selectedRecords"
@@ -1624,6 +1679,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
       v-model:multi-sort-meta="multiSorts"
       v-model:sort-field="sortField"
       v-model:sort-order="sortOrder"
+      :style="{ height: computedTableHeight }"
       :size="computedSize"
       :show-gridlines="showGridLines"
       show-headers
@@ -1631,10 +1687,13 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
       :edit-mode="inlineEditMode"
       :context-menu="withContextMenu"
       :value="records"
+      :row-group-mode="rowGroupMode"
+      :group-rows-by="groupRowsBy"
       :virtual-scroller-options="localVirtualScrollerOptions"
       :lazy="true"
       :scrollable="scrollable"
       :scroll-height="scrollHeight"
+      scroll-direction=""
       :data-key="primaryKey || undefined"
       :paginator="hasPagination"
       paginator-position="top"
@@ -1649,7 +1708,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
       :class="[{ 'compact-table': isCompact }, dataTableComputedClass]"
       :select-all="isAllSelected"
       :removable-sort="removableSort"
-      :sort-mode="sortMode"
+      :sort-mode="computedSortMode"
       @select-all-change="onSelectAllChange"
       @row-select="onRowSelect"
       @row-unselect="onRowUnselect"
@@ -1712,6 +1771,23 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
           <span v-if="perPage !== -1"> {{ t('Entries') }}</span>
         </div>
       </template>
+      <template v-if="$slots.groupheader || rowGroupHeaderFormatter" #groupheader="slotProps">
+        <slot name="groupheader" :data="slotProps.data" :index="slotProps.index">
+          <span
+            v-if="rowGroupHeaderFormatter"
+            class="font-bold"
+            :class="rowGroupHeaderClass"
+            v-html="
+              rowGroupHeaderFormatter === true
+                ? get(slotProps.data, groupRowsBy)
+                : rowGroupHeaderFormatter(get(slotProps.data, groupRowsBy), slotProps.data)
+            "
+          ></span>
+        </slot>
+      </template>
+      <template v-if="$slots.groupfooter" #groupfooter="slotProps">
+        <slot name="groupfooter" :data="slotProps.data" :index="slotProps.index"></slot>
+      </template>
       <template #empty>
         <slot name="empty" :record="records">
           <div class="text-secondary-1 text-center text-sm italic">
@@ -1771,7 +1847,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
               },
             }"
           >
-            <template v-if="column.inlineEditable" #editor="{ data, field, editorSaveCallback }">
+            <template v-if="column.inlineEditable" #editor="{ data, field, editorSaveCallback, editorCancelCallback }">
               <InlineCellEdit
                 :row="data"
                 :field-name="field ?? 'text'"
@@ -1780,6 +1856,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
                 :column="column"
                 :size="computedSize"
                 :submit-callback="editorSaveCallback"
+                :cancel-callback="editorCancelCallback"
               />
             </template>
             <template v-if="column.footer" #footer>
@@ -1952,12 +2029,30 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
     }
   }
 
+  // Making backgrounds slightly transparent
+  .p-datatable-footer {
+    background: color-mix(in srgb, var(--p-datatable-footer-background) 50%, transparent);
+    border-color: color-mix(in srgb, var(--p-datatable-footer-border-color) 50%, transparent);
+  }
+
+  .p-datatable-paginator-top {
+    border-color: color-mix(in srgb, var(--p-datatable-paginator-top-border-color) 50%, transparent);
+  }
+  .p-paginator {
+    background: color-mix(in srgb, var(--p-paginator-background) 50%, transparent);
+  }
+
+  .p-datatable-tbody > tr {
+    background: color-mix(in srgb, var(--p-datatable-row-background) 80%, transparent);
+  }
+
   $table_severities: success, info, warn, error, secondary, contrast;
 
   @each $severity in $table_severities {
     .p-datatable-header-#{$severity} thead.p-datatable-thead th {
       background-color: var(--p-message-#{$severity}-background);
-      border-color: var(--p-message-#{$severity}-border-color);
+      //border-color: var(--p-message-#{$severity}-border-color);
+      border-color: var(--p-message-#{$severity}-color);
       &.p-datatable-column-sorted {
         background-color: color-mix(in srgb, var(--p-message-#{$severity}-background) 70%, var(--p-datatable-header-cell-selected-background) 30%);
       }
@@ -1968,7 +2063,8 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
     }
     .p-datatable-#{$severity} {
       .p-datatable-tbody > tr > td {
-        border-color: var(--p-message-#{$severity}-border-color);
+        border-color: var(--p-message-#{$severity}-color);
+        //border-color: var(--p-message-#{$severity}-border-color);
       }
     }
   }
@@ -2022,6 +2118,20 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
 }
 
 .dark {
+  .HddServerDataTableWrapper {
+    $table_severities: success, info, warn, error, secondary, contrast;
+
+    @each $severity in $table_severities {
+      .p-datatable-header-#{$severity} thead.p-datatable-thead th {
+        border-color: var(--p-message-#{$severity}-border-color);
+      }
+      .p-datatable-#{$severity} {
+        .p-datatable-tbody > tr > td {
+          border-color: var(--p-message-#{$severity}-border-color);
+        }
+      }
+    }
+  }
   .editing-cursor {
     cursor:
       url('../../assets/icons/pencil-green-300.svg') 0 24,
@@ -2036,6 +2146,10 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumn, r
   cursor:
     url('../../assets/icons/cursor-click-blue-700.svg') 10 10,
     pointer;
+
+  [data-p-selection-column='true'] {
+    cursor: default;
+  }
 }
 
 .dark {

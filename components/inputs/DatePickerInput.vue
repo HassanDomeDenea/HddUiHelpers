@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import type { Moment } from 'moment';
 import moment from 'moment';
 import DatePicker from 'primevue/datepicker';
 import type { ComponentExposed } from 'vue-component-type-helpers';
@@ -10,6 +11,7 @@ const props = withDefaults(
     {
       manualInput?: boolean;
       isYearOnly?: boolean;
+      withSuggestionsButtons?: boolean;
       clearable?: boolean;
       showTime?: boolean;
       dateFormat?: string;
@@ -19,11 +21,12 @@ const props = withDefaults(
   {
     manualInput: false,
     isYearOnly: false,
+    withSuggestionsButtons: false,
     formatAsString: true,
   },
 );
 const value = defineModel<any>('modelValue');
-
+const { t } = useI18n();
 const inputRef = useTemplateRef<ComponentExposed<typeof DatePicker>>('inputRef');
 
 function focus() {
@@ -52,6 +55,14 @@ const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = u
 
 const localDateFormat = computed(() => (props.isYearOnly ? 'yy' : (props.dateFormat ?? 'yy-mm-dd')));
 const localView = computed(() => (props.isYearOnly ? 'year' : undefined));
+
+const selectDate = function (date: string | Date | Moment) {
+  localValue.value = date;
+  if (inputRef.value.overlayVisible) {
+    inputRef.value.overlayVisible = false;
+  }
+};
+
 defineExpose({ focus, inputRef, ...exposed });
 </script>
 
@@ -74,7 +85,17 @@ defineExpose({ focus, inputRef, ...exposed });
         :manual-input="manualInput"
         :show-button-bar="clearable"
         @clear-click="() => clearable && (localValue = null)"
-      />
+      >
+        <template #footer>
+          <div v-if="withSuggestionsButtons" class="border-t-1 border-t-dashed border-t-gray/25 mt-1 pt-1">
+            <Button size="small" text severity="secondary" :label="t('Start of Month')" @click="selectDate(moment().startOf('month'))" />
+            <Button size="small" text severity="secondary" :label="t('End of Month')" @click="selectDate(moment().endOf('month'))" />
+
+            <Button size="small" text severity="secondary" :label="t('Start of Week')" @click="selectDate(moment().startOf('week'))" />
+            <Button size="small" text severity="secondary" :label="t('End of Week')" @click="selectDate(moment().endOf('week'))" />
+          </div>
+        </template>
+      </DatePicker>
       <div v-if="clearable && localValue" class="clear-icon-container" :class="[size]">
         <i class="i-mdi:times clear-icon" @click.stop="localValue = null"></i>
       </div>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AppPermission } from '@/types/laravel_generated';
 import DarkModeButton from 'HddUiHelpers/components/misc/DarkModeButton.vue';
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
 
@@ -15,23 +16,41 @@ export interface NavbarMenuItemInterface {
   shortcut?: string;
   command?: () => any;
   auth?: boolean;
-  permission?: string | string[];
+  permission?: AppPermission | AppPermission[];
 }
 
 const {
   navbarClass = 'light:!bg-sky-200 light:!border-b-sky-300 ',
   activeItemClass = 'light:bg-sky-100 dark:bg-gray-800 rounded-lg font-bold',
   withDarkModeButton = true,
+  items,
 } = defineProps<{
   withDarkModeButton?: boolean;
   items: NavbarMenuItemInterface[];
   navbarClass?: any;
   activeItemClass?: any;
 }>();
+
+const filteredItems = computed(() => {
+  return items.filter((item) => {
+    if (item.auth === true && !authStore.user) {
+      return false;
+    }
+
+    if (item.auth === false && authStore.user) {
+      return false;
+    }
+
+    if (item.permission && !authStore.can(item.permission)) {
+      return false;
+    }
+    return true;
+  });
+});
 </script>
 
 <template>
-  <Menubar :model="items" :class="navbarClass" class="z-2">
+  <Menubar :model="filteredItems" :class="navbarClass" class="z-2">
     <template #start>
       <slot name="start"></slot>
     </template>

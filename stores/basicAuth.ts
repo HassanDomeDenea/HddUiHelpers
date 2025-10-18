@@ -2,6 +2,8 @@ import defaultOptions from '@/default_options.json';
 import type { AppPermission, GlobalOptionData, UserOptionsData } from '@/types/laravel_generated';
 import UserController from '@/wayfinder/actions/App/Http/Controllers/UserController';
 import GlobalOptionController from '@/wayfinder/actions/Modules/GlobalOption/Http/Controllers/GlobalOptionController.ts';
+import { configureEcho, echo, echoIsConfigured } from '@laravel/echo-vue';
+import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers.ts';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient';
 import type { BasicUserData } from 'HddUiHelpers/types/BasicModels';
 import { safeRequest } from 'HddUiHelpers/utils/safeTry';
@@ -11,8 +13,16 @@ import { defineStore } from 'pinia';
 
 export const useBasicAuthStore = defineStore('basicAuth', () => {
   const user = ref<BasicUserData | null>(null);
+  const hddUiHelpers = useHddUiHelpers();
+  const connectedUsers = ref<BasicUserData[]>([]);
   const apiClient = useApiClient();
-  const authorizationToken = useStorage<string | null>('authorizationToken', null);
+
+  // Get the full query string from the current URL
+  const queryString = window.location.search;
+
+  // Parse the query string
+
+  const authorizationToken = useStorage<string | null>('authorizationToken', new URLSearchParams(window.location.search).get('_authorization_token'));
   const isLoggedIn = computed(() => !!user.value);
 
   const options = ref<UserOptionsData>(cloneDeep(defaultOptions as UserOptionsData));
@@ -112,12 +122,67 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
     return user.value.permission_names.includes(permission);
   }
 
+  const presenceChannel = ref();
+  if (hddUiHelpers.withBroadcasting) {
+    watch(
+      isLoggedIn,
+      (val) => {
+        if (val) {
+          configureEcho({
+            broadcaster: 'reverb',
+            auth: {
+              headers: {
+                Authorization: `Bearer ${authorizationToken.value}`,
+              },
+            },
+          });
+          if (hddUiHelpers.presenceUsersChannel) {
+            presenceChannel.value = echo()
+              .join(hddUiHelpers.presenceUsersChannel)
+              .here((users: BasicUserData[]) => {
+                // console.log('HERE', users);
+                connectedUsers.value = users;
+              })
+              .joining((user: BasicUserData) => {
+                // console.log('Joining ', user);
+                connectedUsers.value.push(user);
+              })
+              .leaving((user: BasicUserData) => {
+                // console.log('Leaving ', user);
+                connectedUsers.value = connectedUsers.value.filter((u) => u.id !== user.id);
+              });
+          }
+        } else {
+          if (hddUiHelpers.presenceUsersChannel) {
+            presenceChannel.value?.leave();
+            presenceChannel.value = null;
+            connectedUsers.value = [];
+          }
+          if (echoIsConfigured()) {
+            configureEcho({
+              broadcaster: 'reverb',
+              auth: {
+                headers: {
+                  Authorization: null,
+                },
+              },
+            });
+          }
+        }
+      },
+      {
+        immediate: true,
+      },
+    );
+  }
+
   return {
     canAny,
     can,
     changeOption,
     changeGlobalOption,
     options,
+    connectedUsers,
     globalOptions,
     isLoggedIn,
     user,

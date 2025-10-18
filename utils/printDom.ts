@@ -299,7 +299,7 @@ export async function printDomWithStyles(element: HTMLElement, opts: PrintDomWit
       mainPromiseResolve();
     };
     printFrame.srcdoc =
-      `<html lang="${document.body.parentElement.lang}" class="${htmlRootClass}"><head><title>${opts.documentTitle || document.title}</title>` +
+      `<html lang="${document.body.parentElement.lang}" class="${htmlRootClass} light"><head><title>${opts.documentTitle || document.title}</title>` +
       cssLinks
         .map((link) => {
           return '<link rel="stylesheet" href="' + link + '" />';

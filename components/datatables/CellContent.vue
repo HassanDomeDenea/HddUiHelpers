@@ -40,11 +40,18 @@ const resolveRenderTypeProps = computed(() => {
     />
   </template>
   <template v-else-if="column.renderType === 'yesNoIconBadge'">
-    <Badge v-if="isBoolean(renderedData)" :size="size" :severity="renderedData ? 'success' : 'danger'" :title="t(renderedData ? 'Yes' : 'No')">
-      <i class="scale-120" :class="{ 'i-mdi-check': renderedData, 'i-mdi-times': !renderedData }"></i>
-    </Badge>
+    <div>
+      <Badge v-if="isBoolean(renderedData)" :size="size" :severity="renderedData ? 'success' : 'danger'" :title="t(renderedData ? 'Yes' : 'No')">
+        <i class="scale-120" :class="{ 'i-mdi-check': renderedData, 'i-mdi-times': !renderedData }"></i>
+      </Badge>
+    </div>
   </template>
-  <div v-else class="inline-block" v-html="renderedData" />
+  <div
+    v-else
+    class="inline-block"
+    :class="[{ 'whitespace-pre-wrap': column.type === 'textarea' }, column.bodyClassFunction?.(renderedData, row, column)]"
+    v-html="renderedData"
+  />
 </template>
 
 <style scoped></style>

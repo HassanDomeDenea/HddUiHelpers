@@ -35,7 +35,7 @@ const toggleDark = useToggle(isDark);
 function toggleDarkAndSave() {
   toggleDark();
   console.log('H');
-  authStore.changeOption('darkMode', isDark.value ? 'dark' : 'light');
+  authStore.changeOption('dark_mode', isDark.value ? 'dark' : 'light');
 }
 </script>
 

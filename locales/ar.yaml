@@ -167,7 +167,7 @@ Missing Image: الصورة مفقودة
 Are you sure to delete this image?: هل أنت متأكد من حذف هذه الصورة؟
 Request Entity Too Large: البيانات المرسلة كبيرة جداً
 Save Changes: حفظ التغييرات
-Description: الوصفة
+Description: الوصف
 Are you sure you want to delete this file?: هل أنت متأكد من حذف هذا الملف؟
 Delete Confirmation: تأكيد الحذف
 HDD Scanner is not running or installed. Try to download the following link, install it, run it and try again: برنامج HDD  للماسح الضوئي غير مشغل او مثبت. يرجى تنزيله من الرابط التالي، تثبيته، تشغليه ومن ثم المحاولة لاحقاً
@@ -175,3 +175,14 @@ Download Now: التحميل الآن
 Edit History: سجل التعديل
 No Editing History: لا يوجد سجل تعديل
 By: بواسطة
+arrowToEndSymbol: ←
+Unspecified: غير محدد
+Start of Month: بداية الشهر
+End of Month: نهاية الشهر
+Submit & Open: إرسال وفتح
+Start of Week: بداية الاسبوع
+End of Week: نهاية الاسبوع
+Select Color: اختر اللون
+Select a Color: اختر لون
+Page Break: فاصل صفحة
+Drop Files Here to Upload: ضع الملفات هنا لرفعها

@@ -1,6 +1,7 @@
 import type { GlobalOptionData, UserOptionsData } from '@/types/laravel_generated';
 
 export interface BasicUserData {
+  id: number | string;
   username: string;
   name: string;
   options: UserOptionsData;

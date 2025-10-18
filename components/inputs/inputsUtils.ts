@@ -2,6 +2,7 @@ import type BaseInput from 'HddUiHelpers/components/inputs/BaseInput.vue';
 import type { BaseInputProps } from 'HddUiHelpers/components/inputs/types';
 import { pick } from 'lodash-es';
 import uniqueId from 'lodash/uniqueId';
+import type { TreeNode } from 'primevue/treenode';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 
 export const DefaultBasInputProps: Partial<BaseInputProps> = {
@@ -93,3 +94,52 @@ export const useHddBaseInputUtils = function (props: Readonly<BaseInputProps>) {
     generalInputProps,
   };
 };
+
+/**
+ * Return array of ancestor nodes for a given id.
+ * The returned array is ordered [node, parent, grandParent, ... , root].
+ * Returns null if not found.
+ */
+export function getTreeAncestorsById(id: any, tree: TreeNode[], idProperty = 'id', childrenProperty = 'children'): TreeNode[] | null {
+  let result: TreeNode[] | null = null;
+
+  function recurse(nodes: TreeNode[], parents: TreeNode[]) {
+    for (const n of nodes) {
+      if (result) return; // already found
+      const newParents = parents.concat(n);
+      if (n[idProperty] === id) {
+        // build ancestors starting from node up to root
+        result = [];
+        for (let i = newParents.length - 1; i >= 0; i--) {
+          result.push(newParents[i]);
+        }
+        return;
+      }
+      if (n[childrenProperty]?.length) {
+        recurse(n[childrenProperty] as TreeNode[], newParents);
+      }
+    }
+  }
+
+  recurse(tree, []);
+  return result;
+}
+
+export function getTreeItemLabelWithParents(
+  id: number | string,
+  nodes: TreeNode[],
+  idProperty: string = 'id',
+  labelProperty: string = 'label',
+  childrenProperty = 'children',
+) {
+  const path = getTreeAncestorsById(id, nodes, idProperty, childrenProperty);
+  return getTextFromTreePath(path, labelProperty);
+}
+
+export function getTextFromTreePath(path: TreeNode[], labelProperty: string = 'label', glue = '>>'): string {
+  return path
+    .slice() // copy
+    .reverse() // our helper returns [node, parent, ...root], reverse to root..node
+    .map((n) => n[labelProperty])
+    .join(`  ${glue}  `);
+}

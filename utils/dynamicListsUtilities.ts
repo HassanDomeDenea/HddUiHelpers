@@ -1,15 +1,24 @@
+import { useEcho } from '@laravel/echo-vue';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
-import { orderBy, set, startCase } from 'lodash-es';
+import { get, orderBy, set, startCase, uniq } from 'lodash-es';
+import debounce from 'lodash/debounce';
 import keyBy from 'lodash/keyBy';
+import map from 'lodash/map';
 import omit from 'lodash/omit';
 import reduce from 'lodash/reduce';
 import uniqueId from 'lodash/uniqueId';
 import unset from 'lodash/unset';
+import moment from 'moment';
 import type { Ref, WatchStopHandle } from 'vue';
 
 export function createListStore<TItem = any>(
   url: string | { url: string; method: 'get' | 'post' | 'put' | 'delete' | 'patch' },
   options: {
+    storage?: 'session' | 'local';
+
+    /**Storage duration in seconds*/
+    storageDuration?: number;
+    withBroadcasting?: boolean;
     refreshable?: boolean;
     refreshTime?: number;
     websocketChangeEvent?: string;
@@ -23,6 +32,7 @@ export function createListStore<TItem = any>(
     labelProperty?: string;
     withoutPagination?: boolean;
     channelName?: string;
+    modelName?: string;
     childrenProperty?: string;
     subscribeToEvents?: (localItems: Ref) => void;
   } = {},
@@ -41,11 +51,46 @@ export function createListStore<TItem = any>(
   const withoutPagination = options.withoutPagination ?? true;
   const refreshTimeInMinutes = options.refreshTime ?? 5;
   // const userStore = useUserStore()
-  const localItems = ref<null | TItem[]>(null);
+
+  const listNameFromUrl = (typeof url === 'string' ? url : url.url).toString().replace(/[^a-zA-Z0-9]/g, '_');
+
+  let localItems;
+  let localItemsLastFetchedAt;
+  if (options.storage) {
+    const storageTypeInstance = options.storage === 'session' ? window.sessionStorage : window.localStorage;
+    localItemsLastFetchedAt = useStorage('dynamic_lists_' + listNameFromUrl + '_last_fetched_at', moment().toISOString(), storageTypeInstance);
+    if (
+      options.storageDuration > 0 &&
+      localItemsLastFetchedAt.value &&
+      moment().diff(moment(localItemsLastFetchedAt.value), 'seconds') > options.storageDuration
+    ) {
+      storageTypeInstance.removeItem('dynamic_lists_' + listNameFromUrl);
+    }
+    localItems = useStorage('dynamic_lists_' + listNameFromUrl, null, storageTypeInstance, {
+      serializer: {
+        read: (v: any) => (v ? JSON.parse(v) : null) || null,
+        write: (v: any) => JSON.stringify(v),
+      },
+    });
+    console.log(listNameFromUrl);
+    console.log('dynamic_lists_' + listNameFromUrl);
+    console.log(localItems.value);
+  }
+  if (!localItems) {
+    localItems = ref<null | TItem[]>(null);
+  }
+  if (!localItemsLastFetchedAt) {
+    localItemsLastFetchedAt = ref<string | null>(null);
+  }
+
   const sortItemsBy = options.sortBy ?? 'uses';
   const sortItemsByDirection = options.sortByDirection ?? 'asc';
 
   const apiClient = useApiClient();
+
+  const isLoaded = computed(() => {
+    return !!localItems.value;
+  });
 
   const items = computed<TItem[]>(() => {
     if (!localItems.value) {
@@ -133,6 +178,10 @@ export function createListStore<TItem = any>(
         localItems.value = responseData;
       }
 
+      if (localItemsLastFetchedAt) {
+        localItemsLastFetchedAt.value = moment().toISOString();
+      }
+
       if (_onRefreshCallables.value) {
         Object.values(_onRefreshCallables.value).forEach((e) => e(toValue(items) as TItem[]));
       }
@@ -162,6 +211,8 @@ export function createListStore<TItem = any>(
                 unwatch();
               }
               resolve();
+            } else if (items.value) {
+              //no-body, just to compute the items computed property
             }
           } catch (e) {
             console.error(e);
@@ -176,6 +227,19 @@ export function createListStore<TItem = any>(
 
   if (options.subscribeToEvents) {
     options.subscribeToEvents(localItems);
+  }
+
+  const debouncedRefresh = debounce(refresh, 1000);
+
+  if (options.withBroadcasting) {
+    useEcho(
+      'App.Models',
+      [`.${options.modelName}Created`, `.${options.modelName}Updated`, `.${options.modelName}Deleted`, `.${options.modelName}Restored`],
+      (_event: unknown) => {
+        console.log(_event);
+        debouncedRefresh();
+      },
+    );
   }
 
   if (options.listenForWebsocket || (options.websocketChangeEvent && options.listenForWebsocket !== false)) {
@@ -237,7 +301,7 @@ export function createListStore<TItem = any>(
 
       function _localMapper(_item: TItem, _accumulator: TItem[] = []) {
         _accumulator.push(omit(_item as any, options.childrenProperty) as TItem);
-        _item[options.childrenProperty]?.map((e) => _localMapper(e, _accumulator));
+        _item[options.childrenProperty]?.map((e: TItem) => _localMapper(e, _accumulator));
         return _accumulator;
       }
 
@@ -247,6 +311,70 @@ export function createListStore<TItem = any>(
       return items.value;
     }
   });
+
+  const getNestedItem = function (id: string | number) {
+    if (!id) {
+      return undefined;
+    }
+    function _localLooper(_items: TItem[]) {
+      for (const _item of _items) {
+        if (get(_item, options.idProperty ?? 'id') === id) {
+          return _item;
+        }
+        const children = get(_item, options.childrenProperty);
+        if (children && children.length > 0) {
+          const _childTarget = _localLooper(children);
+          if (_childTarget) {
+            return _childTarget;
+          }
+        }
+      }
+      return undefined;
+    }
+    return _localLooper(items.value);
+  };
+
+  const getFlatChildrenOfItem = function (id: TItem | string | number, includeSelf: boolean = false): TItem[] {
+    if (!id) {
+      return [];
+    }
+    let _item: TItem;
+    if (typeof id === 'string' || typeof id === 'number') {
+      _item = getNestedItem(id);
+    } else {
+      _item = id;
+    }
+    if (!_item) {
+      return [];
+    }
+
+    if (options.childrenProperty) {
+      const accumulator: TItem[] = [];
+
+      function _localMapper(_item: TItem, _accumulator: TItem[] = []) {
+        _accumulator.push(omit(_item as any, options.childrenProperty) as TItem);
+        _item[options.childrenProperty]?.map((e: TItem) => _localMapper(e, _accumulator));
+        return _accumulator;
+      }
+
+      if (includeSelf) {
+        [_item].map((e) => _localMapper(e, accumulator));
+      } else {
+        _item[options.childrenProperty]?.map((e) => _localMapper(e, accumulator));
+      }
+      return accumulator;
+    } else {
+      if (includeSelf) {
+        return [_item];
+      }
+      return [];
+    }
+  };
+
+  const getFlatIdsOfItem = function (id: TItem | string | number, includeSelf?: boolean): (string | number)[] {
+    const _items = getFlatChildrenOfItem(id, includeSelf);
+    return uniq(map(_items, idProperty));
+  };
 
   const keyItemPairFlatItems = computed(() => {
     if (!localItems.value) {
@@ -258,6 +386,7 @@ export function createListStore<TItem = any>(
 
   return {
     waitFirstLoad,
+    isLoaded,
     items,
     getLabel,
     flatList,
@@ -271,6 +400,9 @@ export function createListStore<TItem = any>(
     activeItems,
     includeInactive,
     inActiveAsDisabledItems,
+    getNestedItem,
+    getFlatChildrenOfItem,
+    getFlatIdsOfItem,
   };
 }
 

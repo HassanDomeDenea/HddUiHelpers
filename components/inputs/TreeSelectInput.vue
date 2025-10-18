@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { getTreeAncestorsById, useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import TextWithTitleAttribute from 'HddUiHelpers/components/misc/TextWithTitleAttribute.vue';
 import { isEmpty } from 'lodash-es';
 import reduce from 'lodash/reduce';
 import type { TreeNode } from 'primevue/treenode';
@@ -23,6 +24,7 @@ const props = withDefaults(
       disabledValues?: MaybeRefOrGetter<any[]>;
       checkmark?: boolean;
       expanded?: boolean;
+      fullPathValueLabel?: boolean;
       hasFilter?: boolean;
       display?: 'comma' | 'chip';
       selectionMode?: 'single' | 'multiple' | 'checkbox';
@@ -36,6 +38,7 @@ const props = withDefaults(
     clearable: false,
     checkmark: true,
     hasFilter: true,
+    fullPathValueLabel: false,
     expanded: false,
     display: 'comma',
     selectionMode: 'single',
@@ -44,6 +47,7 @@ const props = withDefaults(
 const emits = defineEmits<{
   change: [event: string[]];
 }>();
+const { t } = useI18n();
 const value = defineModel<any>('modelValue');
 const localValue = computed({
   get() {
@@ -207,13 +211,25 @@ onMounted(() => {
   }
 });
 
+function getFullPathLabel(node: TreeNodeWithId): string {
+  const path = getTreeAncestorsById(node[props.optionValueProperty], localOptions.value, props.optionValueProperty);
+  // join labels from root -> ... -> node
+  if (!path || !path.length) return '';
+  return path
+    .slice() // copy
+    .reverse() // our helper returns [node, parent, ...root], reverse to root..node
+    .map((n) => n.label)
+    .join(' > ');
+}
+
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
-defineExpose({ focus, ...exposed, setVisibleElementValue });
+defineExpose({ focus, ...exposed, setVisibleElementValue, getFullPathLabel });
 </script>
 
 <template>
   <BaseInput v-bind="baseInputForwardedProps" @click="focus">
+    <!--    <pre class="ltr text-left" v-text="localOptions"></pre>-->
     <TreeSelect
       v-bind="generalInputProps"
       ref="inputRef"
@@ -231,18 +247,24 @@ defineExpose({ focus, ...exposed, setVisibleElementValue });
       @blur="onInputBlur"
       @change="emits('change', $event)"
     >
-      <template v-if="$slots.value" #value="slotProps">
+      <template v-if="$slots.value || fullPathValueLabel" #value="slotProps">
         <slot name="value" v-bind="slotProps">
           <div v-if="formatter" v-html="formatter(slotProps.value, 'value')" />
           <div v-else-if="value">
-            {{ value }}
-            <!--                        {{ options.find(e => e[optionValueProperty] === value)?.[optionLabelProperty] ?? value }}-->
+            <template v-if="fullPathValueLabel">
+              <TextWithTitleAttribute
+                :text="getFullPathLabel(Array.isArray(slotProps.value) ? slotProps.value[0] : slotProps.value)"
+              ></TextWithTitleAttribute>
+            </template>
+            <template v-else-if="value">
+              {{ Array.isArray(slotProps.value) ? slotProps.value[0].label : slotProps.value.label }}
+            </template>
           </div>
         </slot>
       </template>
       <template v-if="$slots.option" #option="{ node, selected, expanded }">
         <slot name="option" :node="node" :selected="selected" :expanded="expanded">
-          <div v-if="formatter" v-html="formatter(option, 'option')" />
+          <div v-if="formatter" v-html="formatter(node, 'option')" />
         </slot>
       </template>
       <template #footer="slotProps">
