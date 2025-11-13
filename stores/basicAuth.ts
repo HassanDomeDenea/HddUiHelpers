@@ -141,7 +141,7 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
             presenceChannel.value = echo()
               .join(hddUiHelpers.presenceUsersChannel)
               .here((users: BasicUserData[]) => {
-                // console.log('HERE', users);
+                console.log('HERE', users);
                 connectedUsers.value = users;
               })
               .joining((user: BasicUserData) => {
