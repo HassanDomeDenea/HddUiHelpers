@@ -9,8 +9,9 @@ import type { FieldError, FormFieldType, HddFormField, ValidationModeType } from
 
 export interface UseHddFormOptions<T extends string> {
   staticInitialValues?: MaybeRef<Record<T, any>>;
-  fields?: (HddFormField<T> | T)[];
+  fields?: MaybeRef<(HddFormField<T> | T)[]>;
   values?: Record<T, any>;
+  modelValue?: Record<T, any>;
   defaultValidationMode?: ValidationModeType;
   watchFieldValues?: boolean;
   /**
@@ -52,7 +53,7 @@ interface FieldState {
 export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {}) {
   const fields = computed<HddFormField<T>[]>(() => {
     return (
-      options.fields
+      toValue(options.fields)
         ?.filter((e) => {
           if (typeof e === 'object' && ['separator', 'divider'].includes(e.type)) {
             return false;

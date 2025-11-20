@@ -1,39 +1,57 @@
 <script setup lang="ts" generic="TRecord extends RecordItem = RecordItem">
-import type { ServerFormDialogProps } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
 import { type DynamicServerFormDialogEventBus, dynamicServerFormDialogKey } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
 import ServerFormDialog from 'HddUiHelpers/components/datatables/ServerFormDialog.vue';
 import type { RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
+import { last } from 'lodash-es';
+import uniqueId from 'lodash/uniqueId';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 
-const dynamicDialogRef = useTemplateRef<ComponentExposed<typeof ServerFormDialog>>('dynamicDialogRef');
+const dynamicDialogRefs = useTemplateRefsList<ComponentExposed<typeof ServerFormDialog>>();
+const dialogs = ref([]);
 
 const bus = useEventBus(dynamicServerFormDialogKey);
-const localOptions = ref<ServerFormDialogProps>();
-const isVisible = ref(false);
 
-function busListener({ event, options, row, specificId }: DynamicServerFormDialogEventBus) {
-  if (event === 'set') {
-    localOptions.value = options;
-  }
+function busListener({ event, options, row, specificId, dialogRefGetter }: DynamicServerFormDialogEventBus) {
   if (event === 'create') {
-    localOptions.value = options;
-    isVisible.value = true;
+    dialogs.value.push({
+      localOptions: options,
+      isVisible: true,
+      id: uniqueId('HddDynamicDialog-'),
+    });
     nextTick(() => {
-      dynamicDialogRef.value?.create(row, specificId);
+      const newDialogRef = last(dynamicDialogRefs.value);
+      newDialogRef.create(row, specificId);
+      dialogRefGetter.value = () => {
+        return newDialogRef;
+      };
     });
   }
   if (event === 'edit') {
-    localOptions.value = options;
-    isVisible.value = true;
+    dialogs.value.push({
+      localOptions: options,
+      isVisible: true,
+      id: uniqueId('HddDynamicDialog-'),
+    });
     nextTick(() => {
-      dynamicDialogRef.value?.edit(row);
+      const newDialogRef = last(dynamicDialogRefs.value);
+      newDialogRef.edit(row);
+      dialogRefGetter.value = () => {
+        return newDialogRef;
+      };
     });
   }
   if (event === 'delete') {
-    localOptions.value = options;
-    isVisible.value = true;
+    dialogs.value.push({
+      localOptions: options,
+      isVisible: true,
+      id: uniqueId('HddDynamicDialog-'),
+    });
     nextTick(() => {
-      dynamicDialogRef.value?.delete(row);
+      const newDialogRef = last(dynamicDialogRefs.value);
+      newDialogRef.delete(row);
+      dialogRefGetter.value = () => {
+        return newDialogRef;
+      };
     });
   }
 }
@@ -45,13 +63,24 @@ onBeforeUnmount(() => {
   bus.off(busListener);
 });
 
-function onHidden() {
-  isVisible.value = false;
+function onHidden(dialogId: string) {
+  const indexToRemove = dialogs.value.findIndex((e) => e.id === dialogId);
+  dialogs.value[indexToRemove].isVisible = false;
+  nextTick(() => {
+    dialogs.value.splice(indexToRemove, 1);
+  });
 }
 </script>
 
 <template>
-  <ServerFormDialog v-if="isVisible" ref="dynamicDialogRef" v-bind="localOptions" @hidden="onHidden"></ServerFormDialog>
+  <template v-for="dialog in dialogs" :key="dialog.id">
+    <ServerFormDialog
+      v-if="dialog.isVisible"
+      :ref="dynamicDialogRefs.set"
+      v-bind="dialog.localOptions"
+      @hidden="() => onHidden(dialog.id)"
+    ></ServerFormDialog>
+  </template>
 </template>
 
 <style scoped></style>

@@ -229,7 +229,8 @@ export interface ServerDataTableColumn<TType extends ServerDataTableColumnType =
     | string[]
     | {
         string: boolean;
-      };
+      }
+    | ((row: TRow, column: ServerDataTableColumn<TType>) => string);
   bodyClassFunction?: (data: unknown, row: TRow, column: ServerDataTableColumn<TType>) => string | string[] | { string: boolean };
   bodyStyle?: any;
   headerClass?: any;
@@ -327,7 +328,7 @@ export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> 
   onSubmitted?: (row: TRecord | TRecord[] | (string | number)[], type: 'create' | 'update') => void;
 
   submitAndOpenProps?: (event: { isEditing: boolean }) => Partial<ButtonProps>;
-  submitAndOpenButton?: boolean;
+  submitAndOpenButton?: boolean | ((event: { isEditing: boolean }) => boolean);
   submitAndOpenText?: string | ((event: { isEditing: boolean }) => string);
   submitAndOpenIcon?: string | ((event: { isEditing: boolean }) => string);
   submitAndOpenSeverity?: ButtonProps['severity'];

@@ -218,14 +218,14 @@ const computedSortMode = computed(() => sortMode ?? globalConfig.value.sortMode 
 
 onActivated(() => {
   if (refreshOnActivated) {
-    refresh();
+    veryFastLazyRefresh();
   }
 });
 
 // const primevue = usePrimeVue()
 onMounted(() => {
   if (refreshOnMount) {
-    refresh();
+    veryFastLazyRefresh();
   }
 });
 
@@ -891,6 +891,9 @@ const lazyRefresh = useDebounceFn(() => {
 const fastLazyRefresh = useDebounceFn(() => {
   refresh();
 }, 100);
+const veryFastLazyRefresh = useDebounceFn(() => {
+  refresh();
+}, 10);
 
 // Infinite Scrolling
 const localItemSize = ref();
@@ -1474,7 +1477,14 @@ const computedTableHeight = computed(() => {
               <InputGroup>
                 <IconField>
                   <InputIcon class="i-mdi:magnify !z-10" />
-                  <InputText v-model="globalFilterValue" :size="computedSize" :placeholder="t('Search')" @value-change="lazyRefresh" />
+                  <InputText
+                    v-model="globalFilterValue"
+                    :size="computedSize"
+                    :placeholder="t('Search')"
+                    name="global-search"
+                    autocomplete="off"
+                    @value-change="lazyRefresh"
+                  />
                 </IconField>
                 <Button
                   v-if="hasFilters"

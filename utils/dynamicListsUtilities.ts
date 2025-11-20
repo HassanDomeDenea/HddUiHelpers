@@ -236,7 +236,6 @@ export function createListStore<TItem = any>(
       'App.Models',
       [`.${options.modelName}Created`, `.${options.modelName}Updated`, `.${options.modelName}Deleted`, `.${options.modelName}Restored`],
       (_event: unknown) => {
-        //console.log(_event);
         debouncedRefresh();
       },
     );
@@ -384,11 +383,16 @@ export function createListStore<TItem = any>(
     return keyBy(flatList.value, idProperty);
   });
 
+  function addItem(item: TItem) {
+    localItems.value?.push(item);
+  }
+
   return {
     waitFirstLoad,
     isLoaded,
     items,
     getLabel,
+    addItem,
     flatList,
     onFirstLoad,
     onRefresh,

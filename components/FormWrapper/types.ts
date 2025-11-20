@@ -31,7 +31,7 @@ export type UrlWithParameterFunction = (id: number | string) => UrlObject;
 
 export type HddFormProps<TFieldName extends string = string, TFieldType extends FormFieldType = FormFieldType> = {
   url?: string | UrlObject;
-  fields?: HddFormField<TFieldName, TFieldType>[] | TFieldName[];
+  fields?: MaybeRef<HddFormField<TFieldName, TFieldType>[] | TFieldName[]>;
   urlMethod?: UrlMethod;
   formName?: string;
   fieldsContainerClass?: any;
@@ -48,6 +48,7 @@ export type HddFormProps<TFieldName extends string = string, TFieldType extends 
   showFieldErrorsPopover?: boolean;
   inlineFields?: boolean;
   iconAsAddon?: boolean;
+  withFooterButtons?: boolean;
   showRequiredAsterisk?: boolean;
   submitText?: string | false;
   initialValues?: Record<TFieldName, any>;
@@ -93,6 +94,7 @@ export type FormFieldType =
   | 'phone'
   | 'listbox'
   | 'divider'
+  | 'form'
   | 'separator'
   | 'editor';
 
@@ -152,6 +154,7 @@ export type HddFormField<N extends string = string, T extends FormFieldType = Fo
   showable?: MaybeRef<((event: { row: TRow; isEditing: boolean }) => boolean) | boolean>;
   url?: ((event: { row: TRow }) => string | UrlObject) | MaybeRef<string | UrlObject>;
   editable?: MaybeRef<boolean>;
+  fields?: HddFormField[];
   //rules?:HddFormFieldSchema<T>
   // rules?: Schema
 };

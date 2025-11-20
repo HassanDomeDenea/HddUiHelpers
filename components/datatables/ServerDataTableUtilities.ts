@@ -1,10 +1,12 @@
 import type { EventBusKey } from '@vueuse/core';
 import { useEventBus } from '@vueuse/core';
+import type ServerFormDialog from 'HddUiHelpers/components/datatables/ServerFormDialog.vue';
 import type { HddFormField, RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import type { ElementClassType } from 'HddUiHelpers/components/inputs/types.ts';
 import { replace, snakeCase, startCase } from 'lodash-es';
 import moment from 'moment';
 import type { ColumnFilterMatchModeOptions } from 'primevue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 import type { ComposerTranslation } from 'vue-i18n';
 import type { ServerDataTableColumn, ServerDataTableProps, ServerDataTableToolbarFilter, ServerFormDialogProps } from './ServerDataTableTypes.ts';
 import { isToolbarFilterWrapper } from './ServerDataTableTypes.ts';
@@ -32,27 +34,33 @@ export function getColumnBodyClass(rowData: any, column: ServerDataTableColumn):
   return column.bodyClass ?? null;
 }
 
+type DialogRefGetter = { value?: () => ComponentExposed<typeof ServerFormDialog> };
+
 export type DynamicServerFormDialogEventBus = {
-  event: 'set' | 'create' | 'edit' | 'delete';
+  event: 'create' | 'edit' | 'delete';
   options?: ServerFormDialogProps;
   row?: any;
   specificId?: any;
+  dialogRefGetter?: DialogRefGetter;
 };
-export const dynamicServerFormDialogKey: EventBusKey<DynamicServerFormDialogEventBus> = Symbol('symbol-key');
+export const dynamicServerFormDialogKey: EventBusKey<DynamicServerFormDialogEventBus> = Symbol(' DynamicServerFormDialogEventBus Symbol Key');
 export const useDynamicServerFormDialog = function () {
   const bus = useEventBus(dynamicServerFormDialogKey);
   return {
-    set: (options: ServerFormDialogProps) => {
-      bus.emit({ event: 'set', options });
-    },
     create: (options: ServerFormDialogProps, row?: any) => {
-      bus.emit({ event: 'create', options, row: row });
+      const dialogRefGetter: DialogRefGetter = {};
+      bus.emit({ event: 'create', options, row: row, dialogRefGetter });
+      return dialogRefGetter;
     },
     edit: (options: ServerFormDialogProps, row: any) => {
-      bus.emit({ event: 'edit', options, row: row });
+      const dialogRefGetter: DialogRefGetter = {};
+      bus.emit({ event: 'edit', options, row: row, dialogRefGetter });
+      return dialogRefGetter;
     },
     delete: (options: ServerFormDialogProps, row: any) => {
-      bus.emit({ event: 'delete', options, row: row });
+      const dialogRefGetter: DialogRefGetter = {};
+      bus.emit({ event: 'delete', options, row: row, dialogRefGetter });
+      return dialogRefGetter;
     },
   };
 };

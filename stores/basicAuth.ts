@@ -141,7 +141,7 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
             presenceChannel.value = echo()
               .join(hddUiHelpers.presenceUsersChannel)
               .here((users: BasicUserData[]) => {
-                console.log('HERE', users);
+                // console.log('HERE', users);
                 connectedUsers.value = users;
               })
               .joining((user: BasicUserData) => {
@@ -154,22 +154,13 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
               });
           }
         } else {
+          if (echoIsConfigured()) {
+            echo().leave(hddUiHelpers.presenceUsersChannel);
+            echo().disconnect();
+          }
           if (hddUiHelpers.presenceUsersChannel) {
-            presenceChannel.value?.leave();
             presenceChannel.value = null;
             connectedUsers.value = [];
-          }
-          if (echoIsConfigured()) {
-            configureEcho({
-              broadcaster: 'reverb',
-              // wsHost: reverbHostName,
-
-              auth: {
-                headers: {
-                  Authorization: null,
-                },
-              },
-            });
           }
         }
       },

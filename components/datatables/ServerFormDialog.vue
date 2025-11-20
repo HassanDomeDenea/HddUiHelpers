@@ -185,7 +185,7 @@ const hddFormOptions = computed(() => {
     submitPayloadTransformer: localSubmitPayloadTransformer,
     size: 'small',
     inlineFields: inlineFields,
-    fields: mappedFormFields.value,
+    fields: mappedFormFields,
     isEditing: isEditing.value,
     onFailure(error: unknown) {
       if (withoutDialog.value) {
@@ -221,6 +221,9 @@ const currentValues = computed(() => hddFormRef.value?.currentValues);
 
 function setValue(fieldName: string, value: any) {
   form?.value?.setValue(fieldName, value);
+}
+function getValue(fieldName: string) {
+  return get(currentValues.value, fieldName);
 }
 function setValues(_values: { [key: string]: any }) {
   for (const fieldName in _values) {
@@ -493,6 +496,7 @@ defineExpose({
   currentValues,
   setDefaultValues,
   setValue,
+  getValue,
   setValues,
   create,
   editMulti,
@@ -629,7 +633,13 @@ defineExpose({
             @click="form.submitForm()"
           />
           <Button
-            v-if="submitAndOpenButton"
+            v-if="
+              submitAndOpenButton
+                ? typeof submitAndOpenButton === 'function'
+                  ? submitAndOpenButton({ isEditing: isEditing })
+                  : submitAndOpenButton
+                : false
+            "
             :size="size"
             :loading="hddFormRef?.isSubmitting"
             :disabled="hddFormRef?.isSubmitting"

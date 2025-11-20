@@ -120,7 +120,7 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
               v-tooltip.top="toValue(buttonAddon).tooltip"
               :size="size"
               v-bind="omit(toValue(buttonAddon), ['command', 'tooltip'])"
-              @click="toValue(buttonAddon).command?.({ event: $event, value: modelValue, control: controlComponent })"
+              @click.stop="toValue(buttonAddon).command?.({ event: $event, value: modelValue, control: controlComponent })"
             />
           </InputGroupAddon>
           <InputGroupAddon v-if="slots.addon">

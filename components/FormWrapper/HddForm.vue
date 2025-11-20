@@ -2,6 +2,7 @@
 import { isAxiosError } from 'axios';
 import { getFieldSlotName } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
 import CheckboxInput from 'HddUiHelpers/components/inputs/CheckboxInput.vue';
+import FormObjectInput from 'HddUiHelpers/components/inputs/FormObjectInput.vue';
 import ListBoxInput from 'HddUiHelpers/components/inputs/ListBoxInput.vue';
 import MultiSelectInput from 'HddUiHelpers/components/inputs/MultiSelectInput.vue';
 import RadioButtonInput from 'HddUiHelpers/components/inputs/RadioButtonInput.vue';
@@ -15,7 +16,7 @@ import map from 'lodash/map';
 import omit from 'lodash/omit';
 import reduce from 'lodash/reduce';
 import uniqueId from 'lodash/uniqueId';
-import { reactive, toValue } from 'vue';
+import { toValue } from 'vue';
 import type { UseHddFormOptions } from '../../utils/useHddForm';
 import { useHddForm } from '../../utils/useHddForm';
 import type { FieldError, HddFormField, HddFormProps, HddFormValues } from './types';
@@ -47,7 +48,10 @@ const {
   submitOnEnter = true,
   infieldTopAlignedLabel,
   autoFocusFirstOnMount = true,
+  withFooterButtons = true,
 } = defineProps<HddFormProps<T>>();
+
+const formModelValue = defineModel<any>();
 
 const emits = defineEmits<{
   reset: [];
@@ -64,32 +68,34 @@ const emits = defineEmits<{
 const apiClient = useApiClient();
 
 const { t } = useI18n();
-const hddFormOptions = reactive({
-  fields,
-  defaultValidationMode,
-  staticInitialValues: initialValues,
-  onSubmit: (values, context) => {
-    emits('submit', values, context);
-    if (url) {
-      return submitToUrl()
-        .then((result: unknown) => {
-          if (onSuccess) {
-            onSuccess(result);
-          }
-          return result;
-        })
-        .catch((error: Error) => {
-          console.error(error);
-          if (onFailure) {
-            onFailure(error);
-          }
-        });
-    }
-  },
-} as UseHddFormOptions<T>);
+const hddFormOptions = computed(() => {
+  return {
+    fields,
+    defaultValidationMode,
+    staticInitialValues: initialValues,
+    onSubmit: (values, context) => {
+      emits('submit', values, context);
+      if (url) {
+        return submitToUrl()
+          .then((result: unknown) => {
+            if (onSuccess) {
+              onSuccess(result);
+            }
+            return result;
+          })
+          .catch((error: Error) => {
+            console.error(error);
+            if (onFailure) {
+              onFailure(error);
+            }
+          });
+      }
+    },
+  } as UseHddFormOptions<T>;
+});
 
 const containerRef = useTemplateRef('containerRef');
-const form = useHddForm<T>(hddFormOptions as UseHddFormOptions<T>);
+const form = useHddForm<T>(hddFormOptions.value as UseHddFormOptions<T>);
 
 const isSubmitting = ref(false);
 
@@ -311,11 +317,14 @@ const fieldNamePaths = computed(() => {
 function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown) => any[])>, _currentValues: unknown) {
   return typeof _options === 'function' ? _options(_currentValues) : (toValue(_options) ?? []);
 }
+
+if (formModelValue.value) {
+  syncRef(formModelValue, form.currentValues);
+}
 </script>
 
 <template>
   <div ref="containerRef" class="">
-    <!--                    <pre>{{ currentValues }}</pre>-->
     <div>
       <div v-if="summarizeErrorsAtTop && formState.invalid">
         <Message :size="size" severity="error" class="mb-2 mt-1 text-right" icon="i-heroicons-exclamation-triangle-20-solid !size-8 !text-4xl">
@@ -502,6 +511,16 @@ function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown)
                           @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
                         />
                       </template>
+                      <template v-else-if="field.type === 'form'">
+                        <FormObjectInput
+                          :model-value="get(currentValues, field.name)"
+                          v-bind="{ ...omit(generalInputsProps, ['onKeydown']), ...generalInputBindsByField(field) }"
+                          :fields="field.fields"
+                          label-class="-mt-2"
+                          @update:model-value="set(currentValues, fieldNamePaths[field.name], $event)"
+                          @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
+                        />
+                      </template>
                     </slot>
                   </div>
                   <template v-if="showFieldErrorsPopover">
@@ -520,7 +539,7 @@ function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown)
       </div>
     </div>
     <slot name="buttons-area">
-      <div class="mt-4">
+      <div v-if="withFooterButtons" class="mt-4">
         <div class="flex items-center justify-between gap-2">
           <slot name="beforeFooter" :is-submitting="isSubmitting"></slot>
           <Button

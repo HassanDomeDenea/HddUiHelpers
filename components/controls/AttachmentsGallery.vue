@@ -461,7 +461,7 @@ const onMainImageMouseMove = (e: MouseEvent) => {
   if (!panningState.value.isPanning) return;
   translateX.value = e.clientX - panningState.value.startX;
   translateY.value = e.clientY - panningState.value.startY;
-  console.log('Here', translateX.value, translateY.value);
+  // console.log('Here', translateX.value, translateY.value);
 };
 
 const onMainImageMouseUp = () => (panningState.value.isPanning = false);

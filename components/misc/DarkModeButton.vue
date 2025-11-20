@@ -15,7 +15,7 @@ watch(
   () => authStore.options.darkMode,
   (_value) => {
     console.log('Option Changed Dark Mode', _value);
-    console.log(preferredDark.value);
+
     if (_value !== 'auto') {
       const _isDark = _value === 'dark';
       if (_isDark !== isDark.value) {
