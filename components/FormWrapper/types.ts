@@ -130,6 +130,8 @@ export interface FormField<T extends FormFieldType = FormFieldType> {
   rules?: StringSchema | NumberSchema | BooleanSchema | DateSchema | ObjectSchema<any>;
 }
 
+export type HddFormFieldOnValueUpdateEvent = { value: any; row: any; setValue: (fieldName: string, value: any) => void; fieldRef: any };
+
 export type HddFormField<N extends string = string, T extends FormFieldType = FormFieldType, TRow = any> = {
   readonly name: T extends 'separator' | 'divider' ? undefined : N;
   icon?: string;
@@ -145,7 +147,7 @@ export type HddFormField<N extends string = string, T extends FormFieldType = Fo
   size?: 'small' | 'large';
   validationMode?: ValidationModeType;
   defaultValue?: FieldDefaultValue;
-  onValueUpdate?: (event: { value: any; row: any; setValue: (fieldName: string, value: any) => void; fieldRef: any }) => void;
+  onValueUpdate?: (event: HddFormFieldOnValueUpdateEvent) => void;
   customEditGetter?: any | ((data: any, row: any) => any);
   notes?: string;
   hidden?: boolean;

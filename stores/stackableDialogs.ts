@@ -1,5 +1,8 @@
+import { merge } from 'lodash-es';
 import uniqueId from 'lodash/uniqueId';
 import { defineStore } from 'pinia';
+import { useDialog } from 'primevue';
+import type { DynamicDialogOptions } from 'primevue/dynamicdialogoptions';
 
 export const useStackableDialogsStore = defineStore('stackableDialogs', () => {
   const stackableDialogs = ref<any[]>([]);
@@ -39,9 +42,10 @@ export const useStackableDialogsStore = defineStore('stackableDialogs', () => {
   };
 });
 
-export const useStackableDialog = function (options?: { dialogVisibilityRef?: Ref<boolean>; name?: string; dialogRef?: Ref } = {}) {
+export const useStackableDialog = function (options: { dialogVisibilityRef?: Ref<boolean>; name?: string; dialogRef?: Ref } = {}) {
   const store = useStackableDialogsStore();
   const dialogStackIndex = ref(null);
+  const dynamicalDialog = useDialog();
 
   function addDialogToStack() {
     if (dialogStackIndex.value === null) {
@@ -73,7 +77,29 @@ export const useStackableDialog = function (options?: { dialogVisibilityRef?: Re
     });
   }
 
+  function open(content: any, options?: DynamicDialogOptions) {
+    updateDialogVisibility(true);
+    dynamicalDialog.open(
+      content,
+      merge(
+        {
+          props: {
+            dismissableMask: true,
+            closeOnEscape: isClosable,
+            draggable: false,
+            modal: true,
+          } as any,
+          onClose() {
+            updateDialogVisibility(false);
+          },
+        },
+        options,
+      ),
+    );
+  }
+
   return {
+    open,
     updateDialogVisibility,
     store,
     addDialogToStack,

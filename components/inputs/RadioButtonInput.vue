@@ -48,21 +48,23 @@ function onLabelClicked() {
 }
 
 const mappedOptions = computed(() => {
-  return props.options.map((option) => {
-    if (typeof option === 'string') {
-      return {
-        [props.optionValueProperty]: option,
-        [props.optionLabelProperty]: props.autoTranslateLabels ? t(startCase(option)) : option,
-      };
-    }
+  return props.options
+    .map((option) => {
+      if (typeof option === 'string') {
+        return {
+          [props.optionValueProperty]: option,
+          [props.optionLabelProperty]: props.autoTranslateLabels ? t(startCase(option)) : option,
+        };
+      }
 
-    if (props.autoTranslateLabels && !option._skip_auto_translation) {
-      option = { ...option };
-      set(option, props.optionLabelProperty, t(startCase(get(option, props.optionLabelProperty))));
-    }
+      if (props.autoTranslateLabels && !option._skip_auto_translation) {
+        option = { ...option };
+        set(option, props.optionLabelProperty, t(startCase(get(option, props.optionLabelProperty))));
+      }
 
-    return option;
-  });
+      return option;
+    })
+    .filter((option) => option.visible !== false);
 });
 
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
@@ -72,7 +74,7 @@ defineExpose({ focus, ...exposed });
 
 <template>
   <BaseInput v-bind="{ ...baseInputForwardedProps }" :floating-label="false" :infield-top-aligned-label="false" @label-clicked="onLabelClicked">
-    <RadioButtonGroup v-model="value" :name="name" :invalid="generalInputProps.invalid" class="flex flex-wrap gap-5">
+    <RadioButtonGroup v-model="value" :name="name" :invalid="generalInputProps.invalid" class="flex flex-wrap gap-x-5">
       <template v-for="option in mappedOptions" :key="option">
         <div class="flex items-center gap-2">
           <RadioButton

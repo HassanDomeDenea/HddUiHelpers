@@ -251,6 +251,7 @@ defineExpose({ focus, ...exposed, clear, disabled: props.disabled, selectedItem 
       :model-value="selectedItemId"
       :placeholder="placeholder"
       :filter="true"
+      :name="name"
       :filter-fields="localFilterFields"
       :filter-placeholder="filterPlaceholder"
       :loading="isInitiallyLoading"

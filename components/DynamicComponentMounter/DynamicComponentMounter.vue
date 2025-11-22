@@ -1,17 +1,39 @@
 <script setup lang="ts">
 import type { DynamicComponentMounterEventBus } from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounterUtilities.ts';
 import { DynamicComponentMounterDialogKey } from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounterUtilities.ts';
+import { last } from 'lodash-es';
+import uniqueId from 'lodash/uniqueId';
 
 const bus = useEventBus(DynamicComponentMounterDialogKey);
-const localOptions = shallowRef<DynamicComponentMounterEventBus['options'] | null>();
-const componentRef = shallowRef('componentRef');
-function busListener({ event, options, setRef }: DynamicComponentMounterEventBus) {
+const componentsListRefs = useTemplateRefsList<any>();
+
+const componentsList = ref<
+  {
+    options: DynamicComponentMounterEventBus['options'];
+    id: string;
+  }[]
+>([]);
+function busListener({ event, options, setRefAndUnMounter }: DynamicComponentMounterEventBus) {
   if (event === 'mount') {
-    localOptions.value = options;
-    setRef(componentRef);
-  }
-  if (event === 'unmount') {
-    localOptions.value = null;
+    const newComponentId = uniqueId('HddDynamicComponent-');
+    const newItem = {
+      options: options,
+      id: newComponentId,
+    };
+    if (options.stacked !== true) {
+      componentsList.value = [newItem];
+    } else {
+      componentsList.value.push(newItem);
+    }
+
+    nextTick(() => {
+      setRefAndUnMounter(last(componentsListRefs.value), () => {
+        const indexToRemove = componentsList.value.findIndex((e) => e.id === newComponentId);
+        componentsList.value.splice(indexToRemove, 1);
+      });
+    });
+  } else if (event === 'clear') {
+    componentsList.value = [];
   }
 }
 onMounted(() => {
@@ -24,7 +46,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <component :is="localOptions.component" v-if="localOptions && localOptions.component" ref="componentRef" v-bind="localOptions.props"></component>
+  <template v-for="item in componentsList" :key="item.id">
+    <component :is="item.options.component" v-if="item.options.component" :ref="componentsListRefs.set" v-bind="item.options.props"></component>
+  </template>
 </template>
 
 <style scoped></style>

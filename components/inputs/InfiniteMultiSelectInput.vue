@@ -4,6 +4,7 @@ import { vElementVisibility } from '@vueuse/components';
 import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import get from 'lodash/get';
 import type Select from 'primevue/select';
 import type { SelectChangeEvent, SelectFilterEvent } from 'primevue/select';
 import type { Ref } from 'vue';
@@ -11,7 +12,6 @@ import { ref } from 'vue';
 import type { ComponentExposed } from 'vue-component-type-helpers';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps, ElementClassType } from './types';
-
 const props = withDefaults(
   defineProps<
     {
@@ -173,7 +173,6 @@ watch(
     }
 
     const _selectedItems = new Array(_selectedItemIds.length);
-    console.log(_selectedItems);
     const _idsToSearch: { id: string | number; index: number }[] = [];
 
     _selectedItemIds.forEach((_selectedItemId, _selectedItemIdIndex) => {
@@ -283,7 +282,7 @@ function onSelectFilterInput(evt: SelectFilterEvent) {
 
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
-defineExpose({ focus, clear, ...exposed });
+defineExpose({ focus, clear, selectedItems, ...exposed });
 </script>
 
 <template>
@@ -303,7 +302,9 @@ defineExpose({ focus, clear, ...exposed });
       v-bind="generalInputProps"
       ref="inputRef"
       :input-id="fieldUniqueId"
+      :name="name"
       :model-value="selectedItemIds"
+      :data-name="name"
       :placeholder="placeholder"
       :auto-filter-focus="true"
       :variant="variant"
@@ -353,12 +354,17 @@ defineExpose({ focus, clear, ...exposed });
         </slot>
       </template>
       <template #option="{ option, index }">
-        <span v-if="index + 1 === items.length" v-element-visibility="lastElementVisibilityChanged">
+        <span
+          v-if="index + 1 === items.length"
+          v-element-visibility="lastElementVisibilityChanged"
+          :aria-labelledby="getOptionText(option, index)"
+          :data-value="get(option, optionValueProperty)"
+        >
           <slot name="option" :option="{ option, index }">
             <div v-html="getOptionText(option, index)" />
           </slot>
         </span>
-        <span v-else>
+        <span v-else :aria-labelledby="getOptionText(option, index)" :data-value="get(option, optionValueProperty)">
           <slot name="option" :option="{ option, index }"><div v-html="getOptionText(option, index)" /></slot>
         </span>
       </template>

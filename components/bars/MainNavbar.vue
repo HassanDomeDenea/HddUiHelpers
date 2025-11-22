@@ -2,6 +2,7 @@
 import type { AppPermission } from '@/types/laravel_generated';
 import DarkModeButton from 'HddUiHelpers/components/misc/DarkModeButton.vue';
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
+import { Menubar } from 'primevue';
 
 const authStore = useBasicAuthStore();
 
@@ -30,27 +31,68 @@ const {
   navbarClass?: any;
   activeItemClass?: any;
 }>();
+const { t } = useI18n();
+const menuBarRef = useTemplateRef('menuBarRef');
 
 const filteredItems = computed(() => {
-  return items.filter((item) => {
-    if (item.auth === true && !authStore.user) {
-      return false;
-    }
+  const mainItems = [];
+  const otherItems = [];
 
-    if (item.auth === false && authStore.user) {
-      return false;
-    }
+  const _filtered = items
+    .filter((item) => {
+      if (item.auth === true && !authStore.user) {
+        return false;
+      }
 
-    if (item.permission && !authStore.can(item.permission)) {
-      return false;
+      if (item.auth === false && authStore.user) {
+        return false;
+      }
+
+      if (item.permission && !authStore.can(item.permission)) {
+        return false;
+      }
+      return true;
+    })
+    .map((item): NavbarMenuItemInterface & { estimated_width: number } => {
+      return {
+        ...item,
+        estimated_width: item.label.length * 13,
+      };
+    });
+
+  const othersItemEstimatedWidth = 13 * 13;
+  let currentEstimatedWidth = othersItemEstimatedWidth;
+  _filtered.forEach((item) => {
+    if (currentEstimatedWidth + item.estimated_width > itemsAvailableWidth.value) {
+      otherItems.push(item);
+    } else {
+      mainItems.push(item);
     }
-    return true;
+    currentEstimatedWidth += item.estimated_width;
   });
+
+  if (otherItems.length > 0) {
+    mainItems.push({
+      label: t('Others'),
+      items: otherItems,
+    });
+  }
+
+  return mainItems;
+});
+
+const menuBarStartAreaElement = computed(() => menuBarRef.value?.$el?.querySelector('.p-menubar-start'));
+const menuBarEndAreaElement = computed(() => menuBarRef.value?.$el?.querySelector('.p-menubar-end'));
+const { width: menuBarWidth } = useElementSize(menuBarRef);
+const { width: menuBarStartAreaWidth } = useElementSize(menuBarStartAreaElement);
+const { width: menuBarEndAreaWidth } = useElementSize(menuBarEndAreaElement);
+const itemsAvailableWidth = computed(() => {
+  return menuBarWidth.value - menuBarStartAreaWidth.value - menuBarEndAreaWidth.value - 12;
 });
 </script>
 
 <template>
-  <Menubar :model="filteredItems" :class="navbarClass" class="z-2">
+  <Menubar ref="menuBarRef" :model="filteredItems" :class="navbarClass" class="z-2">
     <template #start>
       <slot name="start"></slot>
     </template>

@@ -37,11 +37,11 @@ defineExpose({ focus, ...exposed });
       v-model="value"
       :rows="initialRows"
       :placeholder="placeholder"
+      :name="name"
       class="w-full"
       auto-resize
       :pt="{
         root: {
-          name,
           class: inputClass,
         },
       }"

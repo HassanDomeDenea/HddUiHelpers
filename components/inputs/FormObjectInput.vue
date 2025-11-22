@@ -31,6 +31,7 @@ defineExpose({ focus, ...exposed, inputRef });
       v-bind="{ ...generalInputProps, ...binds }"
       :fields="fields"
       :with-footer-buttons="false"
+      :auto-focus-first-on-mount="false"
       class="w-full"
     />
   </BaseInput>

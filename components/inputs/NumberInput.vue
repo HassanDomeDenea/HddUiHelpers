@@ -78,6 +78,7 @@ defineExpose({ focus, select, ...exposed });
       :use-grouping="useGrouping"
       class="w-full"
       :max-fraction-digits="precision"
+      locale="en-US"
       type="number"
       :class="inputClass"
       v-bind="{
