@@ -79,11 +79,6 @@ const isLoadingMore = ref(false);
 const isLoadingOnFirstShow = ref(false);
 const isInitiallyLoading = ref(false);
 
-interface OptionInterface {
-  name: string;
-  id: number;
-}
-
 type ValueInterface = string;
 
 async function search(event: { query?: string; offset?: number; limit?: number; onlyId?: boolean; multipleIds?: boolean }) {
@@ -239,7 +234,7 @@ function getOptionText(option: OptionInterface, index: number) {
   }
 }
 
-function getValueText(_selectedItemIds: (strin | number)[] | null, placeholder?: string) {
+function getValueText(_selectedItemIds: (string | number)[] | null, placeholder?: string) {
   const placeholderText = placeholder ? `<span class="text-muted px-2">${placeholder}</span>` : undefined;
   if (!_selectedItemIds || _selectedItemIds.length < 1) {
     return placeholderText ?? `&nbsp;`;

@@ -52,6 +52,10 @@ function onInput(event: InputNumberInputEvent) {
 }
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
+const textAddonValue = computed(() => {
+  return typeof props.textAddon === 'function' ? props.textAddon(value.value) : props.textAddon;
+});
+
 defineExpose({ focus, select, ...exposed });
 </script>
 
@@ -60,12 +64,9 @@ defineExpose({ focus, select, ...exposed });
     <template #labelText>
       <slot name="label-text" />
     </template>
-    <template v-if="$slots.addon || textAddon" #addon>
+    <template v-if="$slots.addon || textAddonValue" #addon>
       <slot name="addon">
-        <span
-          :class="{ 'text-xs': size === 'small', 'text-lg': size === 'large' }"
-          v-html="typeof textAddon === 'function' ? textAddon(value) : textAddon"
-        />
+        <span :class="{ 'text-xs': size === 'small', 'text-lg': size === 'large' }" v-html="textAddonValue" />
       </slot>
     </template>
     <template v-if="$slots.helper" #helper>
