@@ -4,6 +4,7 @@ import { i18n } from 'HddUiHelpers/plugins/i18n';
 import pinia from 'HddUiHelpers/plugins/pinia';
 import primevue from 'HddUiHelpers/plugins/primevue';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient';
+import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales.ts';
 import type { App, InjectionKey } from 'vue';
 import { inject } from 'vue';
 import type { I18n } from 'vue-i18n';
@@ -16,6 +17,8 @@ export interface HddUiHelpers {
   commonServerDataTableProps: Partial<ServerDataTableProps>;
   withBroadcasting: boolean;
   presenceUsersChannel: string | null;
+  dateArabicMonthNamesAsNumbers?: boolean;
+  dateEnglishMonthNamesAsNumbers?: boolean;
 }
 
 export interface HddUiHelpersComposable {
@@ -44,6 +47,54 @@ export default {
       presenceUsersChannel: options.presenceUsersChannel ?? null,
     };
     app.provide(HddUiHelpersSymbol, initiallyProvidedValues);
+
+    if (options.dateArabicMonthNamesAsNumbers === true) {
+      primeVueLocales.ar.monthNames = ['شهر 1', 'شهر 2', 'شهر 3', 'شهر 4', 'شهر 5', 'شهر 6', 'شهر 7', 'شهر 8', 'شهر 9', 'شهر 10', 'شهر 11', 'شهر 12'];
+      primeVueLocales.ar.monthNamesShort = [
+        'شهر 1',
+        'شهر 2',
+        'شهر 3',
+        'شهر 4',
+        'شهر 5',
+        'شهر 6',
+        'شهر 7',
+        'شهر 8',
+        'شهر 9',
+        'شهر 10',
+        'شهر 11',
+        'شهر 12',
+      ];
+    }
+    if (options.dateEnglishMonthNamesAsNumbers === true) {
+      primeVueLocales.en.monthNames = [
+        'Month 1',
+        'Month 2',
+        'Month 3',
+        'Month 4',
+        'Month 5',
+        'Month 6',
+        'Month 7',
+        'Month 8',
+        'Month 9',
+        'Month 10',
+        'Month 11',
+        'Month 12',
+      ];
+      primeVueLocales.en.monthNamesShort = [
+        'Month 1',
+        'Month 2',
+        'Month 3',
+        'Month 4',
+        'Month 5',
+        'Month 6',
+        'Month 7',
+        'Month 8',
+        'Month 9',
+        'Month 10',
+        'Month 11',
+        'Month 12',
+      ];
+    }
 
     app.use(i18n);
     app.use(pinia);

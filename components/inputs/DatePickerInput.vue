@@ -73,6 +73,7 @@ defineExpose({ focus, inputRef, ...exposed });
         v-bind="generalInputProps"
         ref="inputRef"
         v-model="localValue"
+        panel-class="HddDatePickerPanel"
         :input-id="fieldUniqueId"
         :placeholder="placeholder"
         :date-format="localDateFormat"
@@ -117,6 +118,22 @@ defineExpose({ focus, inputRef, ...exposed });
   }
   &.large {
     @apply ltr:right-[var(--p-datepicker-dropdown-lg-width)] rtl:left-[var(--p-datepicker-dropdown-lg-width)];
+  }
+}
+</style>
+
+<style lang="scss">
+.HddDatePickerPanel {
+  .p-datepicker-calendar-container {
+    .p-datepicker-header {
+      button {
+        order: unset;
+      }
+      .p-datepicker-prev-button > svg,
+      .p-datepicker-next-button > svg {
+        @apply rotate-180;
+      }
+    }
   }
 }
 </style>
