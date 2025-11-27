@@ -4,6 +4,7 @@ import { vElementVisibility } from '@vueuse/components';
 import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import get from 'lodash/get';
 import type Select from 'primevue/select';
 import type { SelectChangeEvent, SelectFilterEvent } from 'primevue/select';
 import PSelect from 'primevue/select';
@@ -21,6 +22,7 @@ const props = withDefaults(
       searchOnFocus?: boolean;
       optionLabelProperty?: string;
       optionValueProperty?: string;
+      optionDisabledProperty?: string;
       helperText?: string;
       withoutObject?: boolean;
       noManualInput?: boolean;
@@ -41,6 +43,7 @@ const props = withDefaults(
   {
     optionLabelProperty: 'name',
     optionValueProperty: 'id',
+    optionDisabledProperty: 'disabled',
     searchOnFocus: true,
     withoutObject: false,
     inputClass: 'w-full',
@@ -263,6 +266,7 @@ defineExpose({ focus, ...exposed, clear, disabled: props.disabled, selectedItem 
       :show-clear="clearable"
       :option-label="optionLabelProperty"
       :option-value="optionValueProperty"
+      :option-disabled="optionDisabledProperty"
       scroll-height="18rem"
       :pt="{
         pcFilter: {
@@ -290,12 +294,17 @@ defineExpose({ focus, ...exposed, clear, disabled: props.disabled, selectedItem 
         </slot>
       </template>
       <template #option="{ option, index }">
-        <span v-if="index + 1 === items.length" v-element-visibility="lastElementVisibilityChanged">
+        <span
+          v-if="index + 1 === items.length"
+          v-element-visibility="lastElementVisibilityChanged"
+          :aria-labelledby="getOptionText(option, index)"
+          :data-value="get(option, optionValueProperty)"
+        >
           <slot name="option" :option="{ option, index }">
             <div v-html="getOptionText(option, index)" />
           </slot>
         </span>
-        <span v-else>
+        <span v-else :aria-labelledby="getOptionText(option, index)" :data-value="get(option, optionValueProperty)">
           <slot name="option" :option="{ option, index }"><div v-html="getOptionText(option, index)" /></slot>
         </span>
       </template>

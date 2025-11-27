@@ -22,10 +22,13 @@ const inputRef = ref();
 function focus() {
   inputRef.value.$el.focus();
 }
+function select() {
+  inputRef.value.$el.select();
+}
 
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
-defineExpose({ focus, ...exposed });
+defineExpose({ focus, select, ...exposed });
 </script>
 
 <template>

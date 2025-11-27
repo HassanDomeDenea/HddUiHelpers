@@ -30,6 +30,7 @@ const {
   showRequiredAsterisk = false,
   inlineFields = true,
   size,
+  isEditing,
   fieldsContainerClass,
   formName,
   urlMethod = 'post',
@@ -219,7 +220,7 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
           },
         }
       : {}),
-    ...(field.binds ?? {}),
+    ...(field.binds ? (typeof field.binds === 'function' ? field.binds({ isEditing, row: toValue(currentValues) }) : field.binds) : {}),
   };
 }
 

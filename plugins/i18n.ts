@@ -30,3 +30,5 @@ export function setPageDirection() {
 }
 
 setPageDirection();
+
+export const __ = i18n.global.t;

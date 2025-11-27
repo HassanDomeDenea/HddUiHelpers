@@ -56,6 +56,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   noMultiSortBadges?: boolean;
   refreshOnActivated?: boolean;
   noBody?: boolean;
+  noEmptyMessage?: boolean;
   showOnlySortedIcon?: boolean;
   withDataView?: boolean;
   frozenToolsColumn?: boolean;

@@ -27,7 +27,11 @@ function busListener({ event, options }: ConfirmDialogWithInputEventBus) {
     visible.value = true;
     setTimeout(() => {
       inputRef.value?.[0]?.focus?.();
-    }, 300);
+
+      if (options.autoSelectText) {
+        inputRef.value?.[0]?.select?.();
+      }
+    }, 250);
   } else if (event === 'hide') {
     visible.value = false;
   }

@@ -94,6 +94,9 @@ defineExpose({ focus, ...exposed });
               'p-block-[var(--p-inputtext-sm-padding-y)] text-sm': size === 'small',
               'p-block-[var(--p-inputtext-lg-padding-y)] text-lg': size === 'large',
             }"
+            :data-name="name"
+            :aria-labelledby="autoTranslateLabels ? t(startCase(get(option, optionLabelProperty))) : get(option, optionLabelProperty)"
+            :data-value="get(option, optionValueProperty)"
             :for="fieldUniqueId + '_' + snakeCase(get(option, optionValueProperty))"
           >
             {{ autoTranslateLabels ? t(startCase(get(option, optionLabelProperty))) : get(option, optionLabelProperty) }}

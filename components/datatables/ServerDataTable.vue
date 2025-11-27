@@ -181,6 +181,7 @@ const {
   openOnClick,
   frozenSelectionColumn = undefined,
   noBody = false,
+  noEmptyMessage = false,
   withDataView = false,
   openButtonTitle,
   openButtonIcon,
@@ -1364,6 +1365,7 @@ defineExpose({
   refresh,
   startLoading,
   endLoading,
+  isLoading,
   extraData,
   printTable,
   getData,
@@ -1417,7 +1419,7 @@ const computedTableHeight = computed(() => {
 </script>
 
 <template>
-  <div ref="wrapperRef" class="HddServerDataTableWrapper h-full" :class="{ 'rounded-table': rounded }">
+  <div ref="wrapperRef" class="HddServerDataTableWrapper h-full" :class="{ 'rounded-table': rounded }" :data-name="tableName">
     <ServerFormDialog ref="ServerFormDialogRef" v-bind="ServerFormDialogOptions">
       <template v-for="field in ServerFormDialogRef?.mappedFormFields" #[`${getFieldSlotName(field)}BeforeControl`]>
         <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
@@ -1461,224 +1463,231 @@ const computedTableHeight = computed(() => {
     <ContextMenu ref="contextMenuRef" :model="contextMenuModel" @hide="contextMenuSelectedRecord = undefined" />
     <AuditsPopover ref="auditsPopoverRef" />
     <div ref="headerSegmentRef" class="p-1">
-      <!--            <div class="absolute top-0 right-0 left-0 flex justify-center">
+      <slot name="topSegment">
+        <!--            <div class="absolute top-0 right-0 left-0 flex justify-center">
                 <ProgressSpinner class="!size-12" />
             </div>-->
-      <slot name="title" :records="records">
-        <div class="my-1 text-center text-xl font-bold" :class="{ ['text-' + tableSeverity]: tableSeverity && tableSeverity !== 'none' }">
-          {{ title }}
-        </div>
-      </slot>
-      <slot name="subTitle"></slot>
-      <div class="flex justify-between">
-        <div>
-          <div class="flex justify-between">
-            <div v-if="hasGlobalFilter">
-              <InputGroup>
-                <IconField>
-                  <InputIcon class="i-mdi:magnify !z-10" />
-                  <InputText
-                    v-model="globalFilterValue"
-                    :size="computedSize"
-                    :placeholder="t('Search')"
-                    name="global-search"
-                    autocomplete="off"
-                    @value-change="lazyRefresh"
-                  />
-                </IconField>
-                <Button
-                  v-if="hasFilters"
-                  v-tooltip.top="t('Clear Filters')"
-                  class="print:hidden"
-                  :size="computedSize"
-                  type="button"
-                  icon="i-mdi-filter-off w-8"
-                  :label="t('Clear')"
-                  outlined
-                  severity="error"
-                  @click="clearFilters()"
-                />
-                <template v-if="computedWithToolbarFilters">
-                  <Popover ref="toolbarFiltersPopoverRef">
-                    <div class="overflow-y-auto" style="max-height: calc(100vh - 100px)">
-                      <div class="flex max-h-screen flex-col items-center gap-y-1 py-1">
-                        <template v-for="column in toolbarFilterableColumns" :key="column.field">
-                          <Button
-                            :disabled="
-                              filledToolbarColumnNames.includes(column.filterField ?? column.field) && !allowMultipleToolbarFiltersForSameField
-                            "
-                            severity="info"
-                            outlined
-                            fluid
-                            :size="toolbarButtonsSize ?? computedSize"
-                            :label="getColumnTitle(column, t)"
-                            @click="addToolbarFilter(column)"
-                          />
-                        </template>
-                      </div>
-                      <Divider />
-                      <SelectInput
-                        v-if="toolbarFilters.fields.length > 1"
-                        v-model="toolbarFilters.operator"
-                        class="mb-2"
-                        size="small"
-                        :has-filter="false"
-                        :label="t('Filtering Method')"
-                        option-label-property="label"
-                        option-value-property="value"
-                        :options="[
-                          { value: 'and', label: t('All Conditions') },
-                          { value: 'or', label: t('Any Condition') },
-                        ]"
-                        @change="() => hasToolbarFilterValues && onToolbarFiltersChange()"
-                      />
-                      <Button
-                        v-if="hasToolbarFilterItems"
-                        fluid
-                        size="small"
-                        icon="i-mdi-filter-off"
-                        :label="t('Clear Filters')"
-                        severity="secondary"
-                        @click="clearToolbarFilters()"
-                      />
-                    </div>
-                  </Popover>
+        <slot name="title" :records="records">
+          <div class="my-1 text-center text-xl font-bold" :class="{ ['text-' + tableSeverity]: tableSeverity && tableSeverity !== 'none' }">
+            {{ title }}
+          </div>
+        </slot>
+        <slot name="subTitle"></slot>
+        <div class="flex justify-between">
+          <div>
+            <div class="flex justify-between">
+              <div v-if="hasGlobalFilter">
+                <InputGroup>
+                  <IconField>
+                    <InputIcon class="i-mdi:magnify !z-10" />
+                    <InputText
+                      v-model="globalFilterValue"
+                      :size="computedSize"
+                      :placeholder="t('Search')"
+                      name="global-search"
+                      autocomplete="off"
+                      @value-change="lazyRefresh"
+                    />
+                  </IconField>
                   <Button
-                    v-if="computedWithToolbarFilters"
-                    v-tooltip.top="t('Filter')"
+                    v-if="hasFilters"
+                    v-tooltip.top="t('Clear Filters')"
                     class="print:hidden"
-                    :size="toolbarButtonsSize ?? computedSize"
-                    severity="help"
-                    icon="i-mdi-filter"
-                    @click="(evt) => toolbarFiltersPopoverRef?.toggle(evt)"
+                    :size="computedSize"
+                    type="button"
+                    icon="i-mdi-filter-off w-8"
+                    :label="t('Clear')"
+                    outlined
+                    severity="error"
+                    @click="clearFilters()"
                   />
-                </template>
-              </InputGroup>
+                  <template v-if="computedWithToolbarFilters">
+                    <Popover ref="toolbarFiltersPopoverRef">
+                      <div class="overflow-y-auto" style="max-height: calc(100vh - 100px)">
+                        <div class="flex max-h-screen flex-col items-center gap-y-1 py-1">
+                          <template v-for="column in toolbarFilterableColumns" :key="column.field">
+                            <Button
+                              :disabled="
+                                filledToolbarColumnNames.includes(column.filterField ?? column.field) && !allowMultipleToolbarFiltersForSameField
+                              "
+                              severity="info"
+                              outlined
+                              fluid
+                              :size="toolbarButtonsSize ?? computedSize"
+                              :label="getColumnTitle(column, t)"
+                              @click="addToolbarFilter(column)"
+                            />
+                          </template>
+                        </div>
+                        <Divider />
+                        <SelectInput
+                          v-if="toolbarFilters.fields.length > 1"
+                          v-model="toolbarFilters.operator"
+                          class="mb-2"
+                          size="small"
+                          :has-filter="false"
+                          :label="t('Filtering Method')"
+                          option-label-property="label"
+                          option-value-property="value"
+                          :options="[
+                            { value: 'and', label: t('All Conditions') },
+                            { value: 'or', label: t('Any Condition') },
+                          ]"
+                          @change="() => hasToolbarFilterValues && onToolbarFiltersChange()"
+                        />
+                        <Button
+                          v-if="hasToolbarFilterItems"
+                          fluid
+                          size="small"
+                          icon="i-mdi-filter-off"
+                          :label="t('Clear Filters')"
+                          severity="secondary"
+                          @click="clearToolbarFilters()"
+                        />
+                      </div>
+                    </Popover>
+                    <Button
+                      v-if="computedWithToolbarFilters"
+                      v-tooltip.top="t('Filter')"
+                      class="print:hidden"
+                      :size="toolbarButtonsSize ?? computedSize"
+                      severity="help"
+                      icon="i-mdi-filter"
+                      @click="(evt) => toolbarFiltersPopoverRef?.toggle(evt)"
+                    />
+                  </template>
+                </InputGroup>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="flex justify-end gap-1 print:hidden">
-          <slot name="buttonsStart" />
-          <Button
-            v-if="creatable"
-            v-tooltip.success.top="createButtonLabel ?? t('New')"
-            :size="toolbarButtonsSize ?? computedSize"
-            severity="primary"
-            icon="i-mdi-plus "
-            :label="!toolbarButtonsOnlyIcons ? (createButtonLabel ?? t('New')) : null"
-            v-bind="createButtonProps"
-            @click="showCreateDialog()"
-          />
-          <Button
-            v-if="selectable && selectAllToolbarButton"
-            v-tooltip.top="isAllSelected ? t('Deselect') : t('Select All')"
-            class="light:border-gray-300 light:text-black border-1 whitespace-pre dark:border-gray-600 dark:text-white"
-            :size="toolbarButtonsSize ?? computedSize"
-            severity="secondary"
-            :icon="isAllSelected ? 'i-mdi:square-rounded-outline' : 'i-fluent:select-all-on-24-regular'"
-            :label="!toolbarButtonsOnlyIcons ? (isAllSelected ? t('Deselect') : t('Select All')) : null"
-            @click="onSelectAllRecordsButtonClick"
-          />
-          <Button
-            v-if="selectable && deletable"
-            v-tooltip.top="t('Delete')"
-            :loading="isDeleting"
-            :size="toolbarButtonsSize ?? computedSize"
-            severity="danger"
-            :disabled="isLoading || selectedRecords.length < 1"
-            icon="i-mdi-trash"
-            :label="!toolbarButtonsOnlyIcons ? t('Delete') : null"
-            @click="deleteRecords(selectedRecords as T[])"
-          />
-          <Button
-            v-if="selectable && editable"
-            v-tooltip.top="{
-              class: 'warn',
-              value: selectedRecords.length > 1 && !multiEditable ? t('You must select one item only') : t('Edit'),
-            }"
-            :size="toolbarButtonsSize ?? computedSize"
-            :disabled="isDeleting || isLoading || selectedRecords.length < 1 || (selectedRecords.length !== 1 && !multiEditable)"
-            severity="success"
-            icon="pi pi-pencil"
-            :label="!toolbarButtonsOnlyIcons ? t('Edit') : null"
-            @click="editRecords(selectedRecords)"
-          />
-          <template v-if="computedColumnVisibilityButton">
-            <Popover ref="visibleColumnsPopoverRef">
-              <div class="max-h-screen overflow-y-auto">
-                <div v-for="column in toggleableColumns" :key="getColumnName(column)" class="max-h-90vh flex items-center gap-2 overflow-y-auto pb-1">
-                  <Checkbox
-                    v-model="visibleColumns"
-                    :input-id="'ColumnVisibilityCheckbox_' + getColumnName(column)"
-                    :value="getColumnName(column)"
-                    @change="saveVisibleColumnsState"
-                  />
-                  <label :for="'ColumnVisibilityCheckbox_' + getColumnName(column)" class="flex-1 px-1">
-                    {{ getColumnTitle(column, t) }}
-                  </label>
-                </div>
-              </div>
-            </Popover>
+          <div class="flex justify-end gap-1 print:hidden">
+            <slot name="buttonsStart" />
             <Button
-              v-tooltip.top="t('Columns Control')"
+              v-if="creatable"
+              v-tooltip.success.top="createButtonLabel ?? t('New')"
               :size="toolbarButtonsSize ?? computedSize"
-              icon="i-mdi:eye "
-              severity="help"
-              @click="(evt) => visibleColumnsPopoverRef?.toggle(evt)"
+              severity="primary"
+              icon="i-mdi-plus "
+              :label="!toolbarButtonsOnlyIcons ? (createButtonLabel ?? t('New')) : null"
+              v-bind="createButtonProps"
+              @click="showCreateDialog()"
             />
-          </template>
-          <template v-if="printable">
-            <ContextMenu ref="printTableContextMenuRef" :model="printTableContextMenuItems" />
-
             <Button
-              v-tooltip.top="t('Print')"
-              :disabled="isLoading"
+              v-if="selectable && selectAllToolbarButton"
+              v-tooltip.top="isAllSelected ? t('Deselect') : t('Select All')"
+              class="light:border-gray-300 light:text-black border-1 whitespace-pre dark:border-gray-600 dark:text-white"
               :size="toolbarButtonsSize ?? computedSize"
+              severity="secondary"
+              :icon="isAllSelected ? 'i-mdi:square-rounded-outline' : 'i-fluent:select-all-on-24-regular'"
+              :label="!toolbarButtonsOnlyIcons ? (isAllSelected ? t('Deselect') : t('Select All')) : null"
+              @click="onSelectAllRecordsButtonClick"
+            />
+            <Button
+              v-if="selectable && deletable"
+              v-tooltip.top="t('Delete')"
+              :loading="isDeleting"
+              :size="toolbarButtonsSize ?? computedSize"
+              severity="danger"
+              :disabled="isLoading || selectedRecords.length < 1"
+              icon="i-mdi-trash"
+              :label="!toolbarButtonsOnlyIcons ? t('Delete') : null"
+              @click="deleteRecords(selectedRecords as T[])"
+            />
+            <Button
+              v-if="selectable && editable"
+              v-tooltip.top="{
+                class: 'warn',
+                value: selectedRecords.length > 1 && !multiEditable ? t('You must select one item only') : t('Edit'),
+              }"
+              :size="toolbarButtonsSize ?? computedSize"
+              :disabled="isDeleting || isLoading || selectedRecords.length < 1 || (selectedRecords.length !== 1 && !multiEditable)"
               severity="success"
-              :loading="isPrinting"
-              icon="i-mdi-printer"
-              @contextmenu.prevent="printTableOnContextMenu"
-              @click="printTable()"
+              icon="pi pi-pencil"
+              :label="!toolbarButtonsOnlyIcons ? t('Edit') : null"
+              @click="editRecords(selectedRecords)"
             />
-          </template>
-          <Button
-            v-if="hasRefreshButton"
-            v-tooltip.top="t('Refresh')"
-            severity="info"
-            :size="toolbarButtonsSize ?? computedSize"
-            :loading="isLoading"
-            type="button"
-            icon="i-fluent:arrow-counterclockwise-12-regular"
-            outlined
-            @click="refresh()"
-          />
-          <slot name="buttonsEnd" />
+            <template v-if="computedColumnVisibilityButton">
+              <Popover ref="visibleColumnsPopoverRef">
+                <div class="max-h-screen overflow-y-auto">
+                  <div
+                    v-for="column in toggleableColumns"
+                    :key="getColumnName(column)"
+                    class="max-h-90vh flex items-center gap-2 overflow-y-auto pb-1"
+                  >
+                    <Checkbox
+                      v-model="visibleColumns"
+                      :input-id="'ColumnVisibilityCheckbox_' + getColumnName(column)"
+                      :value="getColumnName(column)"
+                      @change="saveVisibleColumnsState"
+                    />
+                    <label :for="'ColumnVisibilityCheckbox_' + getColumnName(column)" class="flex-1 px-1">
+                      {{ getColumnTitle(column, t) }}
+                    </label>
+                  </div>
+                </div>
+              </Popover>
+              <Button
+                v-tooltip.top="t('Columns Control')"
+                :size="toolbarButtonsSize ?? computedSize"
+                icon="i-mdi:eye "
+                severity="help"
+                @click="(evt) => visibleColumnsPopoverRef?.toggle(evt)"
+              />
+            </template>
+            <template v-if="printable">
+              <ContextMenu ref="printTableContextMenuRef" :model="printTableContextMenuItems" />
+
+              <Button
+                v-tooltip.top="t('Print')"
+                :disabled="isLoading"
+                :size="toolbarButtonsSize ?? computedSize"
+                severity="success"
+                :loading="isPrinting"
+                icon="i-mdi-printer"
+                @contextmenu.prevent="printTableOnContextMenu"
+                @click="printTable()"
+              />
+            </template>
+            <Button
+              v-if="hasRefreshButton"
+              v-tooltip.top="t('Refresh')"
+              severity="info"
+              :size="toolbarButtonsSize ?? computedSize"
+              :loading="isLoading"
+              type="button"
+              icon="i-fluent:arrow-counterclockwise-12-regular"
+              outlined
+              @click="refresh()"
+            />
+            <slot name="buttonsEnd" />
+          </div>
         </div>
-      </div>
-      <div v-if="computedWithToolbarFilters" class="flex justify-start">
-        <div class="mt-1">
-          <ToolbarFilterWrapper
-            v-if="fixedToolbarFilters"
-            :filters="{ operator: 'and', fields: fixedToolbarFilters }"
-            :is-printing="true"
-            :hide-operator="true"
-            :columns="mappedColumns"
-            :operator="toolbarFilters.operator"
-            @filters-changed="onToolbarFiltersChange"
-          />
-          <Divider v-if="fixedToolbarFilters && fixedToolbarFilters.length && hasToolbarFilterItems" />
-          <ToolbarFilterWrapper
-            ref="toolbarFiltersWrapperRef"
-            v-model:filters="toolbarFilters"
-            :hide-operator="true"
-            :columns="mappedColumns"
-            :operator="toolbarFilters.operator"
-            @filters-changed="onToolbarFiltersChange"
-          />
+        <div v-if="computedWithToolbarFilters" class="flex justify-start">
+          <div class="mt-1">
+            <ToolbarFilterWrapper
+              v-if="fixedToolbarFilters"
+              :filters="{ operator: 'and', fields: fixedToolbarFilters }"
+              :is-printing="true"
+              :hide-operator="true"
+              :columns="mappedColumns"
+              :operator="toolbarFilters.operator"
+              @filters-changed="onToolbarFiltersChange"
+            />
+            <Divider v-if="fixedToolbarFilters && fixedToolbarFilters.length && hasToolbarFilterItems" />
+            <ToolbarFilterWrapper
+              ref="toolbarFiltersWrapperRef"
+              v-model:filters="toolbarFilters"
+              :hide-operator="true"
+              :columns="mappedColumns"
+              :operator="toolbarFilters.operator"
+              @filters-changed="onToolbarFiltersChange"
+            />
+          </div>
+          <!--                    <pre dir="ltr" class="dir-ltr text-left text-xs">{{toolbarFilters}}</pre>-->
         </div>
-        <!--                    <pre dir="ltr" class="dir-ltr text-left text-xs">{{toolbarFilters}}</pre>-->
-      </div>
+      </slot>
     </div>
+
     <DataTable
       ref="datatableRef"
       v-model:context-menu-selection="contextMenuSelectedRecord"
@@ -1723,6 +1732,11 @@ const computedTableHeight = computed(() => {
       @row-select="onRowSelect"
       @row-unselect="onRowUnselect"
       @row-select-all="onRowSelectAll"
+      :pt="{
+        table: {
+          'data-name': name,
+        },
+      }"
       @row-unselect-all="onRowUnselectAll"
       @page="onPageChange"
       @sort="onSort"
@@ -1800,7 +1814,7 @@ const computedTableHeight = computed(() => {
       </template>
       <template #empty>
         <slot name="empty" :record="records">
-          <div class="text-secondary-1 text-center text-sm italic">
+          <div v-if="!noEmptyMessage" class="text-secondary-1 text-center text-sm italic">
             {{ t('No Records') }}
           </div>
         </slot>

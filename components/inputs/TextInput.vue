@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 import BaseInput from './BaseInput.vue';
-import type { TextInputProps } from './types';
+import type { BaseInputSlots, TextInputProps } from './types';
 
 const props = withDefaults(defineProps<TextInputProps>(), {
   type: 'text',
 });
+const slots = defineSlots<BaseInputSlots>();
 
 const emits = defineEmits<{
   blur: [e: FocusEvent];
   focus: [e: FocusEvent];
   keydown: [e: KeyboardEvent];
 }>();
+
 const value = defineModel<any>('modelValue', { required: true });
 const localValue = ref(null);
 
@@ -33,6 +35,10 @@ function focus() {
   inputRef.value.$el.focus();
 }
 
+function select() {
+  inputRef.value.$el.select();
+}
+
 const inputTextPt = computed(() => {
   return {
     root: {
@@ -51,22 +57,16 @@ function onInputChange() {
 
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
-defineExpose({ focus, ...exposed });
+defineExpose({ select, focus, ...exposed });
 </script>
 
 <template>
   <BaseInput ref="baseInputRef" v-bind="baseInputForwardedProps" @label-clicked="focus">
-    <template #labelText>
-      <slot name="label-text" />
+    <template v-for="(_, name) in slots" #[name]>
+      <!-- We render the slot function provided by the parent (App) -->
+      <slot :name="name" :value="value" />
     </template>
-    <template v-if="$slots.addon" #addon>
-      <slot name="addon" />
-    </template>
-    <template v-if="$slots.helper || helperText" #helper>
-      <slot name="helper">
-        <div v-html="helperText" />
-      </slot>
-    </template>
+
     <InputText
       :id="fieldUniqueId"
       ref="inputRef"

@@ -132,12 +132,14 @@ export interface FormField<T extends FormFieldType = FormFieldType> {
 
 export type HddFormFieldOnValueUpdateEvent = { value: any; row: any; setValue: (fieldName: string, value: any) => void; fieldRef: any };
 
-export type HddFormField<N extends string = string, T extends FormFieldType = FormFieldType, TRow = any> = {
+export type HddFormField<N extends string = string, T extends FormFieldType = FormFieldType, TRow = unknown> = {
   readonly name: T extends 'separator' | 'divider' ? undefined : N;
   icon?: string;
   label?: string;
   readonly type?: T;
-  binds?: T extends 'autocomplete' ? AutocompleteInputProps : T extends 'text' ? TextInputProps : object;
+  binds?:
+    | (T extends 'autocomplete' ? AutocompleteInputProps : T extends 'text' ? TextInputProps : object)
+    | ((event: { isEditing: boolean; row: TRow }) => object);
   disabled?: boolean | ((currentValues: any) => boolean);
   readonly?: boolean | ((currentValues: any) => boolean);
   placeholder?: string;

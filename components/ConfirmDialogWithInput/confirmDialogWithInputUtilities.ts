@@ -7,6 +7,7 @@ type extendedConfirmationOptions = {
   rejectProps?: ButtonProps;
   acceptProps?: ButtonProps;
   closeOnEscape?: boolean;
+  autoSelectText?: boolean;
   inputsCount?: number;
   inputType?: inputType | inputType[];
   initialValue?: any | any[];

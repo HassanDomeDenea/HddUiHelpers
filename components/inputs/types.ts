@@ -4,6 +4,16 @@ import type { StyleValue } from 'vue';
 
 export type ElementClassType = string | { [name: string]: boolean } | ({ [name: string]: boolean } | string)[];
 
+export interface BaseInputSlots {
+  beforeControl: () => any;
+  afterControl: (slotProps: { value: any }) => any;
+  addon: () => any;
+  afterLabel: () => any;
+  labelText: () => any;
+  default: () => any;
+  helper: () => any;
+}
+
 export interface BaseInputProps {
   autocomplete?: string;
   icon?: string;

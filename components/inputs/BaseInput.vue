@@ -4,20 +4,13 @@ import omit from 'lodash/omit';
 import { FloatLabel, IftaLabel } from 'primevue';
 import { useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { BaseInputProps } from './types';
+import type { BaseInputProps, BaseInputSlots } from './types';
 
 const { hideLabelDoubleDots = true, error, showErrorMessage, label, disabled } = defineProps<BaseInputProps>();
 const emits = defineEmits<{
   labelClicked: [event: MouseEvent];
 }>();
-const slots = defineSlots<{
-  addon: () => any;
-  afterLabel: () => any;
-  labelText: () => any;
-  default: () => any;
-  helper: () => any;
-  afterControl: () => any;
-}>();
+const slots = defineSlots<BaseInputSlots>();
 
 const helperSlotRef = ref();
 const { t } = useI18n();
@@ -86,6 +79,7 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
                       <slot name="default" />
                       <slot name="afterControl" />
                     </div> -->
+          <slot name="beforeControl"></slot>
           <template v-if="!floatingLabel && !infieldTopAlignedLabel">
             <slot ref="defaultSlotRef" name="default" />
           </template>
@@ -99,7 +93,7 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
                 <slot ref="defaultSlotRef" name="default" />
               </IconField>
               <template v-else>
-                <slot name="default" />
+                <slot ref="defaultSlotRef" name="default" />
               </template>
               <label :for="inputId" class="z-2 flex items-center gap-1" :style="labelStyle">
                 <template v-if="label">
@@ -112,6 +106,8 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
               </label>
             </component>
           </template>
+          <slot name="afterControl"></slot>
+
           <InputGroupAddon
             v-if="buttonAddon && (toValue(buttonAddon).showable?.({ value: modelValue, control: controlComponent }) ?? true)"
             class="!min-w-unset"
