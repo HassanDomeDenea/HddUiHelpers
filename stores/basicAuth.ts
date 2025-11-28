@@ -7,8 +7,7 @@ import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers.ts';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient';
 import type { BasicUserData } from 'HddUiHelpers/types/BasicModels';
 import { safeRequest } from 'HddUiHelpers/utils/safeTry';
-import { each } from 'lodash-es';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep, each } from 'lodash-es';
 import { defineStore } from 'pinia';
 const reverbHostName = import.meta.env.VITE_REVERB_HOST;
 export const useBasicAuthStore = defineStore('basicAuth', () => {
