@@ -1,25 +1,25 @@
 // my-vite-plugin.ts
-import VueI18n from '@intlify/unplugin-vue-i18n/vite';
-import { PrimeVueResolver } from '@primevue/auto-import-resolver';
-import { unheadVueComposablesImports } from '@unhead/vue';
-import Vue from '@vitejs/plugin-vue';
-import path from 'node:path';
-import UnoCSS from 'unocss/vite';
-import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
-import Markdown from 'unplugin-vue-markdown/vite';
-import { VueRouterAutoImports } from 'unplugin-vue-router';
-import VueRouter from 'unplugin-vue-router/vite';
-import type { Plugin, PluginOption } from 'vite';
+import VueI18n from '@intlify/unplugin-vue-i18n/vite'
+import { PrimeVueResolver } from '@primevue/auto-import-resolver'
+import { unheadVueComposablesImports } from '@unhead/vue'
+import Vue from '@vitejs/plugin-vue'
+import path from 'node:path'
+import UnoCSS from 'unocss/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import Markdown from 'unplugin-vue-markdown/vite'
+import { VueRouterAutoImports } from 'unplugin-vue-router'
+import VueRouter from 'unplugin-vue-router/vite'
+import type { Plugin, PluginOption } from 'vite'
 
 export default function HddUiHelpersPlugin(): PluginOption {
   // Initialize other plugins
   const HddUiHelpersActualPlugin: Plugin = {
     name: 'hdd-ui-helpers-plugin',
-  };
+  }
 
   // Check if we're in development mode
-  const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === undefined;
+  const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === undefined
 
   // Base plugins that are always needed
   const basePlugins = [
@@ -52,7 +52,7 @@ export default function HddUiHelpersPlugin(): PluginOption {
       },
     }),
     HddUiHelpersActualPlugin,
-  ];
+  ]
 
   // Development-optimized plugins
   if (isDev) {
@@ -63,8 +63,17 @@ export default function HddUiHelpersPlugin(): PluginOption {
         imports: ['vue', 'vue-i18n', '@vueuse/core', VueRouterAutoImports],
         dts: 'resources/js/types/auto-imports.d.ts',
         //dts: false, // Disable DTS generation in dev mode for faster work
-        dirs: ['resources/js/composables', 'resources/js/stores', 'resources/js/HddUiHelpers/composables'], // Disable directory scanning in dev mode
+        dirs: [
+          'resources/js/composables',
+          'resources/js/stores',
+          'resources/js/HddUiHelpers/composables',
+        ], // Disable directory scanning in dev mode
         vueTemplate: true,
+        eslintrc: {
+          enabled: true,
+          filepath: '.eslintrc-auto-import.json',
+          globalsPropValue: true,
+        },
       }),
       Components({
         resolvers: [PrimeVueResolver()],
@@ -80,20 +89,33 @@ export default function HddUiHelpersPlugin(): PluginOption {
       VueI18n({
         compositionOnly: true,
         fullInstall: false,
-        include: [path.resolve(__dirname, '../locales/*.yaml'), path.resolve(__dirname, '../../../../lang/*.yaml')],
+        include: [
+          path.resolve(__dirname, '../locales/*.yaml'),
+          path.resolve(__dirname, '../../../../lang/*.yaml'),
+        ],
         // Disable type generation in dev mode
         runtimeOnly: true,
       }),
-    ];
+    ]
   }
 
   // Production plugins with full functionality
   return [
     ...basePlugins,
     AutoImport({
-      imports: ['vue', 'vue-i18n', '@vueuse/core', VueRouterAutoImports, unheadVueComposablesImports],
+      imports: [
+        'vue',
+        'vue-i18n',
+        '@vueuse/core',
+        VueRouterAutoImports,
+        unheadVueComposablesImports,
+      ],
       dts: 'resources/js/types/auto-imports.d.ts',
-      dirs: ['resources/js/composables', 'resources/js/stores', 'resources/js/HddUiHelpers/composables'],
+      dirs: [
+        'resources/js/composables',
+        'resources/js/stores',
+        'resources/js/HddUiHelpers/composables',
+      ],
       vueTemplate: true,
     }),
     Components({
@@ -110,7 +132,10 @@ export default function HddUiHelpersPlugin(): PluginOption {
       headEnabled: true,
     }),
     VueI18n({
-      include: [path.resolve(__dirname, '../locales/*.yaml'), path.resolve(__dirname, '../../../../lang/*.yaml')],
+      include: [
+        path.resolve(__dirname, '../locales/*.yaml'),
+        path.resolve(__dirname, '../../../../lang/*.yaml'),
+      ],
     }),
-  ];
+  ]
 }

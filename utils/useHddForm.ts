@@ -133,7 +133,7 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
   });
 
   const currentValues = ref<Record<T, any>>(cloneDeep(initialValues.value));
-
+  const currentFiles = ref<Record<T, File | File[] | FileList>>({  } as any);
   function createFieldState(): FieldState {
     return {
       touched: false,
@@ -320,6 +320,7 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
 
   const context = {
     currentValues,
+      currentFiles,
     fieldNames,
     initialValues,
     clearFieldError,

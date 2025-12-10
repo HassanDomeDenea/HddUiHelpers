@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import type { Moment } from 'moment';
-import moment from 'moment';
-import DatePicker from 'primevue/datepicker';
-import type { ComponentExposed } from 'vue-component-type-helpers';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
+import type { Moment } from 'moment'
+import moment from 'moment'
+import DatePicker from 'primevue/datepicker'
+import type { ComponentExposed } from 'vue-component-type-helpers'
+import BaseInput from './BaseInput.vue'
+import type { BaseInputProps } from './types'
 const props = withDefaults(
   defineProps<
     {
-      manualInput?: boolean;
-      isYearOnly?: boolean;
-      withSuggestionsButtons?: boolean;
-      clearable?: boolean;
-      showTime?: boolean;
-      dateFormat?: string;
-      formatAsString?: boolean;
+      manualInput?: boolean
+      isYearOnly?: boolean
+      withSuggestionsButtons?: boolean
+      clearable?: boolean
+      showTime?: boolean
+      dateFormat?: string
+      formatAsString?: boolean
     } & BaseInputProps
   >(),
   {
@@ -23,51 +23,66 @@ const props = withDefaults(
     isYearOnly: false,
     withSuggestionsButtons: false,
     formatAsString: true,
-  },
-);
-const value = defineModel<any>('modelValue');
-const { t } = useI18n();
-const inputRef = useTemplateRef<ComponentExposed<typeof DatePicker>>('inputRef');
+  }
+)
+const value = defineModel<any>('modelValue')
+const { t } = useI18n()
+const inputRef = useTemplateRef<ComponentExposed<typeof DatePicker>>('inputRef')
 
 function focus() {
-  inputRef.value.input?.click();
+  inputRef.value.input?.click()
 }
 
 const localValue = computed({
-  get: () => value.value,
-  set: (val) => {
-    if (val && props.formatAsString) {
-      value.value = moment(val).format('YYYY-MM-DD HH:mm:ss');
+  get: () => {
+    if (props.isYearOnly) {
+      return value.value ? moment(value.value).format('YYYY') : null
     } else {
-      value.value = val;
+      return value.value
     }
   },
-});
+  set: (val) => {
+    if (props.isYearOnly) {
+      value.value = val ? moment(val).format('YYYY') : null
+    } else {
+      if (val && props.formatAsString) {
+        value.value = moment(val).format('YYYY-MM-DD HH:mm:ss')
+      } else {
+        value.value = val
+      }
+    }
+  },
+})
 
 function onDateLocalEnterKeyDown(event: KeyboardEvent) {
   if (inputRef.value.overlayVisible) {
-    inputRef.value.overlayVisible = false;
-    event.stopPropagation();
+    inputRef.value.overlayVisible = false
+    event.stopPropagation()
   }
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props)
 
-const localDateFormat = computed(() => (props.isYearOnly ? 'yy' : (props.dateFormat ?? 'yy-mm-dd')));
-const localView = computed(() => (props.isYearOnly ? 'year' : undefined));
+const localDateFormat = computed(() => (props.isYearOnly ? 'yy' : (props.dateFormat ?? 'yy-mm-dd')))
+const localView = computed(() => (props.isYearOnly ? 'year' : undefined))
 
 const selectDate = function (date: string | Date | Moment) {
-  localValue.value = date;
+  localValue.value = date
   if (inputRef.value.overlayVisible) {
-    inputRef.value.overlayVisible = false;
+    inputRef.value.overlayVisible = false
   }
-};
+}
 
-defineExpose({ focus, inputRef, ...exposed });
+defineExpose({ focus, inputRef, ...exposed })
 </script>
 
 <template>
-  <BaseInput v-bind="baseInputForwardedProps" :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown" @click="focus">
+  <BaseInput
+    v-bind="baseInputForwardedProps"
+    :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown"
+    @click="focus"
+  >
     <div class="relative !w-full">
       <DatePicker
         v-bind="generalInputProps"
@@ -88,12 +103,39 @@ defineExpose({ focus, inputRef, ...exposed });
         @clear-click="() => clearable && (localValue = null)"
       >
         <template #footer>
-          <div v-if="withSuggestionsButtons" class="border-t-1 border-t-dashed border-t-gray/25 mt-1 pt-1">
-            <Button size="small" text severity="secondary" :label="t('Start of Month')" @click="selectDate(moment().startOf('month'))" />
-            <Button size="small" text severity="secondary" :label="t('End of Month')" @click="selectDate(moment().endOf('month'))" />
+          <div
+            v-if="withSuggestionsButtons"
+            class="border-t-1 border-t-dashed border-t-gray/25 mt-1 pt-1"
+          >
+            <Button
+              size="small"
+              text
+              severity="secondary"
+              :label="t('Start of Month')"
+              @click="selectDate(moment().startOf('month'))"
+            />
+            <Button
+              size="small"
+              text
+              severity="secondary"
+              :label="t('End of Month')"
+              @click="selectDate(moment().endOf('month'))"
+            />
 
-            <Button size="small" text severity="secondary" :label="t('Start of Week')" @click="selectDate(moment().startOf('week'))" />
-            <Button size="small" text severity="secondary" :label="t('End of Week')" @click="selectDate(moment().endOf('week'))" />
+            <Button
+              size="small"
+              text
+              severity="secondary"
+              :label="t('Start of Week')"
+              @click="selectDate(moment().startOf('week'))"
+            />
+            <Button
+              size="small"
+              text
+              severity="secondary"
+              :label="t('End of Week')"
+              @click="selectDate(moment().endOf('week'))"
+            />
           </div>
         </template>
       </DatePicker>

@@ -1,33 +1,45 @@
 <script setup lang="ts">
-import { useElementSize } from '@vueuse/core';
-import omit from 'lodash/omit';
-import { FloatLabel, IftaLabel } from 'primevue';
-import { useTemplateRef } from 'vue';
-import { useI18n } from 'vue-i18n';
-import type { BaseInputProps, BaseInputSlots } from './types';
+import { useElementSize } from '@vueuse/core'
+import omit from 'lodash/omit'
+import { FloatLabel, IftaLabel } from 'primevue'
+import { useTemplateRef } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { BaseInputProps, BaseInputSlots } from './types'
 
-const { hideLabelDoubleDots = true, error, showErrorMessage, label, disabled } = defineProps<BaseInputProps>();
+const {
+  hideLabelDoubleDots = true,
+  error,
+  showErrorMessage,
+  label,
+  disabled,
+} = defineProps<BaseInputProps>()
 const emits = defineEmits<{
-  labelClicked: [event: MouseEvent];
-}>();
-const slots = defineSlots<BaseInputSlots>();
+  labelClicked: [event: MouseEvent]
+}>()
+const slots = defineSlots<BaseInputSlots>()
 
-const helperSlotRef = ref();
-const { t } = useI18n();
-const hasShowableError = computed(() => showErrorMessage && error);
+const helperSlotRef = ref()
+const { t } = useI18n()
+const hasShowableError = computed(() => showErrorMessage && error)
 
-const labelRef = useTemplateRef('labelRef');
+const labelRef = useTemplateRef('labelRef')
 const { width: labelWidth } = useElementSize(labelRef as any, undefined, {
   box: 'border-box',
-});
-const defaultSlotRef = useTemplateRef('defaultSlotRef');
-defineExpose({ labelWidth, disabled, defaultSlotRef });
+})
+const defaultSlotRef = useTemplateRef('defaultSlotRef')
+defineExpose({ labelWidth, disabled, defaultSlotRef })
 </script>
 
 <template>
   <div
     class="form-control-wrapper hdd-form-control"
-    :class="[wrapperClass, { 'flex items-center gap-2': inline, '!items-start': inline && ($slots.helper || hasShowableError) }]"
+    :class="[
+      wrapperClass,
+      {
+        'flex items-center gap-2': inline,
+        '!items-start': inline && ($slots.helper || helperText || hasShowableError),
+      },
+    ]"
   >
     <template v-for="i in [0, 1, 2]" :key="i">
       <label
@@ -48,7 +60,7 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
             'text-sm': size === 'small',
             'text-lg': size === 'large',
             'form-control-label-selector': !ignoreLabelSelector,
-            'mt-[8px]': inline && ($slots.helper || hasShowableError),
+            'mt-[8px]': inline && ($slots.helper || helperText || hasShowableError),
           },
         ]"
         @click="emits('labelClicked', $event)"
@@ -60,8 +72,15 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
                       v-html="(autoI18nLabel === true ? t(label) : label) + (!hideLabelDoubleDots ? ' :' : '')"
                     /> -->
           <template v-if="label">
-            <span :class="{ 'whitespace-pre': labelSingleLine }">{{ autoI18nLabel === true ? t(label) : label }}</span>
-            <Message v-if="required && showRequiredAsterisk" variant="simple" size="small" :severity="error ? 'error' : 'contrast'" aria-hidden="true"
+            <span :class="{ 'whitespace-pre': labelSingleLine }">{{
+              autoI18nLabel === true ? t(label) : label
+            }}</span>
+            <Message
+              v-if="required && showRequiredAsterisk"
+              variant="simple"
+              size="small"
+              :severity="error ? 'error' : 'contrast'"
+              aria-hidden="true"
               ><strong>*</strong></Message
             >
             <span v-if="!hideLabelDoubleDots">:</span>
@@ -73,7 +92,9 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
         v-if="(!controlBeforeLabel && i === 2) || (controlBeforeLabel && i === 0)"
         :class="[{ 'w-full': !controlBeforeLabel }, controlWrapperClass]"
       >
-        <InputGroup @keydown.enter="(evt) => (onLocalEnterKeyDown ? onLocalEnterKeyDown(evt) : null)">
+        <InputGroup
+          @keydown.enter="(evt) => (onLocalEnterKeyDown ? onLocalEnterKeyDown(evt) : null)"
+        >
           <!--          <div class="w-full" :class="{ 'has-addon': $slots.addon }">
                       <InputIcon v-if="false" :class="icon" />
                       <slot name="default" />
@@ -87,7 +108,10 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
             <InputGroupAddon v-if="iconAsAddon">
               <i :class="[icon, iconClass]" />
             </InputGroupAddon>
-            <component :is="floatingLabel ? FloatLabel : IftaLabel" :variant="floatingLabel ? (floatingLabelVariant ?? 'over') : undefined">
+            <component
+              :is="floatingLabel ? FloatLabel : IftaLabel"
+              :variant="floatingLabel ? (floatingLabelVariant ?? 'over') : undefined"
+            >
               <IconField v-if="icon && !iconAsAddon">
                 <InputIcon v-if="icon" class="z-2" :class="[icon, iconClass]" />
                 <slot ref="defaultSlotRef" name="default" />
@@ -97,8 +121,16 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
               </template>
               <label :for="inputId" class="z-2 flex items-center gap-1" :style="labelStyle">
                 <template v-if="label">
-                  <span :class="{ 'whitespace-pre': labelSingleLine }">{{ autoI18nLabel === true ? t(label) : label }}</span>
-                  <Message v-if="required" variant="simple" size="small" :severity="error ? 'error' : 'contrast'" aria-hidden="true">
+                  <span :class="{ 'whitespace-pre': labelSingleLine }">{{
+                    autoI18nLabel === true ? t(label) : label
+                  }}</span>
+                  <Message
+                    v-if="required"
+                    variant="simple"
+                    size="small"
+                    :severity="error ? 'error' : 'contrast'"
+                    aria-hidden="true"
+                  >
                     <strong>*</strong>
                   </Message>
                   <span v-if="!hideLabelDoubleDots">:</span>
@@ -109,14 +141,24 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
           <slot name="afterControl"></slot>
 
           <InputGroupAddon
-            v-if="buttonAddon && (toValue(buttonAddon).showable?.({ value: modelValue, control: controlComponent }) ?? true)"
+            v-if="
+              buttonAddon &&
+              (toValue(buttonAddon).showable?.({ value: modelValue, control: controlComponent }) ??
+                true)
+            "
             class="!min-w-unset"
           >
             <Button
               v-tooltip.top="toValue(buttonAddon).tooltip"
               :size="size"
               v-bind="omit(toValue(buttonAddon), ['command', 'tooltip'])"
-              @click.stop="toValue(buttonAddon).command?.({ event: $event, value: modelValue, control: controlComponent })"
+              @click.stop="
+                toValue(buttonAddon).command?.({
+                  event: $event,
+                  value: modelValue,
+                  control: controlComponent,
+                })
+              "
             />
           </InputGroupAddon>
           <InputGroupAddon v-if="slots.addon">
@@ -135,15 +177,17 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
           <span>{{ error }}</span>
         </Message>
         <Message
-          v-if="slots.helper?.length"
+          v-if="slots.helper?.length || helperText"
           :id="inputId ? `${inputId}-desc` : ''"
           ref="helperSlotRef"
           size="small"
           variant="simple"
           severity="secondary"
-          class="mt-1 px-2"
+          class="mt-1 px-2 text-sm"
         >
-          <slot name="helper" />
+          <slot name="helper">
+            <span class="text-xs">{{ helperText }}</span>
+          </slot>
         </Message>
       </div>
     </template>

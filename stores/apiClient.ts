@@ -1,47 +1,58 @@
-import { echo, echoIsConfigured } from '@laravel/echo-vue';
-import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import axios from 'axios';
-import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers.ts';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
-import { defineStore } from 'pinia';
-import type { ToastMessageOptions, ToastServiceMethods } from 'primevue';
-import type { ComposerTranslation } from 'vue-i18n';
-import type { Router } from 'vue-router';
+import { echo, echoIsConfigured } from '@laravel/echo-vue'
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  isAxiosError,
+} from 'axios'
+import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers.ts'
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth'
+import { defineStore } from 'pinia'
+import type { ToastMessageOptions, ToastServiceMethods } from 'primevue'
+import type { ComposerTranslation } from 'vue-i18n'
+import type { Router } from 'vue-router'
 
-function appendFormData(formData: FormData, data: any, parentKey: string = '') {
+function appendFormData(formData: FormData, data: unknown, parentKey: string = '') {
   if (data && typeof data === 'object' && !(data instanceof File)) {
-    Object.keys(data).forEach((key) => {
-      const value = data[key];
-      const newKey = parentKey ? `${parentKey}[${key}]` : key;
-      appendFormData(formData, value, newKey);
-    });
+    const objectData = data as { [k: string | number]: unknown }
+    Object.keys(objectData).forEach((key) => {
+      let value = objectData[key]
+      const newKey = parentKey ? `${parentKey}[${key}]` : key
+      if (typeof value === 'boolean') {
+        value = value ? 1 : 0
+      } else if (value === null) {
+        value = ''
+      }
+      appendFormData(formData, value as { [k: string | number]: unknown }, newKey)
+    })
   } else {
-    formData.append(parentKey, data);
+    formData.append(parentKey, data as string | Blob)
   }
 }
 
 export const useApiClient = defineStore('apiClient', () => {
-  const authStore = useBasicAuthStore();
-  const t = ref<ComposerTranslation | null>(null);
-  const toast = ref<ToastServiceMethods | null>(null);
-  const router = ref<Router>();
-  const hddUiHelpers = useHddUiHelpers();
+  const authStore = useBasicAuthStore()
+  const t = ref<ComposerTranslation | null>(null)
+  const toast = ref<ToastServiceMethods | null>(null)
+  const router = ref<Router>()
+  const hddUiHelpers = useHddUiHelpers()
   function setRouter(_router: Router) {
-    router.value = _router;
+    router.value = _router
   }
 
   function setI18n(_t: ComposerTranslation) {
-    t.value = _t;
+    t.value = _t
   }
 
   function setToast(_toast: ToastServiceMethods) {
-    toast.value = _toast;
+    toast.value = _toast
   }
 
-  const activeRequests = ref(0);
-  const isLoading = computed(() => activeRequests.value > 0);
-  const uploadProgress = ref(0);
-  const isUploading = ref(false);
+  const activeRequests = ref(0)
+  const isLoading = computed(() => activeRequests.value > 0)
+  const uploadProgress = ref(0)
+  const isUploading = ref(false)
 
   const instance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL || '/',
@@ -49,150 +60,175 @@ export const useApiClient = defineStore('apiClient', () => {
     headers: {
       accept: 'application/json',
     },
-  });
+  })
   instance.interceptors.request.use((config) => {
-    activeRequests.value++;
+    activeRequests.value++
     if (authStore.authorizationToken) {
-      config.headers.Authorization = `Bearer ${authStore.authorizationToken}`;
+      config.headers.Authorization = `Bearer ${authStore.authorizationToken}`
     }
     if (hddUiHelpers.withBroadcasting && echoIsConfigured()) {
-      config.headers['X-Socket-ID'] = echo().socketId();
+      config.headers['X-Socket-ID'] = echo().socketId()
     }
 
-    return config;
-  });
+    return config
+  })
   instance.interceptors.response.use(
     (response) => {
-      activeRequests.value--;
-      return response;
+      activeRequests.value--
+      return response
     },
     (error: AxiosError) => {
-      triggerErrorNotifierFor(0.2);
-      activeRequests.value--;
+      triggerErrorNotifierFor(0.2)
+      activeRequests.value--
       if (error.status === 401 && authStore.isLoggedIn) {
-        authStore.logout();
-        console.log(error);
-        router.value?.push({ path: '/login', query: { redirect_url: window.location.pathname } } as any).then();
+        authStore.logout()
+        console.log(error)
+        router.value
+          ?.push({ path: '/login', query: { redirect_url: window.location.pathname } } as any)
+          .then()
       }
-      return Promise.reject(error);
-    },
-  );
+      return Promise.reject(error)
+    }
+  )
 
-  const hasError = ref<boolean>(false);
-  const hasErrorSetterTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
+  const hasError = ref<boolean>(false)
+  const hasErrorSetterTimeout = ref<ReturnType<typeof setTimeout>>()
 
   function triggerErrorNotifierFor(delay: number) {
-    hasError.value = true;
-    clearTimeout(hasErrorSetterTimeout.value);
+    hasError.value = true
+    clearTimeout(hasErrorSetterTimeout.value)
     hasErrorSetterTimeout.value = setTimeout(() => {
-      hasError.value = false;
-    }, delay * 1000);
+      hasError.value = false
+    }, delay * 1000)
   }
 
-  const axiosInstance = ref(instance);
+  const axiosInstance = ref(instance)
 
-  function request<T = any>(config: AxiosRequestConfig, data: any = null, withApiBaseUrl: boolean = false): Promise<AxiosResponse<T>> {
+  function request<T = any>(
+    config: AxiosRequestConfig,
+    data: any = null,
+    withApiBaseUrl: boolean = false
+  ): Promise<AxiosResponse<T>> {
     return axiosInstance.value.request<T>({
       ...config,
       ...(data ? { data } : {}),
       ...(!withApiBaseUrl ? { baseURL: '/' } : {}),
-    });
+    })
   }
 
   function setAxiosInstance(instance: AxiosInstance) {
-    axiosInstance.value = instance;
+    axiosInstance.value = instance
   }
 
   function get<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return axiosInstance.value.get<T>(url, config);
+    return axiosInstance.value.get<T>(url, config)
   }
 
-  function post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return axiosInstance.value.post<T>(url, data, config);
+  function post<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    return axiosInstance.value.post<T>(url, data, config)
   }
 
-  function upload<T = any>(
+  function upload<T = unknown>(
     url: string | { url: string; method: string },
     files: File | File[] | FileList | { [k: string]: File | File[] | FileList },
-    data?: any,
-    config?: AxiosRequestConfig,
+    data?: unknown,
+    config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> {
-    const form = new FormData();
+    const form = new FormData()
 
     if (Array.isArray(files) || files instanceof FileList) {
       for (let i = 0; i < files.length; i++) {
-        form.append('files[]', files[i]); // change 'files[]' if needed
+        form.append('files[]', files[i]) // change 'files[]' if needed
       }
-    } else if (Object.keys(files).length > 0) {
+    } else if (Object.keys(files).length > 0 && !(files instanceof File)) {
       for (const i in files) {
         if (Array.isArray(files[i]) || files[i] instanceof FileList) {
           for (let j = 0; j < files[i].length; j++) {
-            form.append(i + '[]', files[i][j]);
+            form.append(i + '[]', files[i][j])
           }
         } else {
-          form.append(i, files[i]);
+          form.append(i, files[i])
         }
       }
     } else {
-      form.append('file', files as File);
+      form.append('file', files as File)
     }
 
     if (data) {
-      appendFormData(form, data);
+      appendFormData(form, data)
     }
 
     if (typeof url !== 'string' && url.method.toLowerCase() !== 'post') {
-      form.append('_method', url.method);
+      form.append('_method', url.method)
     }
-    uploadProgress.value = 0;
-    isUploading.value = true;
+    uploadProgress.value = 0
+    isUploading.value = true
     return axiosInstance.value
       .request<T>({
         url: typeof url === 'string' ? url : url.url,
         method: 'POST',
         data: form,
         onUploadProgress(progressEvent) {
-          if (!progressEvent.lengthComputable) return;
-          uploadProgress.value = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          if (!progressEvent.lengthComputable) return
+          uploadProgress.value = !progressEvent.total
+            ? 0
+            : Math.round((progressEvent.loaded * 100) / progressEvent.total)
         },
         ...config,
       })
-      .finally(() => (isUploading.value = false));
+      .finally(() => (isUploading.value = false))
   }
 
-  function put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return axiosInstance.value.put<T>(url, data, config);
+  function put<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    return axiosInstance.value.put<T>(url, data, config)
   }
-  function patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return axiosInstance.value.patch<T>(url, data, config);
+  function patch<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    return axiosInstance.value.patch<T>(url, data, config)
   }
 
-  function deleteRequest<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return axiosInstance.value.delete<T>(url, config);
+  function deleteRequest<T = any>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    return axiosInstance.value.delete<T>(url, config)
   }
 
-  function toastRequestError(error: AxiosError) {
-    let message =
-      (error.response?.data as any)?.message ||
-      ((error.response?.data as any)?.data as any)?.message ||
-      error.message ||
-      t.value?.('Error Occurred') ||
-      'Error Occurred';
-    if (error.status === 403 && message === 'This action is unauthorized.') {
-      message = t.value?.(message);
+  function toastRequestError(error: unknown) {
+    if (isAxiosError(error)) {
+      let message =
+        (error.response?.data as any)?.message ||
+        ((error.response?.data as any)?.data as any)?.message ||
+        error.message ||
+        t.value?.('Error Occurred') ||
+        'Error Occurred'
+      if (error.status === 403 && message === 'This action is unauthorized.') {
+        message = t.value?.(message)
+      }
+      if (error.status === 401 && message === 'Unauthenticated.') {
+        message = t.value?.(message)
+      }
+      if (error.status === 413 && error?.response?.statusText) {
+        message = t.value?.(error.response.statusText)
+      }
+      toast.value?.add({
+        group: 'errors',
+        severity: 'error',
+        summary: message,
+        life: 3000,
+      })
     }
-    if (error.status === 401 && message === 'Unauthenticated.') {
-      message = t.value?.(message);
-    }
-    if (error.status === 413 && error?.response?.statusText) {
-      message = t.value?.(error.response.statusText);
-    }
-    toast.value?.add({
-      group: 'errors',
-      severity: 'error',
-      summary: message,
-      life: 3000,
-    });
   }
 
   function toastError(title: string = '', message = '', options: ToastMessageOptions = {}) {
@@ -203,7 +239,7 @@ export const useApiClient = defineStore('apiClient', () => {
       detail: message,
       life: 3000,
       ...options,
-    });
+    })
   }
 
   function toastSuccess(title: string = '', message = '', options: ToastMessageOptions = {}) {
@@ -214,7 +250,7 @@ export const useApiClient = defineStore('apiClient', () => {
       detail: message,
       life: 2000,
       ...options,
-    });
+    })
   }
 
   return {
@@ -238,5 +274,5 @@ export const useApiClient = defineStore('apiClient', () => {
     patch,
     delete: deleteRequest,
     deleteRequest: deleteRequest,
-  };
-});
+  }
+})

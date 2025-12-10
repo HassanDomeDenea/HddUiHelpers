@@ -5,7 +5,7 @@ import type { InputNumberInputEvent } from 'primevue/inputnumber';
 import { ref } from 'vue';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps, ElementClassType } from './types';
-
+import { evaluate } from 'mathjs';
 const props = withDefaults(
   defineProps<
     {
@@ -58,7 +58,7 @@ function doCalculation(_updateValues: boolean = true) {
   }
   try {
     const _value = ('' + currentValue).replaceAll(' ', '');
-    finalVal = eval(_value);
+    finalVal = evaluate(_value);
   } catch (e) {
     // console.error(e);
   }

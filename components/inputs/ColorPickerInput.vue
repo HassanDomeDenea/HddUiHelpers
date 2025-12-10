@@ -1,43 +1,58 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { take, uniq } from 'lodash-es';
-import Popover from 'primevue/popover';
-import { ref } from 'vue';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
+import { take, uniq } from 'lodash-es'
+import type { ButtonProps } from 'primevue'
+import PrimeVuePopover from 'primevue/popover'
+import { ref } from 'vue'
+import BaseInput from './BaseInput.vue'
+import type { BaseInputProps } from './types'
 
 const props = withDefaults(
   defineProps<
     {
-      colors?: string[];
-      autoDismiss?: boolean;
-      asPopover?: boolean;
-      withTrigger?: boolean;
-      clearable?: boolean;
-      customSelector?: boolean;
-      withRecentColors?: boolean;
-      recentColorsGroupName?: string;
+      colors?: string[]
+      autoOpen?: boolean
+      autoDismiss?: boolean
+      asPopover?: boolean
+      appendInline?: boolean
+      withTrigger?: boolean
+      clearable?: boolean
+      customSelector?: boolean
+      withRecentColors?: boolean
+      recentColorsGroupName?: string
+      triggerButtonColorBoxClass?: any
+      triggerButtonSeverity?: ButtonProps['severity']
     } & BaseInputProps
   >(),
   {
     withTrigger: true,
+    autoOpen: false,
     asPopover: true,
+    appendInline: false,
     customSelector: true,
+    triggerButtonSeverity: 'secondary',
     withRecentColors: true,
-  },
-);
+  }
+)
 
 const emits = defineEmits<{
-  change: [value: string | null];
-}>();
+  change: [value: string | null]
+}>()
 
-const value = defineModel<any>('modelValue', { default: ref().value });
-const { t } = useI18n();
-const inputRef = ref();
-const customColorInputRef = useTemplateRef('customColorInputRef');
-const colorPalateContainerRef = useTemplateRef<HTMLDivElement | ComponentExposed<typeof Popover>>('colorPalateContainerRef');
+const value = defineModel<any>('modelValue', { default: ref().value })
+const { t } = useI18n()
+const inputRef = ref()
+const customColorInputRef = useTemplateRef('customColorInputRef')
+const colorPalateContainerRef = useTemplateRef<HTMLDivElement | ComponentExposed<typeof Popover>>(
+  'colorPalateContainerRef'
+)
+const colorsContainerDivRef = useTemplateRef<HTMLDivElement>('colorsContainerDivRef')
+const popoverShowContainerRef = useTemplateRef<HTMLDivElement>('popoverShowContainerRef')
+
+// onClickOutside(colorsContainerDivRef, event => console.log(event));
+
 function focus() {
-  inputRef.value.$el.focus();
+  inputRef.value.$el.click()
 }
 
 const colorPalate = computed(() => {
@@ -79,121 +94,175 @@ const colorPalate = computed(() => {
       '#00ffff',
       '#007575',
     ]
-  );
-});
+  )
+})
 
-const recentColors = useStorage(() => 'recent_colors_' + props.recentColorsGroupName, null, localStorage, {
-  serializer: {
-    read: (v: any) => (v ? JSON.parse(v) : null) || null,
-    write: (v: any) => JSON.stringify(v),
-  },
-});
+const recentColors = useStorage(
+  () => 'recent_colors_' + props.recentColorsGroupName,
+  null,
+  localStorage,
+  {
+    serializer: {
+      read: (v: any) => (v ? JSON.parse(v) : null) || null,
+      write: (v: any) => JSON.stringify(v),
+    },
+  }
+)
 
 function selectColor(color) {
-  value.value = color;
-  emits('change', value.value);
+  value.value = color
+  emits('change', value.value)
   if (props.autoDismiss && props.asPopover) {
-    colorPalateContainerRef.value?.hide();
+    colorPalateContainerRef.value?.hide()
   }
 }
 
 function clearColor() {
-  value.value = null;
-  emits('change', value.value);
+  value.value = null
+  emits('change', value.value)
   if (props.autoDismiss && props.asPopover) {
-    colorPalateContainerRef.value?.hide();
+    colorPalateContainerRef.value?.hide()
   }
 }
 
 function customColorSelected(event: Event) {
-  value.value = (event.target as HTMLInputElement).value;
-  emits('change', value.value);
+  value.value = (event.target as HTMLInputElement).value
+  emits('change', value.value)
   if (props.withRecentColors) {
-    const newRecentColors = uniq([value.value, ...(recentColors.value || [])]);
-    recentColors.value = take(newRecentColors, 5);
+    const newRecentColors = uniq([value.value, ...(recentColors.value || [])])
+    recentColors.value = take(newRecentColors, 5)
   }
   if (props.autoDismiss && props.asPopover) {
-    colorPalateContainerRef.value?.hide();
+    colorPalateContainerRef.value?.hide()
   }
 }
 
-onMounted(() => {});
+onMounted(() => {
+  if (props.autoOpen) {
+    // The timeout was added to prevent showing popover at page edge, and to wait if other focus happens
+    setTimeout(() => {
+      focus()
+      setTimeout(() => {
+        console.log(colorPalateContainerRef.value)
+        colorPalateContainerRef.value.alignOverlay()
+        /*colorPalateContainerRef.value.container.addEventListener('click', (e) => {
+                    console.log('Clicked Here');
+                    e.stopPropagation();
+                    e.preventDefault();
+                });*/
+      }, 10)
+    }, 10)
+  }
+})
 
-const { exposed, baseInputForwardedProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps } = useHddBaseInputUtils(props)
 
 function toggle(event: PointerEvent | MouseEvent) {
-  colorPalateContainerRef.value?.toggle?.(event);
+  colorPalateContainerRef.value?.toggle?.(event)
 }
 
-defineExpose({ focus, toggle, ...exposed });
+defineExpose({ focus, toggle, ...exposed })
 </script>
 
 <template>
-  <BaseInput v-bind="baseInputForwardedProps" :floating-label="false" :infield-top-aligned-label="false">
-    <div>
+  <BaseInput
+    v-bind="baseInputForwardedProps"
+    :floating-label="false"
+    :infield-top-aligned-label="false"
+  >
+    <div ref="relative">
+      <div
+        v-if="appendInline"
+        ref="popoverShowContainerRef"
+        class="fixed left-0 top-0 h-screen w-screen"
+      ></div>
       <component
-        :is="asPopover ? Popover : 'div'"
+        :is="asPopover ? PrimeVuePopover : 'div'"
         ref="colorPalateContainerRef"
-        :class="[{ 'border-1 max-w-[480px] rounded border-dotted p-1': !asPopover, 'max-w-[360px]': asPopover }]"
+        :append-to="appendInline ? popoverShowContainerRef : undefined"
+        :class="[
+          {
+            'border-1 max-w-[480px] rounded border-dotted p-1': !asPopover,
+            'max-w-[360px]': asPopover,
+          },
+        ]"
+        @click.stop.prevent
       >
-        <div class="m-1 flex flex-wrap gap-1">
-          <button
-            v-for="color in colorPalate"
-            :key="color"
-            class="color-box"
-            :disabled="disabled"
-            :style="{ backgroundColor: color }"
-            :class="{ active: color === value, disabled: disabled }"
-            @click="selectColor(color)"
-          ></button>
-        </div>
-        <div v-if="withRecentColors" class="m-1 mt-3 flex flex-wrap gap-1">
-          <button
-            v-for="color in recentColors"
-            :key="color"
-            class="color-box"
-            :disabled="disabled"
-            :style="{ backgroundColor: color }"
-            :class="{ active: color === value, disabled: disabled }"
-            @click="selectColor(color)"
-          ></button>
-        </div>
-        <div class="flex justify-center">
-          <div v-if="customSelector" class="mt-2 flex items-center justify-center gap-1">
-            <Button
-              icon="i-ic:outline-color-lens"
-              size="small"
-              :label="t('Select a Color')"
-              severity="info"
-              @click="() => customColorInputRef.click()"
-            ></Button>
-            <input
-              ref="customColorInputRef"
-              v-model="value"
-              style="height: 0; width: 0"
-              type="color"
+        <div ref="colorsContainerDivRef">
+          <div class="m-1 flex flex-wrap gap-1">
+            <button
+              v-for="color in colorPalate"
+              :key="color"
+              class="hdd-color-box"
               :disabled="disabled"
-              @change="customColorSelected"
-            />
+              :style="{ backgroundColor: color }"
+              :class="{ active: color === value, disabled: disabled }"
+              @click="selectColor(color)"
+            ></button>
           </div>
-          <div>
-            <Button
-              v-if="clearable && value"
-              size="small"
-              :title="t('Clear Selection')"
-              severity="danger"
-              outlined
-              icon="i-iconamoon:sign-times"
-              class="mt-2"
-              @click="clearColor"
-            />
+          <div v-if="withRecentColors" class="m-1 mt-3 flex flex-wrap gap-1">
+            <button
+              v-for="color in recentColors"
+              :key="color"
+              class="hdd-color-box"
+              :disabled="disabled"
+              :style="{ backgroundColor: color }"
+              :class="{ active: color === value, disabled: disabled }"
+              @click="selectColor(color)"
+            ></button>
+          </div>
+          <div class="flex justify-center">
+            <div v-if="customSelector" class="mt-2 flex items-center justify-center gap-1">
+              <Button
+                icon="i-ic:outline-color-lens"
+                size="small"
+                :label="t('Select a Color')"
+                severity="info"
+                @click="() => customColorInputRef.click()"
+              ></Button>
+              <input
+                ref="customColorInputRef"
+                v-model="value"
+                style="height: 0; width: 0"
+                type="color"
+                :disabled="disabled"
+                @change="customColorSelected"
+              />
+            </div>
+            <div>
+              <Button
+                v-if="clearable && value"
+                size="small"
+                :title="t('Clear Selection')"
+                severity="danger"
+                outlined
+                icon="i-iconamoon:sign-times"
+                class="mt-2"
+                @click="clearColor"
+              />
+            </div>
           </div>
         </div>
       </component>
-      <slot v-if="asPopover && withTrigger" name="trigger" :toggle="colorPalateContainerRef?.toggle" :value="value">
-        <Button :size="size" :label="value ? undefined : t('Select Color')" severity="info" @click="(event) => colorPalateContainerRef.toggle(event)">
+      <slot
+        v-if="asPopover && withTrigger"
+        name="trigger"
+        :toggle="colorPalateContainerRef?.toggle"
+        :value="value"
+      >
+        <Button
+          ref="inputRef"
+          :size="size"
+          :label="value ? ' ' : t('Select Color')"
+          :severity="triggerButtonSeverity"
+          @click="(event) => colorPalateContainerRef.toggle(event)"
+        >
           <template v-if="value" #icon>
-            <span class="color-box inline-block" :class="{ '!size-4': size === 'small' }" :style="{ backgroundColor: value }"></span>
+            <span
+              class="hdd-color-box inline-block"
+              :class="[{ '!size-4': size === 'small' }, triggerButtonColorBoxClass]"
+              :style="{ backgroundColor: value }"
+            ></span>
           </template>
         </Button>
       </slot>
@@ -201,15 +270,17 @@ defineExpose({ focus, toggle, ...exposed });
   </BaseInput>
 </template>
 
-<style scoped lang="scss">
-.color-box {
+<style lang="scss">
+.hdd-color-box {
   @apply inline-block size-6 rounded-md;
   &:not(.disabled):not(.active) {
     @apply cursor-pointer;
   }
+
   &:not(.active) {
     @apply shadow-xs shadow-op-90 shadow-inset light:shadow-black dark:shadow-white;
   }
+
   &.active {
     @apply light:border-zinc-100/75 light:ring-zinc-950/95 border-2 ring-2 dark:border-zinc-950/75 dark:ring-zinc-100/95;
   }
