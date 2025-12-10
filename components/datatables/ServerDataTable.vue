@@ -236,7 +236,7 @@ const computedOnlyRequestedColumns = computed(() =>
     ? onlyRequestedColumns
     : isBoolean(globalConfig.value.onlyRequestedColumns)
       ? globalConfig.value.onlyRequestedColumns
-      : false
+      : true
 )
 const computedExtraGetDataPayload = computed(
   () => extraGetDataPayload ?? globalConfig.value.extraGetDataPayload ?? {}
