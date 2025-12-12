@@ -71,6 +71,21 @@ const resolveRenderTypeProps = computed(() => {
       ></span>
     </div>
   </template>
+  <template v-else-if="column.type === 'image'">
+    <div>
+      <template v-if="renderedData">
+        <Image
+          :src="renderedData"
+          :alt="t('Image not found')"
+          :image-style="{
+            maxWidth: '50px',
+            maxHeight: '50px',
+          }"
+          preview
+        />
+      </template>
+    </div>
+  </template>
   <div
     v-else
     class="inline-block"

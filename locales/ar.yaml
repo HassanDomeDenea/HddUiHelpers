@@ -1,3 +1,4 @@
+lang_code: ar
 Entries: مدخل
 Show: عرض
 No Data: لا توجد مدخلات
@@ -197,3 +198,11 @@ Item removed successfully: تمت الازالة بنجاح
 Update Item: تعديل عنصر
 Image not found: لم يتم العثور على الصورة
 Choose File: اختر ملف
+Yesterday: الأمس
+Today: اليوم
+AM: ص
+PM: م
+Send Message: إرسال الرسالة
+New Message: رسالة جديدة
+There are new messages: توجد رسائل جديدة
+Messenger: المراسلة

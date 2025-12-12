@@ -1,34 +1,41 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { ref } from 'vue';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
+import { ref } from 'vue'
+import BaseInput from './BaseInput.vue'
+import type { BaseInputProps } from './types'
 
-const props = defineProps<
-  BaseInputProps & {
-    initialRows?: number;
+const props = withDefaults(
+  defineProps<
+    BaseInputProps & {
+      initialRows?: number
+      autoResize?: boolean
+      noResize?: boolean
+    }
+  >(),
+  {
+    autoResize: true,
   }
->();
-
+)
 const emits = defineEmits<{
-  keydown: [e: KeyboardEvent];
-  change: [e: any];
-}>();
+  keydown: [e: KeyboardEvent]
+  change: [e: any]
+}>()
 
-const value = defineModel<any>('modelValue');
+const value = defineModel<any>('modelValue')
 
-const inputRef = ref();
+const inputRef = ref()
 
 function focus() {
-  inputRef.value.$el.focus();
+  inputRef.value.$el.focus()
 }
 function select() {
-  inputRef.value.$el.select();
+  inputRef.value.$el.select()
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props)
 
-defineExpose({ focus, select, ...exposed });
+defineExpose({ focus, select, ...exposed })
 </script>
 
 <template>
@@ -41,11 +48,13 @@ defineExpose({ focus, select, ...exposed });
       :rows="initialRows"
       :placeholder="placeholder"
       :name="name"
+      :auto-resize="autoResize"
+      :noresize="noResize"
       class="w-full"
-      auto-resize
       :pt="{
         root: {
           class: inputClass,
+          style: { resize: noResize ? 'none' : '' },
         },
       }"
       @change="emits('change', $event)"

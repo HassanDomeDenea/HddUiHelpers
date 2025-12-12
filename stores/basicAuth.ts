@@ -11,18 +11,12 @@ import { safeRequest } from 'HddUiHelpers/utils/safeTry'
 import { cloneDeep, each } from 'lodash-es'
 import { defineStore } from 'pinia'
 
-const reverbHostName = import.meta.env.VITE_REVERB_HOST
 export const useBasicAuthStore = defineStore('basicAuth', () => {
   const user = ref<BasicUserData | null>(null)
   const hddUiHelpers = useHddUiHelpers()
   const connectedUsers = ref<BasicUserData[]>([])
   const apiClient = useApiClient()
   const cookies = useCookies()
-
-  // Get the full query string from the current URL
-  const queryString = window.location.search
-
-  // Parse the query string
 
   const authorizationToken = useStorage<string | null>(
     'authorizationToken',
@@ -118,7 +112,7 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
     if (!user.value.permission_names) {
       return false
     }
-    return permissions.some((p) => user.value.permission_names.includes(p))
+    return permissions.some((p) => user.value?.permission_names?.includes(p))
   }
 
   function can(permission: AppPermission | AppPermission[]) {
@@ -132,7 +126,7 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
       return false
     }
     if (Array.isArray(permission)) {
-      return permission.every((p) => user.value.permission_names.includes(p))
+      return permission.every((p) => user.value?.permission_names?.includes(p))
     }
     return user.value.permission_names.includes(permission)
   }
@@ -164,11 +158,11 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
               })
           }
         } else {
-          if (echoIsConfigured()) {
-            echo().leave(hddUiHelpers.presenceUsersChannel)
-            echo().disconnect()
-          }
           if (hddUiHelpers.presenceUsersChannel) {
+            if (echoIsConfigured()) {
+              echo().leave(hddUiHelpers.presenceUsersChannel)
+              echo().disconnect()
+            }
             presenceChannel.value = null
             connectedUsers.value = []
           }

@@ -1,3 +1,4 @@
+lang_code: en
 Are you sure to delete n records?: Are you sure to delete {n} record? | Are you sure to delete {n} records?
 (n Records selected): ({n} Record selected) | ({n} Records selected)
 Showing start To end From filtered (Filtered From total): Showing {start} To {end} From {filtered} (Filtered From {total})

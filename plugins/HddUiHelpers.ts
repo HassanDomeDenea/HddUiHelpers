@@ -5,11 +5,13 @@ import pinia from 'HddUiHelpers/plugins/pinia'
 import primevue from 'HddUiHelpers/plugins/primevue'
 import { useApiClient } from 'HddUiHelpers/stores/apiClient'
 import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales.ts'
+import 'moment/locale/ar'
+import moment from 'moment/moment'
 import type { App, InjectionKey } from 'vue'
 import { inject } from 'vue'
 import type { I18n } from 'vue-i18n'
 import YAML from 'yaml'
-
+moment.locale('en')
 export interface HddUiHelpers {
   axiosInstance: AxiosInstance
   routeNameResolver: (name: string, parameter?: string | number) => string
