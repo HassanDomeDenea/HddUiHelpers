@@ -9,7 +9,7 @@ import { useLoader } from 'HddUiHelpers/composables/loader.ts'
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts'
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts'
 import { useDimensionsStore } from 'HddUiHelpers/stores/dimensions.ts'
-import { sumBy } from 'lodash-es'
+import { last, sumBy } from 'lodash-es'
 import debounce from 'lodash/debounce'
 import moment from 'moment/moment'
 import { ButtonProps } from 'primevue'
@@ -28,6 +28,7 @@ const newMessageTextRef =
   useTemplateRef<ComponentExposed<typeof TextAreaInput>>('newMessageTextRef')
 const newMessageText = ref('')
 const messagesContainerRef = useTemplateRef<HTMLDivElement>('messagesContainerRef')
+const loadMoreDivRef = useTemplateRef<HTMLDivElement>('loadMoreDivRef')
 const isVisible = ref(false)
 const dimensions = useDimensionsStore()
 const activeContact = ref<UserChatData>()
@@ -55,37 +56,60 @@ function loadContacts() {
 }
 
 const messages = ref<MessageData[]>([])
+const totalMessagesCount = ref(0)
 
-function loadMessages() {
+function getLastMessageToLoadFromParameters() {
+  const sentAt = last(messages.value)?.sent_at
+  if (!sentAt) {
+    return undefined
+  }
+  return {
+    sent_at: sentAt,
+    excluded_ids: messages.value
+      .filter((e) => e.sent_at === sentAt)
+      .map((i) => i.id)
+      .join(','),
+  }
+}
+
+async function loadMessages(fromLastMessage: boolean = false) {
   if (!activeContact.value) {
     return
   }
-  if (!messagesLoader.isLoadedOnce) {
-    messages.value = []
-  } else {
-    setTimeout(() => {
-      gotToEnd()
-      newMessageTextRef.value?.focus()
-    }, 1)
+  if (!fromLastMessage) {
+    if (!messagesLoader.isLoadedOnce) {
+      messages.value = []
+      totalMessagesCount.value = 0
+    } else {
+      setTimeout(() => {
+        gotToEnd()
+        newMessageTextRef.value?.focus()
+      }, 1)
+    }
   }
   messagesLoader.startLoading()
-  apiClient
+  return apiClient
     .request<ApiResponseData<{ messages: MessageData[]; total_count: number }>>(
       MessageController.index(
         { friend: activeContact.value.id },
         {
           query: {
-            unread_count: activeContact.value.unread_count,
+            from_last_message: fromLastMessage ? getLastMessageToLoadFromParameters() : null,
           },
         }
       )
     )
     .then((response) => {
-      messages.value = response.data.data.messages
-      setTimeout(() => {
-        gotToEnd()
-        newMessageTextRef.value?.focus()
-      }, 1)
+      if (fromLastMessage) {
+        messages.value.push(...response.data.data.messages)
+      } else {
+        messages.value = response.data.data.messages
+        totalMessagesCount.value = response.data.data.total_count
+        setTimeout(() => {
+          gotToEnd()
+          newMessageTextRef.value?.focus()
+        }, 1)
+      }
     })
     .catch(apiClient.toastRequestError)
     .finally(messagesLoader.endLoading)
@@ -139,6 +163,7 @@ function sendMessage() {
     .then((response) => {
       newMessageText.value = ''
       messages.value.unshift(response.data.data)
+      totalMessagesCount.value++
       setTimeout(() => {
         gotToEnd(false)
         newMessageTextRef.value?.focus()
@@ -147,12 +172,20 @@ function sendMessage() {
     .catch(apiClient.toastRequestError)
     .finally(sendingMessageLoader.endLoading)
 }
-
-async function onMessagesLoadMore() {}
-const canLoadMoreMessages = ref(false)
-const canLoadMoreMessagesCallable = () => {
-  return canLoadMoreMessages.value
+const isLoadingMore = ref(false)
+async function onMessagesLoadMore() {
+  isLoadingMore.value = true
+  await loadMessages(true)
+  isLoadingMore.value = false
 }
+const canLoadMoreMessagesCallable = () => {
+  return messages.value.length < totalMessagesCount.value
+}
+
+const loadMoreDivRefIsVisible = useElementVisibility(loadMoreDivRef, {
+  threshold: 0.9,
+})
+
 function gotToEnd(toFirstUnseen = true) {
   const element = messagesContainerRef.value
   const firstUnseenMessage = toFirstUnseen ? element?.querySelector("[data-unread='true']") : null
@@ -191,6 +224,7 @@ onMounted(() => {
       .listen('MessageSent', function (event: { message: MessageData }) {
         if (isVisible.value === true && activeContact.value?.id === event.message.sender_id) {
           messages.value.unshift(event.message)
+          totalMessagesCount.value++
           setTimeout(gotToEnd, 1)
         } else {
           playNotificationSound()
@@ -426,16 +460,25 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
                           onMessagesLoadMore,
                           {
                             distance: 10,
+                            throttle: 100,
+                            interval: 100,
                             direction: 'top',
                             canLoadMore: canLoadMoreMessagesCallable,
                             behavior: 'smooth',
                           },
                         ]"
-                        class="flex-1 overflow-y-auto"
+                        class="flex flex-1 flex-col-reverse overflow-y-auto"
                       >
-                        <template v-for="message in reversedMessages" :key="message.id">
+                        <template v-for="message in messages" :key="message.id">
                           <ChatMessageSegment :message :active-contact @seen="onMessageSeen" />
                         </template>
+                        <div
+                          v-if="isLoadingMore"
+                          ref="loadMoreDivRef"
+                          class="text-muted font-italic text-sm"
+                        >
+                          {{ t('Is Loading') }}
+                        </div>
                       </div>
                       <div class="mt-1 flex">
                         <div class="flex-1">

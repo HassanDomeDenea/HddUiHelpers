@@ -102,6 +102,13 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
     }
   }
 
+  function hasRole(role: string): boolean {
+    return user.value?.role_names?.includes(role) === true
+  }
+  const isSuperAdmin = computed(() => {
+    return user.value?.role_names?.includes('super_admin') === true
+  })
+
   function canAny(...permissions: string[]): boolean {
     if (!user.value) {
       return false
@@ -177,6 +184,8 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
   return {
     canAny,
     can,
+    hasRole,
+    isSuperAdmin,
     changeOption,
     changeGlobalOption,
     options,

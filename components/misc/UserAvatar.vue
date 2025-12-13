@@ -21,34 +21,36 @@ function onClick(evt: PointerEvent) {
   menuRef.value?.toggle(evt)
 }
 
-const items = ref<MenuItem[]>([
-  {
-    label: t('Refresh'),
-    icon: 'i-mdi-refresh',
-    class: 'text-sm',
-    command() {
-      window.location.reload()
+const items = computed<MenuItem[]>(() => {
+  return [
+    {
+      label: t('Refresh Page'),
+      icon: 'i-mdi-refresh',
+      class: 'text-sm',
+      command() {
+        window.location.reload()
+      },
     },
-  },
-  {
-    label: t('Logout'),
-    icon: 'i-mdi-logout',
-    class: 'text-sm',
-    command() {
-      apiClient
-        .request(UserController.logout())
-        .then(() => {
-          basicAuthStore.logout()
-          router.push('/login')
-        })
-        .catch((error) => {
-          console.error(error)
-          apiClient.toastError()
-          window.location.reload()
-        })
+    {
+      label: t('Logout'),
+      icon: 'i-mdi-logout',
+      class: 'text-sm',
+      command() {
+        apiClient
+          .request(UserController.logout())
+          .then(() => {
+            basicAuthStore.logout()
+            router.push('/login')
+          })
+          .catch((error) => {
+            console.error(error)
+            apiClient.toastError()
+            window.location.reload()
+          })
+      },
     },
-  },
-])
+  ]
+})
 </script>
 
 <template>

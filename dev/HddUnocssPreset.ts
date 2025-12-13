@@ -6,6 +6,8 @@ import {
   transformerDirectives,
   transformerVariantGroup,
 } from 'unocss'
+import presetAnimateCSS from 'unocss-preset-animatecss'
+import { presetMagicss } from 'unocss-preset-magicss'
 
 export default definePreset(() => {
   return {
@@ -18,6 +20,8 @@ export default definePreset(() => {
         },
       }),
       presetTypography(),
+      presetAnimateCSS(),
+      presetMagicss(),
     ],
 
     transformers: [transformerDirectives(), transformerVariantGroup()],

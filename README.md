@@ -31,7 +31,7 @@ git push --recurse-submodules=on-demand
 Packages to install:
 
 ```bash
-bun add -D unocss unplugin-vue-components unplugin-vue-router unplugin-auto-import unplugin-vue-components unocss @unhead/vue unplugin-vue-markdown @primevue/auto-import-resolver @intlify/unplugin-vue-i18n @types/lodash-es  vue-component-type-helpers @types/jsonpath @types/sortablejs @types/downloadjs unocss-preset-animatecss
+bun add -D unocss unplugin-vue-components unplugin-vue-router unplugin-auto-import unplugin-vue-components unocss @unhead/vue unplugin-vue-markdown @primevue/auto-import-resolver @intlify/unplugin-vue-i18n @types/lodash-es  vue-component-type-helpers @types/jsonpath @types/sortablejs @types/downloadjs unocss-preset-animatecss -D unocss-preset-magicss
 ```
 
 ```bash
