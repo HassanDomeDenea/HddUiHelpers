@@ -20,14 +20,14 @@ function busListener({ event, options, setRefAndUnMounter }: DynamicComponentMou
       options: options,
       id: newComponentId,
     }
-    if (options.stacked !== true) {
+    if (options?.stacked !== true) {
       componentsList.value = [newItem]
     } else {
       componentsList.value.push(newItem)
     }
 
     nextTick(() => {
-      setRefAndUnMounter(last(componentsListRefs.value), () => {
+      setRefAndUnMounter?.(last(componentsListRefs.value), () => {
         const indexToRemove = componentsList.value.findIndex((e) => e.id === newComponentId)
         componentsList.value.splice(indexToRemove, 1)
       })
@@ -48,10 +48,10 @@ onBeforeUnmount(() => {
 <template>
   <template v-for="item in componentsList" :key="item.id">
     <component
-      :is="item.options.component"
-      v-if="item.options.component"
+      :is="item.options?.component"
+      v-if="item.options?.component"
       :ref="componentsListRefs.set"
-      v-bind="item.options.props"
+      v-bind="item.options?.props"
     ></component>
   </template>
 </template>

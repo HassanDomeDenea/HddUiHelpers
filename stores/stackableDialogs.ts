@@ -50,7 +50,7 @@ export const useStackableDialog = function (
   options: { dialogVisibilityRef?: Ref<boolean>; name?: string; dialogRef?: Ref } = {}
 ) {
   const store = useStackableDialogsStore()
-  const dialogStackIndex = ref(null)
+  const dialogStackIndex = ref<number | null>(null)
   const dynamicalDialog = useDialog()
 
   function addDialogToStack() {
@@ -86,7 +86,7 @@ export const useStackableDialog = function (
 
   async function open<TComponent>(
     component: TComponent,
-    options?: Partial<Exclude<DynamicDialogOptions, 'onClose'>>,
+    options?: Partial<Exclude<DynamicDialogOptions, 'onClose'>> & { emits?: any },
     extraOptions?: {
       onHidden?: () => void
       onClose?: (closeOptions?: DynamicDialogCloseOptions) => void

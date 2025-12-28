@@ -31,7 +31,9 @@ const {
   dismissableMask = true,
   keepFormOpenAfterCreate = false,
   dialogClass,
+  dialogName,
   dialogContentStyle,
+  autoComplete,
   columns,
   size,
   submitAndOpenProps,
@@ -204,6 +206,7 @@ const hddFormOptions = computed(() => {
     size: 'small',
     inlineFields: inlineFields,
     fields: mappedFormFields,
+    autoComplete: autoComplete,
     isEditing: isEditing.value,
     onFailure(error: unknown) {
       if (withoutDialog.value) {
@@ -225,8 +228,8 @@ const hddFormOptions = computed(() => {
               ? t('Record Updated Successfully!')
               : t(
                   'n Record Updated Successfully!',
-                  { n: multiEditRecords.value.length },
-                  multiEditRecords.value.length
+                  { n: multiEditRecords.value.length || 1 },
+                  multiEditRecords.value.length || 1
                 )
             : isMultiCreate.value
               ? t('Record Created Successfully!')
@@ -302,6 +305,7 @@ function editMulti(rows: TRecord[]) {
 
 function edit(row: TRecord, showDialog = true) {
   isEditing.value = true
+  isMultiEdit.value = false
   recordToEdit.value = row
   initialValues.value = cloneDeep(row)
   idToEdit.value = row[primaryKey as keyof TRecord] as string | number
@@ -561,6 +565,7 @@ defineExpose({
     :content-style="dialogContentStyle"
     :draggable="false"
     class="w-580px"
+    :name="dialogName"
     :class="[dialogClass, { '!hidden': withoutDialog }]"
     @show="onDialogShown"
     @after-hide="onDialogHidden"
@@ -610,6 +615,9 @@ defineExpose({
       </Button>
     </template>
     <HddForm ref="hddFormRef" v-bind="hddFormOptions" @reset="onResetButtonClicked">
+      <template #beforeControls="slotProps">
+        <slot name="beforeControls" v-bind="slotProps"></slot>
+      </template>
       <template v-for="field in mappedFormFields" #[`${getFieldSlotName(field)}BeforeControl`]>
         <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
       </template>

@@ -16,6 +16,9 @@ const props = withDefaults(
       showTime?: boolean
       dateFormat?: string
       formatAsString?: boolean
+      stringFormat?: string
+      startingView?: 'date' | 'month' | 'year'
+      view?: string | 'date' | 'month' | 'year' | undefined
     } & BaseInputProps
   >(),
   {
@@ -30,7 +33,7 @@ const { t } = useI18n()
 const inputRef = useTemplateRef<ComponentExposed<typeof DatePicker>>('inputRef')
 
 function focus() {
-  inputRef.value.input?.click()
+  inputRef.value.input?.focus()
 }
 
 const localValue = computed({
@@ -46,7 +49,7 @@ const localValue = computed({
       value.value = val ? moment(val).format('YYYY') : null
     } else {
       if (val && props.formatAsString) {
-        value.value = moment(val).format('YYYY-MM-DD HH:mm:ss')
+        value.value = moment(val).format(props.stringFormat ?? 'YYYY-MM-DD HH:mm:ss')
       } else {
         value.value = val
       }
@@ -65,7 +68,7 @@ const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
   useHddBaseInputUtils(props)
 
 const localDateFormat = computed(() => (props.isYearOnly ? 'yy' : (props.dateFormat ?? 'yy-mm-dd')))
-const localView = computed(() => (props.isYearOnly ? 'year' : undefined))
+const localView = computed(() => (props.isYearOnly ? 'year' : props.view))
 
 const selectDate = function (date: string | Date | Moment) {
   localValue.value = date
@@ -74,6 +77,13 @@ const selectDate = function (date: string | Date | Moment) {
   }
 }
 
+function onShow() {
+  if (props.startingView === 'year') {
+    inputRef.value.switchToYearView(new Event('year'))
+  } else if (props.startingView === 'month') {
+    inputRef.value.switchToMonthView(new Event('month'))
+  }
+}
 defineExpose({ focus, inputRef, ...exposed })
 </script>
 
@@ -100,7 +110,15 @@ defineExpose({ focus, inputRef, ...exposed })
         :view="localView"
         :manual-input="manualInput"
         :show-button-bar="clearable"
+        :pt="{
+          pcInputText: {
+            root: {
+              onKeydown: (ev) => undefined,
+            },
+          },
+        }"
         @clear-click="() => clearable && (localValue = null)"
+        @show="onShow"
       >
         <template #footer>
           <div

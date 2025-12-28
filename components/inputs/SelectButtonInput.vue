@@ -1,49 +1,51 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { get } from 'lodash-es';
-import { ref } from 'vue';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
+import { get } from 'lodash-es'
+import { ref } from 'vue'
+import BaseInput from './BaseInput.vue'
+import type { BaseInputProps } from './types'
 
 const props = withDefaults(
   defineProps<
     {
-      options: any[];
-      optionDisabledProperty?: string | null;
-      optionIconProperty?: string | null;
-      optionLabelProperty?: string | null;
-      optionValueProperty?: string | null;
-      clearable?: boolean;
+      options: any[]
+      optionDisabledProperty?: string
+      optionIconProperty?: string
+      optionLabelProperty?: string
+      optionValueProperty?: string
+      clearable?: boolean
+      optionClass?: any
     } & BaseInputProps
   >(),
   {
     optionIconProperty: 'icon',
     optionDisabledProperty: 'disabled',
-    optionLabelProperty: 'label',
-    optionValueProperty: 'value',
+    optionLabelProperty: 'name',
+    optionValueProperty: 'id',
     clearable: false,
-  },
-);
-const value = defineModel<any>('modelValue');
+  }
+)
+const value = defineModel<any>('modelValue')
 
-const inputRef = ref();
+const inputRef = ref()
 
 const optionLabelClass = computed(() => {
   if (props.size === 'small') {
-    return 'text-sm';
+    return 'text-sm'
   } else if (props.size === 'large') {
-    return 'text-lg';
+    return 'text-lg'
   } else {
-    return '';
+    return ''
   }
-});
+})
 
 function focus() {
-  inputRef.value.$el.focus();
+  inputRef.value.$el.focus()
 }
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props)
 
-defineExpose({ focus, ...exposed });
+defineExpose({ focus, ...exposed })
 </script>
 
 <template>
@@ -58,8 +60,12 @@ defineExpose({ focus, ...exposed });
     >
       <template #option="{ option }">
         <slot name="option" :option="option">
-          <div class="flex gap-1" :class="[optionLabelClass]">
-            <i v-if="get(option, optionIconProperty)" :class="get(option, optionIconProperty)" class="me-1"></i>
+          <div class="flex justify-center gap-1" :class="[optionLabelClass, optionClass]">
+            <i
+              v-if="get(option, optionIconProperty)"
+              :class="get(option, optionIconProperty)"
+              class="me-1"
+            ></i>
             <span>{{ get(option, optionLabelProperty) }}</span>
           </div>
         </slot>

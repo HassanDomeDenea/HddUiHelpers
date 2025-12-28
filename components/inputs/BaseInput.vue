@@ -90,7 +90,7 @@ defineExpose({ labelWidth, disabled, defaultSlotRef })
       <slot v-if="i === 1" name="afterLabel" />
       <div
         v-if="(!controlBeforeLabel && i === 2) || (controlBeforeLabel && i === 0)"
-        :class="[{ 'w-full': !controlBeforeLabel }, controlWrapperClass]"
+        :class="[{ 'min-w-0 flex-1': !controlBeforeLabel }, controlWrapperClass]"
       >
         <InputGroup
           @keydown.enter="(evt) => (onLocalEnterKeyDown ? onLocalEnterKeyDown(evt) : null)"

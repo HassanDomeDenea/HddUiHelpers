@@ -105,6 +105,7 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
   function hasRole(role: string): boolean {
     return user.value?.role_names?.includes(role) === true
   }
+
   const isSuperAdmin = computed(() => {
     return user.value?.role_names?.includes('super_admin') === true
   })
@@ -120,6 +121,18 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
       return false
     }
     return permissions.some((p) => user.value?.permission_names?.includes(p))
+  }
+
+  function ifCan<TValue>(
+    permission: AppPermission | AppPermission[],
+    value: TValue,
+    elseValue = undefined
+  ) {
+    if (can(permission)) {
+      return value
+    } else {
+      return elseValue
+    }
   }
 
   function can(permission: AppPermission | AppPermission[]) {
@@ -181,8 +194,15 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
     )
   }
 
+  const userFullName = computed(() => {
+    return user.value?.name ?? ''
+  })
+
   return {
     canAny,
+    ifCan,
+    userFullName,
+    ifHasPermission: ifCan,
     can,
     hasRole,
     isSuperAdmin,

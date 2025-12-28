@@ -77,6 +77,9 @@ export type HddFormProps<
    */
   fixedLabelWidth?: number
   isEditing?: boolean
+
+  /** Autocomplete on form tag*/
+  autoComplete?: string
 } & Pick<UseHddFormOptions<TFieldName>, 'defaultValidationMode'> &
   Pick<
     BaseInputProps,
@@ -203,8 +206,14 @@ export type HddFormField<
   fields?: HddFormField[]
   imageUrlKey?: string
   imageClearKey?: string
+  teleport?: MaybeRefOrGetter<string | HTMLElement | Component>
   //rules?:HddFormFieldSchema<T>
   // rules?: Schema
+  /** Fixed width for the label of the field */
+  labelWidth?: number
+
+  /** Used for phone input to integrate country code field*/
+  countyCodeFieldName?: string
 }
 
 export type HddFormFieldSchema<T> = T extends 'text' | 'autocomplete'

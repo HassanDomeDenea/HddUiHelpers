@@ -33,7 +33,8 @@ export default function HddUiHelpersPlugin(): PluginOption {
       dts: 'resources/js/types/typed-router.d.ts',
       //dts: false, Disable DTS generation in dev mode for faster work
       // Use async import in dev mode for faster initial load
-      importMode: isDev ? 'async' : 'sync',
+      // importMode: isDev ? 'async' : 'sync',
+      importMode: 'sync',
       routeBlockLang: 'yaml',
       // Disable dts generation in dev mode for faster updates
     }),

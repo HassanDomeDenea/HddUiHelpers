@@ -1,13 +1,13 @@
-import type BaseInput from 'HddUiHelpers/components/inputs/BaseInput.vue';
-import type { BaseInputProps } from 'HddUiHelpers/components/inputs/types';
-import { pick } from 'lodash-es';
-import uniqueId from 'lodash/uniqueId';
-import type { TreeNode } from 'primevue/treenode';
-import type { ComponentExposed } from 'vue-component-type-helpers';
+import type BaseInput from 'HddUiHelpers/components/inputs/BaseInput.vue'
+import type { BaseInputProps } from 'HddUiHelpers/components/inputs/types'
+import { pick } from 'lodash-es'
+import uniqueId from 'lodash/uniqueId'
+import type { TreeNode } from 'primevue/treenode'
+import type { ComponentExposed } from 'vue-component-type-helpers'
 
 export const DefaultBasInputProps: Partial<BaseInputProps> = {
   hideLabelDoubleDots: true,
-} as Partial<BaseInputProps>;
+} as Partial<BaseInputProps>
 
 // This array takes the keys of the BaseInputProps type and makes it a const array
 const baseInputPropsKeys = [
@@ -50,29 +50,30 @@ const baseInputPropsKeys = [
   'size',
   'buttonAddon',
   'controlComponent',
-] as const;
+] as const
 
 export const useHddBaseInputUtils = function (props: Readonly<BaseInputProps>) {
-  const hasError = computed(() => !!props.error);
-  const baseInputRef = ref<ComponentExposed<typeof BaseInput>>();
+  const hasError = computed(() => !!props.error)
+  const baseInputRef = ref<ComponentExposed<typeof BaseInput>>()
 
   const fieldUniqueId = computed(() => {
-    return props.uniqueId ?? uniqueId(props.name ?? 'unnamed');
-  });
+    return props.uniqueId ?? uniqueId(props.name ?? 'unnamed')
+  })
 
   const baseInputForwardedProps = computed(() => {
     return {
       inputId: fieldUniqueId.value,
       ref: (el: any) => (baseInputRef.value = el),
       ...pick(props, baseInputPropsKeys),
-    };
-  });
+    }
+  })
 
   const exposed = {
     hasError,
     baseInputRef,
+    name: props.name,
     disabled: props.disabled,
-  };
+  }
 
   const generalInputProps = computed(() => {
     return {
@@ -82,8 +83,9 @@ export const useHddBaseInputUtils = function (props: Readonly<BaseInputProps>) {
       invalid: hasError.value,
       disabled: props.disabled,
       readonly: props.readonly,
-    };
-  });
+      variant: props.variant,
+    }
+  })
 
   return {
     exposed,
@@ -92,37 +94,42 @@ export const useHddBaseInputUtils = function (props: Readonly<BaseInputProps>) {
     hasError,
     baseInputForwardedProps,
     generalInputProps,
-  };
-};
+  }
+}
 
 /**
  * Return array of ancestor nodes for a given id.
  * The returned array is ordered [node, parent, grandParent, ... , root].
  * Returns null if not found.
  */
-export function getTreeAncestorsById(id: any, tree: TreeNode[], idProperty = 'id', childrenProperty = 'children'): TreeNode[] | null {
-  let result: TreeNode[] | null = null;
+export function getTreeAncestorsById(
+  id: any,
+  tree: TreeNode[],
+  idProperty = 'id',
+  childrenProperty = 'children'
+): TreeNode[] | null {
+  let result: TreeNode[] | null = null
 
   function recurse(nodes: TreeNode[], parents: TreeNode[]) {
     for (const n of nodes) {
-      if (result) return; // already found
-      const newParents = parents.concat(n);
+      if (result) return // already found
+      const newParents = parents.concat(n)
       if (n[idProperty] === id) {
         // build ancestors starting from node up to root
-        result = [];
+        result = []
         for (let i = newParents.length - 1; i >= 0; i--) {
-          result.push(newParents[i]);
+          result.push(newParents[i])
         }
-        return;
+        return
       }
       if (n[childrenProperty]?.length) {
-        recurse(n[childrenProperty] as TreeNode[], newParents);
+        recurse(n[childrenProperty] as TreeNode[], newParents)
       }
     }
   }
 
-  recurse(tree, []);
-  return result;
+  recurse(tree, [])
+  return result
 }
 
 export function getTreeItemLabelWithParents(
@@ -130,16 +137,34 @@ export function getTreeItemLabelWithParents(
   nodes: TreeNode[],
   idProperty: string = 'id',
   labelProperty: string = 'label',
-  childrenProperty = 'children',
+  childrenProperty = 'children'
 ) {
-  const path = getTreeAncestorsById(id, nodes, idProperty, childrenProperty);
-  return getTextFromTreePath(path, labelProperty);
+  const path = getTreeAncestorsById(id, nodes, idProperty, childrenProperty)
+  return path ? getTextFromTreePath(path, labelProperty) : ''
 }
 
-export function getTextFromTreePath(path: TreeNode[], labelProperty: string = 'label', glue = '>>'): string {
+export function getTextFromTreePath(
+  path: TreeNode[],
+  labelProperty: string = 'label',
+  glue = '>>'
+): string {
   return path
     .slice() // copy
     .reverse() // our helper returns [node, parent, ...root], reverse to root..node
     .map((n) => n[labelProperty])
-    .join(`  ${glue}  `);
+    .join(`  ${glue}  `)
+}
+
+export function cursorAtStartOfInput(input: HTMLInputElement) {
+  if (!input) return false
+  const cursorPosition = input.selectionStart
+  const hasTextSelection = input.selectionStart !== input.selectionEnd
+  return !hasTextSelection && cursorPosition === 0
+}
+
+export function cursorAtEndOfInput(input: HTMLInputElement) {
+  if (!input) return false
+  const cursorPosition = input.selectionStart
+  const hasTextSelection = input.selectionStart !== input.selectionEnd
+  return !hasTextSelection && cursorPosition === input.value.length
 }

@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import UserController from '@/wayfinder/actions/App/Http/Controllers/UserController';
-import type { HddFormProps } from 'HddUiHelpers/components/FormWrapper/types';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
-import type { BasicUserData } from 'HddUiHelpers/types/BasicModels';
+import UserController from '@/wayfinder/actions/App/Http/Controllers/UserController'
+import type { HddFormProps } from 'HddUiHelpers/components/FormWrapper/types'
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts'
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth'
+import type { BasicUserData } from 'HddUiHelpers/types/BasicModels'
 
-const { t } = useI18n();
-const authStore = useBasicAuthStore();
-const router = useRouter();
-const route = useRoute();
+const { t } = useI18n()
+const authStore = useBasicAuthStore()
+const router = useRouter()
+const apiClient = useApiClient()
+const route = useRoute()
 const formBinds = ref<HddFormProps>({
   url: UserController.login(),
   unifyLabelsWidth: 120,
@@ -17,14 +19,29 @@ const formBinds = ref<HddFormProps>({
   size: 'small',
   formName: 'login',
   fields: [
-    { name: 'username', icon: 'i-mdi-user', label: t('Username'), binds: { inputClass: 'dir-ltr text-left' } },
-    { name: 'password', icon: 'i-mdi-password', type: 'password', label: t('Password'), binds: { inputClass: 'dir-ltr text-left' } },
+    {
+      name: 'username',
+      icon: 'i-mdi-user',
+      label: t('Username'),
+      binds: { inputClass: 'dir-ltr text-left' },
+    },
+    {
+      name: 'password',
+      icon: 'i-mdi-password',
+      type: 'password',
+      label: t('Password'),
+      binds: { inputClass: 'dir-ltr text-left' },
+    },
   ],
   onSuccess: (data: { user: BasicUserData; token: string }) => {
-    router.push((route.query?.redirect_url ?? '/') as any);
-    authStore.login(data.user, data.token);
+    if (!data.user) {
+      apiClient.toastError(t('Error Occurred'))
+      return
+    }
+    router.push(((route.query?.redirect_url ?? '/') || '/') as string)
+    authStore.login(data.user, data.token)
   },
-});
+})
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 import type { ApiResponseData, ResponseData } from '@/types/laravel_generated'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
-import type {
+import {
+  FormFieldType,
   HddFormField,
   RecordItem,
   ServerDataTableColumnSource,
@@ -50,8 +51,8 @@ export type MenuItemAndButton = Omit<MenuItem, 'icon'> & {
 }
 
 export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
-  columns: (string | ServerDataTableColumn<ServerDataTableColumnType, T>)[] | string
-  fields?: HddFormField[]
+  columns?: (string | ServerDataTableColumn<ServerDataTableColumnType, T>)[] | string
+  fields?: HddFormField<string, FormFieldType, T>[]
   name?: string
   printingTitle?: string
   title?: string
@@ -89,6 +90,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   primaryKey?: keyof T
   scrollHeight?: 'flex' | string
   scrollable?: boolean
+  scrollDirection?: any
   toolButtonsSize?: 'large' | 'small'
   size?: 'large' | 'small'
   hasRefreshButton?: boolean
@@ -358,6 +360,7 @@ export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> 
   customDefaultValuesOnEdit?: { [key: string]: any }
   dialogContentStyle?: any
   dialogClass?: any
+  dialogName?: string
   successMessageTitle?: string
   successMessageText?: string
   submitSeverity?: ButtonProps['severity']
@@ -385,6 +388,7 @@ export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> 
   submitAndOpenIcon?: string | ((event: { isEditing: boolean }) => string)
   submitAndOpenSeverity?: ButtonProps['severity']
   dismissableMask?: boolean
+  autoComplete?: string
 }
 
 export type DynamicDialogRefInjectionType = ComputedRef<{

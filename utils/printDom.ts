@@ -1,118 +1,130 @@
-import moment from 'moment';
+import moment from 'moment'
 
-const MM_TO_PX = 3.78;
-const IN_TO_PX = 96;
+const MM_TO_PX = 3.78
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const IN_TO_PX = 96
 
 interface PrintDomWithStylesOptions {
-  inlineStyles?: boolean;
-  paperSize?: string;
-  paperMargin?: string | number;
-  bodyTopMargin?: string | number;
-  backgroundImage?: string;
-  successCallback?: () => void;
-  documentTitle?: () => void;
-  pageCounter?: boolean;
-  showPrintTime?: boolean;
-  themeClassName?: string;
-  firstPageHeaderImageUrl?: string;
-  headerImageUrl?: string;
+  inlineStyles?: boolean
+  paperSize?: string
+  paperMargin?: string | number
+  bodyTopMargin?: string | number
+  backgroundImage?: string
+  successCallback?: () => void
+  documentTitle?: () => void
+  pageCounter?: boolean
+  showPrintTime?: boolean
+  themeClassName?: string
+  firstPageHeaderImageUrl?: string
+  headerImageUrl?: string
   /** Header max width in mm*/
-  headerMaxWidth?: number;
+  headerMaxWidth?: number
   /** Header max height in mm*/
-  headerMaxHeight?: number;
+  headerMaxHeight?: number
   /** footer max width in mm*/
-  footerMaxWidth?: number;
+  footerMaxWidth?: number
   /** footer max height in mm*/
-  footerMaxHeight?: number;
+  footerMaxHeight?: number
   /** Left max width in mm*/
-  leftMargin?: number;
+  leftMargin?: number
   /** Right max width in mm*/
-  rightMargin?: number;
+  rightMargin?: number
   /** Top max width in mm*/
-  topMargin?: number;
+  topMargin?: number
   /** Bottom max width in mm*/
-  bottomMargin?: number;
-  footerImageUrl?: string;
+  bottomMargin?: number
+  footerImageUrl?: string
 }
 
-export async function printDomWithStyles(element: HTMLElement, opts: PrintDomWithStylesOptions = {}) {
-  const contents = element.outerHTML;
-  const cssLinks: string[] = [];
-  const cssStyles = [];
+export async function printDomWithStyles(
+  element: HTMLElement,
+  opts: PrintDomWithStylesOptions = {}
+) {
+  const contents = element.outerHTML
+  const cssLinks: string[] = []
+  const cssStyles: string[] = []
 
   if (!opts.inlineStyles) {
     document.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]').forEach((e) => {
-      cssLinks.push(e.href);
-    });
+      cssLinks.push(e.href)
+    })
     document.querySelectorAll<HTMLLinkElement>('style').forEach((e) => {
-      cssStyles.push(e.innerHTML);
-    });
+      cssStyles.push(e.innerHTML)
+    })
   }
-  const targetPaperSize = opts.paperSize?.toLowerCase() ?? 'a4';
-  if (typeof opts.paperSize === 'number') {
+  const targetPaperSize = opts.paperSize?.toLowerCase() ?? 'a4'
+
+  // I don't remember what this segment does:
+  /*  if (typeof opts.paperSize === 'number') {
     if (undefined === opts.leftMargin) {
-      opts.leftMargin = opts.paperSize;
+      opts.leftMargin = opts.paperSize
     }
     if (undefined === opts.rightMargin) {
-      opts.rightMargin = opts.paperSize;
+      opts.rightMargin = opts.paperSize
     }
     if (undefined === opts.bottomMargin) {
-      opts.bottomMargin = opts.paperSize;
+      opts.bottomMargin = opts.paperSize
     }
     if (undefined === opts.topMargin) {
-      opts.topMargin = opts.paperSize;
+      opts.topMargin = opts.paperSize
     }
-  }
+  }*/
   if (!opts.headerMaxWidth) {
     if (targetPaperSize.startsWith('a4')) {
-      opts.headerMaxWidth = 210;
+      opts.headerMaxWidth = 210
     } else if (targetPaperSize.startsWith('letter')) {
-      opts.headerMaxWidth = 216;
+      opts.headerMaxWidth = 216
     } else if (targetPaperSize.startsWith('a5')) {
-      opts.headerMaxWidth = 148;
+      opts.headerMaxWidth = 148
     }
 
     if (opts.headerMaxWidth) {
       if (opts.leftMargin) {
-        opts.headerMaxWidth -= opts.leftMargin;
+        opts.headerMaxWidth -= opts.leftMargin
       }
       if (opts.rightMargin) {
-        opts.headerMaxWidth -= opts.rightMargin;
+        opts.headerMaxWidth -= opts.rightMargin
       }
     }
   }
   if (!opts.footerMaxWidth) {
     if (targetPaperSize.startsWith('a4')) {
-      opts.footerMaxWidth = 210;
+      opts.footerMaxWidth = 210
     } else if (targetPaperSize.startsWith('letter')) {
-      opts.footerMaxWidth = 216;
+      opts.footerMaxWidth = 216
     } else if (targetPaperSize.startsWith('a5')) {
-      opts.footerMaxWidth = 148;
+      opts.footerMaxWidth = 148
     }
 
     if (opts.footerMaxWidth) {
       if (opts.leftMargin) {
-        opts.footerMaxWidth -= opts.leftMargin;
+        opts.footerMaxWidth -= opts.leftMargin
       }
       if (opts.rightMargin) {
-        opts.footerMaxWidth -= opts.rightMargin;
+        opts.footerMaxWidth -= opts.rightMargin
       }
     }
-    if (opts.showPrintTime || opts.pageCounter) {
-      opts.footerMaxWidth -= 55;
+    if (undefined !== opts.footerMaxWidth && (opts.showPrintTime || opts.pageCounter)) {
+      opts.footerMaxWidth -= 55
     }
   }
 
   // opts.headerImageUrl = 'https://placehold.co/1200x80?text=Header';
-  const headerMaxHeight = opts.headerMaxHeight ?? 100;
-  const footerMaxHeight = opts.footerMaxHeight ?? 50;
+  const headerMaxHeight = opts.headerMaxHeight ?? 100
+  const footerMaxHeight = opts.footerMaxHeight ?? 50
+  const footerMaxWidth = opts.footerMaxWidth ?? 210
+  const headerMaxWidth = opts.headerMaxWidth ?? 210
 
   if (opts.headerImageUrl) {
-    const { dataUrl: url, newHeight } = await resizeImageToDataURL(opts.headerImageUrl, MM_TO_PX * opts.headerMaxWidth, MM_TO_PX * headerMaxHeight);
+    const { dataUrl: url, newHeight } = await resizeImageToDataURL(
+      opts.headerImageUrl,
+      MM_TO_PX * headerMaxWidth,
+      MM_TO_PX * headerMaxHeight
+    )
 
-    const newHeightInMm = +(newHeight / MM_TO_PX).toFixed(2);
-    if (newHeightInMm > opts.topMargin) {
-      opts.topMargin = newHeightInMm;
+    const newHeightInMm = +(newHeight / MM_TO_PX).toFixed(2)
+    if (newHeightInMm > (opts.topMargin ?? 0)) {
+      opts.topMargin = newHeightInMm
     }
 
     cssStyles.push(`
@@ -120,7 +132,7 @@ export async function printDomWithStyles(element: HTMLElement, opts: PrintDomWit
             @top-center {
                 content: url('${url}');
             }
-        `);
+        `)
 
     /*
                 const { dataUrl: url, newHeight,newWidth } = await convertImageToDataURLWithDimensions(
@@ -145,15 +157,15 @@ export async function printDomWithStyles(element: HTMLElement, opts: PrintDomWit
   if (opts.firstPageHeaderImageUrl) {
     const { dataUrl: url, newHeight } = await resizeImageToDataURL(
       opts.firstPageHeaderImageUrl,
-      MM_TO_PX * opts.headerMaxWidth,
-      MM_TO_PX * headerMaxHeight,
-    );
+      MM_TO_PX * headerMaxWidth,
+      MM_TO_PX * headerMaxHeight
+    )
 
-    const newHeightInMm = +(newHeight / MM_TO_PX).toFixed(2);
+    const newHeightInMm = +(newHeight / MM_TO_PX).toFixed(2)
 
-    let differentFirstPageTopMargin = null;
-    if (newHeightInMm > opts.topMargin) {
-      differentFirstPageTopMargin = newHeightInMm;
+    let differentFirstPageTopMargin: number | null = null
+    if (newHeightInMm > (opts.topMargin ?? 0)) {
+      differentFirstPageTopMargin = newHeightInMm
     }
 
     cssStyles.push(`
@@ -163,14 +175,18 @@ export async function printDomWithStyles(element: HTMLElement, opts: PrintDomWit
             }
             margin-top: ${typeof differentFirstPageTopMargin === 'number' ? differentFirstPageTopMargin + 'mm!important' : ''};
 
-        `);
+        `)
   }
   if (opts.footerImageUrl) {
-    const { dataUrl: url, newHeight } = await resizeImageToDataURL(opts.footerImageUrl, MM_TO_PX * opts.footerMaxWidth, MM_TO_PX * footerMaxHeight);
+    const { dataUrl: url, newHeight } = await resizeImageToDataURL(
+      opts.footerImageUrl,
+      MM_TO_PX * footerMaxWidth,
+      MM_TO_PX * footerMaxHeight
+    )
 
-    const newHeightInMm = +(newHeight / MM_TO_PX).toFixed(2);
-    if (newHeightInMm > opts.bottomMargin) {
-      opts.bottomMargin = newHeightInMm;
+    const newHeightInMm = +(newHeight / MM_TO_PX).toFixed(2)
+    if (newHeightInMm > (opts.bottomMargin ?? 0)) {
+      opts.bottomMargin = newHeightInMm
     }
 
     cssStyles.push(`
@@ -178,12 +194,14 @@ export async function printDomWithStyles(element: HTMLElement, opts: PrintDomWit
             @bottom-center {
                 content: url('${url}');
             }
-        `);
+        `)
   }
 
-  const dir = window.getComputedStyle(document.body).direction;
-  const fontFamily = window.getComputedStyle(document.body).fontFamily;
-  cssStyles.push(`body{background:white; font-family:${fontFamily}!important; direction: ${dir}; text-align:${dir === 'ltr' ? 'left' : 'right'};}`);
+  const dir = window.getComputedStyle(document.body).direction
+  const fontFamily = window.getComputedStyle(document.body).fontFamily
+  cssStyles.push(
+    `body{background:white; font-family:${fontFamily}!important; direction: ${dir}; text-align:${dir === 'ltr' ? 'left' : 'right'};}`
+  )
   cssStyles.push(
     `
         @page {
@@ -197,8 +215,8 @@ export async function printDomWithStyles(element: HTMLElement, opts: PrintDomWit
             color-adjust: exact !important;
 
         }
-    `,
-  );
+    `
+  )
   cssStyles.push(
     `
             @page {
@@ -228,158 +246,168 @@ export async function printDomWithStyles(element: HTMLElement, opts: PrintDomWit
         : ``) +
       `
                 }
-            }`,
-  );
+            }`
+  )
 
   if (opts.backgroundImage) {
-    cssStyles.push(`body{ background-image: url('${opts.backgroundImage}')!important; background-size: cover; background-repeat: no-repeat;} `);
+    cssStyles.push(
+      `body{ background-image: url('${opts.backgroundImage}')!important; background-size: cover; background-repeat: no-repeat;} `
+    )
     if (opts.bodyTopMargin) {
-      cssStyles.push(` body{padding-top:${typeof opts.bodyTopMargin === 'number' ? opts.paperMargin + 'cm' : opts.paperMargin || '0'}`);
+      cssStyles.push(
+        ` body{padding-top:${typeof opts.bodyTopMargin === 'number' ? opts.paperMargin + 'cm' : opts.paperMargin || '0'}`
+      )
     }
   }
 
-  let htmlRootClass = '';
+  let htmlRootClass = ''
   if (opts.themeClassName) {
-    htmlRootClass = opts.themeClassName;
+    htmlRootClass = opts.themeClassName
   } else {
-    htmlRootClass = 'light';
+    htmlRootClass = 'light'
   }
 
   return new Promise<void>((mainPromiseResolve) => {
-    const printFrame = document.createElement('iframe');
-    printFrame.style.position = 'absolute';
-    printFrame.style.left = '-1';
-    printFrame.style.visibility = 'hidden';
+    const printFrame = document.createElement('iframe')
+    printFrame.style.position = 'absolute'
+    printFrame.style.left = '-1'
+    printFrame.style.visibility = 'hidden'
 
-    document.body.appendChild(printFrame);
+    document.body.appendChild(printFrame)
 
     printFrame.onload = async () => {
-      const printDocument = printFrame.contentWindow?.document ?? printFrame.contentDocument;
+      const printDocument = printFrame.contentWindow?.document ?? printFrame.contentDocument
 
-      const images = printDocument.images;
+      if (!printDocument) {
+        mainPromiseResolve()
+        return
+      }
+      const images = printDocument.images
       if (images.length > 0) {
         await Promise.all(
           Array.from(images).map((image) => {
             if (image.src && image.src !== window.location.href) {
               return new Promise<void>((resolve) => {
                 if (image.complete) {
-                  resolve();
+                  resolve()
                 } else {
-                  image.addEventListener('load', () => resolve());
-                  image.addEventListener('error', () => resolve());
+                  image.addEventListener('load', () => resolve())
+                  image.addEventListener('error', () => resolve())
                 }
-              });
+              })
             } else {
-              return Promise.resolve();
+              return Promise.resolve()
             }
-          }),
-        );
+          })
+        )
       }
 
-      await printDocument.fonts.ready;
+      await printDocument.fonts.ready
 
       await new Promise<void>((resolve) => {
-        printFrame.focus();
+        printFrame.focus()
         try {
-          printFrame.contentWindow.document.execCommand('print', false, null);
-          resolve();
+          printFrame.contentWindow?.document.execCommand('print', false, undefined)
+          resolve()
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (_) {
           // console.log("Printing with timeout")
           setTimeout(function () {
-            printFrame.contentWindow.print();
-            resolve();
-          }, 500);
+            printFrame.contentWindow?.print()
+            resolve()
+          }, 250)
         }
-      });
+      })
       if (opts.successCallback) {
-        opts.successCallback();
+        opts.successCallback()
       }
       // printFrame.remove();
-      mainPromiseResolve();
-    };
+      mainPromiseResolve()
+    }
     printFrame.srcdoc =
-      `<html lang="${document.body.parentElement.lang}" class="${htmlRootClass} light"><head><title>${opts.documentTitle || document.title}</title>` +
+      `<html lang="${document.body.parentElement?.lang}" class="${htmlRootClass} light"><head><title>${opts.documentTitle || document.title}</title>` +
       cssLinks
         .map((link) => {
-          return '<link rel="stylesheet" href="' + link + '" />';
+          return '<link rel="stylesheet" href="' + link + '" />'
         })
         .join('') +
       cssStyles.map((cssStyle) => `<style>${cssStyle}</style>`).join('') +
-      `</head><body>${contents}</body></html>`;
+      `</head><body>${contents}</body></html>`
 
     // console.log(printFrame.srcdoc)
-    document.body.appendChild(printFrame);
-  });
+    document.body.appendChild(printFrame)
+  })
 }
 
 async function resizeImageToDataURL(
   imageUrl: string,
   maxWidth: number,
-  maxHeight: number,
+  maxHeight: number
 ): Promise<{
-  dataUrl: string;
-  newWidth: number;
-  newHeight: number;
+  dataUrl: string
+  newWidth: number
+  newHeight: number
 }> {
   return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous'; // needed for cross-origin images
+    const img = new Image()
+    img.crossOrigin = 'Anonymous' // needed for cross-origin images
 
     img.onload = function () {
-      const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+      const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1)
 
-      const newWidth = img.width * ratio;
-      const newHeight = img.height * ratio;
+      const newWidth = img.width * ratio
+      const newHeight = img.height * ratio
 
-      const canvas = document.createElement('canvas');
-      canvas.width = newWidth;
-      canvas.height = newHeight;
+      const canvas = document.createElement('canvas')
+      canvas.width = newWidth
+      canvas.height = newHeight
 
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, newWidth, newHeight);
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = 'high'
+        ctx.drawImage(img, 0, 0, newWidth, newHeight)
+      }
+      const dataUrl = canvas.toDataURL('image/png')
+      resolve({ dataUrl, newWidth, newHeight })
+    }
 
-      const dataUrl = canvas.toDataURL('image/png');
-      resolve({ dataUrl, newWidth, newHeight });
-    };
+    img.onerror = reject
 
-    img.onerror = reject;
-
-    img.src = imageUrl;
-  });
+    img.src = imageUrl
+  })
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function convertImageToDataURLWithDimensions(
   imageUrl: string,
   maxWidth: number,
-  maxHeight: number,
+  maxHeight: number
 ): Promise<{
-  dataUrl: string;
-  newWidth: number;
-  newHeight: number;
+  dataUrl: string
+  newWidth: number
+  newHeight: number
 }> {
   return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous'; // needed for cross-origin images
+    const img = new Image()
+    img.crossOrigin = 'Anonymous' // needed for cross-origin images
 
     img.onload = function () {
-      const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
+      const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1)
 
-      const newWidth = img.width * ratio;
-      const newHeight = img.height * ratio;
+      const newWidth = img.width * ratio
+      const newHeight = img.height * ratio
 
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      canvas.getContext('2d').drawImage(img, 0, 0);
-      const dataUrl = canvas.toDataURL('image/png');
-      resolve({ dataUrl, newWidth, newHeight });
-    };
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      canvas.getContext('2d')?.drawImage(img, 0, 0)
+      const dataUrl = canvas.toDataURL('image/png')
+      resolve({ dataUrl, newWidth, newHeight })
+    }
 
-    img.onerror = reject;
+    img.onerror = reject
 
-    img.src = imageUrl;
-  });
+    img.src = imageUrl
+  })
 }

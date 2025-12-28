@@ -121,7 +121,7 @@ const {
   initialTotalRecords = 0,
   sortMode,
   initialRecords = null,
-  columns,
+  columns = [],
   fields = [],
   globalFilterFields,
   withToolbarFilters = undefined,
@@ -1327,6 +1327,18 @@ const contextMenuModel = computed<MenuItem[]>(() => {
         if (typeof e.labelFn === 'function') {
           e.label = e.labelFn(contextMenuSelectedRecord.value)
         }
+        if (typeof e.icon === 'function') {
+          e.icon2 = e.icon
+          e.icon = () => e.icon2(contextMenuSelectedRecord.value)
+        }
+        const badgeResult = isFunction(e.badge) ? e.badge(contextMenuSelectedRecord.value) : e.badge
+        if (typeof e.label === 'function') {
+          e.label2 = e.label
+          e.label = () =>
+            e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : '')
+        } else {
+          e.label = e.label + (badgeResult ? ` (${badgeResult})` : '')
+        }
         return e as MenuItem
       })
     )
@@ -1618,6 +1630,9 @@ const computedTableHeight = computed(() => {
       </template>
       <template #afterSubmitButton="slotProps">
         <slot name="afterSubmitButton" v-bind="slotProps"></slot>
+      </template>
+      <template #beforeControls="slotProps">
+        <slot name="beforeFormControls" v-bind="slotProps"></slot>
       </template>
     </ServerFormDialog>
     <PrintPaperForServerDataTable
@@ -1918,7 +1933,7 @@ const computedTableHeight = computed(() => {
       :lazy="true"
       :scrollable="scrollable"
       :scroll-height="scrollHeight"
-      scroll-direction=""
+      :scroll-direction="scrollDirection"
       :data-key="primaryKey || undefined"
       :paginator="hasPagination"
       paginator-position="top"

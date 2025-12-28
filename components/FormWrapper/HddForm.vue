@@ -17,7 +17,9 @@ import omit from 'lodash/omit'
 import reduce from 'lodash/reduce'
 import uniqueId from 'lodash/uniqueId'
 import unset from 'lodash/unset'
+import Button from 'primevue/button'
 import { toValue } from 'vue'
+import { ComponentExposed } from 'vue-component-type-helpers'
 import type { UseHddFormOptions } from '../../utils/useHddForm'
 import { useHddForm } from '../../utils/useHddForm'
 import type { FieldError, HddFormField, HddFormProps, HddFormValues } from './types'
@@ -97,6 +99,8 @@ const hddFormOptions = computed(() => {
 })
 
 const containerRef = useTemplateRef('containerRef')
+const fieldsContainerRef = useTemplateRef('fieldsContainerRef')
+const submitButtonRef = useTemplateRef<ComponentExposed>('submitButtonRef')
 const form = useHddForm<T>(hddFormOptions.value as UseHddFormOptions<T>)
 
 const isSubmitting = ref(false)
@@ -224,6 +228,17 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
     size: field.size ?? size,
     error: fieldsStates.value[field.name].error?.message,
     showErrorMessage: showFieldErrorBelowIt,
+    ...(field.labelWidth || field.labelWidth === 0
+      ? {
+          labelMinWidth: field.labelWidth || 'unset',
+        }
+      : {}),
+    ...(['text', 'password'].includes(field.type ?? 'text')
+      ? {
+          onFocusNext: () => focusNext(field),
+          onFocusPrevious: () => focusPrevious(field),
+        }
+      : []),
     ...(field.addonCallback
       ? {
           textAddon: (value: any) => {
@@ -245,6 +260,11 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
             row: toValue(currentValues),
           })
         : field.binds
+      : {}),
+    ...(field.teleport && !field.labelWidth
+      ? {
+          labelMinWidth: 'unset',
+        }
       : {}),
   }
 }
@@ -319,9 +339,41 @@ function focusFirstWithError(): boolean | null {
 }
 
 function focusFirst() {
-  Object.values(fieldRefs.value)
-    .filter((e) => !e?.disabled)[0]
-    ?.focus()
+  nextTick(() => {
+    let firstFieldName = formFields.value[0]?.name
+    if (firstFieldName) {
+      focusField(firstFieldName)
+    } else {
+      Object.values(fieldRefs.value)
+        .filter((e) => !e?.disabled)[0]
+        ?.focus()
+    }
+  })
+}
+
+function focusPrevious(field: HddFormField) {
+  const enabledFields = Object.entries(fieldRefs.value).filter((e) => !e[1]?.disabled)
+  const currentFieldIndex = enabledFields.findIndex((e) => e[0] === field.name)
+  enabledFields[currentFieldIndex - 1]?.[1].focus?.()
+}
+
+function focusNext(field: HddFormField) {
+  const enabledFields = Object.entries(fieldRefs.value).filter((e) => !e[1]?.disabled)
+  const currentFieldIndex = enabledFields.findIndex((e) => e[0] === field.name)
+  if (currentFieldIndex + 1 === enabledFields.length) {
+    focusSubmit()
+  } else {
+    enabledFields[currentFieldIndex + 1]?.[1].focus?.()
+  }
+}
+
+function focusLast() {
+  const enabledFields = Object.values(fieldRefs.value).filter((e) => !e?.disabled)
+  enabledFields[enabledFields.length - 1]?.focus?.()
+}
+
+function focusSubmit() {
+  submitButtonRef.value?.$el.focus()
 }
 
 function setFieldRef(el: any, name: string) {
@@ -359,8 +411,8 @@ if (formModelValue.value) {
 
 <template>
   <div ref="containerRef" class="">
-    <!--        <pre class="dir-ltr text-left">{{ currentValues }}</pre>-->
-    <div>
+    <!--    <pre class="dir-ltr text-left">{{ currentValues }}</pre>-->
+    <form :autocomplete="autoComplete">
       <div v-if="summarizeErrorsAtTop && formState.invalid">
         <Message
           :size="size"
@@ -377,314 +429,327 @@ if (formModelValue.value) {
           </ul>
         </Message>
       </div>
-      <div :class="fieldsContainerClass">
+      <slot name="beforeControls"></slot>
+      <div ref="fieldsContainerRef" :class="fieldsContainerClass">
         <template v-for="field in formFields" :key="field.name">
-          <template
-            v-if="
-              !field.hidden &&
-              (typeof field.showable === 'function'
-                ? field.showable({ row: currentValues, isEditing: isEditing === true })
-                : !toValue(field.showable)) &&
-              !(isEditing && field.editable === false)
-            "
-          >
-            <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
-            <slot :name="`${getFieldSlotName(field)}ControlBody`">
-              <div class="mb-2">
-                <div class="flex items-center gap-1">
-                  <div class="flex-grow">
-                    <slot
-                      name="fieldInput"
-                      :field="field"
-                      :current-values="currentValues"
-                      :set-ref="setFieldRef"
-                      :binds="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                    >
-                      <template v-if="!field.type || field.type === 'text'">
-                        <TextInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'color'">
-                        <ColorPickerInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'checkbox'">
-                        <CheckboxInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'radio'">
-                        <RadioButtonInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          :options="resolveFieldOptions(field.options, currentValues)"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'switch'">
-                        <ToggleSwitchInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'password'">
-                        <PasswordInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'phone'">
-                        <PhoneInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'select'">
-                        <SelectInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          :options="resolveFieldOptions(field.options, currentValues)"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'tree_select'">
-                        <TreeSelectInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          :options="resolveFieldOptions(field.options, currentValues)"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'multiselect'">
-                        <MultiSelectInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          :options="resolveFieldOptions(field.options, currentValues)"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'listbox'">
-                        <ListBoxInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          :options="resolveFieldOptions(field.options, currentValues)"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'number'">
-                        <NumberInput
-                          :model-value="get(currentValues, field.name)"
-                          allow-empty
-                          :immediate-update="!field.lazy"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'price'">
-                        <NumberInput
-                          :model-value="get(currentValues, field.name)"
-                          allow-empty
-                          use-grouping
-                          :text-addon="field.currency"
-                          :immediate-update="!field.lazy"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'math'">
-                        <MathInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'textarea'">
-                        <TextAreaInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{
-                            ...omit(generalInputsProps, ['onKeydown']),
-                            ...generalInputBindsByField(field),
-                          }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                          @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'date'">
-                        <DatePickerInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'autocomplete'">
-                        <AutoCompleteInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          :url="
-                            typeof field.url === 'function'
-                              ? field.url({ row: currentValues })
-                              : toValue(field.url)
-                          "
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'server_select'">
-                        <InfiniteSelectInput
-                          :model-value="get(currentValues, field.name)"
-                          :filter-placeholder="t('Search For') + ': ' + t(field.label)"
-                          :url="
-                            typeof field.url === 'function'
-                              ? field.url({ row: currentValues })
-                              : toValue(field.url)
-                          "
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'server_multi_select'">
-                        <InfiniteMultiSelectInput
-                          :model-value="get(currentValues, field.name)"
-                          :filter-placeholder="t('Search For') + ': ' + t(field.label)"
-                          :url="
-                            typeof field.url === 'function'
-                              ? field.url({ row: currentValues })
-                              : toValue(field.url)
-                          "
-                          v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'editor'">
-                        <TipTapEditorInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{
-                            ...omit(generalInputsProps, ['onKeydown']),
-                            ...generalInputBindsByField(field),
-                          }"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                          @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'image'">
-                        <ImageInput
-                          :model-value="get(currentFiles, field.name)"
-                          :current-url="get(currentValues, field.imageUrlKey ?? field.name)"
-                          v-bind="{
-                            ...omit(generalInputsProps, ['onKeydown']),
-                            ...generalInputBindsByField(field),
-                          }"
-                          :fields="field.fields"
-                          @update:model-value="
-                            set(currentFiles, fieldNamePaths[field.name], $event)
-                          "
-                          @update:current-url="
-                            set(
-                              currentValues,
-                              field.imageUrlKey ?? fieldNamePaths[field.name],
-                              $event
-                            )
-                          "
-                          @clear="
-                            field.imageClearKey
-                              ? set(currentValues, field.imageClearKey, true)
-                              : null
-                          "
-                          @unclear="
-                            field.imageClearKey ? unset(currentValues, field.imageClearKey) : null
-                          "
-                        />
-                      </template>
-                      <template v-else-if="field.type === 'form'">
-                        <FormObjectInput
-                          :model-value="get(currentValues, field.name)"
-                          v-bind="{
-                            ...omit(generalInputsProps, ['onKeydown']),
-                            ...generalInputBindsByField(field),
-                          }"
-                          :fields="field.fields"
-                          label-class="-mt-2"
-                          @update:model-value="
-                            set(currentValues, fieldNamePaths[field.name], $event)
-                          "
-                          @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
-                        />
-                      </template>
-                    </slot>
-                  </div>
-                  <template v-if="showFieldErrorsPopover">
-                    <div
-                      class="self-start ltr:pr-2 rtl:pl-2"
-                      :class="{ 'pt-7': !inlineFields, 'pt-1': inlineFields }"
-                    >
-                      <Button severity="warn" text size="small">
-                        <i class="i-heroicons-exclamation-triangle-20-solid text-2xl" />
-                      </Button>
+          <Teleport :to="field.teleport ?? fieldsContainerRef" defer :disabled="!field.teleport">
+            <template
+              v-if="
+                !field.hidden &&
+                (typeof field.showable === 'function'
+                  ? field.showable({ row: currentValues, isEditing: isEditing === true })
+                  : !toValue(field.showable)) &&
+                !(isEditing && field.editable === false)
+              "
+            >
+              <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
+              <slot :name="`${getFieldSlotName(field)}ControlBody`">
+                <div class="mb-2">
+                  <div class="flex items-center gap-1">
+                    <div class="min-w-0 flex-1">
+                      <slot
+                        name="fieldInput"
+                        :field="field"
+                        :current-values="currentValues"
+                        :set-ref="setFieldRef"
+                        :binds="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                      >
+                        <template v-if="!field.type || field.type === 'text'">
+                          <TextInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'color'">
+                          <ColorPickerInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'checkbox'">
+                          <CheckboxInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'radio'">
+                          <RadioButtonInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            :options="resolveFieldOptions(field.options, currentValues)"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'switch'">
+                          <ToggleSwitchInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'password'">
+                          <PasswordInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'phone'">
+                          <PhoneInput
+                            :model-value="get(currentValues, field.name)"
+                            :country-code="
+                              field.countyCodeFieldName
+                                ? get(currentValues, field.countyCodeFieldName)
+                                : undefined
+                            "
+                            :with-country-code="!!field.countyCodeFieldName"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:country-code="
+                              set(currentValues, field.countyCodeFieldName, $event)
+                            "
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'select'">
+                          <SelectInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            :options="resolveFieldOptions(field.options, currentValues)"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'tree_select'">
+                          <TreeSelectInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            :options="resolveFieldOptions(field.options, currentValues)"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'multiselect'">
+                          <MultiSelectInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            :options="resolveFieldOptions(field.options, currentValues)"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'listbox'">
+                          <ListBoxInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            :options="resolveFieldOptions(field.options, currentValues)"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'number'">
+                          <NumberInput
+                            :model-value="get(currentValues, field.name)"
+                            allow-empty
+                            :immediate-update="!field.lazy"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'price'">
+                          <NumberInput
+                            :model-value="get(currentValues, field.name)"
+                            allow-empty
+                            use-grouping
+                            :text-addon="field.currency"
+                            :immediate-update="!field.lazy"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'math'">
+                          <MathInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'textarea'">
+                          <TextAreaInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{
+                              ...omit(generalInputsProps, ['onKeydown']),
+                              ...generalInputBindsByField(field),
+                            }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                            @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'date'">
+                          <DatePickerInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'autocomplete'">
+                          <AutoCompleteInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            :url="
+                              typeof field.url === 'function'
+                                ? field.url({ row: currentValues })
+                                : toValue(field.url)
+                            "
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'server_select'">
+                          <InfiniteSelectInput
+                            :model-value="get(currentValues, field.name)"
+                            :filter-placeholder="t('Search For') + ': ' + t(field.label)"
+                            :url="
+                              typeof field.url === 'function'
+                                ? field.url({ row: currentValues })
+                                : toValue(field.url)
+                            "
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'server_multi_select'">
+                          <InfiniteMultiSelectInput
+                            :model-value="get(currentValues, field.name)"
+                            :filter-placeholder="t('Search For') + ': ' + t(field.label)"
+                            :url="
+                              typeof field.url === 'function'
+                                ? field.url({ row: currentValues })
+                                : toValue(field.url)
+                            "
+                            v-bind="{ ...generalInputsProps, ...generalInputBindsByField(field) }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'editor'">
+                          <TipTapEditorInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{
+                              ...omit(generalInputsProps, ['onKeydown']),
+                              ...generalInputBindsByField(field),
+                            }"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                            @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'image'">
+                          <ImageInput
+                            :model-value="get(currentFiles, field.name)"
+                            :current-url="get(currentValues, field.imageUrlKey ?? field.name)"
+                            v-bind="{
+                              ...omit(generalInputsProps, ['onKeydown']),
+                              ...generalInputBindsByField(field),
+                            }"
+                            :fields="field.fields"
+                            @update:model-value="
+                              set(currentFiles, fieldNamePaths[field.name], $event)
+                            "
+                            @update:current-url="
+                              set(
+                                currentValues,
+                                field.imageUrlKey ?? fieldNamePaths[field.name],
+                                $event
+                              )
+                            "
+                            @clear="
+                              field.imageClearKey
+                                ? set(currentValues, field.imageClearKey, true)
+                                : null
+                            "
+                            @unclear="
+                              field.imageClearKey ? unset(currentValues, field.imageClearKey) : null
+                            "
+                          />
+                        </template>
+                        <template v-else-if="field.type === 'form'">
+                          <FormObjectInput
+                            :model-value="get(currentValues, field.name)"
+                            v-bind="{
+                              ...omit(generalInputsProps, ['onKeydown']),
+                              ...generalInputBindsByField(field),
+                            }"
+                            :fields="field.fields"
+                            label-class="-mt-2"
+                            @update:model-value="
+                              set(currentValues, fieldNamePaths[field.name], $event)
+                            "
+                            @keydown.ctrl.enter.stop="submitOnEnter && form.submitForm()"
+                          />
+                        </template>
+                      </slot>
                     </div>
-                  </template>
+                    <template v-if="showFieldErrorsPopover">
+                      <div
+                        class="self-start ltr:pr-2 rtl:pl-2"
+                        :class="{ 'pt-7': !inlineFields, 'pt-1': inlineFields }"
+                      >
+                        <Button severity="warn" text size="small">
+                          <i class="i-heroicons-exclamation-triangle-20-solid text-2xl" />
+                        </Button>
+                      </div>
+                    </template>
+                  </div>
                 </div>
-              </div>
-            </slot>
-            <slot :name="`${getFieldSlotName(field)}AfterControl`"></slot>
-          </template>
+              </slot>
+              <slot :name="`${getFieldSlotName(field)}AfterControl`"></slot>
+            </template>
+          </Teleport>
         </template>
       </div>
-    </div>
+    </form>
     <slot name="buttons-area">
       <div v-if="withFooterButtons" class="mt-4">
         <div class="flex items-center justify-between gap-2">
           <slot name="beforeFooter" :is-submitting="isSubmitting"></slot>
           <Button
+            ref="submitButtonRef"
             :name="localFormName + '_submit'"
             :size="size"
             :loading="isSubmitting"
@@ -694,6 +759,7 @@ if (formModelValue.value) {
             :label="submitText === false ? undefined : submitText || t('Submit')"
             :icon="submitIcon"
             :severity="submitSeverity"
+            @keydown.up="focusLast"
             @click="form.submitForm()"
           />
           <slot name="afterFooter" :is-submitting="isSubmitting"></slot>

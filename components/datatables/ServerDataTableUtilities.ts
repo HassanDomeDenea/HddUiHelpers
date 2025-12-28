@@ -54,7 +54,7 @@ type DialogRefGetter = { value?: () => ComponentExposed<typeof ServerFormDialog>
 
 export type DynamicServerFormDialogEventBus = {
   event: 'create' | 'edit' | 'delete'
-  options?: ServerFormDialogProps
+  options?: ServerFormDialogProps<any>
   row?: any
   specificId?: any
   dialogRefGetter?: DialogRefGetter
@@ -65,17 +65,17 @@ export const dynamicServerFormDialogKey: EventBusKey<DynamicServerFormDialogEven
 export const useDynamicServerFormDialog = function () {
   const bus = useEventBus(dynamicServerFormDialogKey)
   return {
-    create: (options: ServerFormDialogProps, row?: any) => {
+    create: <T extends RecordItem = RecordItem>(options: ServerFormDialogProps<T>, row?: T) => {
       const dialogRefGetter: DialogRefGetter = {}
       bus.emit({ event: 'create', options, row: row, dialogRefGetter })
       return dialogRefGetter
     },
-    edit: (options: ServerFormDialogProps, row: any) => {
+    edit: <T extends RecordItem = RecordItem>(options: ServerFormDialogProps<T>, row: T) => {
       const dialogRefGetter: DialogRefGetter = {}
       bus.emit({ event: 'edit', options, row: row, dialogRefGetter })
       return dialogRefGetter
     },
-    delete: (options: ServerFormDialogProps, row: any) => {
+    delete: <T extends RecordItem = RecordItem>(options: ServerFormDialogProps<T>, row: T) => {
       const dialogRefGetter: DialogRefGetter = {}
       bus.emit({ event: 'delete', options, row: row, dialogRefGetter })
       return dialogRefGetter
