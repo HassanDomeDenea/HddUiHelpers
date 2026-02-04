@@ -65,7 +65,10 @@ export const dynamicServerFormDialogKey: EventBusKey<DynamicServerFormDialogEven
 export const useDynamicServerFormDialog = function () {
   const bus = useEventBus(dynamicServerFormDialogKey)
   return {
-    create: <T extends RecordItem = RecordItem>(options: ServerFormDialogProps<T>, row?: T) => {
+    create: <T extends RecordItem = RecordItem>(
+      options: ServerFormDialogProps<T>,
+      row?: T | true
+    ) => {
       const dialogRefGetter: DialogRefGetter = {}
       bus.emit({ event: 'create', options, row: row, dialogRefGetter })
       return dialogRefGetter

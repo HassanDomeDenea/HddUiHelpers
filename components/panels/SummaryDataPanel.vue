@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import type { ButtonProps } from 'primevue';
-import ContextMenu from 'primevue/contextmenu';
-import type { MenuItem } from 'primevue/menuitem';
-import type { ComponentExposed } from 'vue-component-type-helpers';
+import type { ButtonProps } from 'primevue'
+import ContextMenu from 'primevue/contextmenu'
+import type { MenuItem } from 'primevue/menuitem'
+import type { ComponentExposed } from 'vue-component-type-helpers'
 
 export interface SummaryDataPanelItem {
-  label: string;
-  value: string | number | boolean | null;
-  labelClass?: any;
-  type?: 'divider' | 'price' | 'formatted_number' | 'number' | 'text';
-  valueClass?: any;
-  wrapperClass?: any;
-  hidden?: boolean;
-  noPrint?: boolean;
-  appendButton?: ButtonProps & { href?: string };
-  appendContextMenu?: MenuItem[];
+  label: string
+  value: string | number | boolean | null
+  labelClass?: any
+  type?: 'divider' | 'price' | 'formatted_number' | 'number' | 'text'
+  valueClass?: any
+  wrapperClass?: any
+  hidden?: boolean
+  noPrint?: boolean
+  appendButton?: ButtonProps & { href?: string }
+  appendContextMenu?: MenuItem[]
 }
 
 const { labelWidth = 150, severity = 'contrast' } = defineProps<{
-  title?: string;
-  labelWidth?: number | true;
-  severity?: ButtonProps['severity'];
-  items?: SummaryDataPanelItem[];
-  minimumAfterLabelSpace?: number;
-}>();
-const itemLabelRefs = useTemplateRef<HTMLSpanElement[]>('itemLabelRefs');
-const itemContextMenusRefs = ref<Record<number, ComponentExposed<typeof ContextMenu>>>({});
+  title?: string
+  labelWidth?: number | true
+  severity?: ButtonProps['severity']
+  items?: SummaryDataPanelItem[]
+  minimumAfterLabelSpace?: number
+}>()
+const itemLabelRefs = useTemplateRef<HTMLSpanElement[]>('itemLabelRefs')
+const itemContextMenusRefs = ref<Record<number, ComponentExposed<typeof ContextMenu>>>({})
 /*const maxLabelWidth = ref();
 watch(
     itemLabelRefs,
@@ -41,8 +41,8 @@ watch(
 
 function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIndex: number) {
   if (item.appendContextMenu) {
-    itemContextMenusRefs[itemIndex].show(event);
-    event.preventDefault();
+    itemContextMenusRefs[itemIndex].show(event)
+    event.preventDefault()
   }
 }
 </script>
@@ -50,7 +50,10 @@ function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIn
 <template>
   <div class="summeryDataPanel mx-4 space-y-1">
     <slot name="title">
-      <div v-if="title" class="underline-offset-6 !mb-4 mt-2 text-center text-xl font-bold underline">
+      <div
+        v-if="title"
+        class="underline-offset-6 !mb-4 mt-2 text-center text-xl font-bold underline"
+      >
         {{ title }}
       </div>
     </slot>
@@ -63,7 +66,9 @@ function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIn
         <Divider />
       </template>
       <template v-else>
-        <span ref="itemLabelRefs" :class="item.labelClass" :style="{ width: labelWidth + 'px' }">{{ item.label }}: </span>
+        <span ref="itemLabelRefs" :class="item.labelClass" :style="{ width: labelWidth + 'px' }"
+          >{{ item.label }}:
+        </span>
         <span :class="['font-bold', item.valueClass]" v-html="item.value"></span>
         <Button
           v-if="item.appendButton"
@@ -79,7 +84,7 @@ function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIn
           :href="item.appendButton.href"
           :as="item.appendButton.href ? 'a' : undefined"
           :title="item.appendButton.title"
-          @click="item.appendButton.onClick"
+          @click.prevent="item.appendButton.onClick"
           @contextmenu="onItemContextMenu($event, item, itemIndex)"
         />
         <ContextMenu

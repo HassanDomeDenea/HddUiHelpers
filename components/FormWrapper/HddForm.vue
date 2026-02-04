@@ -412,7 +412,7 @@ if (formModelValue.value) {
 <template>
   <div ref="containerRef" class="">
     <!--    <pre class="dir-ltr text-left">{{ currentValues }}</pre>-->
-    <form :autocomplete="autoComplete">
+    <form :autocomplete="autoComplete" @submit.prevent>
       <div v-if="summarizeErrorsAtTop && formState.invalid">
         <Message
           :size="size"
