@@ -13,7 +13,7 @@ export interface SummaryDataPanelItem {
   wrapperClass?: any
   hidden?: boolean
   noPrint?: boolean
-  appendButton?: ButtonProps & { href?: string }
+  appendButton?: ButtonProps & { href?: string; visible?: boolean }
   appendContextMenu?: MenuItem[]
 }
 
@@ -71,7 +71,7 @@ function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIn
         </span>
         <span :class="['font-bold', item.valueClass]" v-html="item.value"></span>
         <Button
-          v-if="item.appendButton"
+          v-if="item.appendButton && item.appendButton.visible !== false"
           v-tooltip.top="item.appendButton.tooltip"
           :icon="item.appendButton.icon ? `${item.appendButton.icon} !min-w-0.5rem` : null"
           size="small"

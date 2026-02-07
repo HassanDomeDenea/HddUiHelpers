@@ -1924,7 +1924,7 @@ const computedTableHeight = computed(() => {
       :show-gridlines="showGridLines"
       show-headers
       highlight-on-select
-      :edit-mode="inlineEditMode"
+      :edit-mode="editable ? inlineEditMode : 'none'"
       :context-menu="withContextMenu"
       :value="records"
       :row-group-mode="rowGroupMode"
@@ -2127,7 +2127,9 @@ const computedTableHeight = computed(() => {
             :filter-match-mode-options="columnFilterMatchModeOptions[column.type ?? 'text']"
             :body-class="
               (column.bodyClass ?? '') +
-              (column.inlineEditable && inlineEditMode === 'cell' ? ' editing-cursor' : '')
+              (column.inlineEditable && inlineEditMode === 'cell' && editable
+                ? ' editing-cursor'
+                : '')
             "
             :body-style="column.bodyStyle"
             :header-class="column.headerClass"

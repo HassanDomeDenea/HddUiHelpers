@@ -2,6 +2,7 @@ import type { ColumnSelectOptions } from 'HddUiHelpers/components/datatables/Ser
 import { i18n } from 'HddUiHelpers/plugins/i18n.ts'
 import { isLocalListType } from 'HddUiHelpers/utils/dynamicListsUtilities.ts'
 import { get } from 'lodash-es'
+import moment from 'moment'
 
 export const useFormatters = () => {
   const { t } = useI18n()
@@ -121,4 +122,8 @@ export function formatListToSeverityTag({
 export function formatReceiptNumberByFirstLetter(value: string): string {
   const splitted = value.split('-')
   return splitted[0][0] + '-' + splitted[1]
+}
+
+export function currentTimestamp() {
+  return moment().format('YYYY-MM-DD HH:mm:ss')
 }
