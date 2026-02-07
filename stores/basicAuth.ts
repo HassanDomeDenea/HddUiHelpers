@@ -135,6 +135,10 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
     }
   }
 
+  function cannot(permission: AppPermission | AppPermission[]) {
+    return !can(permission)
+  }
+
   function can(permission: AppPermission | AppPermission[]) {
     if (!user.value) {
       return false
@@ -204,6 +208,7 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
     userFullName,
     ifHasPermission: ifCan,
     can,
+    cannot,
     hasRole,
     isSuperAdmin,
     changeOption,
