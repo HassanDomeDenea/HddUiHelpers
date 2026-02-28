@@ -5,6 +5,7 @@ import pinia from 'HddUiHelpers/plugins/pinia'
 import primevue from 'HddUiHelpers/plugins/primevue'
 import { useApiClient } from 'HddUiHelpers/stores/apiClient'
 import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales.ts'
+import { merge } from 'lodash-es'
 import 'moment/locale/ar'
 import moment from 'moment/moment'
 import type { App, InjectionKey } from 'vue'
@@ -135,7 +136,10 @@ export default {
     for (const [key, value] of Object.entries(locales)) {
       const locale = key.split('/').pop()?.split('.')[0] // Extract locale name (e.g., "en", "fr")
       if (locale) {
-        i18n.global.mergeLocaleMessage(locale, YAML.parse(value as string))
+        i18n.global.setLocaleMessage(
+          locale,
+          merge(YAML.parse(value as string), i18n.global.getLocaleMessage(locale))
+        )
       }
     }
   },
