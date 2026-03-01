@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Editor } from '@tiptap/vue-3';
 import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
-import uniqueId from 'lodash/uniqueId';
+import { uniqueId } from 'lodash-es';
 import { Menu } from 'primevue';
 import type { MenuItem } from 'primevue/menuitem';
 import Popover from 'primevue/popover';

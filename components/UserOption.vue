@@ -3,8 +3,7 @@ import type { GlobalOptionData, UserOptionsData } from '@/types/laravel_generate
 import TreeSelectInput from 'HddUiHelpers/components/inputs/TreeSelectInput.vue';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient';
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
-import { uniqueId } from 'lodash-es';
-import map from 'lodash/map';
+import { map, uniqueId } from 'lodash-es';
 import type { FileUploadUploadEvent } from 'primevue';
 import { FileUpload } from 'primevue';
 import Select from 'primevue/select';

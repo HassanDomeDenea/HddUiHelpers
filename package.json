@@ -1,0 +1,10 @@
+{
+  "name": "@hassandomedenea/hdduihelpers",
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/lodash-es": "^4"
+  },
+  "peerDependencies": {}
+}

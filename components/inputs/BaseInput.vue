@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useElementSize } from '@vueuse/core'
-import omit from 'lodash/omit'
+import { omit } from 'lodash-es'
 import { FloatLabel, IftaLabel } from 'primevue'
 import { useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'

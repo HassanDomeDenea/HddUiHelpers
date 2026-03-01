@@ -13,8 +13,7 @@ import {
 } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
 import { hidePrimevuePopovers } from 'HddUiHelpers/plugins/primevue.ts';
 import { useFormatters } from 'HddUiHelpers/utils/useFormatters.ts';
-import { isNull, toLower } from 'lodash-es';
-import isBoolean from 'lodash/isBoolean';
+import { isBoolean, isNull, toLower } from 'lodash-es';
 import moment from 'moment';
 import type { ColumnFilterModelType } from 'primevue';
 import type ContextMenu from 'primevue/contextmenu';

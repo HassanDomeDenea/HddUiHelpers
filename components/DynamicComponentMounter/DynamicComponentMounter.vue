@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { DynamicComponentMounterEventBus } from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounterUtilities.ts'
 import { DynamicComponentMounterDialogKey } from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounterUtilities.ts'
-import { last } from 'lodash-es'
-import uniqueId from 'lodash/uniqueId'
+import { last, uniqueId } from 'lodash-es'
 
 const bus = useEventBus(DynamicComponentMounterDialogKey)
 const componentsListRefs = useTemplateRefsList<any>()

@@ -1,13 +1,6 @@
 import { useEcho } from '@laravel/echo-vue';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
-import { get, orderBy, set, startCase, uniq } from 'lodash-es';
-import debounce from 'lodash/debounce';
-import keyBy from 'lodash/keyBy';
-import map from 'lodash/map';
-import omit from 'lodash/omit';
-import reduce from 'lodash/reduce';
-import uniqueId from 'lodash/uniqueId';
-import unset from 'lodash/unset';
+import { debounce, get, keyBy, map, omit, orderBy, reduce, set, startCase, uniq, uniqueId, unset } from 'lodash-es';
 import moment from 'moment';
 import type { Ref, WatchStopHandle } from 'vue';
 
@@ -60,9 +53,9 @@ export function createListStore<TItem = any>(
     const storageTypeInstance = options.storage === 'session' ? window.sessionStorage : window.localStorage;
     localItemsLastFetchedAt = useStorage('dynamic_lists_' + listNameFromUrl + '_last_fetched_at', moment().toISOString(), storageTypeInstance);
     if (
-      options.storageDuration > 0 &&
+      (options.storageDuration ?? 0) > 0 &&
       localItemsLastFetchedAt.value &&
-      moment().diff(moment(localItemsLastFetchedAt.value), 'seconds') > options.storageDuration
+      moment().diff(moment(localItemsLastFetchedAt.value), 'seconds') > (options.storageDuration ?? 0)
     ) {
       storageTypeInstance.removeItem('dynamic_lists_' + listNameFromUrl);
     }

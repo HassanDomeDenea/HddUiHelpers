@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import uniqueId from 'lodash/uniqueId';
+import { uniqueId } from 'lodash-es';
 import type { ButtonProps } from 'primevue';
 import type { MenuItem } from 'primevue/menuitem';
 

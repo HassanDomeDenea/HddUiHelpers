@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ServerDataTableColumn } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts'
-import { get } from 'lodash-es'
-import isBoolean from 'lodash/isBoolean'
+import { get, isBoolean } from 'lodash-es'
 
 const { column } = defineProps<{
   column: ServerDataTableColumn

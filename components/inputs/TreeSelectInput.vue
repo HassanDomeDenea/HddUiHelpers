@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { getTreeAncestorsById, useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 import TextWithTitleAttribute from 'HddUiHelpers/components/misc/TextWithTitleAttribute.vue';
-import { isEmpty } from 'lodash-es';
-import reduce from 'lodash/reduce';
+import { isEmpty, reduce } from 'lodash-es';
 import type { TreeNode } from 'primevue/treenode';
 import { ref } from 'vue';
 import BaseInput from './BaseInput.vue';

@@ -6,8 +6,7 @@ export type SideTabularPanelItem = MenuItem & { name: string; permission?: AppPe
 </script>
 
 <script setup lang="ts">
-import isBoolean from 'lodash/isBoolean';
-import { isString } from 'lodash-es';
+import { isBoolean, isString } from 'lodash-es';
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
 
 const { t } = useI18n();

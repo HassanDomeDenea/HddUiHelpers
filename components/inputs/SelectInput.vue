@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
-import isBoolean from 'lodash/isBoolean'
+import { isBoolean } from 'lodash-es'
 import type { SelectChangeEvent } from 'primevue/select'
 import Select from 'primevue/select'
 import { ref } from 'vue'

@@ -1,5 +1,5 @@
 import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts'
-import omit from 'lodash/omit'
+import { omit } from 'lodash-es'
 import { ConfirmationOptions } from 'primevue/confirmationoptions'
 import { useConfirm } from 'primevue/useconfirm'
 

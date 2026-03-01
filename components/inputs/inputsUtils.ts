@@ -1,7 +1,6 @@
 import type BaseInput from 'HddUiHelpers/components/inputs/BaseInput.vue'
 import type { BaseInputProps } from 'HddUiHelpers/components/inputs/types'
-import { pick } from 'lodash-es'
-import uniqueId from 'lodash/uniqueId'
+import { pick, uniqueId } from 'lodash-es'
 import type { TreeNode } from 'primevue/treenode'
 import type { ComponentExposed } from 'vue-component-type-helpers'
 

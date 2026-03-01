@@ -3,8 +3,7 @@ import MediaController from '@/wayfinder/actions/HassanDomeDenea/HddLaravelHelpe
 import downloadJs from 'downloadjs';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
 import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts';
-import { get } from 'lodash-es';
-import debounce from 'lodash/debounce';
+import { debounce, get } from 'lodash-es';
 import moment from 'moment';
 import { useConfirm } from 'primevue/useconfirm';
 

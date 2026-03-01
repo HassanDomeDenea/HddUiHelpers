@@ -9,15 +9,7 @@ import vTooltip from 'primevue/tooltip'
 import type { InputHTMLAttributes, Ref } from 'vue'
 import { computed, onBeforeMount, onMounted, ref } from 'vue'
 
-import cloneDeep from 'lodash/cloneDeep'
-import debounce from 'lodash/debounce'
-import filter from 'lodash/filter'
-import lodashGet from 'lodash/get'
-import isBoolean from 'lodash/isBoolean'
-import map from 'lodash/map'
-import reduce from 'lodash/reduce'
-import unset from 'lodash/unset'
-import ucFirst from 'lodash/upperFirst'
+import { cloneDeep, debounce, filter, get as lodashGet, isBoolean, map, reduce, unset, upperFirst as ucFirst } from 'lodash-es'
 import moment from 'moment'
 import type {
   DataTablePageEvent,

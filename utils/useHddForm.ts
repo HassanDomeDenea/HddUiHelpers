@@ -1,7 +1,4 @@
-import { flatten, set } from 'lodash-es';
-import cloneDeep from 'lodash/cloneDeep';
-import filter from 'lodash/filter';
-import map from 'lodash/map';
+import { cloneDeep, filter, flatten, map, set } from 'lodash-es';
 import type { WatchHandle } from 'vue';
 import { ref } from 'vue';
 import { ValidationError } from 'yup';

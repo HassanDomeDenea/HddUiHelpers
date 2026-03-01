@@ -16,8 +16,7 @@ export interface HddPanelTabItem {
 import PrimeVueTabs from 'primevue/tabs'
 
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts'
-import { isString, startCase } from 'lodash-es'
-import isBoolean from 'lodash/isBoolean'
+import { isBoolean, isString, startCase } from 'lodash-es'
 
 const {
   basedOnRouteQuery = true,

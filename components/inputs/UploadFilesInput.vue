@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import reduce from 'lodash/reduce';
+import { reduce } from 'lodash-es';
 import { rotateImageFile } from '../../utils/filesManipulations';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps } from './types';

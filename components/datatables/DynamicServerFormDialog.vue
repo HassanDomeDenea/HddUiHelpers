@@ -5,8 +5,7 @@ import {
 } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts'
 import ServerFormDialog from 'HddUiHelpers/components/datatables/ServerFormDialog.vue'
 import type { RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts'
-import { last } from 'lodash-es'
-import uniqueId from 'lodash/uniqueId'
+import { last, uniqueId } from 'lodash-es'
 import type { ComponentExposed } from 'vue-component-type-helpers'
 
 const dynamicDialogRefs = useTemplateRefsList<ComponentExposed<typeof ServerFormDialog>>()

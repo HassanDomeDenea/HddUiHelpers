@@ -1,5 +1,4 @@
-import { merge } from 'lodash-es'
-import uniqueId from 'lodash/uniqueId'
+import { merge, uniqueId } from 'lodash-es'
 import { defineStore } from 'pinia'
 import { useDialog } from 'primevue'
 import { DynamicDialogCloseOptions, DynamicDialogOptions } from 'primevue/dynamicdialogoptions'

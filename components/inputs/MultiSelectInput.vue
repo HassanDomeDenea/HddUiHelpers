@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import get from 'lodash/get';
+import { get } from 'lodash-es';
 import type { SelectChangeEvent } from 'primevue/select';
 import { ref } from 'vue';
 import BaseInput from './BaseInput.vue';

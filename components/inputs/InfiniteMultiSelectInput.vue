@@ -4,7 +4,7 @@ import { vElementVisibility } from '@vueuse/components';
 import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
-import get from 'lodash/get';
+import { get } from 'lodash-es';
 import type Select from 'primevue/select';
 import type { SelectChangeEvent, SelectFilterEvent } from 'primevue/select';
 import type { Ref } from 'vue';
