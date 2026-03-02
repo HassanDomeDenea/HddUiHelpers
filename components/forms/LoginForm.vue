@@ -1,54 +1,54 @@
 <script setup lang="ts">
-import UserController from '@/wayfinder/actions/App/Http/Controllers/UserController'
-import type { HddFormProps } from 'HddUiHelpers/components/FormWrapper/types'
-import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts'
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth'
-import type { BasicUserData } from 'HddUiHelpers/types/BasicModels'
+import UserController from "@/wayfinder/actions/App/Http/Controllers/UserController";
+import type { HddFormProps } from "HddUiHelpers/components/FormWrapper/types";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
+import type { BasicUserData } from "HddUiHelpers/types/types";
 
-const { t } = useI18n()
-const authStore = useBasicAuthStore()
-const router = useRouter()
-const apiClient = useApiClient()
-const route = useRoute()
+const { t } = useI18n();
+const authStore = useBasicAuthStore();
+const router = useRouter();
+const apiClient = useApiClient();
+const route = useRoute();
 const formBinds = ref<HddFormProps>({
   url: UserController.login(),
   unifyLabelsWidth: 120,
-  submitSeverity: 'primary',
-  submitText: t('Login'),
-  submitIcon: 'i-mdi-user',
-  size: 'small',
-  formName: 'login',
+  submitSeverity: "primary",
+  submitText: t("Login"),
+  submitIcon: "i-mdi-user",
+  size: "small",
+  formName: "login",
   fields: [
     {
-      name: 'username',
-      icon: 'i-mdi-user',
-      label: t('Username'),
-      binds: { inputClass: 'dir-ltr text-left' },
+      name: "username",
+      icon: "i-mdi-user",
+      label: t("Username"),
+      binds: { inputClass: "dir-ltr text-left" },
     },
     {
-      name: 'password',
-      icon: 'i-mdi-password',
-      type: 'password',
-      label: t('Password'),
-      binds: { inputClass: 'dir-ltr text-left' },
+      name: "password",
+      icon: "i-mdi-password",
+      type: "password",
+      label: t("Password"),
+      binds: { inputClass: "dir-ltr text-left" },
     },
   ],
   onSuccess: (data: { user: BasicUserData; token: string }) => {
     if (!data.user) {
-      apiClient.toastError(t('Error Occurred'))
-      return
+      apiClient.toastError(t("Error Occurred"));
+      return;
     }
-    router.push(((route.query?.redirect_url ?? '/') || '/') as string)
-    authStore.login(data.user, data.token)
+    router.push(((route.query?.redirect_url ?? "/") || "/") as string);
+    authStore.login(data.user, data.token);
   },
-})
+});
 </script>
 
 <template>
   <Panel class="font-tajawal w-400px light:bg-primary-1 light:border-blue-200 max-w-full">
     <Message severity="success" size="large" class="mb-4" variant="simple">
       <template #container>
-        <div class="w-full text-center text-lg font-bold">{{ t('Welcome, Please Log In') }}:</div>
+        <div class="w-full text-center text-lg font-bold">{{ t("Welcome, Please Log In") }}:</div>
       </template>
     </Message>
     <HddForm v-bind="formBinds" />

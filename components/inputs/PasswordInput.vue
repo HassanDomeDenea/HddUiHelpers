@@ -3,44 +3,44 @@ import {
   cursorAtEndOfInput,
   cursorAtStartOfInput,
   useHddBaseInputUtils,
-} from 'HddUiHelpers/components/inputs/inputsUtils.ts'
-import type { PasswordProps } from 'primevue'
-import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
+} from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import type { PasswordProps } from "primevue";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
     BaseInputProps & {
-      originalProps?: PasswordProps
-      feedback?: boolean
-      toggleMask?: boolean
+      originalProps?: PasswordProps;
+      feedback?: boolean;
+      toggleMask?: boolean;
     }
   >(),
   {
     feedback: false,
     toggleMask: true,
-  }
-)
+  },
+);
 
 const emits = defineEmits<{
-  blur: [e: FocusEvent]
-  focus: [e: FocusEvent]
-  keydown: [e: KeyboardEvent]
-  focusPrevious: []
-  focusNext: []
-}>()
-const value = defineModel<any>('modelValue', { required: true })
+  blur: [e: FocusEvent];
+  focus: [e: FocusEvent];
+  keydown: [e: KeyboardEvent];
+  focusPrevious: [];
+  focusNext: [];
+}>();
+const value = defineModel<any>("modelValue", { required: true });
 
-const inputRef = ref()
+const inputRef = ref();
 
 function focus() {
-  inputRef.value.$el.querySelector('input').focus()
+  inputRef.value.$el.querySelector("input").focus();
 }
 
 const onArrowUp = () =>
-  cursorAtStartOfInput(inputRef.value.$el.querySelector('input')) && emits('focusPrevious')
+  cursorAtStartOfInput(inputRef.value.$el.querySelector("input")) && emits("focusPrevious");
 const onArrowDown = () =>
-  cursorAtEndOfInput(inputRef.value.$el.querySelector('input')) && emits('focusNext')
+  cursorAtEndOfInput(inputRef.value.$el.querySelector("input")) && emits("focusNext");
 
 const inputTextPt = computed(() => {
   return {
@@ -49,13 +49,13 @@ const inputTextPt = computed(() => {
       type: props.type,
       name: props.name,
     },
-  }
-})
+  };
+});
 
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props)
+  useHddBaseInputUtils(props);
 
-defineExpose({ focus, ...exposed })
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>

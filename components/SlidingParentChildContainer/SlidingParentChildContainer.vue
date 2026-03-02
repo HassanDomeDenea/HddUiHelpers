@@ -10,7 +10,7 @@ const selectedChild = defineModel<any>({ required: false });
 
 function backToParent() {
   selectedChild.value = undefined;
-  emits('back');
+  emits("back");
 }
 defineExpose({
   backToParent,
@@ -19,7 +19,11 @@ defineExpose({
 </script>
 <template>
   <div>
-    <div v-if="selectedChild" key="listItems" class="animate-slide-in-down animate-duration-75 animate-count-1">
+    <div
+      v-if="selectedChild"
+      key="listItems"
+      class="animate-slide-in-down animate-duration-75 animate-count-1"
+    >
       <div v-if="withBackButton" class="mb-1 flex justify-end">
         <Button
           size="small"
@@ -27,12 +31,16 @@ defineExpose({
           severity="info"
           :label="backButtonLabel"
           @click="backToParent"
-        ></Button>
+        />
       </div>
-      <slot name="child"></slot>
+      <slot name="child" />
     </div>
-    <div v-show="!selectedChild" key="lists" class="animate-slide-in-up animate-duration-75 animate-count-1">
-      <slot name="parent"></slot>
+    <div
+      v-show="!selectedChild"
+      key="lists"
+      class="animate-slide-in-up animate-duration-75 animate-count-1"
+    >
+      <slot name="parent" />
     </div>
   </div>
 </template>

@@ -1,38 +1,38 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
-import { groupBy, reduce } from 'lodash-es'
-import type { SelectChangeEvent } from 'primevue/select'
-import { ref } from 'vue'
-import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { groupBy, reduce } from "lodash-es";
+import type { SelectChangeEvent } from "primevue/select";
+import { ref } from "vue";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
     {
-      options: any[]
-      optionLabelProperty?: string
-      optionValueProperty?: string
-      optionGroupLabel?: string
-      optionGroupChildren?: string
-      filter?: boolean
-      multiple?: boolean
-      checkmark?: boolean
-      scrollHeight?: string
-      groupItemsBy?: string
-      groupsLabels?: Record<string | number, string>
+      options: any[];
+      optionLabelProperty?: string;
+      optionValueProperty?: string;
+      optionGroupLabel?: string;
+      optionGroupChildren?: string;
+      filter?: boolean;
+      multiple?: boolean;
+      checkmark?: boolean;
+      scrollHeight?: string;
+      groupItemsBy?: string;
+      groupsLabels?: Record<string | number, string>;
     } & BaseInputProps
   >(),
   {
-    optionLabelProperty: 'name',
-    optionValueProperty: 'id',
-    optionGroupChildren: 'items',
+    optionLabelProperty: "name",
+    optionValueProperty: "id",
+    optionGroupChildren: "items",
     checkmark: true,
-  }
-)
+  },
+);
 const emits = defineEmits<{
-  change: [event: SelectChangeEvent]
-}>()
-const value = defineModel<any>('modelValue')
+  change: [event: SelectChangeEvent];
+}>();
+const value = defineModel<any>("modelValue");
 const computedOptions = computed(() =>
   props.groupItemsBy
     ? reduce(
@@ -41,14 +41,14 @@ const computedOptions = computed(() =>
           carry.push({
             label: props.groupsLabels?.[key] ?? key,
             items: value,
-          })
-          return carry
+          });
+          return carry;
         },
-        [] as { label: string; items: any[] }[]
+        [] as { label: string; items: any[] }[],
       )
-    : props.options
-)
-const inputRef = ref()
+    : props.options,
+);
+const inputRef = ref();
 
 function focus() {
   if (!props.disabled) {
@@ -58,9 +58,9 @@ function focus() {
 
 function onInputBlur() {}
 
-const { exposed, baseInputForwardedProps, generalInputProps } = useHddBaseInputUtils(props)
+const { exposed, baseInputForwardedProps, generalInputProps } = useHddBaseInputUtils(props);
 
-defineExpose({ focus, ...exposed })
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>

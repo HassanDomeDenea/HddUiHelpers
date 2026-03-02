@@ -1,12 +1,12 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useGlobalDragging = defineStore('globalDragging', () => {
+export const useGlobalDragging = defineStore("globalDragging", () => {
   const isDragging = ref(false);
   let dragCounter = 0; // helps when multiple dragenter/leave events fire
 
   function onDragEnter(e: DragEvent) {
     dragCounter++;
-    if (e.dataTransfer?.types.includes('Files')) {
+    if (e.dataTransfer?.types.includes("Files")) {
       isDragging.value = true;
     }
   }
@@ -23,9 +23,9 @@ export const useGlobalDragging = defineStore('globalDragging', () => {
     dragCounter = 0;
   }
 
-  document.body.addEventListener('dragenter', onDragEnter);
-  document.body.addEventListener('dragleave', onDragLeave);
-  document.body.addEventListener('drop', onDrop);
+  document.body.addEventListener("dragenter", onDragEnter);
+  document.body.addEventListener("dragleave", onDragLeave);
+  document.body.addEventListener("drop", onDrop);
 
   return {
     isDragging,

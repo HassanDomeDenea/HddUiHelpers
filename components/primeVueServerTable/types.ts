@@ -1,13 +1,21 @@
-import type { ColumnProps } from 'primevue/column';
-import type { DataTableSortMeta } from 'primevue/datatable';
-import type { FormField } from '../FormWrapper/types';
+import type { ColumnProps } from "primevue/column";
+import type { DataTableSortMeta } from "primevue/datatable";
+import type { FormField } from "../FormWrapper/types";
 
-type ColumnFetchType = 'main' | 'main_count' | 'relation' | 'relation_count' | 'custom' | 'json' | 'json_array' | 'relation_many';
+type ColumnFetchType =
+  | "main"
+  | "main_count"
+  | "relation"
+  | "relation_count"
+  | "custom"
+  | "json"
+  | "json_array"
+  | "relation_many";
 
 // Types
 export interface ColumnType<R extends RecordItem = RecordItem> {
   name: string;
-  type?: 'date' | 'numeric' | 'text' | 'hidden' | 'select' | 'boolean';
+  type?: "date" | "numeric" | "text" | "hidden" | "select" | "boolean";
   isMultiSelect?: boolean;
   selectOptions?:
     | { name: string; id: string }[]
@@ -48,7 +56,15 @@ export interface ColumnType<R extends RecordItem = RecordItem> {
   widthPoint?: number;
 }
 
-export type FilterMatchModeType = 'startsWith' | 'contains' | 'dateIs' | 'dateIsNot' | 'dateBefore' | 'dateAfter' | 'containsAny' | 'containsAll';
+export type FilterMatchModeType =
+  | "startsWith"
+  | "contains"
+  | "dateIs"
+  | "dateIsNot"
+  | "dateBefore"
+  | "dateAfter"
+  | "containsAny"
+  | "containsAll";
 
 export interface RecordItem {
   id: number | string;
@@ -60,7 +76,7 @@ export interface FilterType {
 }
 
 export interface MultipleFilterType {
-  operator: 'and' | 'or';
+  operator: "and" | "or";
   constraints: FilterType[];
 }
 
@@ -86,7 +102,7 @@ export interface RequestDataPayloadType {
 
 export interface GroupedFilterConstraints<T extends boolean = false> {
   isGroup?: T;
-  operator?: 'and' | 'or';
+  operator?: "and" | "or";
   constraints?: T extends true ? GroupedFilterConstraints[] : never;
   column: T extends false ? string : never;
   value: T extends false ? any : never;
@@ -123,15 +139,21 @@ export interface RecordsServiceType {
       routeName?: string;
     },
   ) => Promise<GetRecordsResponseType>;
-  deleteRecord: (id: number | string, options?: { url?: string; routeName?: string }) => Promise<null>;
-  deleteRecordsMulti: (ids: (number | string)[], options?: { url?: string; routeName?: string }) => Promise<null>;
+  deleteRecord: (
+    id: number | string,
+    options?: { url?: string; routeName?: string },
+  ) => Promise<null>;
+  deleteRecordsMulti: (
+    ids: (number | string)[],
+    options?: { url?: string; routeName?: string },
+  ) => Promise<null>;
 }
 
 export const FilterMatchMode = {
   // 'startsWith' | 'contains' | 'notContains' | 'endsWith' | 'equals' | 'notEquals' | 'in' | 'lt' | 'lte' | 'gt' | 'gte' | 'between' | 'dateIs' | 'dateIsNot' | 'dateBefore' | 'dateAfter'
-  CONTAINS_ANY: 'containsAny',
-  CONTAINS_All: 'containsAll',
-  CONTAINS: 'contains',
-  DATE_IS: 'dateIs',
-  EQUALS: 'equals',
+  CONTAINS_ANY: "containsAny",
+  CONTAINS_All: "containsAll",
+  CONTAINS: "contains",
+  DATE_IS: "dateIs",
+  EQUALS: "equals",
 };

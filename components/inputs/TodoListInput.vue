@@ -1,23 +1,28 @@
 <script setup lang="ts">
-import type { RouteDefinition, RouteQueryOptions } from '@/wayfinder/wayfinder';
-import { useSortable } from '@vueuse/integrations/useSortable';
-import { useConfirmDialogWithInput } from 'HddUiHelpers/components/ConfirmDialogWithInput/confirmDialogWithInputUtilities.ts';
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
-import { debounce, get } from 'lodash-es';
-import { useConfirm } from 'primevue/useconfirm';
-import { ref } from 'vue';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import type { RouteDefinition, RouteQueryOptions } from "@/wayfinder/wayfinder";
+import { useSortable } from "@vueuse/integrations/useSortable";
+import { useConfirmDialogWithInput } from "HddUiHelpers/components/ConfirmDialogWithInput/confirmDialogWithInputUtilities.ts";
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
+import { debounce, get } from "lodash-es";
+import { useConfirm } from "primevue/useconfirm";
+import { ref } from "vue";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
-type LocalItemType = { id: string | number; name: string | number; item?: object; _isLoading?: boolean };
+type LocalItemType = {
+  id: string | number;
+  name: string | number;
+  item?: object;
+  _isLoading?: boolean;
+};
 
 type ServerUrls = {
-  list: (options?: RouteQueryOptions) => RouteDefinition<'get'>;
-  store: (options?: RouteQueryOptions) => RouteDefinition<'post'>;
-  update: (args: string | number, options?: RouteQueryOptions) => RouteDefinition<'put'>;
-  destroy: (args: string | number, options?: RouteQueryOptions) => RouteDefinition<'delete'>;
-  reorder: (options?: RouteQueryOptions) => RouteDefinition<'put'>;
+  list: (options?: RouteQueryOptions) => RouteDefinition<"get">;
+  store: (options?: RouteQueryOptions) => RouteDefinition<"post">;
+  update: (args: string | number, options?: RouteQueryOptions) => RouteDefinition<"put">;
+  destroy: (args: string | number, options?: RouteQueryOptions) => RouteDefinition<"delete">;
+  reorder: (options?: RouteQueryOptions) => RouteDefinition<"put">;
 };
 
 const props = withDefaults(
@@ -53,9 +58,9 @@ const props = withDefaults(
     creatable: true,
     removable: true,
     reorderable: true,
-    labelProperty: 'name',
-    valueProperty: 'id',
-    orderSequenceProperty: 'order_sequence',
+    labelProperty: "name",
+    valueProperty: "id",
+    orderSequenceProperty: "order_sequence",
     refreshOnMounted: true,
     refreshOnActivated: false,
   },
@@ -63,11 +68,11 @@ const props = withDefaults(
 const emits = defineEmits<{
   change: [event: Event];
 }>();
-const value = defineModel<any[]>('modelValue', { default: ref([]).value });
-const newItemValue = defineModel<string | null>('newItemValue', {});
+const value = defineModel<any[]>("modelValue", { default: ref([]).value });
+const newItemValue = defineModel<string | null>("newItemValue", {});
 const { t } = useI18n();
 const inputRef = ref();
-const listRef = useTemplateRef<HTMLUListElement | HTMLOListElement>('listRef');
+const listRef = useTemplateRef<HTMLUListElement | HTMLOListElement>("listRef");
 const confirmWithInput = useConfirmDialogWithInput();
 const confirm = useConfirm();
 const apiClient = useApiClient();
@@ -87,12 +92,12 @@ function onLabelClicked() {
 }
 
 function onCheckboxChange(evt: Event) {
-  emits('change', evt);
+  emits("change", evt);
 }
 
 onMounted(() => {
-  inputRef.value.$el.children[0].addEventListener('keydown', (evt: KeyboardEvent) => {
-    if (evt.key === 'Enter') {
+  inputRef.value.$el.children[0].addEventListener("keydown", (evt: KeyboardEvent) => {
+    if (evt.key === "Enter") {
       onLabelClicked();
     }
   });
@@ -100,7 +105,7 @@ onMounted(() => {
 
 const localItems = computed<LocalItemType[]>(() => {
   return (value.value || []).map((item) => {
-    if (typeof item === 'object') {
+    if (typeof item === "object") {
       return {
         id: get(item, props.valueProperty),
         name: get(item, props.labelProperty, item.id),
@@ -124,7 +129,7 @@ const addItem = () => {
       })
       .then(() => {
         refreshList();
-        apiClient.toastSuccess(props.storeSuccessMessage ?? t('Item added successfully'));
+        apiClient.toastSuccess(props.storeSuccessMessage ?? t("Item added successfully"));
       })
       .catch(apiClient.toastRequestError)
       .finally(() => {
@@ -145,17 +150,17 @@ const removeItem = (item: LocalItemType, index: number, event: MouseEvent) => {
   if (props.confirmBeforeRemove || props.serverUrls?.destroy) {
     confirm.require({
       target: event.target as HTMLElement,
-      message: props.removeConfirmBodyMessage ?? t('Are you sure you want to remove this item?'),
-      header: props.removeConfirmHeaderMessage ?? t('Remove item'),
-      icon: 'i-mdi-alert-circle text-danger',
-      group: 'popup',
-      acceptIcon: 'i-mdi-check',
-      acceptClass: 'font-bold',
+      message: props.removeConfirmBodyMessage ?? t("Are you sure you want to remove this item?"),
+      header: props.removeConfirmHeaderMessage ?? t("Remove item"),
+      icon: "i-mdi-alert-circle text-danger",
+      group: "popup",
+      acceptIcon: "i-mdi-check",
+      acceptClass: "font-bold",
       acceptProps: {
-        severity: 'danger',
+        severity: "danger",
       },
       rejectProps: {
-        severity: 'secondary',
+        severity: "secondary",
       },
       accept: () => {
         if (props.serverUrls?.store) {
@@ -169,7 +174,7 @@ const removeItem = (item: LocalItemType, index: number, event: MouseEvent) => {
             )
             .then(() => {
               refreshList();
-              apiClient.toastSuccess(props.removeSuccessMessage ?? t('Item removed successfully'));
+              apiClient.toastSuccess(props.removeSuccessMessage ?? t("Item removed successfully"));
             })
             .catch(apiClient.toastRequestError)
             .finally(() => {
@@ -180,7 +185,7 @@ const removeItem = (item: LocalItemType, index: number, event: MouseEvent) => {
           value.value.splice(index, 1);
         }
       },
-      defaultFocus: 'accept',
+      defaultFocus: "accept",
     });
   } else {
     value.value.splice(index, 1);
@@ -193,11 +198,11 @@ const editItem = (item: LocalItemType, index: number, event: MouseEvent) => {
   confirmWithInput.show({
     initialValue: item.name,
     autoSelectText: true,
-    inputType: 'text',
-    header: props.updateDialogHeaderMessage ?? t('Update Item'),
-    acceptIcon: 'i-mdi-check',
-    rejectLabel: t('Cancel'),
-    acceptLabel: t('Update'),
+    inputType: "text",
+    header: props.updateDialogHeaderMessage ?? t("Update Item"),
+    acceptIcon: "i-mdi-check",
+    rejectLabel: t("Cancel"),
+    acceptLabel: t("Update"),
     accept: (newValue) => {
       if (props.serverUrls?.store) {
         isSubmitting.value = true;
@@ -209,7 +214,7 @@ const editItem = (item: LocalItemType, index: number, event: MouseEvent) => {
           })
           .then(() => {
             refreshList();
-            apiClient.toastSuccess(props.updateSuccessMessage ?? t('Item updated successfully'));
+            apiClient.toastSuccess(props.updateSuccessMessage ?? t("Item updated successfully"));
           })
           .catch(apiClient.toastRequestError)
           .finally(() => {
@@ -220,7 +225,7 @@ const editItem = (item: LocalItemType, index: number, event: MouseEvent) => {
         value.value[index] = newValue;
       }
     },
-    defaultFocus: 'accept',
+    defaultFocus: "accept",
   });
 };
 
@@ -245,7 +250,7 @@ const refreshList = debounce(() => {
 
 if (props.reorderable) {
   useSortable(listRef, localItems, {
-    handle: '.reorder-handle',
+    handle: ".reorder-handle",
     onUpdate: (e) => {
       isSubmitting.value = true;
       apiClient
@@ -269,13 +274,19 @@ if (props.reorderable) {
   });
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-  <BaseInput v-bind="baseInputForwardedProps" :floating-label="false" :infield-top-aligned-label="false" @label-clicked="onLabelClicked">
+  <BaseInput
+    v-bind="baseInputForwardedProps"
+    :floating-label="false"
+    :infield-top-aligned-label="false"
+    @label-clicked="onLabelClicked"
+  >
     <div>
       <TextInput
         ref="inputRef"

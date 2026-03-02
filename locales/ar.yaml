@@ -137,11 +137,11 @@ Print Current Page: طباعة الصفحة الحالية
 Print All Pages: طباعة كل الصفحات
 Dark: وضع ليلي
 Light: وضع نهاري
-'This action is unauthorized.': 'هذا الاجراء غير مصرح به.'
-'Unauthenticated.': 'لم تقم بتسجيل الدخول.'
-'?': '؟'
-',': '،'
-Apply: 'تطبيق'
+"This action is unauthorized.": "هذا الاجراء غير مصرح به."
+"Unauthenticated.": "لم تقم بتسجيل الدخول."
+"?": "؟"
+",": "،"
+Apply: "تطبيق"
 In: في
 or: أو
 not between: ليس بين

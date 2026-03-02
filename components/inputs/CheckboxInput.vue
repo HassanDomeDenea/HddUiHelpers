@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { ref } from 'vue';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { ref } from "vue";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(defineProps<{} & BaseInputProps>(), {});
 const emits = defineEmits<{
   change: [event: Event];
 }>();
-const value = defineModel<any>('modelValue', { default: ref().value });
+const value = defineModel<any>("modelValue", { default: ref().value });
 
 const inputRef = ref();
 
@@ -23,25 +23,37 @@ function onLabelClicked() {
 }
 
 function onCheckboxChange(evt: Event) {
-  emits('change', evt);
+  emits("change", evt);
 }
 
 onMounted(() => {
-  inputRef.value.$el.children[0].addEventListener('keydown', (evt: KeyboardEvent) => {
-    if (evt.key === 'Enter') {
+  inputRef.value.$el.children[0].addEventListener("keydown", (evt: KeyboardEvent) => {
+    if (evt.key === "Enter") {
       onLabelClicked();
     }
   });
 });
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-  <BaseInput v-bind="baseInputForwardedProps" :floating-label="false" :infield-top-aligned-label="false">
-    <Checkbox ref="inputRef" v-bind="generalInputProps" v-model="value" :input-id="fieldUniqueId" binary @change="onCheckboxChange" />
+  <BaseInput
+    v-bind="baseInputForwardedProps"
+    :floating-label="false"
+    :infield-top-aligned-label="false"
+  >
+    <Checkbox
+      ref="inputRef"
+      v-bind="generalInputProps"
+      v-model="value"
+      :input-id="fieldUniqueId"
+      binary
+      @change="onCheckboxChange"
+    />
   </BaseInput>
 </template>
 

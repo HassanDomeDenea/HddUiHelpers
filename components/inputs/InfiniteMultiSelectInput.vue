@@ -1,17 +1,17 @@
 <script setup lang="ts" generic="T extends any">
-import type { ApiResponseData, InfiniteScrollResponseData } from '@/types/laravel_generated';
-import { vElementVisibility } from '@vueuse/components';
-import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
-import { get } from 'lodash-es';
-import type Select from 'primevue/select';
-import type { SelectChangeEvent, SelectFilterEvent } from 'primevue/select';
-import type { Ref } from 'vue';
-import { ref } from 'vue';
-import type { ComponentExposed } from 'vue-component-type-helpers';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps, ElementClassType } from './types';
+import type { ApiResponseData, InfiniteScrollResponseData } from "@/types/laravel_generated";
+import { vElementVisibility } from "@vueuse/components";
+import type { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
+import { get } from "lodash-es";
+import type Select from "primevue/select";
+import type { SelectChangeEvent, SelectFilterEvent } from "primevue/select";
+import type { Ref } from "vue";
+import { ref } from "vue";
+import type { ComponentExposed } from "vue-component-type-helpers";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps, ElementClassType } from "./types";
 const props = withDefaults(
   defineProps<
     {
@@ -32,29 +32,32 @@ const props = withDefaults(
       ajaxParams?: { [key: string]: any } | ((params: { [key: string]: any }) => void);
       autoCompleteClass?: ElementClassType;
       optionLabelFormatter?: (item: OptionInterface | ValueInterface, index: number) => string;
-      valueLabelFormatter?: (item: OptionInterface | ValueInterface, placeholder?: string) => string;
+      valueLabelFormatter?: (
+        item: OptionInterface | ValueInterface,
+        placeholder?: string,
+      ) => string;
       onKeydown?: (event: KeyboardEvent) => void;
       optionAndValueLabelFormatter?: (item: OptionInterface | ValueInterface) => string;
       resetFilterOnHide?: boolean;
-      display?: 'comma' | 'chip';
+      display?: "comma" | "chip";
       maxSelectedLabels?: number;
       selectionLimit?: number;
       showToggleAll?: boolean;
     } & BaseInputProps
   >(),
   {
-    optionLabelProperty: 'name',
-    optionValueProperty: 'id',
+    optionLabelProperty: "name",
+    optionValueProperty: "id",
     searchOnFocus: true,
     withoutObject: false,
-    inputClass: 'w-full',
-    autoCompleteClass: '',
+    inputClass: "w-full",
+    autoCompleteClass: "",
     noManualInput: false,
     useIdModel: false,
     clearOnDblClick: false,
     clearable: false,
     maxSelectedLabels: 5,
-    display: 'comma',
+    display: "comma",
     showToggleAll: true,
   },
 );
@@ -68,9 +71,11 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
-const selectedItems = defineModel<(OptionInterface | ValueInterface)[] | null>('item', { default: null });
+const selectedItems = defineModel<(OptionInterface | ValueInterface)[] | null>("item", {
+  default: null,
+});
 
-const selectedItemIds = defineModel<(string | number)[] | null>('modelValue', { default: null });
+const selectedItemIds = defineModel<(string | number)[] | null>("modelValue", { default: null });
 const apiClient = useApiClient();
 const items: Ref<OptionInterface[]> = ref([]);
 const total = ref(0);
@@ -81,26 +86,32 @@ const isInitiallyLoading = ref(false);
 
 type ValueInterface = string;
 
-async function search(event: { query?: string; offset?: number; limit?: number; onlyId?: boolean; multipleIds?: boolean }) {
-  searchQueryName.value = event.query || '';
+async function search(event: {
+  query?: string;
+  offset?: number;
+  limit?: number;
+  onlyId?: boolean;
+  multipleIds?: boolean;
+}) {
+  searchQueryName.value = event.query || "";
   const params = {
-    name: event.query || '',
+    name: event.query || "",
     offset: event.offset || 0,
     limit: event.limit,
     only_id: event.onlyId ? 1 : 0,
     multiple_ids: event.multipleIds ? 1 : 0,
   };
-  if (typeof props.ajaxParams === 'object') {
+  if (typeof props.ajaxParams === "object") {
     for (const key in props.ajaxParams) {
       params[key] = props.ajaxParams[key];
     }
-  } else if (typeof props.ajaxParams === 'function') {
+  } else if (typeof props.ajaxParams === "function") {
     props.ajaxParams(params);
   }
   return apiClient
     .request<ApiResponseData<InfiniteScrollResponseData>>({
-      method: 'get',
-      ...(typeof props.url === 'string' ? { url: props.url } : props.url),
+      method: "get",
+      ...(typeof props.url === "string" ? { url: props.url } : props.url),
       params: params,
     })
     .then((response) => {
@@ -119,7 +130,7 @@ function lastElementVisibilityChanged(isVisible: boolean) {
   }
 }
 
-const inputRef = useTemplateRef<ComponentExposed<typeof Select>>('inputRef');
+const inputRef = useTemplateRef<ComponentExposed<typeof Select>>("inputRef");
 
 function focus(_show: boolean = false) {
   if (!props.disabled) {
@@ -133,19 +144,19 @@ function focus(_show: boolean = false) {
 
 function onFilterKeyDown(event: KeyboardEvent) {
   if ((!inputRef.value as any)?.overlayVisible as boolean) {
-    emits('keydown', event);
+    emits("keydown", event);
   }
 }
 
 function onSelectKeyDown(event: KeyboardEvent) {
-  if (props.onKeydown && event.code === 'Enter') {
+  if (props.onKeydown && event.code === "Enter") {
     inputRef.value?.hide();
   }
-  emits('keydown', event);
+  emits("keydown", event);
 }
 
 function onFilterBlur(event: FocusEvent) {
-  emits('blur', event);
+  emits("blur", event);
 }
 
 const localFilterFields = computed(() => {
@@ -162,7 +173,9 @@ watch(
 
     if (
       selectedItems.value?.length === _selectedItemIds.length &&
-      selectedItems.value?.every((_item, _itemIndex) => _item[props.optionValueProperty] === _selectedItemIds[_itemIndex])
+      selectedItems.value?.every(
+        (_item, _itemIndex) => _item[props.optionValueProperty] === _selectedItemIds[_itemIndex],
+      )
     ) {
       return;
     }
@@ -193,7 +206,9 @@ watch(
       }).then(() => {
         nextTick(() => {
           _idsToSearch.forEach((_idToSearch) => {
-            const existsItem = items.value.find((v) => v[props.optionValueProperty] === _idToSearch.id);
+            const existsItem = items.value.find(
+              (v) => v[props.optionValueProperty] === _idToSearch.id,
+            );
             if (existsItem) {
               _selectedItems[_idToSearch.index] = existsItem;
             }
@@ -220,28 +235,30 @@ function clear() {
   nextTick(() => {
     setTimeout(focus, 50);
   });
-  emits('cleared');
+  emits("cleared");
 }
 
 function getOptionText(option: OptionInterface, index: number) {
-  if (!option) return '&nbsp;';
+  if (!option) return "&nbsp;";
   if (props.optionLabelFormatter) {
     return props.optionLabelFormatter(option, index);
   } else if (props.optionAndValueLabelFormatter) {
     return props.optionAndValueLabelFormatter(option);
   } else {
-    return option[props.optionLabelProperty] ?? '&nbsp;';
+    return option[props.optionLabelProperty] ?? "&nbsp;";
   }
 }
 
 function getValueText(_selectedItemIds: (string | number)[] | null, placeholder?: string) {
-  const placeholderText = placeholder ? `<span class="text-muted px-2">${placeholder}</span>` : undefined;
+  const placeholderText = placeholder
+    ? `<span class="text-muted px-2">${placeholder}</span>`
+    : undefined;
   if (!_selectedItemIds || _selectedItemIds.length < 1) {
     return placeholderText ?? `&nbsp;`;
   }
 
   if (_selectedItemIds.length > props.maxSelectedLabels) {
-    return `${_selectedItemIds.length} ${t('multiSelectItemsSelectedLabel')}`;
+    return `${_selectedItemIds.length} ${t("multiSelectItemsSelectedLabel")}`;
   }
 
   return _selectedItemIds.map((_id) => {
@@ -249,14 +266,14 @@ function getValueText(_selectedItemIds: (string | number)[] | null, placeholder?
       return e[props.optionValueProperty] === _id;
     });
     if (!_item) {
-      return '---';
+      return "---";
     }
     if (props.valueLabelFormatter) {
-      return props.valueLabelFormatter(_item, placeholder) ?? '---' ?? '&nbsp;';
+      return props.valueLabelFormatter(_item, placeholder) ?? "---";
     } else if (props.optionAndValueLabelFormatter) {
-      return props.optionAndValueLabelFormatter(_item) ?? '---' ?? '&nbsp;';
+      return props.optionAndValueLabelFormatter(_item) ?? "---";
     } else {
-      return _item?.[props.optionLabelProperty] ?? '---' ?? '&nbsp;';
+      return _item?.[props.optionLabelProperty] ?? "---";
     }
   });
 }
@@ -268,14 +285,15 @@ function onSelectBeforeShow() {
 
 function onSelectChange(evt: SelectChangeEvent) {
   selectedItemIds.value = evt.value;
-  emits('itemSelected', selectedItems.value as T);
+  emits("itemSelected", selectedItems.value as T);
 }
 
 function onSelectFilterInput(evt: SelectFilterEvent) {
   search({ query: evt.value });
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props);
 
 defineExpose({ focus, clear, selectedItems, ...exposed });
 </script>
@@ -359,8 +377,14 @@ defineExpose({ focus, clear, selectedItems, ...exposed });
             <div v-html="getOptionText(option, index)" />
           </slot>
         </span>
-        <span v-else :aria-labelledby="getOptionText(option, index)" :data-value="get(option, optionValueProperty)">
-          <slot name="option" :option="{ option, index }"><div v-html="getOptionText(option, index)" /></slot>
+        <span
+          v-else
+          :aria-labelledby="getOptionText(option, index)"
+          :data-value="get(option, optionValueProperty)"
+        >
+          <slot name="option" :option="{ option, index }"
+            ><div v-html="getOptionText(option, index)"
+          /></slot>
         </span>
       </template>
       <template #footer>

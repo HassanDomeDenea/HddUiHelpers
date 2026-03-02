@@ -5,7 +5,7 @@ const { duration = 0 } = defineProps<{
    */
   duration?: number;
 }>();
-const slotRef = useTemplateRef('slotRef');
+const slotRef = useTemplateRef("slotRef");
 const slots = useSlots();
 
 onMounted(() => {
@@ -27,7 +27,7 @@ function focus() {
     } else if (comp.$el.focus && comp.$el.focus()) {
       //
     } else {
-      comp.$el.querySelector('input')?.focus();
+      comp.$el.querySelector("input")?.focus();
     }
   }
 }
@@ -40,7 +40,7 @@ function setRef(el: any) {
 </script>
 
 <template>
-  <slot :set-ref="setRef"></slot>
+  <slot :set-ref="setRef" />
 </template>
 
 <style scoped></style>

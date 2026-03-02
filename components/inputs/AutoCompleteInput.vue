@@ -1,101 +1,101 @@
 <script setup lang="ts" generic="T extends any">
-import { vElementVisibility } from '@vueuse/components'
-import { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts'
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
-import { useLoader } from 'HddUiHelpers/composables/loader.ts'
-import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts'
-import type { AutoCompleteOptionSelectEvent } from 'primevue/autocomplete'
-import type { Ref } from 'vue'
-import { ref } from 'vue'
-import BaseInput from './BaseInput.vue'
-import type { AutocompleteInputProps } from './types'
+import { vElementVisibility } from "@vueuse/components";
+import { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { useLoader } from "HddUiHelpers/composables/loader.ts";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
+import type { AutoCompleteOptionSelectEvent } from "primevue/autocomplete";
+import type { Ref } from "vue";
+import { ref } from "vue";
+import BaseInput from "./BaseInput.vue";
+import type { AutocompleteInputProps } from "./types";
 
 const props = withDefaults(defineProps<AutocompleteInputProps>(), {
-  optionLabelProperty: 'name',
-  optionIdProperty: 'id',
+  optionLabelProperty: "name",
+  optionIdProperty: "id",
   searchOnFocus: true,
   withoutObject: false,
   options: () => [],
-  inputClass: 'w-full',
-  autoCompleteClass: '',
+  inputClass: "w-full",
+  autoCompleteClass: "",
   noManualInput: false,
   useIdModel: false,
   hideListWhenEmpty: false,
   clearOnDblClick: false,
   clearable: false,
-})
+});
 const emits = defineEmits<{
-  (e: 'containerDblClick', event: MouseEvent)
-  (e: 'keydown', event: KeyboardEvent)
-  (e: 'blur', event: Event)
-  (e: 'itemSelected', event: T)
-  (e: 'cleared')
-}>()
+  (e: "containerDblClick", event: MouseEvent);
+  (e: "keydown", event: KeyboardEvent);
+  (e: "blur", event: Event);
+  (e: "itemSelected", event: T);
+  (e: "cleared");
+}>();
 
-const selectedItem = defineModel<OptionInterface | ValueInterface | null>('modelValue', {
+const selectedItem = defineModel<OptionInterface | ValueInterface | null>("modelValue", {
   default: ref().value,
-})
-const selectedItemId = defineModel<string | number | null>('id')
+});
+const selectedItemId = defineModel<string | number | null>("id");
 
-const items: Ref<OptionInterface[]> = ref([])
-const hasMore = ref(false)
-const total = ref(0)
-const searchQueryName = ref()
-const isLoadingMore = ref(false)
-const inputRef = ref()
-const apiClient = useApiClient()
-const { isLoading, startLoading, endLoading } = useLoader()
+const items: Ref<OptionInterface[]> = ref([]);
+const hasMore = ref(false);
+const total = ref(0);
+const searchQueryName = ref();
+const isLoadingMore = ref(false);
+const inputRef = ref();
+const apiClient = useApiClient();
+const { isLoading, startLoading, endLoading } = useLoader();
 interface OptionInterface {
-  name: string
-  id: number
+  name: string;
+  id: number;
 }
 
-type ValueInterface = string
-const manualInput = ref<any>(null)
+type ValueInterface = string;
+const manualInput = ref<any>(null);
 
 const dynamicValue = computed({
   get() {
     return props.withoutObject
       ? selectedItem.value
-      : selectedItem.value?.[props.optionLabelProperty]
+      : selectedItem.value?.[props.optionLabelProperty];
   },
   set(newValue: ValueInterface | OptionInterface) {
     if (props.withoutObject) {
       selectedItem.value =
-        typeof newValue === 'string' ? newValue : newValue[props.optionLabelProperty]
+        typeof newValue === "string" ? newValue : newValue[props.optionLabelProperty];
     } else {
-      selectedItem.value = newValue
+      selectedItem.value = newValue;
     }
   },
-})
+});
 
 async function search(event: { query: string; offset?: number; limit?: number; onlyId?: boolean }) {
-  searchQueryName.value = event.query
+  searchQueryName.value = event.query;
   const params = {
     name: event.query,
     offset: event.offset || 0,
     limit: event.limit,
     only_id: event.onlyId ? 1 : 0,
-  }
-  if (typeof props.ajaxParams === 'object') {
+  };
+  if (typeof props.ajaxParams === "object") {
     for (const key in props.ajaxParams) {
-      params[key] = props.ajaxParams[key]
+      params[key] = props.ajaxParams[key];
     }
-  } else if (typeof props.ajaxParams === 'function') {
-    props.ajaxParams(params)
+  } else if (typeof props.ajaxParams === "function") {
+    props.ajaxParams(params);
   }
-  let request: Promise<any>
+  let request: Promise<any>;
   if (props.url) {
-    let url: string | UrlObject
-    if (typeof props.url === 'function') {
-      url = props.url()
+    let url: string | UrlObject;
+    if (typeof props.url === "function") {
+      url = props.url();
     } else {
-      url = props.url
+      url = props.url;
     }
-    if (typeof url === 'string') {
-      request = apiClient.get(url, { params })
+    if (typeof url === "string") {
+      request = apiClient.get(url, { params });
     } else {
-      request = apiClient.request({ ...url, params })
+      request = apiClient.request({ ...url, params });
     }
   } else {
     request = new Promise((resolve) => {
@@ -103,8 +103,8 @@ async function search(event: { query: string; offset?: number; limit?: number; o
         return (
           item[props.optionLabelProperty].includes(params.name) &&
           !(props.hideCurrentOption && item[props.optionLabelProperty].trim() === params.name)
-        )
-      })
+        );
+      });
       resolve({
         data: {
           data: {
@@ -113,16 +113,16 @@ async function search(event: { query: string; offset?: number; limit?: number; o
             hasMore: false,
           },
         },
-      })
-    })
+      });
+    });
   }
-  startLoading()
+  startLoading();
   return request.then((response) => {
     if (event.offset) {
-      items.value.push(...response.data.data.items)
+      items.value.push(...response.data.data.items);
     } else {
       if (!(items.value.length === 0 && response.data.data.items.length === 0)) {
-        items.value = response.data.data.items
+        items.value = response.data.data.items;
       }
     }
 
@@ -131,27 +131,27 @@ async function search(event: { query: string; offset?: number; limit?: number; o
                 inputRef.value.overlayVisible = false;
             });
         }*/
-    hasMore.value = response.data.data.hasMore
-    total.value = response.data.data.total
-    isLoadingMore.value = false
-    endLoading()
-  })
+    hasMore.value = response.data.data.hasMore;
+    total.value = response.data.data.total;
+    isLoadingMore.value = false;
+    endLoading();
+  });
 }
 
 function lastElementVisibilityChanged(isVisible: boolean) {
   if (isVisible && total.value > items.value.length && isLoadingMore.value === false) {
-    isLoadingMore.value = true
-    search({ query: searchQueryName.value, offset: items.value.length - 1 })
+    isLoadingMore.value = true;
+    search({ query: searchQueryName.value, offset: items.value.length - 1 });
   }
 }
 
 function onItemSelected(evt: AutoCompleteOptionSelectEvent) {
-  emits('itemSelected', evt.value)
+  emits("itemSelected", evt.value);
   if (props.useIdModel) {
-    selectedItemId.value = evt.value[props.optionIdProperty]
+    selectedItemId.value = evt.value[props.optionIdProperty];
   }
   if (props.noManualInput) {
-    dynamicValue.value = evt.value
+    dynamicValue.value = evt.value;
     // manualInput.value = props.withoutObject ? evt.value: evt.value?.[props.optionLabelProperty]
   }
 }
@@ -161,21 +161,21 @@ function onManualInput() {
 }
 
 function focus() {
-  inputRef.value?.$refs.focusInput.$el.focus()
+  inputRef.value?.$refs.focusInput.$el.focus();
 }
 
 function deselectAndMoveCaretToEnd() {
-  const inputElement = inputRef.value?.$refs.focusInput.$el
-  inputElement.selectionStart = inputElement.selectionEnd
-  const valueLength = inputElement.value.length
-  inputElement.setSelectionRange(valueLength, valueLength)
-  inputElement.focus()
+  const inputElement = inputRef.value?.$refs.focusInput.$el;
+  inputElement.selectionStart = inputElement.selectionEnd;
+  const valueLength = inputElement.value.length;
+  inputElement.setSelectionRange(valueLength, valueLength);
+  inputElement.focus();
 }
 
 function onInputContainerDblclick(evt: MouseEvent) {
-  emits('containerDblClick', evt)
+  emits("containerDblClick", evt);
   if (props.clearOnDblClick) {
-    clear()
+    clear();
   }
 }
 
@@ -183,50 +183,50 @@ watch(
   () => dynamicValue.value,
   (value) => {
     if (props.noManualInput) {
-      manualInput.value = value
+      manualInput.value = value;
     }
   },
   {
     immediate: true,
     deep: true,
-  }
-)
+  },
+);
 
 function onAutocompleteInput(value: any) {
   if (props.noManualInput) {
-    manualInput.value = value
+    manualInput.value = value;
   } else {
-    dynamicValue.value = value
+    dynamicValue.value = value;
   }
 }
 
 function onBlur(event: Event) {
-  emits('blur', event)
+  emits("blur", event);
   if (props.noManualInput && selectedItem.value) {
     manualInput.value = props.withoutObject
       ? selectedItem.value
-      : selectedItem.value?.[props.optionLabelProperty]
+      : selectedItem.value?.[props.optionLabelProperty];
   }
 }
 
 function onKeyDown(event: KeyboardEvent) {
   if (!inputRef.value.overlayVisible) {
-    emits('keydown', event)
+    emits("keydown", event);
   }
-  if (event.code === 'Enter' && props.noManualInput && manualInput.value === '') {
-    selectedItem.value = null
+  if (event.code === "Enter" && props.noManualInput && manualInput.value === "") {
+    selectedItem.value = null;
     if (props.useIdModel) {
-      selectedItemId.value = null
+      selectedItemId.value = null;
     }
   }
 }
 
 function showList(isFocus = true) {
-  inputRef.value.show(isFocus)
+  inputRef.value.show(isFocus);
 }
 
 function hideList(isFocus = true) {
-  inputRef.value.hide(isFocus)
+  inputRef.value.hide(isFocus);
 }
 
 watch(
@@ -234,51 +234,51 @@ watch(
   () => {
     if (props.useIdModel) {
       if (selectedItem.value?.[props.optionIdProperty] === selectedItemId.value) {
-        return
+        return;
       }
-      let existsItem = items.value.find((v) => v[props.optionIdProperty] === selectedItemId.value)
+      let existsItem = items.value.find((v) => v[props.optionIdProperty] === selectedItemId.value);
       if (existsItem) {
-        dynamicValue.value = existsItem
+        dynamicValue.value = existsItem;
       } else {
         search({ query: `${selectedItemId.value}`, limit: 1, onlyId: true }).then(() => {
-          existsItem = items.value.find((v) => v[props.optionIdProperty] === selectedItemId.value)
+          existsItem = items.value.find((v) => v[props.optionIdProperty] === selectedItemId.value);
           nextTick(() => {
             if (existsItem) {
-              dynamicValue.value = existsItem
+              dynamicValue.value = existsItem;
             }
-          })
-        })
+          });
+        });
       }
     }
   },
   {
     immediate: true,
-  }
-)
+  },
+);
 
 function clear() {
   if (props.useIdModel) {
-    selectedItemId.value = null
+    selectedItemId.value = null;
   }
-  selectedItem.value = null
+  selectedItem.value = null;
   nextTick(() => {
-    setTimeout(focus, 50)
-  })
-  emits('cleared')
+    setTimeout(focus, 50);
+  });
+  emits("cleared");
 }
 
 function getOptionText(option: any) {
-  return props.formatter ? props.formatter(option) : option[props.optionLabelProperty]
+  return props.formatter ? props.formatter(option) : option[props.optionLabelProperty];
 }
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props)
+  useHddBaseInputUtils(props);
 defineExpose({
   focus,
   deselectAndMoveCaretToEnd,
   showList,
   hideList,
   ...exposed,
-})
+});
 </script>
 
 <template>

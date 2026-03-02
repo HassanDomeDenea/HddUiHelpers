@@ -1,206 +1,209 @@
-import defaultOptions from '@/default_options.json'
-import type { AppPermission, GlobalOptionData, UserOptionsData } from '@/types/laravel_generated'
-import UserController from '@/wayfinder/actions/App/Http/Controllers/UserController'
-import GlobalOptionController from '@/wayfinder/actions/Modules/GlobalOption/Http/Controllers/GlobalOptionController.ts'
-import { configureEcho, echo, echoIsConfigured } from '@laravel/echo-vue'
-import { useCookies } from '@vueuse/integrations/useCookies'
-import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers.ts'
-import { useApiClient } from 'HddUiHelpers/stores/apiClient'
-import type { BasicUserData } from 'HddUiHelpers/types/BasicModels'
-import { safeRequest } from 'HddUiHelpers/utils/safeTry'
-import { cloneDeep, each } from 'lodash-es'
-import { defineStore } from 'pinia'
+import type {
+  HddPermission,
+  HddGlobalOption,
+  HddUserOption,
+  GlobalOptionsMap,
+  UserOptionsMap,
+} from "HddUiHelpers/types/types";
+import { configureEcho, echo, echoIsConfigured } from "@laravel/echo-vue";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { useApiClient } from "HddUiHelpers/stores/apiClient";
+import type { BasicUserData } from "HddUiHelpers/types/types";
+import { cloneDeep, each } from "lodash-es";
+import { defineStore } from "pinia";
+import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers";
+import { safeRequest } from "../utils/safeTry";
+import { useStorage } from "@vueuse/core";
 
-export const useBasicAuthStore = defineStore('basicAuth', () => {
-  const user = ref<BasicUserData | null>(null)
-  const hddUiHelpers = useHddUiHelpers()
-  const connectedUsers = ref<BasicUserData[]>([])
-  const apiClient = useApiClient()
-  const cookies = useCookies()
-
+export const useBasicAuthStore = defineStore("basicAuth", () => {
+  const user = ref<BasicUserData | null>(null);
+  const hddUiHelpers = useHddUiHelpers();
+  const connectedUsers = ref<BasicUserData[]>([]);
+  const apiClient = useApiClient();
+  const cookies = useCookies();
   const authorizationToken = useStorage<string | null>(
-    'authorizationToken',
-    new URLSearchParams(window.location.search).get('_authorization_token')
-  )
-  const isLoggedIn = computed(() => !!user.value)
+    "authorizationToken",
+    new URLSearchParams(window.location.search).get("_authorization_token"),
+  );
+  const isLoggedIn = computed(() => !!user.value);
 
-  const options = ref<UserOptionsData>(cloneDeep(defaultOptions as UserOptionsData))
-  const globalOptions = ref<GlobalOptionData>(cloneDeep({} as GlobalOptionData))
+  const options = ref<UserOptionsMap>(cloneDeep(hddUiHelpers.defaultUserOptions));
+  const globalOptions: Ref<GlobalOptionsMap> = ref<GlobalOptionsMap>(cloneDeep({}));
 
-  function resetOptions(data: UserOptionsData | null = null) {
-    const newOptions: UserOptionsData = cloneDeep(defaultOptions as UserOptionsData)
+  function resetOptions(data: GlobalOptionsMap | null = null) {
+    const newOptions = cloneDeep(hddUiHelpers.defaultUserOptions) as GlobalOptionsMap;
     if (data) {
       each(data, (_value, _key) => {
-        newOptions[_key] = _value
-      })
+        newOptions[_key] = _value;
+      });
     }
-    options.value = newOptions
+    options.value = newOptions;
   }
 
   function login(_user: BasicUserData, _token: string) {
-    user.value = _user
-    resetOptions(_user.options)
-    globalOptions.value = _user.global_options ?? ({} as GlobalOptionData)
-    authorizationToken.value = _token
-    cookies.set('authorizationToken', _token, {
-      secure: window.location.protocol === 'https:',
-    })
+    user.value = _user;
+    resetOptions(_user.options);
+    globalOptions.value = _user.global_options ?? {};
+    authorizationToken.value = _token;
+    cookies.set("authorizationToken", _token, {
+      secure: window.location.protocol === "https:",
+    });
   }
 
   function logout() {
-    user.value = null
-    resetOptions()
-    authorizationToken.value = null
-    cookies.remove('authorizationToken')
+    user.value = null;
+    resetOptions();
+    authorizationToken.value = null;
+    cookies.remove("authorizationToken");
   }
 
-  async function changeOption<TKey extends keyof UserOptionsData>(
-    option: TKey,
-    value: UserOptionsData[TKey]
-  ) {
+  async function changeOption(option: HddUserOption, value: UserOptionsMap[HddUserOption]) {
     try {
-      await apiClient.request(UserController.changeOption(), { option, value })
-      options.value[option] = value
+      await apiClient.request({ method: "post", url: "/api/change-option" }, { option, value });
+      options.value[option] = value;
     } catch (error: any) {
-      apiClient.toastError(error?.response?.data?.message ?? '')
-      throw error
+      apiClient.toastError(error?.response?.data?.message ?? "");
+      throw error;
     }
   }
 
-  async function changeGlobalOption<TKey extends keyof GlobalOptionData>(
-    option: TKey,
-    value: GlobalOptionData[TKey]
+  async function changeGlobalOption(
+    option: HddGlobalOption,
+    value: GlobalOptionsMap[HddGlobalOption],
   ) {
     try {
       // Check if the value is a File
+      const urlObject = {
+        method: "put",
+        url: "/api/global_options",
+      };
       if (value instanceof File) {
-        const urlObject = GlobalOptionController.update()
-
-        const formData = new FormData()
-        formData.append('value', value)
-        formData.append('option', option)
-        formData.append('_method', urlObject.method)
+        const formData = new FormData();
+        formData.append("option", option);
+        formData.append("value", value);
+        formData.append("_method", urlObject.method);
         const response = await apiClient.request(
           {
             url: urlObject.url,
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'multipart/form-data',
+              "Content-Type": "multipart/form-data",
             },
           },
-          formData
-        )
+          formData,
+        );
 
-        globalOptions.value[option] = response.data.data
+        globalOptions.value[option] = response.data.data;
       } else {
-        await apiClient.request(GlobalOptionController.update(), { option, value })
-        globalOptions.value[option] = value
+        await apiClient.request(urlObject, { option, value });
+        globalOptions.value[option] = value;
       }
     } catch (error: any) {
-      apiClient.toastError(error?.response?.data?.message ?? '')
-      throw error
+      apiClient.toastError(error?.response?.data?.message ?? "");
+      throw error;
     }
   }
 
   function hasRole(role: string): boolean {
-    return user.value?.role_names?.includes(role) === true
+    return user.value?.role_names?.includes(role) === true;
   }
 
   const isSuperAdmin = computed(() => {
-    return user.value?.role_names?.includes('super_admin') === true
-  })
+    return user.value?.role_names?.includes("super_admin") === true;
+  });
 
-  function canAny(...permissions: string[]): boolean {
+  function canAny(...permissions: HddPermission[]): boolean {
     if (!user.value) {
-      return false
+      return false;
     }
-    if (user.value.role_names?.includes('super_admin')) {
-      return true
+    if (user.value.role_names?.includes("super_admin")) {
+      return true;
     }
     if (!user.value.permission_names) {
-      return false
+      return false;
     }
-    return permissions.some((p) => user.value?.permission_names?.includes(p))
+    return permissions.some((p) => user.value?.permission_names?.includes(p));
   }
 
   function ifCan<TValue>(
-    permission: AppPermission | AppPermission[],
+    permission: HddPermission | HddPermission[],
     value: TValue,
-    elseValue = undefined
+    elseValue = undefined,
   ) {
     if (can(permission)) {
-      return value
+      return value;
     } else {
-      return elseValue
+      return elseValue;
     }
   }
 
-  function cannot(permission: AppPermission | AppPermission[]) {
-    return !can(permission)
+  function cannot(permission: HddPermission | HddPermission[]) {
+    return !can(permission);
   }
 
-  function can(permission: AppPermission | AppPermission[]) {
+  function can(permission: HddPermission | HddPermission[]) {
     if (!user.value) {
-      return false
+      return false;
     }
-    if (user.value.role_names?.includes('super_admin')) {
-      return true
+    if (user.value.role_names?.includes("super_admin")) {
+      return true;
     }
     if (!user.value.permission_names) {
-      return false
+      return false;
     }
     if (Array.isArray(permission)) {
-      return permission.every((p) => user.value?.permission_names?.includes(p))
+      return permission.every((p) => user.value?.permission_names?.includes(p));
     }
-    return user.value.permission_names.includes(permission)
+    return user.value.permission_names.includes(permission);
   }
 
-  const presenceChannel = ref()
+  const presenceChannel = ref();
   if (hddUiHelpers.withBroadcasting) {
     watch(
       isLoggedIn,
       (val) => {
+        console.log(hddUiHelpers.presenceUsersChannel);
         if (val) {
           configureEcho({
-            broadcaster: 'reverb',
+            broadcaster: "reverb",
             bearerToken: authorizationToken.value,
-          })
+          });
           if (hddUiHelpers.presenceUsersChannel) {
             presenceChannel.value = echo()
               .join(hddUiHelpers.presenceUsersChannel)
               .here((users: BasicUserData[]) => {
                 // console.log('HERE', users);
-                connectedUsers.value = users
+                connectedUsers.value = users;
               })
               .joining((user: BasicUserData) => {
                 // console.log('Joining ', user);
-                connectedUsers.value.push(user)
+                connectedUsers.value.push(user);
               })
               .leaving((user: BasicUserData) => {
                 // console.log('Leaving ', user);
-                connectedUsers.value = connectedUsers.value.filter((u) => u.id !== user.id)
-              })
+                connectedUsers.value = connectedUsers.value.filter((u) => u.id !== user.id);
+              });
           }
         } else {
           if (hddUiHelpers.presenceUsersChannel) {
             if (echoIsConfigured()) {
-              echo().leave(hddUiHelpers.presenceUsersChannel)
-              echo().disconnect()
+              echo().leave(hddUiHelpers.presenceUsersChannel);
+              echo().disconnect();
             }
-            presenceChannel.value = null
-            connectedUsers.value = []
+            presenceChannel.value = null;
+            connectedUsers.value = [];
           }
         }
       },
       {
         immediate: true,
-      }
-    )
+      },
+    );
   }
 
   const userFullName = computed(() => {
-    return user.value?.name ?? ''
-  })
+    return user.value?.name ?? "";
+  });
 
   return {
     canAny,
@@ -221,16 +224,16 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
     authorizationToken: computed<string | null>(() => authorizationToken.value),
     login,
     logout,
-  }
-})
+  };
+});
 
 export async function setUserFromToken() {
-  const authStore = useBasicAuthStore()
-  const apiClient = useApiClient()
+  const authStore = useBasicAuthStore();
+  const apiClient = useApiClient();
   if (authStore.authorizationToken) {
-    const [data] = await safeRequest(() => apiClient.get<BasicUserData>(UserController.me().url))
+    const [data] = await safeRequest(() => apiClient.get<BasicUserData>("/api/me"));
     if (data) {
-      authStore.login(data, authStore.authorizationToken)
+      authStore.login(data, authStore.authorizationToken);
     }
   }
 }

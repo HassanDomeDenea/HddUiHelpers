@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import Highlight from '@tiptap/extension-highlight';
-import { ListItem } from '@tiptap/extension-list';
-import Subscript from '@tiptap/extension-subscript';
-import Superscript from '@tiptap/extension-superscript';
-import { TableKit } from '@tiptap/extension-table';
-import TextAlign from '@tiptap/extension-text-align';
-import { Color, FontFamily, FontSize, LineHeight, TextStyle } from '@tiptap/extension-text-style';
-import { Placeholder } from '@tiptap/extensions';
-import StarterKit from '@tiptap/starter-kit';
-import type { Editor } from '@tiptap/vue-3';
-import { EditorContent, useEditor } from '@tiptap/vue-3';
-import { BubbleMenu } from '@tiptap/vue-3/menus';
-import { CustomParagraph } from 'HddUiHelpers/components/TipTapEditor/Extensions/CustomParagraphExtension.ts';
-import TipTapPageBreakerNodeExtension from 'HddUiHelpers/components/TipTapEditor/Extensions/PageBreaker/TipTapPageBreakerNodeExtension.ts';
-import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
-import TipTapToolBar from 'HddUiHelpers/components/TipTapEditor/TipTapToolBar.vue';
-import Button from 'primevue/button';
+import Highlight from "@tiptap/extension-highlight";
+import { ListItem } from "@tiptap/extension-list";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import { TableKit } from "@tiptap/extension-table";
+import TextAlign from "@tiptap/extension-text-align";
+import { Color, FontFamily, FontSize, LineHeight, TextStyle } from "@tiptap/extension-text-style";
+import { Placeholder } from "@tiptap/extensions";
+import StarterKit from "@tiptap/starter-kit";
+import type { Editor } from "@tiptap/vue-3";
+import { EditorContent, useEditor } from "@tiptap/vue-3";
+import { BubbleMenu } from "@tiptap/vue-3/menus";
+import { CustomParagraph } from "HddUiHelpers/components/TipTapEditor/Extensions/CustomParagraphExtension.ts";
+import TipTapPageBreakerNodeExtension from "HddUiHelpers/components/TipTapEditor/Extensions/PageBreaker/TipTapPageBreakerNodeExtension.ts";
+import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
+import TipTapToolBar from "HddUiHelpers/components/TipTapEditor/TipTapToolBar.vue";
+import Button from "primevue/button";
 const { config } = defineProps<{
   config?: TipTapEditorConfig;
 }>();
@@ -26,7 +26,7 @@ const editor = useEditor({
   editable: !(config?.disabled || config?.readonly),
   extensions: [
     TextAlign.configure({
-      types: ['heading', 'paragraph'],
+      types: ["heading", "paragraph"],
       defaultAlignment: config?.defaultAlignment,
     }),
     Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -50,7 +50,7 @@ const editor = useEditor({
     CustomParagraph,
     TipTapPageBreakerNodeExtension,
     Placeholder.configure({
-      placeholder: config?.placeholder ?? '…',
+      placeholder: config?.placeholder ?? "…",
     }),
     ...(config?.extraExtensions ?? []),
   ],
@@ -114,13 +114,24 @@ defineExpose({ editor });
         </slot>
       </template>
     </TipTapToolBar>
-    <BubbleMenu v-if="editor.isEditable" :editor="editor" :options="{ placement: 'bottom', offset: 8 }">
+    <BubbleMenu
+      v-if="editor.isEditable"
+      :editor="editor"
+      :options="{ placement: 'bottom', offset: 8 }"
+    >
       <div class="tiptap-bubble-menu" dir="ltr">
-        <TipTapTextStyleControls :editor="editor" :config="config" :with-alignments="false" :with-scripts="false" />
+        <TipTapTextStyleControls
+          :editor="editor"
+          :config="config"
+          :with-alignments="false"
+          :with-scripts="false"
+        />
       </div>
     </BubbleMenu>
     <EditorContent :editor="editor" />
-    <div v-if="false" class="dir-ltr whitespace-pre-wrap text-left">{{ value }}</div>
+    <div v-if="false" class="dir-ltr whitespace-pre-wrap text-left">
+      {{ value }}
+    </div>
   </div>
 </template>
 
@@ -213,7 +224,7 @@ defineExpose({ editor });
     background: var(--black);
     border-radius: 0.5rem;
     color: var(--white);
-    font-family: 'JetBrainsMono', monospace;
+    font-family: "JetBrainsMono", monospace;
     margin: 1.5rem 0;
     padding: 0.75rem 1rem;
 
@@ -258,7 +269,7 @@ defineExpose({ editor });
 
     .selectedCell:after {
       @apply bg-blue-200/45 dark:bg-blue-800/45;
-      content: '';
+      content: "";
       left: 0;
       right: 0;
       top: 0;

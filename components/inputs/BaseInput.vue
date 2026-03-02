@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useElementSize } from '@vueuse/core'
-import { omit } from 'lodash-es'
-import { FloatLabel, IftaLabel } from 'primevue'
-import { useTemplateRef } from 'vue'
-import { useI18n } from 'vue-i18n'
-import type { BaseInputProps, BaseInputSlots } from './types'
+import { useElementSize } from "@vueuse/core";
+import { omit } from "lodash-es";
+import { FloatLabel, IftaLabel } from "primevue";
+import { useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+import type { BaseInputProps, BaseInputSlots } from "./types";
 
 const {
   hideLabelDoubleDots = true,
@@ -12,22 +12,22 @@ const {
   showErrorMessage,
   label,
   disabled,
-} = defineProps<BaseInputProps>()
+} = defineProps<BaseInputProps>();
 const emits = defineEmits<{
-  labelClicked: [event: MouseEvent]
-}>()
-const slots = defineSlots<BaseInputSlots>()
+  labelClicked: [event: MouseEvent];
+}>();
+const slots = defineSlots<BaseInputSlots>();
 
-const helperSlotRef = ref()
-const { t } = useI18n()
-const hasShowableError = computed(() => showErrorMessage && error)
+const helperSlotRef = ref();
+const { t } = useI18n();
+const hasShowableError = computed(() => showErrorMessage && error);
 
-const labelRef = useTemplateRef('labelRef')
+const labelRef = useTemplateRef("labelRef");
 const { width: labelWidth } = useElementSize(labelRef as any, undefined, {
-  box: 'border-box',
-})
-const defaultSlotRef = useTemplateRef('defaultSlotRef')
-defineExpose({ labelWidth, disabled, defaultSlotRef })
+  box: "border-box",
+});
+const defaultSlotRef = useTemplateRef("defaultSlotRef");
+defineExpose({ labelWidth, disabled, defaultSlotRef });
 </script>
 
 <template>
@@ -100,7 +100,7 @@ defineExpose({ labelWidth, disabled, defaultSlotRef })
                       <slot name="default" />
                       <slot name="afterControl" />
                     </div> -->
-          <slot name="beforeControl"></slot>
+          <slot name="beforeControl" />
           <template v-if="!floatingLabel && !infieldTopAlignedLabel">
             <slot ref="defaultSlotRef" name="default" />
           </template>
@@ -138,7 +138,7 @@ defineExpose({ labelWidth, disabled, defaultSlotRef })
               </label>
             </component>
           </template>
-          <slot name="afterControl"></slot>
+          <slot name="afterControl" />
 
           <InputGroupAddon
             v-if="

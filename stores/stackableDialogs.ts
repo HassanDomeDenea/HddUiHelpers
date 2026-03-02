@@ -1,31 +1,31 @@
-import { merge, uniqueId } from 'lodash-es'
-import { defineStore } from 'pinia'
-import { useDialog } from 'primevue'
-import { DynamicDialogCloseOptions, DynamicDialogOptions } from 'primevue/dynamicdialogoptions'
-import { ComponentExposed } from 'vue-component-type-helpers'
+import { merge, uniqueId } from "lodash-es";
+import { defineStore } from "pinia";
+import { useDialog } from "primevue";
+import { DynamicDialogCloseOptions, DynamicDialogOptions } from "primevue/dynamicdialogoptions";
+import { ComponentExposed } from "vue-component-type-helpers";
 
-export const useStackableDialogsStore = defineStore('stackableDialogs', () => {
-  const stackableDialogs = ref<any[]>([])
+export const useStackableDialogsStore = defineStore("stackableDialogs", () => {
+  const stackableDialogs = ref<any[]>([]);
 
   function add(dialog?: any): number {
-    stackableDialogs.value.push(dialog ?? uniqueId('stackableDialogs'))
-    return stackableDialogs.value.length - 1
+    stackableDialogs.value.push(dialog ?? uniqueId("stackableDialogs"));
+    return stackableDialogs.value.length - 1;
   }
 
   function remove(index: number): void {
-    stackableDialogs.value.splice(index, 1)
+    stackableDialogs.value.splice(index, 1);
   }
 
   function removeByName(name: any): void {
-    stackableDialogs.value = stackableDialogs.value.filter((item) => item !== name)
+    stackableDialogs.value = stackableDialogs.value.filter((item) => item !== name);
   }
 
   function getByName(name: any): any {
-    return stackableDialogs.value.find((item) => item === name) ?? null
+    return stackableDialogs.value.find((item) => item === name) ?? null;
   }
 
   function getByIndex(index: number): any {
-    return stackableDialogs.value[index] ?? null
+    return stackableDialogs.value[index] ?? null;
   }
 
   /*watch(
@@ -42,58 +42,58 @@ export const useStackableDialogsStore = defineStore('stackableDialogs', () => {
     removeByName,
     remove,
     add,
-  }
-})
+  };
+});
 
 export const useStackableDialog = function (
-  options: { dialogVisibilityRef?: Ref<boolean>; name?: string; dialogRef?: Ref } = {}
+  options: { dialogVisibilityRef?: Ref<boolean>; name?: string; dialogRef?: Ref } = {},
 ) {
-  const store = useStackableDialogsStore()
-  const dialogStackIndex = ref<number | null>(null)
-  const dynamicalDialog = useDialog()
+  const store = useStackableDialogsStore();
+  const dialogStackIndex = ref<number | null>(null);
+  const dynamicalDialog = useDialog();
 
   function addDialogToStack() {
     if (dialogStackIndex.value === null) {
-      dialogStackIndex.value = store.add(options.name ?? undefined)
+      dialogStackIndex.value = store.add(options.name ?? undefined);
     }
   }
 
   function removeDialogFromStack() {
     if (dialogStackIndex.value !== null) {
-      store.remove(dialogStackIndex.value)
-      dialogStackIndex.value = null
+      store.remove(dialogStackIndex.value);
+      dialogStackIndex.value = null;
     }
   }
 
   const isClosable = computed(() => {
-    return store.stackableDialogs.length - 1 === dialogStackIndex.value
-  })
+    return store.stackableDialogs.length - 1 === dialogStackIndex.value;
+  });
 
   function updateDialogVisibility(visible: boolean) {
     if (visible) {
-      addDialogToStack()
+      addDialogToStack();
     } else {
-      removeDialogFromStack()
+      removeDialogFromStack();
     }
   }
 
   if (options.dialogVisibilityRef) {
     watch(options.dialogVisibilityRef, (val) => {
-      updateDialogVisibility(val)
-    })
+      updateDialogVisibility(val);
+    });
   }
 
   async function open<TComponent>(
     component: TComponent,
-    options?: Partial<Exclude<DynamicDialogOptions, 'onClose'>> & { emits?: any },
+    options?: Partial<Exclude<DynamicDialogOptions, "onClose">> & { emits?: any },
     extraOptions?: {
-      onHidden?: () => void
-      onClose?: (closeOptions?: DynamicDialogCloseOptions) => void
-      onShow?: (content: ComponentExposed<typeof component>) => void
-    }
+      onHidden?: () => void;
+      onClose?: (closeOptions?: DynamicDialogCloseOptions) => void;
+      onShow?: (content: ComponentExposed<typeof component>) => void;
+    },
   ) {
-    updateDialogVisibility(true)
-    const componentRef = ref<ComponentExposed<TComponent>>()
+    updateDialogVisibility(true);
+    const componentRef = ref<ComponentExposed<TComponent>>();
     dynamicalDialog.open(
       component,
       merge(
@@ -104,26 +104,26 @@ export const useStackableDialog = function (
             draggable: false,
             modal: true,
             onAfterHide: () => {
-              extraOptions?.onHidden?.()
+              extraOptions?.onHidden?.();
             },
           } as DynamicDialogOptions,
           onClose(closeOptions?: DynamicDialogCloseOptions) {
-            updateDialogVisibility(false)
-            extraOptions?.onClose?.(closeOptions)
+            updateDialogVisibility(false);
+            extraOptions?.onClose?.(closeOptions);
           },
           emits: {
             ref: (element: ComponentExposed<TComponent>) => (componentRef.value = element),
           },
         },
-        options
-      )
-    )
+        options,
+      ),
+    );
     await nextTick(() => {
       if (componentRef.value) {
-        extraOptions?.onShow?.(componentRef.value)
+        extraOptions?.onShow?.(componentRef.value);
       }
-    })
-    return componentRef.value as ComponentExposed<TComponent>
+    });
+    return componentRef.value as ComponentExposed<TComponent>;
   }
 
   return {
@@ -134,5 +134,5 @@ export const useStackableDialog = function (
     removeDialogFromStack,
     isClosable,
     dialogStackIndex,
-  }
-}
+  };
+};

@@ -1,127 +1,127 @@
 <script lang="ts">
-import type { AppPermission } from '@/types/laravel_generated'
+import type { AppPermission } from "@/types/laravel_generated";
 
 export interface HddPanelTabItem {
-  name: string
-  label?: string
-  icon?: string
-  disabled?: boolean
-  visible?: boolean
-  permission?: AppPermission | AppPermission[]
-  component?: any
-  binds?: any
+  name: string;
+  label?: string;
+  icon?: string;
+  disabled?: boolean;
+  visible?: boolean;
+  permission?: AppPermission | AppPermission[];
+  component?: any;
+  binds?: any;
 }
 </script>
 <script setup lang="ts">
-import PrimeVueTabs from 'primevue/tabs'
+import PrimeVueTabs from "primevue/tabs";
 
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts'
-import { isBoolean, isString, startCase } from 'lodash-es'
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
+import { isBoolean, isString, startCase } from "lodash-es";
 
 const {
   basedOnRouteQuery = true,
-  queryName = 'tab',
+  queryName = "tab",
   initialTab,
   lazy = true,
   keepAlive = true,
   tabs,
 } = defineProps<{
-  basedOnRouteQuery?: boolean
-  queryName?: string
-  initialTab?: string
-  lazy?: any
-  keepAlive?: boolean
-  tabs: HddPanelTabItem[]
-}>()
-const { t } = useI18n()
-const route = useRoute()
-const router = useRouter()
+  basedOnRouteQuery?: boolean;
+  queryName?: string;
+  initialTab?: string;
+  lazy?: any;
+  keepAlive?: boolean;
+  tabs: HddPanelTabItem[];
+}>();
+const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
 const computedTabs = computed(() => {
   return tabs.filter((tab) => {
     if (isBoolean(tab.visible)) {
-      return tab.visible
+      return tab.visible;
     }
 
     if (isString(tab.permission)) {
-      return authStore.can(tab.permission as any)
+      return authStore.can(tab.permission as any);
     }
 
     if (tab.permission instanceof Array) {
-      return tab.permission.every((item) => authStore.can(item as any))
+      return tab.permission.every((item) => authStore.can(item as any));
     }
 
-    return true
-  })
-})
+    return true;
+  });
+});
 
 const routeTabName = computed(() =>
-  basedOnRouteQuery ? (route.query[queryName] as string) : undefined
-)
-const authStore = useBasicAuthStore()
+  basedOnRouteQuery ? (route.query[queryName] as string) : undefined,
+);
+const authStore = useBasicAuthStore();
 
-const tabNames = computed(() => computedTabs.value.map((tab) => tab.name))
+const tabNames = computed(() => computedTabs.value.map((tab) => tab.name));
 
 const currentTab = ref(
   (basedOnRouteQuery ? (route.query[queryName] as string) : undefined) ??
     initialTab ??
-    computedTabs.value[0]?.name
-)
+    computedTabs.value[0]?.name,
+);
 function setTabIfValid(tabName: string) {
-  if (tabName === currentTab.value) return
+  if (tabName === currentTab.value) return;
   if (tabNames.value.includes(tabName)) {
-    currentTab.value = tabName
+    currentTab.value = tabName;
   }
 }
 
 function updateTabFromRoute() {
   if (!basedOnRouteQuery) {
-    return
+    return;
   }
-  if (typeof route.query[queryName] === 'string') {
-    setTabIfValid(route.query[queryName])
+  if (typeof route.query[queryName] === "string") {
+    setTabIfValid(route.query[queryName]);
   } else if (currentTab.value) {
-    router.replace({ query: { ...route.query, [queryName]: currentTab.value } })
+    router.replace({ query: { ...route.query, [queryName]: currentTab.value } });
   } else if (currentTab.value !== routeTabName.value) {
-    router.replace({ query: { ...route.query, [queryName]: currentTab.value } })
+    router.replace({ query: { ...route.query, [queryName]: currentTab.value } });
   }
 }
 
 onActivated(() => {
-  updateTabFromRoute()
-})
+  updateTabFromRoute();
+});
 
 watch(currentTab, (_tabName) => {
   if (!basedOnRouteQuery) {
-    return
+    return;
   }
   if (routeTabName.value) {
-    router.push({ query: { ...route.query, [queryName]: _tabName } })
+    router.push({ query: { ...route.query, [queryName]: _tabName } });
   } else {
-    router.replace({ query: { ...route.query, [queryName]: _tabName } })
+    router.replace({ query: { ...route.query, [queryName]: _tabName } });
   }
-})
+});
 watch(routeTabName, () => {
   if (!basedOnRouteQuery) {
-    return
+    return;
   }
 
-  updateTabFromRoute()
-})
+  updateTabFromRoute();
+});
 
-const loadedTabs = ref([])
+const loadedTabs = ref([]);
 
 watch(
   currentTab,
   (tabName) => {
-    if (loadedTabs.value.includes(tabName)) return
-    loadedTabs.value.push(tabName)
+    if (loadedTabs.value.includes(tabName)) return;
+    loadedTabs.value.push(tabName);
   },
   {
     immediate: true,
-  }
-)
+  },
+);
 
-defineExpose({ currentTab })
+defineExpose({ currentTab });
 </script>
 
 <template>
@@ -129,7 +129,7 @@ defineExpose({ currentTab })
     <TabList>
       <Tab v-for="tab in computedTabs" :key="tab.name" :disabled="tab.disabled" :value="tab.name">
         <div class="flex items-center gap-1">
-          <i v-if="tab.icon" :class="tab.icon"></i>
+          <i v-if="tab.icon" :class="tab.icon" />
           <span>{{ tab.label ?? t(startCase(tab.name)) }}</span>
         </div>
       </Tab>
@@ -141,12 +141,12 @@ defineExpose({ currentTab })
             :is="tab.component"
             v-if="tab.component && tab.name === currentTab"
             v-bind="tab.binds"
-          ></component>
-          <slot v-else-if="tab.name === currentTab" :name="tab.name"></slot>
+          />
+          <slot v-else-if="tab.name === currentTab" :name="tab.name" />
         </KeepAlive>
         <template v-else-if="!lazy || tab.name === currentTab">
-          <component :is="tab.component" v-bind="tab.binds" v-if="tab.component"></component>
-          <slot v-else :name="tab.name"></slot>
+          <component :is="tab.component" v-bind="tab.binds" v-if="tab.component" />
+          <slot v-else :name="tab.name" />
         </template>
       </TabPanel>
     </TabPanels>

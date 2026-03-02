@@ -1,92 +1,97 @@
 <script setup lang="ts">
-import { ApiResponseData, MessageData, MessagesRead, UserChatData } from '@/types/laravel_generated'
-import MessageController from '@/wayfinder/actions/App/Http/Controllers/MessageController.ts'
-import { echo } from '@laravel/echo-vue'
-import { vInfiniteScroll } from '@vueuse/components'
-import TextAreaInput from 'HddUiHelpers/components/inputs/TextAreaInput.vue'
-import ChatMessageSegment from 'HddUiHelpers/components/Widgets/Chat/ChatMessageSegment.vue'
-import { useLoader } from 'HddUiHelpers/composables/loader.ts'
-import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts'
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts'
-import { useDimensionsStore } from 'HddUiHelpers/stores/dimensions.ts'
-import { debounce, last, sumBy } from 'lodash-es'
-import moment from 'moment/moment'
-import { ButtonProps } from 'primevue'
-import { ComponentExposed } from 'vue-component-type-helpers'
-import notifMessageSound from '../../../assets/audios/notify-352705.mp3'
-const { t } = useI18n()
-const contactsLoader = useLoader()
-const messagesLoader = useLoader()
-const sendingMessageLoader = useLoader()
-const apiClient = useApiClient()
-const { severity = 'success', size = 'small' } = defineProps<{
-  size?: ButtonProps['size']
-  severity?: ButtonProps['severity']
-}>()
+import {
+  ApiResponseData,
+  MessageData,
+  MessagesRead,
+  UserChatData,
+} from "@/types/laravel_generated";
+import MessageController from "@/wayfinder/actions/App/Http/Controllers/MessageController.ts";
+import { echo } from "@laravel/echo-vue";
+import { vInfiniteScroll } from "@vueuse/components";
+import TextAreaInput from "HddUiHelpers/components/inputs/TextAreaInput.vue";
+import ChatMessageSegment from "HddUiHelpers/components/Widgets/Chat/ChatMessageSegment.vue";
+import { useLoader } from "HddUiHelpers/composables/loader.ts";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
+import { useDimensionsStore } from "HddUiHelpers/stores/dimensions.ts";
+import { debounce, last, sumBy } from "lodash-es";
+import moment from "moment/moment";
+import { ButtonProps } from "primevue";
+import { ComponentExposed } from "vue-component-type-helpers";
+import notifMessageSound from "../../../assets/audios/notify-352705.mp3";
+const { t } = useI18n();
+const contactsLoader = useLoader();
+const messagesLoader = useLoader();
+const sendingMessageLoader = useLoader();
+const apiClient = useApiClient();
+const { severity = "success", size = "small" } = defineProps<{
+  size?: ButtonProps["size"];
+  severity?: ButtonProps["severity"];
+}>();
 const newMessageTextRef =
-  useTemplateRef<ComponentExposed<typeof TextAreaInput>>('newMessageTextRef')
-const newMessageText = ref('')
-const messagesContainerRef = useTemplateRef<HTMLDivElement>('messagesContainerRef')
-const loadMoreDivRef = useTemplateRef<HTMLDivElement>('loadMoreDivRef')
-const isVisible = ref(false)
-const dimensions = useDimensionsStore()
-const activeContact = ref<UserChatData>()
-const contacts = ref<UserChatData[]>([])
-const authStore = useBasicAuthStore()
+  useTemplateRef<ComponentExposed<typeof TextAreaInput>>("newMessageTextRef");
+const newMessageText = ref("");
+const messagesContainerRef = useTemplateRef<HTMLDivElement>("messagesContainerRef");
+const loadMoreDivRef = useTemplateRef<HTMLDivElement>("loadMoreDivRef");
+const isVisible = ref(false);
+const dimensions = useDimensionsStore();
+const activeContact = ref<UserChatData>();
+const contacts = ref<UserChatData[]>([]);
+const authStore = useBasicAuthStore();
 
 const onlineUsers = computed(() => {
   return authStore.connectedUsers.reduce(
     (acc, user) => {
-      acc[user.name] = true
-      return acc
+      acc[user.name] = true;
+      return acc;
     },
-    {} as Record<string, boolean>
-  )
-})
+    {} as Record<string, boolean>,
+  );
+});
 function loadContacts() {
-  contactsLoader.startLoading()
+  contactsLoader.startLoading();
   apiClient
     .request<ApiResponseData<UserChatData[]>>(MessageController.contacts())
     .then((response) => {
-      contacts.value = response.data.data
+      contacts.value = response.data.data;
     })
     .catch(apiClient.toastRequestError)
-    .finally(contactsLoader.endLoading)
+    .finally(contactsLoader.endLoading);
 }
 
-const messages = ref<MessageData[]>([])
-const totalMessagesCount = ref(0)
+const messages = ref<MessageData[]>([]);
+const totalMessagesCount = ref(0);
 
 function getLastMessageToLoadFromParameters() {
-  const sentAt = last(messages.value)?.sent_at
+  const sentAt = last(messages.value)?.sent_at;
   if (!sentAt) {
-    return undefined
+    return undefined;
   }
   return {
     sent_at: sentAt,
     excluded_ids: messages.value
       .filter((e) => e.sent_at === sentAt)
       .map((i) => i.id)
-      .join(','),
-  }
+      .join(","),
+  };
 }
 
 async function loadMessages(fromLastMessage: boolean = false) {
   if (!activeContact.value) {
-    return
+    return;
   }
   if (!fromLastMessage) {
     if (!messagesLoader.isLoadedOnce) {
-      messages.value = []
-      totalMessagesCount.value = 0
+      messages.value = [];
+      totalMessagesCount.value = 0;
     } else {
       setTimeout(() => {
-        gotToEnd()
-        newMessageTextRef.value?.focus()
-      }, 1)
+        gotToEnd();
+        newMessageTextRef.value?.focus();
+      }, 1);
     }
   }
-  messagesLoader.startLoading()
+  messagesLoader.startLoading();
   return apiClient
     .request<ApiResponseData<{ messages: MessageData[]; total_count: number }>>(
       MessageController.index(
@@ -95,146 +100,146 @@ async function loadMessages(fromLastMessage: boolean = false) {
           query: {
             from_last_message: fromLastMessage ? getLastMessageToLoadFromParameters() : null,
           },
-        }
-      )
+        },
+      ),
     )
     .then((response) => {
       if (fromLastMessage) {
-        messages.value.push(...response.data.data.messages)
+        messages.value.push(...response.data.data.messages);
       } else {
-        messages.value = response.data.data.messages
-        totalMessagesCount.value = response.data.data.total_count
+        messages.value = response.data.data.messages;
+        totalMessagesCount.value = response.data.data.total_count;
         setTimeout(() => {
-          gotToEnd()
-          newMessageTextRef.value?.focus()
-        }, 1)
+          gotToEnd();
+          newMessageTextRef.value?.focus();
+        }, 1);
       }
     })
     .catch(apiClient.toastRequestError)
-    .finally(messagesLoader.endLoading)
+    .finally(messagesLoader.endLoading);
 }
 
 function onContactClick(contact: UserChatData) {
-  activeContact.value = isActiveContact(contact) ? undefined : contact
+  activeContact.value = isActiveContact(contact) ? undefined : contact;
   if (activeContact.value) {
-    loadMessages()
+    loadMessages();
   }
 }
 
 function isActiveContact(contact: UserChatData) {
-  return activeContact.value?.id === contact.id
+  return activeContact.value?.id === contact.id;
 }
 
 function onShow() {
-  loadContacts()
+  loadContacts();
   if (activeContact.value) {
-    loadMessages()
+    loadMessages();
   }
 }
 
 function onNewMessageKeyDown(event: KeyboardEvent) {
-  if (event.key === 'Escape' && newMessageText.value) {
-    newMessageText.value = ''
-    event.preventDefault()
-    event.stopPropagation()
+  if (event.key === "Escape" && newMessageText.value) {
+    newMessageText.value = "";
+    event.preventDefault();
+    event.stopPropagation();
   }
-  if (event.key === 'Enter') {
+  if (event.key === "Enter") {
     if (!event.shiftKey && newMessageText.value) {
-      sendMessage()
-      event.preventDefault()
-      event.stopPropagation()
+      sendMessage();
+      event.preventDefault();
+      event.stopPropagation();
     }
   }
 }
 
 function sendMessage() {
   if (!newMessageText.value || !activeContact.value?.id) {
-    return
+    return;
   }
-  sendingMessageLoader.startLoading()
+  sendingMessageLoader.startLoading();
   apiClient
     .request<ApiResponseData<MessageData>>(
       MessageController.store({ friend: activeContact.value.id }),
       {
         text: newMessageText.value,
-      }
+      },
     )
     .then((response) => {
-      newMessageText.value = ''
-      messages.value.unshift(response.data.data)
-      totalMessagesCount.value++
+      newMessageText.value = "";
+      messages.value.unshift(response.data.data);
+      totalMessagesCount.value++;
       setTimeout(() => {
-        gotToEnd(false)
-        newMessageTextRef.value?.focus()
-      }, 1)
+        gotToEnd(false);
+        newMessageTextRef.value?.focus();
+      }, 1);
     })
     .catch(apiClient.toastRequestError)
-    .finally(sendingMessageLoader.endLoading)
+    .finally(sendingMessageLoader.endLoading);
 }
-const isLoadingMore = ref(false)
+const isLoadingMore = ref(false);
 async function onMessagesLoadMore() {
-  isLoadingMore.value = true
-  await loadMessages(true)
-  isLoadingMore.value = false
+  isLoadingMore.value = true;
+  await loadMessages(true);
+  isLoadingMore.value = false;
 }
 const canLoadMoreMessagesCallable = () => {
-  return messages.value.length < totalMessagesCount.value
-}
+  return messages.value.length < totalMessagesCount.value;
+};
 
 const loadMoreDivRefIsVisible = useElementVisibility(loadMoreDivRef, {
   threshold: 0.9,
-})
+});
 
 function gotToEnd(toFirstUnseen = true) {
-  const element = messagesContainerRef.value
-  const firstUnseenMessage = toFirstUnseen ? element?.querySelector("[data-unread='true']") : null
+  const element = messagesContainerRef.value;
+  const firstUnseenMessage = toFirstUnseen ? element?.querySelector("[data-unread='true']") : null;
   if (element) {
     if (firstUnseenMessage) {
       firstUnseenMessage.scrollIntoView({
-        behavior: 'instant',
-        block: 'start',
-      })
+        behavior: "instant",
+        block: "start",
+      });
     } else {
       element.scrollTo({
         top: element.scrollHeight,
-        behavior: 'instant',
-      })
+        behavior: "instant",
+      });
     }
   }
 }
 
 const playNotificationSound = () => {
-  const audio = new Audio(notifMessageSound)
+  const audio = new Audio(notifMessageSound);
 
   audio.play().catch((error) => {
-    console.warn('Sound blocked by browser policy:', error)
-  })
-}
+    console.warn("Sound blocked by browser policy:", error);
+  });
+};
 
-const drawerMainRef = useTemplateRef('drawerMainRef')
-const drawerMainSize = useElementSize(drawerMainRef, undefined, { box: 'border-box' })
-const reversedMessages = computed(() => messages.value.toReversed())
+const drawerMainRef = useTemplateRef("drawerMainRef");
+const drawerMainSize = useElementSize(drawerMainRef, undefined, { box: "border-box" });
+const reversedMessages = computed(() => messages.value.toReversed());
 
 onMounted(() => {
-  loadContacts()
+  loadContacts();
   if (authStore.user) {
     echo()
-      .private('chat.' + authStore.user.id)
-      .listen('MessageSent', function (event: { message: MessageData }) {
+      .private("chat." + authStore.user.id)
+      .listen("MessageSent", function (event: { message: MessageData }) {
         if (isVisible.value === true && activeContact.value?.id === event.message.sender_id) {
-          messages.value.unshift(event.message)
-          totalMessagesCount.value++
-          setTimeout(gotToEnd, 1)
+          messages.value.unshift(event.message);
+          totalMessagesCount.value++;
+          setTimeout(gotToEnd, 1);
         } else {
-          playNotificationSound()
-          const contactIndex = contacts.value.findIndex((e) => e.id === event.message.sender_id)
+          playNotificationSound();
+          const contactIndex = contacts.value.findIndex((e) => e.id === event.message.sender_id);
           if (contactIndex > -1) {
             contacts.value[contactIndex].unread_count =
-              contacts.value[contactIndex].unread_count + 1
+              contacts.value[contactIndex].unread_count + 1;
           }
         }
       })
-      .listen('MessagesRead', function (event: MessagesRead) {
+      .listen("MessagesRead", function (event: MessagesRead) {
         if (activeContact.value?.id === event.receiverId) {
           messages.value = messages.value.map((message) => {
             if (
@@ -242,24 +247,24 @@ onMounted(() => {
               message.receiver_id === event.receiverId &&
               message.sent_at <= event.lastSeenSentAt
             ) {
-              message.read_at = event.readAt
+              message.read_at = event.readAt;
             }
-            return message
-          })
+            return message;
+          });
         }
-      })
+      });
   }
-})
+});
 onUnmounted(() => {
   if (authStore.user) {
-    echo().leave('chat.' + authStore.user?.id)
+    echo().leave("chat." + authStore.user?.id);
   }
-})
+});
 
-const newestSeenMessage = ref<MessageData>()
+const newestSeenMessage = ref<MessageData>();
 const markMessagesAsSeen = debounce(() => {
   if (!newestSeenMessage.value || !activeContact.value) {
-    return
+    return;
   }
   apiClient
     .request(
@@ -268,13 +273,13 @@ const markMessagesAsSeen = debounce(() => {
       }),
       {
         last_seen_sent_at: newestSeenMessage.value.sent_at,
-      }
+      },
     )
     .then(() => {
-      const now = moment().format('YYYY-MM-DD HH:mm:ss')
-      const seenAt = newestSeenMessage.value?.sent_at
-      newestSeenMessage.value = undefined
-      let newSeenCount = 0
+      const now = moment().format("YYYY-MM-DD HH:mm:ss");
+      const seenAt = newestSeenMessage.value?.sent_at;
+      newestSeenMessage.value = undefined;
+      let newSeenCount = 0;
       messages.value = messages.value.map((message) => {
         if (
           seenAt &&
@@ -282,27 +287,27 @@ const markMessagesAsSeen = debounce(() => {
           message.sender_id === activeContact.value?.id &&
           message.sent_at <= seenAt
         ) {
-          message.read_at = now
-          newSeenCount++
+          message.read_at = now;
+          newSeenCount++;
         }
-        return message
-      })
+        return message;
+      });
       if (activeContact.value) {
-        activeContact.value.unread_count = activeContact.value?.unread_count - newSeenCount
+        activeContact.value.unread_count = activeContact.value?.unread_count - newSeenCount;
       }
-    })
-}, 1_000)
+    });
+}, 1_000);
 function onMessageSeen(message: MessageData) {
   if (!newestSeenMessage.value) {
-    newestSeenMessage.value = message
-    markMessagesAsSeen()
+    newestSeenMessage.value = message;
+    markMessagesAsSeen();
   } else if (message.sent_at > newestSeenMessage.value.sent_at) {
-    newestSeenMessage.value = message
-    markMessagesAsSeen()
+    newestSeenMessage.value = message;
+    markMessagesAsSeen();
   }
 }
 
-const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
+const totalUnread = computed(() => sumBy(contacts.value, "unread_count"));
 </script>
 
 <template>
@@ -344,7 +349,7 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
     >
       <template #container="{ closeCallback }">
         <div class="z-1 absolute -bottom-4 end-3">
-          <i class="i-raphael:arrowdown text-zinc-400 dark:text-zinc-600"></i>
+          <i class="i-raphael:arrowdown text-zinc-400 dark:text-zinc-600" />
         </div>
         <Card
           class="!bg-minimal-gray border-1 relative m-1 h-full rounded-es-lg rounded-ss-lg border-zinc-400 dark:border-zinc-600"
@@ -359,7 +364,9 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
         >
           <template #header>
             <div class="flex items-center justify-between">
-              <div class="text-success-2 ms-4 text-xl font-bold">{{ t('Messenger') }}</div>
+              <div class="text-success-2 ms-4 text-xl font-bold">
+                {{ t("Messenger") }}
+              </div>
               <Button
                 icon="i-mdi:close"
                 class=""
@@ -376,7 +383,7 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
                 class="drawer-contrast-border-color col-span-1 flex h-full flex-col items-center overflow-y-auto border-e-0 border-zinc-500"
                 :style="{ maxHeight: drawerMainSize.height + 'px' }"
               >
-                <span class="underline-offset-5 underline">{{ t('Users') }}:</span>
+                <span class="underline-offset-5 underline">{{ t("Users") }}:</span>
                 <ProgressSpinner
                   v-if="toValue(contactsLoader.isLoading) && !toValue(contactsLoader.isLoadedOnce)"
                   class="!mt-4 !size-8"
@@ -398,7 +405,7 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
                       >
                         <i
                           class="i-fluent-diamond-16-filled text-sm text-blue-300/55 dark:text-sky-700/55"
-                        ></i>
+                        />
                       </div>
                       <div class="relative">
                         <Avatar
@@ -411,13 +418,13 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
                         <i
                           v-if="onlineUsers[contact.name]"
                           class="i-stash-circle-dot-duotone absolute -bottom-1 -end-1 text-xl text-green-600"
-                        ></i>
+                        />
                         <!--TODO: Remove false-->
                         <i
                           v-if="contact?.unread_count && contact?.unread_count > 0"
                           v-tooltip.bottom="t('There are new messages')"
                           class="i-icon-park-outline-dot animate__animated animate__flash animate__slow animate__infinite absolute -bottom-1 -start-1 text-xl text-blue-600"
-                        ></i>
+                        />
                       </div>
                       <div
                         class="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center"
@@ -439,7 +446,7 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
                   }"
                 >
                   <div v-if="!activeContact" class="font-italic text-muted block p-1">
-                    {{ t('Please select a chat') }}
+                    {{ t("Please select a chat") }}
                   </div>
                   <div v-else class="h-full">
                     <ProgressSpinner
@@ -476,7 +483,7 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
                           ref="loadMoreDivRef"
                           class="text-muted font-italic text-sm"
                         >
-                          {{ t('Is Loading') }}
+                          {{ t("Is Loading") }}
                         </div>
                       </div>
                       <div class="mt-1 flex">
@@ -493,7 +500,7 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'))
                               @keydown="onNewMessageKeyDown"
                             />
                             <label class="z-1" for="newMessageTextAreaId"
-                              >{{ t('New Message') }}:</label
+                              >{{ t("New Message") }}:</label
                             >
                           </IftaLabel>
                         </div>

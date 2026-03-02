@@ -1,13 +1,17 @@
 <script lang="ts">
-import type { AppPermission } from '@/types/laravel_generated';
-import type { MenuItem } from 'primevue/menuitem';
+import type { AppPermission } from "@/types/laravel_generated";
+import type { MenuItem } from "primevue/menuitem";
 
-export type SideTabularPanelItem = MenuItem & { name: string; permission?: AppPermission | AppPermission[],visible?:boolean };
+export type SideTabularPanelItem = MenuItem & {
+  name: string;
+  permission?: AppPermission | AppPermission[];
+  visible?: boolean;
+};
 </script>
 
 <script setup lang="ts">
-import { isBoolean, isString } from 'lodash-es';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
+import { isBoolean, isString } from "lodash-es";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -17,7 +21,7 @@ const {
   items,
   autoSelectFirst = true,
   showSelectedMenuLabel = true,
-  queryName = 'menu',
+  queryName = "menu",
 } = defineProps<{
   items: SideTabularPanelItem[];
   title?: string;
@@ -46,7 +50,7 @@ const filteredItems = computed(() => {
 });
 
 onActivated(() => {
-  if (typeof route.query[queryName] === 'string') {
+  if (typeof route.query[queryName] === "string") {
     currentMenu.value = route.query[queryName];
   } else if (currentMenu.value) {
     router.replace({ query: { ...route.query, [queryName]: currentMenu.value } });
@@ -90,7 +94,10 @@ const activeMenuItem = computed(() => {
               >
                 <i :class="item.icon" />
                 <span class="ms-2">{{ item.label }}</span>
-                <span v-if="item.shortcut" class="border-surface bg-emphasis text-muted-color ms-auto rounded border p-1 text-xs">
+                <span
+                  v-if="item.shortcut"
+                  class="border-surface bg-emphasis text-muted-color ms-auto rounded border p-1 text-xs"
+                >
                   {{ item.shortcut }}
                 </span>
               </a>
@@ -106,7 +113,7 @@ const activeMenuItem = computed(() => {
             {{ activeMenuItem.label }}:
           </div>
           <div v-else class="text-lg font-bold">
-            {{ t('Please Select from Side Menu') }}
+            {{ t("Please Select from Side Menu") }}
           </div>
           <template v-if="activeMenuItem">
             <component :is="activeMenuItem.component" />

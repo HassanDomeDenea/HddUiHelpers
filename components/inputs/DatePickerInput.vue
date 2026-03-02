@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
-import type { Moment } from 'moment'
-import moment from 'moment'
-import DatePicker from 'primevue/datepicker'
-import type { ComponentExposed } from 'vue-component-type-helpers'
-import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import type { Moment } from "moment";
+import moment from "moment";
+import DatePicker from "primevue/datepicker";
+import type { ComponentExposed } from "vue-component-type-helpers";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 const props = withDefaults(
   defineProps<
     {
-      manualInput?: boolean
-      isYearOnly?: boolean
-      withSuggestionsButtons?: boolean
-      clearable?: boolean
-      showTime?: boolean
-      dateFormat?: string
-      formatAsString?: boolean
-      stringFormat?: string
-      startingView?: 'date' | 'month' | 'year'
-      view?: string | 'date' | 'month' | 'year' | undefined
+      manualInput?: boolean;
+      isYearOnly?: boolean;
+      withSuggestionsButtons?: boolean;
+      clearable?: boolean;
+      showTime?: boolean;
+      dateFormat?: string;
+      formatAsString?: boolean;
+      stringFormat?: string;
+      startingView?: "date" | "month" | "year";
+      view?: string | "date" | "month" | "year" | undefined;
     } & BaseInputProps
   >(),
   {
@@ -26,65 +26,67 @@ const props = withDefaults(
     isYearOnly: false,
     withSuggestionsButtons: false,
     formatAsString: true,
-  }
-)
-const value = defineModel<any>('modelValue')
-const { t } = useI18n()
-const inputRef = useTemplateRef<ComponentExposed<typeof DatePicker>>('inputRef')
+  },
+);
+const value = defineModel<any>("modelValue");
+const { t } = useI18n();
+const inputRef = useTemplateRef<ComponentExposed<typeof DatePicker>>("inputRef");
 
 function focus() {
-  inputRef.value.input?.focus()
+  inputRef.value.input?.focus();
 }
 
 const localValue = computed({
   get: () => {
     if (props.isYearOnly) {
-      return value.value ? moment(value.value).format('YYYY') : null
+      return value.value ? moment(value.value).format("YYYY") : null;
     } else {
-      return value.value
+      return value.value;
     }
   },
   set: (val) => {
     if (props.isYearOnly) {
-      value.value = val ? moment(val).format('YYYY') : null
+      value.value = val ? moment(val).format("YYYY") : null;
     } else {
       if (val && props.formatAsString) {
-        value.value = moment(val).format(props.stringFormat ?? 'YYYY-MM-DD HH:mm:ss')
+        value.value = moment(val).format(props.stringFormat ?? "YYYY-MM-DD HH:mm:ss");
       } else {
-        value.value = val
+        value.value = val;
       }
     }
   },
-})
+});
 
 function onDateLocalEnterKeyDown(event: KeyboardEvent) {
   if (inputRef.value.overlayVisible) {
-    inputRef.value.overlayVisible = false
-    event.stopPropagation()
+    inputRef.value.overlayVisible = false;
+    event.stopPropagation();
   }
 }
 
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props)
+  useHddBaseInputUtils(props);
 
-const localDateFormat = computed(() => (props.isYearOnly ? 'yy' : (props.dateFormat ?? 'yy-mm-dd')))
-const localView = computed(() => (props.isYearOnly ? 'year' : props.view))
+const localDateFormat = computed(() =>
+  props.isYearOnly ? "yy" : (props.dateFormat ?? "yy-mm-dd"),
+);
+const localView = computed(() => (props.isYearOnly ? "year" : props.view));
 
 const selectDate = function (date: string | Date | Moment) {
-  localValue.value = date
+  localValue.value = date;
   if (inputRef.value.overlayVisible) {
-    inputRef.value.overlayVisible = false
+    inputRef.value.overlayVisible = false;
   }
-}
+};
 
 function onShow() {
-  if (props.startingView === 'year') {
-    inputRef.value.switchToYearView(new Event('year'))
-  } else if (props.startingView === 'month') {
-    inputRef.value.switchToMonthView(new Event('month'))
+  if (props.startingView === "year") {
+    inputRef.value.switchToYearView(new Event("year"));
+  } else if (props.startingView === "month") {
+    inputRef.value.switchToMonthView(new Event("month"));
   }
 }
-defineExpose({ focus, inputRef, ...exposed })
+defineExpose({ focus, inputRef, ...exposed });
 </script>
 
 <template>
@@ -158,7 +160,7 @@ defineExpose({ focus, inputRef, ...exposed })
         </template>
       </DatePicker>
       <div v-if="clearable && localValue" class="clear-icon-container" :class="[size]">
-        <i class="i-mdi:times clear-icon" @click.stop="localValue = null"></i>
+        <i class="i-mdi:times clear-icon" @click.stop="localValue = null" />
       </div>
     </div>
   </BaseInput>

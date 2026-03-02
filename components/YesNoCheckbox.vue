@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { isBoolean } from 'lodash-es';
-import { useId } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { isBoolean, inRange } from "lodash-es";
+import { useId } from "vue";
+import { useI18n } from "vue-i18n";
 
-const { labelPosition = 'end', uncheckedValue = 'null' } = defineProps<{
+const { labelPosition = "end", uncheckedValue = "null" } = defineProps<{
   withStatusLabel?: boolean;
   invalid?: boolean;
   name?: string;
   label?: string;
   labelClass?: string;
   statusLabelClass?: any;
-  labelPosition?: 'start' | 'end';
-  uncheckedValue?: 'null' | 'undefined';
+  labelPosition?: "start" | "end";
+  uncheckedValue?: "null" | "undefined";
   checkedLabel?: string;
   unCheckedLabel?: string;
 }>();
@@ -23,7 +23,7 @@ function onLocalValueChange() {
       value.value = false;
       break;
     case false:
-      value.value = uncheckedValue === 'null' ? null : undefined;
+      value.value = uncheckedValue === "null" ? null : undefined;
       break;
     case null:
     case undefined:
@@ -38,7 +38,12 @@ const { t } = useI18n();
 
 <template>
   <div class="flex items-center gap-2">
-    <label v-if="labelPosition === 'start'" :for="`hdd-checkbox-${id}`" class="select-none" :class="[labelClass ?? '']">
+    <label
+      v-if="labelPosition === 'start'"
+      :for="`hdd-checkbox-${id}`"
+      class="select-none"
+      :class="[labelClass ?? '']"
+    >
       {{ label }}
     </label>
     <Checkbox
@@ -49,7 +54,9 @@ const { t } = useI18n();
       :name="name"
       :invalid="invalid"
       :pt="{
-        box: (pt) => ({ class: pt.context.indeterminate ? 'text-black dark:bg-red-300 light:bg-red-400' : '' }),
+        box: (pt) => ({
+          class: pt.context.indeterminate ? 'text-black dark:bg-red-300 light:bg-red-400' : '',
+        }),
       }"
       @value-change="onLocalValueChange"
     >
@@ -60,17 +67,22 @@ const { t } = useI18n();
         </template>
       </template>
     </Checkbox>
-    <label v-if="labelPosition === 'end'" :for="`hdd-checkbox-${id}`" class="select-none" :class="[labelClass ?? '']">
+    <label
+      v-if="labelPosition === 'end'"
+      :for="`hdd-checkbox-${id}`"
+      class="select-none"
+      :class="[labelClass ?? '']"
+    >
       {{ label }}
     </label>
     <template v-if="withStatusLabel && isBoolean(value)">
       <label :for="`hdd-checkbox-${id}`" class="select-none" :class="[statusLabelClass ?? '']">
         <slot name="statusLabel" :status="value">
           <template v-if="value === true">
-            {{ checkedLabel ?? t('Yes') }}
+            {{ checkedLabel ?? t("Yes") }}
           </template>
           <template v-if="value === false">
-            {{ unCheckedLabel ?? t('No') }}
+            {{ unCheckedLabel ?? t("No") }}
           </template>
         </slot>
       </label>

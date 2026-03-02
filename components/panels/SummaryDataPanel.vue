@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import type { ButtonProps } from 'primevue'
-import ContextMenu from 'primevue/contextmenu'
-import type { MenuItem } from 'primevue/menuitem'
-import type { ComponentExposed } from 'vue-component-type-helpers'
+import type { ButtonProps } from "primevue";
+import ContextMenu from "primevue/contextmenu";
+import type { MenuItem } from "primevue/menuitem";
+import type { ComponentExposed } from "vue-component-type-helpers";
 
 export interface SummaryDataPanelItem {
-  label: string
-  value: string | number | boolean | null
-  labelClass?: any
-  type?: 'divider' | 'price' | 'formatted_number' | 'number' | 'text'
-  valueClass?: any
-  wrapperClass?: any
-  hidden?: boolean
-  noPrint?: boolean
-  appendButton?: ButtonProps & { href?: string; visible?: boolean }
-  appendContextMenu?: MenuItem[]
+  label: string;
+  value: string | number | boolean | null;
+  labelClass?: any;
+  type?: "divider" | "price" | "formatted_number" | "number" | "text";
+  valueClass?: any;
+  wrapperClass?: any;
+  hidden?: boolean;
+  noPrint?: boolean;
+  appendButton?: ButtonProps & { href?: string; visible?: boolean };
+  appendContextMenu?: MenuItem[];
 }
 
-const { labelWidth = 150, severity = 'contrast' } = defineProps<{
-  title?: string
-  labelWidth?: number | true
-  severity?: ButtonProps['severity']
-  items?: SummaryDataPanelItem[]
-  minimumAfterLabelSpace?: number
-}>()
-const itemLabelRefs = useTemplateRef<HTMLSpanElement[]>('itemLabelRefs')
-const itemContextMenusRefs = ref<Record<number, ComponentExposed<typeof ContextMenu>>>({})
+const { labelWidth = 150, severity = "contrast" } = defineProps<{
+  title?: string;
+  labelWidth?: number | true;
+  severity?: ButtonProps["severity"];
+  items?: SummaryDataPanelItem[];
+  minimumAfterLabelSpace?: number;
+}>();
+const itemLabelRefs = useTemplateRef<HTMLSpanElement[]>("itemLabelRefs");
+const itemContextMenusRefs = ref<Record<number, ComponentExposed<typeof ContextMenu>>>({});
 /*const maxLabelWidth = ref();
 watch(
     itemLabelRefs,
@@ -41,8 +41,8 @@ watch(
 
 function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIndex: number) {
   if (item.appendContextMenu) {
-    itemContextMenusRefs[itemIndex].show(event)
-    event.preventDefault()
+    itemContextMenusRefs[itemIndex].show(event);
+    event.preventDefault();
   }
 }
 </script>
@@ -69,7 +69,7 @@ function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIn
         <span ref="itemLabelRefs" :class="item.labelClass" :style="{ width: labelWidth + 'px' }"
           >{{ item.label }}:
         </span>
-        <span :class="['font-bold', item.valueClass]" v-html="item.value"></span>
+        <span :class="['font-bold', item.valueClass]" v-html="item.value" />
         <Button
           v-if="item.appendButton && item.appendButton.visible !== false"
           v-tooltip.top="item.appendButton.tooltip"
@@ -91,7 +91,7 @@ function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIn
           v-if="item.appendContextMenu"
           :ref="(el) => (itemContextMenusRefs[itemIndex] = el as any)"
           :model="item.appendContextMenu"
-        ></ContextMenu>
+        />
       </template>
     </div>
   </div>
@@ -104,7 +104,7 @@ function onItemContextMenu(event: MouseEvent, item: SummaryDataPanelItem, itemIn
       @apply inline-flex gap-2 pe-2;
       &:after {
         @apply border-b-1 mb-2 flex-grow border-dashed border-b-gray-600/40 dark:border-b-gray-400/40;
-        content: '';
+        content: "";
       }
     }
   }

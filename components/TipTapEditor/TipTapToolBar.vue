@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Editor } from '@tiptap/vue-3';
-import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
-import TipTapColorsControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapColorsControls.vue';
-import TipTapPageControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapPageControls.vue';
-import TipTapTableControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTableControls.vue';
-import TipTapTextStyleControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTextStyleControls.vue';
+import type { Editor } from "@tiptap/vue-3";
+import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
+import TipTapColorsControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapColorsControls.vue";
+import TipTapPageControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapPageControls.vue";
+import TipTapTableControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTableControls.vue";
+import TipTapTextStyleControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTextStyleControls.vue";
 const { t } = useI18n();
 const { editor } = defineProps<{
   editor: Editor;
@@ -18,14 +18,14 @@ const focusedEditor = computed(() => editor.chain().focus());
 <template>
   <div class="control-group text-center">
     <div class="button-group">
-      <slot name="start"></slot>
+      <slot name="start" />
       <TipTapTextStyleControls :editor="editor" :config="config" />
       <TipTapFontControls :editor="editor" :config="config" />
       <TipTapColorsControls :editor="editor" :config="config" />
       <TipTapListsControls :editor="editor" :config="config" />
       <TipTapTableControls :editor="editor" :config="config" />
       <TipTapPageControls :editor="editor" :config="config" />
-      <slot name="end"></slot>
+      <slot name="end" />
     </div>
   </div>
 </template>

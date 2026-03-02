@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { ServerDataTableColumn } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts'
-import { get, isBoolean } from 'lodash-es'
+import type { ServerDataTableColumn } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
+import { get, isBoolean } from "lodash-es";
 
 const { column } = defineProps<{
-  column: ServerDataTableColumn
-  renderedData: any
-  row: any
-  size?: 'small' | 'large' | string
-}>()
-const { t } = useI18n()
+  column: ServerDataTableColumn;
+  renderedData: any;
+  row: any;
+  size?: "small" | "large" | string;
+}>();
+const { t } = useI18n();
 
 const resolveRenderTypeProps = computed(() => {
-  return typeof column.renderTypeProps === 'function'
+  return typeof column.renderTypeProps === "function"
     ? column.renderTypeProps
-    : toValue(column.renderTypeProps)
-})
+    : toValue(column.renderTypeProps);
+});
 </script>
 
 <template>
@@ -56,7 +56,7 @@ const resolveRenderTypeProps = computed(() => {
         <i
           class="scale-120"
           :class="{ 'i-mdi-check': renderedData, 'i-mdi-times': !renderedData }"
-        ></i>
+        />
       </Badge>
     </div>
   </template>
@@ -67,7 +67,7 @@ const resolveRenderTypeProps = computed(() => {
         class="hdd-color-box !cursor-initial inline-block"
         :class="[{ '!size-6': size === 'small' }]"
         :style="{ backgroundColor: renderedData }"
-      ></span>
+      />
     </div>
   </template>
   <template v-else-if="column.type === 'image'">

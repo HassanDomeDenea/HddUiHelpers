@@ -3,47 +3,47 @@ import {
   cursorAtEndOfInput,
   cursorAtStartOfInput,
   useHddBaseInputUtils,
-} from 'HddUiHelpers/components/inputs/inputsUtils.ts'
-import BaseInput from './BaseInput.vue'
-import type { BaseInputSlots, TextInputProps } from './types'
+} from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputSlots, TextInputProps } from "./types";
 
 const props = withDefaults(defineProps<TextInputProps>(), {
-  type: 'text',
-  autocomplete: 'off',
-})
-const slots = defineSlots<BaseInputSlots>()
+  type: "text",
+  autocomplete: "off",
+});
+const slots = defineSlots<BaseInputSlots>();
 
 const emits = defineEmits<{
-  blur: [e: FocusEvent]
-  focus: [e: FocusEvent]
-  keydown: [e: KeyboardEvent]
-  focusPrevious: []
-  focusNext: []
-}>()
+  blur: [e: FocusEvent];
+  focus: [e: FocusEvent];
+  keydown: [e: KeyboardEvent];
+  focusPrevious: [];
+  focusNext: [];
+}>();
 
-const value = defineModel<any>('modelValue', { required: true })
-const localValue = ref(null)
+const value = defineModel<any>("modelValue", { required: true });
+const localValue = ref(null);
 
 if (props.lazy) {
   watch(
     value,
     (_value) => {
-      localValue.value = _value
+      localValue.value = _value;
     },
     {
       immediate: true,
-    }
-  )
+    },
+  );
 }
 
-const inputRef = ref()
+const inputRef = ref();
 
 function focus() {
-  inputRef.value.$el.focus()
+  inputRef.value.$el.focus();
 }
 
 function select() {
-  inputRef.value.$el.select()
+  inputRef.value.$el.select();
 }
 
 const inputTextPt = computed(() => {
@@ -53,22 +53,22 @@ const inputTextPt = computed(() => {
       type: props.type,
       name: props.name,
     },
-  }
-})
+  };
+});
 
 function onInputChange() {
   if (props.lazy) {
-    value.value = localValue.value
+    value.value = localValue.value;
   }
 }
 
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props)
+  useHddBaseInputUtils(props);
 
-const onArrowUp = () => cursorAtStartOfInput(inputRef.value.$el) && emits('focusPrevious')
-const onArrowDown = () => cursorAtEndOfInput(inputRef.value.$el) && emits('focusNext')
+const onArrowUp = () => cursorAtStartOfInput(inputRef.value.$el) && emits("focusPrevious");
+const onArrowDown = () => cursorAtEndOfInput(inputRef.value.$el) && emits("focusNext");
 
-defineExpose({ select, focus, ...exposed })
+defineExpose({ select, focus, ...exposed });
 </script>
 
 <template>

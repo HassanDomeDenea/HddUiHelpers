@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import DynamicServerFormDialog from 'HddUiHelpers/components/datatables/DynamicServerFormDialog.vue';
-import DynamicComponentMounter from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue';
-import TopProgressBar from 'HddUiHelpers/components/misc/TopProgressBar.vue';
-import DismissableConfirmDialog from 'HddUiHelpers/components/modified/DismissableConfirmDialog.vue';
-import { setPageDirection } from 'HddUiHelpers/plugins/i18n';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
-import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales.ts';
-import { usePrimeVue } from 'primevue';
-import { defaultOptions as PrimeVueDefaultOptions } from 'primevue/config';
-import { useToast } from 'primevue/usetoast';
+import DynamicServerFormDialog from "HddUiHelpers/components/datatables/DynamicServerFormDialog.vue";
+import DynamicComponentMounter from "HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue";
+import TopProgressBar from "HddUiHelpers/components/misc/TopProgressBar.vue";
+import DismissableConfirmDialog from "HddUiHelpers/components/modified/DismissableConfirmDialog.vue";
+import { setPageDirection } from "HddUiHelpers/plugins/i18n";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
+import primeVueLocales from "HddUiHelpers/utils/primeVueLocales.ts";
+import { usePrimeVue } from "primevue";
+import { defaultOptions as PrimeVueDefaultOptions } from "primevue/config";
+import { useToast } from "primevue/usetoast";
 
 /*useHead({
     title: computed(() => route.meta.title || 'HDD Clinic'),
@@ -31,7 +31,10 @@ import { useToast } from 'primevue/usetoast';
     ],
 })*/
 
-import { useApiClient } from 'HddUiHelpers/stores/apiClient';
+import { useApiClient } from "../stores/apiClient";
+import ConfirmDialogWithInput from "./ConfirmDialogWithInput/ConfirmDialogWithInput.vue";
+import { useI18n } from "vue-i18n";
+import { watch } from "vue";
 
 const { t, locale } = useI18n();
 const toast = useToast();
@@ -73,7 +76,7 @@ watch(
     <DynamicServerFormDialog />
     <DynamicDialog />
     <ConfirmDialogWithInput />
-    <ConfirmPopup group="popup"></ConfirmPopup>
+    <ConfirmPopup group="popup" />
     <DynamicComponentMounter />
     <router-view v-slot="{ Component }">
       <keep-alive>

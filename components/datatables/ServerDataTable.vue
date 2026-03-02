@@ -4,9 +4,9 @@
 import type {
   RecordItem,
   ServerDataTableColumnPayload,
-} from 'HddUiHelpers/components/FormWrapper/types.ts'
+} from "HddUiHelpers/components/FormWrapper/types.ts";
 
-import PrintPaperForServerDataTable from 'HddUiHelpers/components/datatables/PrintPaperForServerDataTable.vue'
+import PrintPaperForServerDataTable from "HddUiHelpers/components/datatables/PrintPaperForServerDataTable.vue";
 import type {
   DataTableCellEditCompleteEvent,
   DataTableFilterMeta,
@@ -21,9 +21,9 @@ import type {
   DataTableRowReorderEvent,
   DataTableSelectAllChangeEvent,
   DataTableSortMeta,
-} from 'primevue/datatable'
-import DataTable from 'primevue/datatable'
-import type { ComponentExposed } from 'vue-component-type-helpers'
+} from "primevue/datatable";
+import DataTable from "primevue/datatable";
+import type { ComponentExposed } from "vue-component-type-helpers";
 import type {
   FilterMatchModes,
   PrintPaperForServerDataTableProps,
@@ -33,33 +33,33 @@ import type {
   ServerDataTableProps,
   ServerDataTableStandardSort,
   ServerDataTableToolbarFilter,
-} from './ServerDataTableTypes.ts'
+} from "./ServerDataTableTypes.ts";
 import {
   isToolbarFilterValue,
   type ServerDataTableToolbarFilterWrapper,
   type ServerFormDialogProps,
-} from './ServerDataTableTypes.ts'
+} from "./ServerDataTableTypes.ts";
 
-import type { ApiResponseData, ReorderRequestData, ResponseData } from '@/types/laravel_generated'
-import type { GetRecordsResponseType } from 'HddUiHelpers/components/primeVueServerTable/types.ts'
-import type { AxiosError, AxiosRequestConfig } from 'axios'
-import type { VirtualScrollerProps } from 'primevue'
-import type { MenuItem } from 'primevue/menuitem'
+import type { ApiResponseData, ReorderRequestData, ResponseData } from "@/types/laravel_generated";
+import type { GetRecordsResponseType } from "HddUiHelpers/components/primeVueServerTable/types.ts";
+import type { AxiosError, AxiosRequestConfig } from "axios";
+import type { VirtualScrollerProps } from "primevue";
+import type { MenuItem } from "primevue/menuitem";
 
-import type { MaybeElement } from '@vueuse/core'
-import { useDebounceFn } from '@vueuse/core'
-import ServerFormDialog from 'HddUiHelpers/components/datatables/ServerFormDialog.vue'
-import { useServerDataTableColumnVisibility } from 'HddUiHelpers/components/datatables/visibility.ts'
-import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts'
-import { cloneDeep, find, get, isFunction, isString, map, reduce, set, unset } from 'lodash-es'
-import ContextMenu from 'primevue/contextmenu'
-import { useConfirm } from 'primevue/useconfirm'
-import { computed, onMounted, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import type { MaybeElement } from "@vueuse/core";
+import { useDebounceFn } from "@vueuse/core";
+import ServerFormDialog from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
+import { useServerDataTableColumnVisibility } from "HddUiHelpers/components/datatables/visibility.ts";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
+import { cloneDeep, find, get, isFunction, isString, map, reduce, set, unset } from "lodash-es";
+import ContextMenu from "primevue/contextmenu";
+import { useConfirm } from "primevue/useconfirm";
+import { computed, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-import AuditsPopover from 'HddUiHelpers/components/AuditsPopover/AuditsPopover.vue'
-import CellContent from 'HddUiHelpers/components/datatables/CellContent.vue'
-import InlineCellEdit from 'HddUiHelpers/components/datatables/InlineCellEdit.vue'
+import AuditsPopover from "HddUiHelpers/components/AuditsPopover/AuditsPopover.vue";
+import CellContent from "HddUiHelpers/components/datatables/CellContent.vue";
+import InlineCellEdit from "HddUiHelpers/components/datatables/InlineCellEdit.vue";
 import {
   appendToUrl,
   getColumnCanShowAddButton,
@@ -74,41 +74,41 @@ import {
   isToolbarFilterEmpty,
   localeAlignToFrozenAlign,
   snakeCasePreserveDots,
-} from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts'
-import ToolbarFilterWrapper from 'HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue'
-import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers.ts'
-import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts'
-import { printDomWithStyles } from 'HddUiHelpers/utils/printDom.ts'
-import { useFormatters } from 'HddUiHelpers/utils/useFormatters.ts'
-import { filter, isBoolean, uniqueId } from 'lodash-es'
-import moment from 'moment'
-import Button from 'primevue/button'
-import Column from 'primevue/column'
-import Popover from 'primevue/popover'
+} from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import ToolbarFilterWrapper from "HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue";
+import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers.ts";
+import { useStackableDialog } from "HddUiHelpers/stores/stackableDialogs.ts";
+import { printDomWithStyles } from "HddUiHelpers/utils/printDom.ts";
+import { useFormatters } from "HddUiHelpers/utils/useFormatters.ts";
+import { filter, isBoolean, uniqueId } from "lodash-es";
+import moment from "moment";
+import Button from "primevue/button";
+import Column from "primevue/column";
+import Popover from "primevue/popover";
 
 type ServerDataTableColumnScoped = ServerDataTableColumn<ServerDataTableColumnType, T> & {
-  field: string
-  fullFieldName: string
-  type: ServerDataTableColumnType
-}
+  field: string;
+  fullFieldName: string;
+  type: ServerDataTableColumnType;
+};
 
 const emits = defineEmits<{
-  rowClick: [row: T, index: number, original: Event]
-  rowDblClick: [row: T, index: number, original: Event]
-  rowOpen: [row: T]
-  rowEdit: [row: T]
-  multiRowsEdit: [rows: T[]]
-  rowCreated: [row: T | T[]]
-  rowUpdated: [row: T | T[]]
-  rowDeleted: [row: (string | number)[] | string | number]
-  rowExpand: [row: T]
-  rowPrint: [row: T]
-  rowCollapse: [row: T]
-  rowReorder: [event: DataTableRowReorderEvent]
-  refreshed: [res: GetRecordsResponseType]
-  rowChanged: [row: T | T[] | (string | number)[], type: 'create' | 'update' | 'delete']
-  dialogsVisibility: [status: boolean]
-}>()
+  rowClick: [row: T, index: number, original: Event];
+  rowDblClick: [row: T, index: number, original: Event];
+  rowOpen: [row: T];
+  rowEdit: [row: T];
+  multiRowsEdit: [rows: T[]];
+  rowCreated: [row: T | T[]];
+  rowUpdated: [row: T | T[]];
+  rowDeleted: [row: (string | number)[] | string | number];
+  rowExpand: [row: T];
+  rowPrint: [row: T];
+  rowCollapse: [row: T];
+  rowReorder: [event: DataTableRowReorderEvent];
+  refreshed: [res: GetRecordsResponseType];
+  rowChanged: [row: T | T[] | (string | number)[], type: "create" | "update" | "delete"];
+  dialogsVisibility: [status: boolean];
+}>();
 
 const {
   dataProvider,
@@ -124,25 +124,25 @@ const {
   fixedToolbarFilters = [],
   initialToolbarFilters = [],
   hasPagination = true,
-  primaryKey = 'id' as keyof T,
-  scrollHeight = 'flex',
+  primaryKey = "id" as keyof T,
+  scrollHeight = "flex",
   scrollable,
 
-  initialSortDirection = 'asc',
+  initialSortDirection = "asc",
   initialSortField,
   initialSorts,
   fixedFilters,
   refreshOnMount = true,
   refreshOnActivated = false,
-  defaultDateMatchMode = 'dateBetween',
-  defaultNumericMatchMode = 'equals',
-  defaultMatchMode = 'contains',
-  defaultFiltersOperator = 'and',
+  defaultDateMatchMode = "dateBetween",
+  defaultNumericMatchMode = "equals",
+  defaultMatchMode = "contains",
+  defaultFiltersOperator = "and",
   defaultShowFilterMatchModes = true,
   defaultColumnMultipleFilters = true,
   defaultColumnShowFilterAddButton = true,
   defaultColumnShowFilterClearButton = true,
-  selectionMode = 'multiple',
+  selectionMode = "multiple",
   hasGlobalFilter = true,
   hasRefreshButton = true,
   url,
@@ -184,7 +184,7 @@ const {
   firstPageHeaderImageUrl,
   headerImageUrl,
   footerImageUrl,
-  orderableColumnName = 'order_sequence' as keyof T,
+  orderableColumnName = "order_sequence" as keyof T,
   oneExpansionAtATime = false,
   hasExpanderColumn = true,
   withExpansion = false,
@@ -211,463 +211,465 @@ const {
   noMultiSortBadges,
   rounded = true,
   columnVisibilityButton = undefined,
-  tableSeverity = 'info',
-  inlineEditMode = 'none',
-  rowGroupMode = 'subheader',
+  tableSeverity = "info",
+  inlineEditMode = "none",
+  rowGroupMode = "subheader",
   onlyRequestedColumns = undefined,
   transformResponseData,
-} = defineProps<ServerDataTableProps<T>>()
+} = defineProps<ServerDataTableProps<T>>();
 
 const tableName = computed(
-  () => 'HddServerDataTable_' + (name ?? (typeof url === 'object' ? url.url : url))
-)
+  () => "HddServerDataTable_" + (name ?? (typeof url === "object" ? url.url : url)),
+);
 
-const hddUiHelpers = useHddUiHelpers()
+const hddUiHelpers = useHddUiHelpers();
 
-const globalConfig = computed(() => hddUiHelpers.commonServerDataTableProps ?? {})
+const globalConfig = computed(() => hddUiHelpers.commonServerDataTableProps ?? {});
 
-const computedSize = computed(() => size ?? globalConfig.value.size)
+const computedSize = computed(() => size ?? globalConfig.value.size);
 const computedOnlyRequestedColumns = computed(() =>
   isBoolean(onlyRequestedColumns)
     ? onlyRequestedColumns
     : isBoolean(globalConfig.value.onlyRequestedColumns)
       ? globalConfig.value.onlyRequestedColumns
-      : true
-)
+      : true,
+);
 const computedExtraGetDataPayload = computed(
-  () => extraGetDataPayload ?? globalConfig.value.extraGetDataPayload ?? {}
-)
+  () => extraGetDataPayload ?? globalConfig.value.extraGetDataPayload ?? {},
+);
 const computedNoMultiSortBadges = computed(
-  () => noMultiSortBadges ?? globalConfig.value.noMultiSortBadges ?? false
-)
+  () => noMultiSortBadges ?? globalConfig.value.noMultiSortBadges ?? false,
+);
 const computedColumnVisibilityButton = computed(
-  () => columnVisibilityButton ?? globalConfig.value.columnVisibilityButton
-)
+  () => columnVisibilityButton ?? globalConfig.value.columnVisibilityButton,
+);
 const computedWithToolbarFilters = computed(
-  () => withToolbarFilters ?? globalConfig.value.withToolbarFilters
-)
+  () => withToolbarFilters ?? globalConfig.value.withToolbarFilters,
+);
 const computedFilterDisplayLayout = computed(
-  () => filterDisplayLayout ?? globalConfig.value.filterDisplayLayout ?? 'menu'
-)
-const computedSortMode = computed(() => sortMode ?? globalConfig.value.sortMode ?? 'multiple')
+  () => filterDisplayLayout ?? globalConfig.value.filterDisplayLayout ?? "menu",
+);
+const computedSortMode = computed(() => sortMode ?? globalConfig.value.sortMode ?? "multiple");
 
 onActivated(() => {
   if (refreshOnActivated) {
-    veryFastLazyRefresh()
+    veryFastLazyRefresh();
   }
-})
+});
 
 // const primevue = usePrimeVue()
 onMounted(() => {
   if (refreshOnMount) {
-    veryFastLazyRefresh()
+    veryFastLazyRefresh();
   }
-})
+});
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const records = ref<T[]>(initialRecords || []) as Ref<T[]>
-const totalRecords = ref(initialTotalRecords)
-const totalWithoutFilters = ref(0)
-const from = ref(0)
-const to = ref(0)
-const selectedRecords = ref<T[]>([]) as Ref<T[]>
-const selectedRecord = ref<T>()
+const records = ref<T[]>(initialRecords || []) as Ref<T[]>;
+const totalRecords = ref(initialTotalRecords);
+const totalWithoutFilters = ref(0);
+const from = ref(0);
+const to = ref(0);
+const selectedRecords = ref<T[]>([]) as Ref<T[]>;
+const selectedRecord = ref<T>();
 const selectedRecordOrRecords = computed({
   get() {
-    if (selectionMode === 'multiple') return selectedRecords.value
-    return selectedRecord.value
+    if (selectionMode === "multiple") return selectedRecords.value;
+    return selectedRecord.value;
   },
   set(val) {
-    if (selectionMode === 'multiple') selectedRecords.value = val as T[]
-    else selectedRecord.value = val as T
+    if (selectionMode === "multiple") selectedRecords.value = val as T[];
+    else selectedRecord.value = val as T;
   },
-})
-const expandedRecords = ref<{ [n in string]: boolean }>({})
+});
+const expandedRecords = ref<{ [n in string]: boolean }>({});
 
-const contextMenuSelectedRecord = ref<T>()
-const perPage = defineModel<number>('perPage', { default: 25 })
-const firstRowIndex = defineModel<number>('firstRowIndex', { default: 0 })
-const currentPage = defineModel<number>('currentPage', { default: 1 })
-const extraData = defineModel<unknown>('extraData')
-const isLoading = ref(false)
-const isAllSelected = ref(false)
+const contextMenuSelectedRecord = ref<T>();
+const perPage = defineModel<number>("perPage", { default: 25 });
+const firstRowIndex = defineModel<number>("firstRowIndex", { default: 0 });
+const currentPage = defineModel<number>("currentPage", { default: 1 });
+const extraData = defineModel<unknown>("extraData");
+const isLoading = ref(false);
+const isAllSelected = ref(false);
 
 // Providers
 
-const formatters = useFormatters()
-const apiClient = useApiClient()
-const confirm = useConfirm()
+const formatters = useFormatters();
+const apiClient = useApiClient();
+const confirm = useConfirm();
 
 // Template Refs
-const wrapperRef = useTemplateRef<HTMLDivElement>('wrapperRef')
-const headerSegmentRef = useTemplateRef<MaybeElement>('headerSegmentRef')
-const datatableRef = useTemplateRef<MaybeElement>('datatableRef')
+const wrapperRef = useTemplateRef<HTMLDivElement>("wrapperRef");
+const headerSegmentRef = useTemplateRef<MaybeElement>("headerSegmentRef");
+const datatableRef = useTemplateRef<MaybeElement>("datatableRef");
 
 // Columns
 
 const mappedColumns = computed(() => {
-  let toRenderColumnsList: (string | ServerDataTableColumn<ServerDataTableColumnType, T>)[]
+  let toRenderColumnsList: (string | ServerDataTableColumn<ServerDataTableColumnType, T>)[];
   if (Array.isArray(columns)) {
-    toRenderColumnsList = columns
+    toRenderColumnsList = columns;
   } else {
     toRenderColumnsList =
-      columns === '*' && records.value?.length ? Object.keys(records.value[0]) : [columns]
+      columns === "*" && records.value?.length ? Object.keys(records.value[0]) : [columns];
   }
   return toRenderColumnsList.map((column) => {
-    if (typeof column === 'string') {
-      return { name: column, field: column, label: column, fullFieldName: column }
+    if (typeof column === "string") {
+      return { name: column, field: column, label: column, fullFieldName: column };
     }
     if (!column.field) {
-      column.field = column.name as string
+      column.field = column.name as string;
     }
     if (column.relation) {
-      column.relation = snakeCasePreserveDots(column.relation)
-      column.fullFieldName = column.relation + '.' + column.field
+      column.relation = snakeCasePreserveDots(column.relation);
+      column.fullFieldName = column.relation + "." + column.field;
     } else {
-      column.fullFieldName = column.field
+      column.fullFieldName = column.field;
     }
-    if ((!column.type || column.type === 'select') && column.selectOptions !== undefined) {
-      column.type = 'select'
+    if ((!column.type || column.type === "select") && column.selectOptions !== undefined) {
+      column.type = "select";
       if (column.renderTypeProps && !column.renderType) {
-        column.renderType = 'tag'
+        column.renderType = "tag";
       }
     }
     if (true === column.hiddenButCanBeVisible) {
-      column.visibilityControl = true
-      column.visible = false
+      column.visibilityControl = true;
+      column.visible = false;
     }
-    if (column.type === 'date') {
+    if (column.type === "date") {
       if (column.dateFormat) {
-        if (column.dateFormat === 'date') {
-          column.dateFormat = 'YYYY-MM-DD'
-        } else if (column.dateFormat === 'datetime') {
-          column.dateFormat = 'YYYY-MM-DD hh:mmA'
+        if (column.dateFormat === "date") {
+          column.dateFormat = "YYYY-MM-DD";
+        } else if (column.dateFormat === "datetime") {
+          column.dateFormat = "YYYY-MM-DD hh:mmA";
         }
       } else {
-        column.dateFormat = 'YYYY-MM-DD'
+        column.dateFormat = "YYYY-MM-DD";
       }
     }
     if (!column.type) {
-      column.type = 'text'
+      column.type = "text";
     }
-    return column
-  }) as ServerDataTableColumnScoped[]
-})
+    return column;
+  }) as ServerDataTableColumnScoped[];
+});
 
 const filterableColumns = computed(() => {
-  return mappedColumns.value.filter((column) => column.filterable ?? defaultColumnFilterable.value)
-})
+  return mappedColumns.value.filter((column) => column.filterable ?? defaultColumnFilterable.value);
+});
 
 const mappedColumnsListToObject = computed(() => {
-  const obj: { [k1 in string]: { [k2 in string]: string } } = {}
+  const obj: { [k1 in string]: { [k2 in string]: string } } = {};
   mappedColumns.value.forEach((column) => {
-    const name = column.fullFieldName as string
-    if (column.type === 'select') {
+    const name = column.fullFieldName as string;
+    if (column.type === "select") {
       if (column.selectOptionsKeyed) {
-        obj[name] = column.selectOptionsKeyed
+        obj[name] = column.selectOptionsKeyed;
       } else if (column.selectOptions) {
         if (!Array.isArray(column.selectOptions)) {
-          obj[name] = column.selectOptions.object
+          obj[name] = column.selectOptions.object;
         } else {
           obj[name] = column.selectOptions.reduce(
             (carry: { [k2 in string]: string }, currentValue) => {
-              carry[currentValue[(column.selectValueProperty ?? 'id') as 'id'] as string] =
-                currentValue[(column.selectLabelProperty ?? 'name') as 'name'] as string
-              return carry
+              carry[currentValue[(column.selectValueProperty ?? "id") as "id"] as string] =
+                currentValue[(column.selectLabelProperty ?? "name") as "name"] as string;
+              return carry;
             },
-            {}
-          )
+            {},
+          );
         }
       }
     }
-  })
-  return obj
-})
+  });
+  return obj;
+});
 
 function getColumnBody(
   rowData: T,
-  column: ServerDataTableColumn<ServerDataTableColumnType, T>
+  column: ServerDataTableColumn<ServerDataTableColumnType, T>,
 ): string | string[] {
   const _showable =
-    typeof column.showable === 'function' ? column.showable : toValue(column.showable)
-  if (typeof _showable === 'function' || isBoolean(_showable)) {
-    const showableValue = typeof _showable === 'function' ? _showable({ row: rowData }) : _showable
+    typeof column.showable === "function" ? column.showable : toValue(column.showable);
+  if (typeof _showable === "function" || isBoolean(_showable)) {
+    const showableValue = typeof _showable === "function" ? _showable({ row: rowData }) : _showable;
     if (showableValue === false) {
-      return `<span class="italic text-muted">--</span>`
+      return `<span class="italic text-muted">--</span>`;
     } else if (showableValue !== true) {
-      return showableValue
+      return showableValue;
     }
   }
-  let fieldName = column.fullFieldName as string
-  if (typeof column.formatter === 'string') {
-    fieldName = column.formatter
+  let fieldName = column.fullFieldName as string;
+  if (typeof column.formatter === "string") {
+    fieldName = column.formatter;
   }
-  const value = get(rowData, fieldName)
-  if (typeof column.formatter === 'function') {
-    return column.formatter(value, rowData, fieldName)
+  const value = get(rowData, fieldName);
+  if (typeof column.formatter === "function") {
+    return column.formatter(value, rowData, fieldName);
   }
-  if (column.type === 'select') {
-    let result: unknown
+  if (column.type === "select") {
+    let result: unknown;
     if (column.isMultiSelect) {
-      result = value.map((i: string) => mappedColumnsListToObject.value[fieldName]?.[i] || i)
+      result = value.map((i: string) => mappedColumnsListToObject.value[fieldName]?.[i] || i);
     } else {
-      result = mappedColumnsListToObject.value[fieldName]?.[value] || value
+      result = mappedColumnsListToObject.value[fieldName]?.[value] || value;
     }
     if (!result && column.emptyValuePlaceholder) {
-      result = `<span class="italic text-muted">${column.emptyValuePlaceholder}</span>`
+      result = `<span class="italic text-muted">${column.emptyValuePlaceholder}</span>`;
     }
-    return result as string | string[]
+    return result as string | string[];
   }
-  if (column.type === 'price') {
+  if (column.type === "price") {
     return formatters.formatPrice(
       value,
-      typeof column.currency === 'string'
+      typeof column.currency === "string"
         ? column.currency
         : column.currency
           ? (rowData as T & { currency: string })
-          : undefined
-    )
+          : undefined,
+    );
   }
-  if (column.type === 'date' && column.dateFormat) {
-    return value ? moment(value).format(column.dateFormat) : ''
+  if (column.type === "date" && column.dateFormat) {
+    return value ? moment(value).format(column.dateFormat) : "";
   }
-  if (column.type === 'boolean') {
-    if (column.renderType === 'yesNoIconBadge') return value
-    let result = value === true ? t('Yes') : value === false ? t('No') : ''
+  if (column.type === "boolean") {
+    if (column.renderType === "yesNoIconBadge") return value;
+    let result = value === true ? t("Yes") : value === false ? t("No") : "";
     if (!result) {
-      result = `<span class="italic text-muted">${column.emptyValuePlaceholder ?? 'null'}</span>`
+      result = `<span class="italic text-muted">${column.emptyValuePlaceholder ?? "null"}</span>`;
     }
-    return result
+    return result;
   }
 
-  return value
+  return value;
 }
 
 // Selections:
 
 function recheckIfAllIsSelected() {
   isAllSelected.value =
-    selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0
+    selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
 }
 
 function onSelectAllRecordsButtonClick() {
   if (!isAllSelected.value) {
-    selectedRecords.value = records.value
-    isAllSelected.value = selectedRecords.value.length !== 0
+    selectedRecords.value = records.value;
+    isAllSelected.value = selectedRecords.value.length !== 0;
   } else {
-    selectedRecords.value = []
-    isAllSelected.value = false
+    selectedRecords.value = [];
+    isAllSelected.value = false;
   }
 }
 
 function onSelectAllChange(event: DataTableSelectAllChangeEvent) {
   if (records.value?.length === 0) {
-    isAllSelected.value = false
-    selectedRecords.value = []
+    isAllSelected.value = false;
+    selectedRecords.value = [];
   }
-  isAllSelected.value = event.checked
+  isAllSelected.value = event.checked;
 
-  if (isAllSelected.value) selectedRecords.value = records.value
-  else selectedRecords.value = []
+  if (isAllSelected.value) selectedRecords.value = records.value;
+  else selectedRecords.value = [];
 }
 
 function onRowSelect() {
   // Params: (event: DataTableRowSelectEvent)
   isAllSelected.value =
-    selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0
+    selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
 }
 
 function onRowUnselect() {
   //Params: (event: DataTableRowUnselectEvent)
-  isAllSelected.value = false
+  isAllSelected.value = false;
 }
 
 function onRowSelectAll() {
   // Params: (event: DataTableRowSelectAllEvent)
-  selectedRecords.value = records.value
-  isAllSelected.value = selectedRecords.value.length !== 0
+  selectedRecords.value = records.value;
+  isAllSelected.value = selectedRecords.value.length !== 0;
 }
 
 function onRowUnselectAll() {
   // Params: (event: DataTableRowUnselectAllEvent)
-  selectedRecords.value = []
-  isAllSelected.value = false
+  selectedRecords.value = [];
+  isAllSelected.value = false;
 }
 
 function isSelectedRow(row: T): boolean {
-  return selectedRecords.value.some((e) => e[primaryKey] === row[primaryKey])
+  return selectedRecords.value.some((e) => e[primaryKey] === row[primaryKey]);
 }
 
 function toggleRowSelection(row: T) {
-  if (selectionMode === 'single') {
-    selectedRecord.value = selectedRecord.value === row ? undefined : row
+  if (selectionMode === "single") {
+    selectedRecord.value = selectedRecord.value === row ? undefined : row;
   } else {
     if (isSelectedRow(row)) {
-      selectedRecords.value = selectedRecords.value.filter((e) => e[primaryKey] !== row[primaryKey])
+      selectedRecords.value = selectedRecords.value.filter(
+        (e) => e[primaryKey] !== row[primaryKey],
+      );
     } else {
-      selectedRecords.value = [...selectedRecords.value, row]
+      selectedRecords.value = [...selectedRecords.value, row];
     }
     isAllSelected.value =
-      selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0
+      selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
   }
 }
 
 // Sorting
 
-function sortDirectionToOrder(direction?: 'asc' | 'desc'): 1 | -1 | undefined {
-  return direction === 'asc' ? 1 : direction === 'desc' ? -1 : undefined
+function sortDirectionToOrder(direction?: "asc" | "desc"): 1 | -1 | undefined {
+  return direction === "asc" ? 1 : direction === "desc" ? -1 : undefined;
 }
 
 const globalSortable = computed(() => {
-  return hasSorts ?? true
-})
+  return hasSorts ?? true;
+});
 const multiSorts = ref<DataTableSortMeta[] | undefined>(
   initialSorts?.map((e) => ({
     field: e.field,
     order: sortDirectionToOrder(e.direction),
-  }))
-)
-const sortField = ref(initialSortField)
-const sortOrder = ref<-1 | 1 | undefined>(sortDirectionToOrder(initialSortDirection))
+  })),
+);
+const sortField = ref(initialSortField);
+const sortOrder = ref<-1 | 1 | undefined>(sortDirectionToOrder(initialSortDirection));
 
 const mappedSorts = computed<ServerDataTableStandardSort[]>(() => {
-  if (computedSortMode.value === 'single' && sortField.value) {
-    return [{ field: sortField.value, direction: sortOrder.value === -1 ? 'desc' : 'asc' }]
-  } else if (computedSortMode.value === 'multiple' && multiSorts.value?.length) {
+  if (computedSortMode.value === "single" && sortField.value) {
+    return [{ field: sortField.value, direction: sortOrder.value === -1 ? "desc" : "asc" }];
+  } else if (computedSortMode.value === "multiple" && multiSorts.value?.length) {
     return multiSorts.value.map(
       (item: DataTableSortMeta) =>
         ({
           field: item.field,
-          direction: item.order === -1 ? 'desc' : 'asc',
-        }) as ServerDataTableStandardSort
-    )
+          direction: item.order === -1 ? "desc" : "asc",
+        }) as ServerDataTableStandardSort,
+    );
   }
 
-  return []
-})
+  return [];
+});
 
 async function onSort() {
-  await refresh()
-  recheckIfAllIsSelected()
+  await refresh();
+  recheckIfAllIsSelected();
 }
 
 // Filters
 
 const columnFilterMatchModeOptions = computed(() => {
-  return getFilterMatchModesByTypeOptions(t)
-})
+  return getFilterMatchModesByTypeOptions(t);
+});
 
 const filters = ref<DataTableFilterMeta & { _global: DataTableFilterMetaData }>(
   {} as DataTableFilterMeta & {
-    _global: DataTableFilterMetaData
-  }
-)
+    _global: DataTableFilterMetaData;
+  },
+);
 
 const globalFilterValue = computed({
   get() {
-    return filters.value._global?.value
+    return filters.value._global?.value;
   },
   set(value) {
-    set(filters.value, '_global.value', value)
+    set(filters.value, "_global.value", value);
   },
-})
-const defaultColumnFilterable = ref(true)
+});
+const defaultColumnFilterable = ref(true);
 
 function isMultipleFilterType(value: unknown): value is DataTableOperatorFilterMetaData {
-  return (value as DataTableOperatorFilterMetaData)?.operator !== undefined
+  return (value as DataTableOperatorFilterMetaData)?.operator !== undefined;
 }
 
 const hasFilters = computed(() => {
-  if (hasToolbarFilterValues.value) return true
+  if (hasToolbarFilterValues.value) return true;
   for (const key in filters.value) {
     if (fixedFilters?.[key]) {
-      continue
+      continue;
     }
-    const filter = filters.value[key]
+    const filter = filters.value[key];
 
     if (isMultipleFilterType(filter)) {
-      const index = filter.constraints?.findIndex((x) => x.value !== null && x.value !== '')
-      if (index > -1) return true
-    } else if (typeof filter === 'string') {
-      return filters.value[key] !== null && filters.value[key] !== ''
+      const index = filter.constraints?.findIndex((x) => x.value !== null && x.value !== "");
+      if (index > -1) return true;
+    } else if (typeof filter === "string") {
+      return filters.value[key] !== null && filters.value[key] !== "";
     } else {
-      if (filter?.value !== null && filter?.value !== '') return true
+      if (filter?.value !== null && filter?.value !== "") return true;
     }
   }
-  return false
-})
+  return false;
+});
 const hasFilledGlobalFilter = computed(() => {
-  const filter = filters.value['_global']
+  const filter = filters.value["_global"];
   if (!filter) {
-    return false
+    return false;
   }
   if (isMultipleFilterType(filter)) {
-    const index = filter.constraints?.findIndex((x) => x.value !== null && x.value !== '')
-    if (index > -1) return true
+    const index = filter.constraints?.findIndex((x) => x.value !== null && x.value !== "");
+    if (index > -1) return true;
   } else {
-    if (filter?.value !== null && filter?.value !== '') return true
+    if (filter?.value !== null && filter?.value !== "") return true;
   }
-  return false
-})
+  return false;
+});
 
 function clearFilters() {
-  clearToolbarFilters(false)
-  createFilters()
-  refresh()
+  clearToolbarFilters(false);
+  createFilters();
+  refresh();
 }
 
 function getDefaultMatchModeForColumnType(columnType?: ServerDataTableColumnType) {
-  let matchMode: FilterMatchModes
+  let matchMode: FilterMatchModes;
   switch (columnType) {
-    case 'date':
-      matchMode = defaultDateMatchMode
-      break
-    case 'price':
-    case 'numeric':
-      matchMode = defaultNumericMatchMode
-      break
-    case 'boolean':
-      matchMode = 'equals'
+    case "date":
+      matchMode = defaultDateMatchMode;
+      break;
+    case "price":
+    case "numeric":
+      matchMode = defaultNumericMatchMode;
+      break;
+    case "boolean":
+      matchMode = "equals";
 
-      break
+      break;
     default:
-      matchMode = defaultMatchMode
+      matchMode = defaultMatchMode;
   }
-  return matchMode
+  return matchMode;
 }
 
 function clearFilterFor(columnName: string | ServerDataTableColumn): void {
   const column =
-    typeof columnName === 'object'
+    typeof columnName === "object"
       ? columnName
-      : mappedColumns.value.find((e) => (e.filterField ?? e.field ?? e.name) === columnName)
+      : mappedColumns.value.find((e) => (e.filterField ?? e.field ?? e.name) === columnName);
   if (column) {
     filters.value[(column.filterField ?? column.fullFieldName) as string] =
-      createFilterForColumn(column)
+      createFilterForColumn(column);
   }
 }
 
 function createFilterForColumn(
-  column: ServerDataTableColumn<ServerDataTableColumnType, T>
+  column: ServerDataTableColumn<ServerDataTableColumnType, T>,
 ): DataTableFilterMetaData | DataTableOperatorFilterMetaData {
-  let matchMode: FilterMatchModes
+  let matchMode: FilterMatchModes;
   if (column.initialFilterMatchMode) {
-    matchMode = column.initialFilterMatchMode
+    matchMode = column.initialFilterMatchMode;
   } else {
-    matchMode = getDefaultMatchModeForColumnType(column.type)
+    matchMode = getDefaultMatchModeForColumnType(column.type);
   }
-  const temporaryFalse = false
+  const temporaryFalse = false;
   if (column.multipleFilters === false && temporaryFalse) {
     return {
       value: null,
       matchMode,
-    }
+    };
   } else {
     return {
-      operator: 'and',
+      operator: "and",
       constraints: [{ value: null, matchMode }],
-    }
+    };
   }
 }
 
@@ -675,86 +677,86 @@ function createFilters() {
   filters.value = reduce(
     mappedColumns.value,
     (carry: DataTableFilterMeta & { _global: DataTableFilterMetaData }, column) => {
-      carry[column.filterField ?? column.fullFieldName] = createFilterForColumn(column)
-      return carry
+      carry[column.filterField ?? column.fullFieldName] = createFilterForColumn(column);
+      return carry;
     },
     {
       _global: {
-        value: '',
-        matchMode: 'contains',
+        value: "",
+        matchMode: "contains",
       },
-    }
-  )
+    },
+  );
 }
 
 watch(
-  () => mappedColumns.value.map((e) => e.filterField ?? e.name ?? e.field).join(','),
+  () => mappedColumns.value.map((e) => e.filterField ?? e.name ?? e.field).join(","),
   (val, oldValue) => {
     if (val !== oldValue) {
-      createFilters()
+      createFilters();
     }
   },
   {
     immediate: true,
     deep: true,
-  }
-)
+  },
+);
 
 const filtersListOfPrimeVueColumnFilters = computed<ServerDataTableToolbarFilter>(() => {
   const list: ServerDataTableToolbarFilter = {
     operator: defaultFiltersOperator,
     fields: [],
-  }
+  };
   for (const fieldName in filters.value) {
-    const filter = filters.value[fieldName]
-    if (typeof filter === 'string') {
+    const filter = filters.value[fieldName];
+    if (typeof filter === "string") {
       list.fields.push({
         field: fieldName,
         value: filter,
         matchMode: defaultMatchMode,
-      })
+      });
     } else if (isMultipleFilterType(filter)) {
       list.fields.push({
-        operator: filter.operator as 'and' | 'or',
+        operator: filter.operator as "and" | "or",
         fields: filter.constraints.map((constraint) => {
           return {
             field: fieldName,
             value: constraint.value,
             matchMode: constraint.matchMode,
-          }
+          };
         }),
-      })
+      });
     } else {
       list.fields.push({
         field: fieldName,
         value: filter.value,
         matchMode: filter.matchMode,
-      })
+      });
     }
   }
-  return list
-})
+  return list;
+});
 
 async function onFilter() {
-  await refresh()
+  await refresh();
 }
 
 // Toolbar Filters:
 // TODO: Finish It
 const toolbarFiltersPopoverRef = useTemplateRef<ComponentExposed<typeof Popover>>(
-  'toolbarFiltersPopoverRef'
-)
+  "toolbarFiltersPopoverRef",
+);
 const toolbarFiltersWrapperRef = useTemplateRef<ComponentExposed<typeof ToolbarFilterWrapper>>(
-  'toolbarFiltersWrapperRef'
-)
+  "toolbarFiltersWrapperRef",
+);
 const toolbarFilterableColumns = computed(() => {
-  return filterableColumns.value
-})
+  return filterableColumns.value;
+});
 const filledToolbarColumnNames = computed(() => {
   return toolbarFilters.value.fields
     .filter((e) => isToolbarFilterValue(e))
-    .map((filter) => filter.field)
-})
+    .map((filter) => filter.field);
+});
 
 /*
 function makeToolbarFiltersFixed(_filters: ServerDataTableToolbarFilter[]) {
@@ -777,19 +779,19 @@ function makeToolbarFiltersFixed(_filters: ServerDataTableToolbarFilter[]) {
 */
 
 function addMissingIds<TFilters extends ServerDataTableToolbarFilter>(
-  _filters: TFilters
+  _filters: TFilters,
 ): TFilters {
   if (isToolbarFilterValue(_filters)) {
     if (!_filters.id) {
-      _filters.id = uniqueId('toolbar-filter-')
+      _filters.id = uniqueId("toolbar-filter-");
     }
-    return _filters
+    return _filters;
   } else {
     if (!_filters.id) {
-      _filters.id = uniqueId('toolbar-filter-')
+      _filters.id = uniqueId("toolbar-filter-");
     }
-    _filters.fields = _filters.fields.map(addMissingIds)
-    return _filters
+    _filters.fields = _filters.fields.map(addMissingIds);
+    return _filters;
   }
 }
 
@@ -797,54 +799,54 @@ const toolbarFilters = ref<ServerDataTableToolbarFilterWrapper>(
   addMissingIds({
     operator: defaultFiltersOperator,
     fields: [...cloneDeep(initialToolbarFilters)],
-  })
-)
+  }),
+);
 
 function addToolbarFilter(column: ServerDataTableColumnScoped) {
   toolbarFilters.value.fields.push({
-    id: uniqueId('toolbar-filter-'),
+    id: uniqueId("toolbar-filter-"),
     field: column.filterField ?? column.fullFieldName,
     value: null,
     matchMode: getDefaultMatchModeForColumnType(column.type),
-  })
-  toolbarFiltersPopoverRef.value?.hide()
+  });
+  toolbarFiltersPopoverRef.value?.hide();
   nextTick(() => {
     setTimeout(() => {
-      toolbarFiltersWrapperRef.value?.focusLast()
-    }, 50)
-  })
+      toolbarFiltersWrapperRef.value?.focusLast();
+    }, 50);
+  });
 }
 
 const hasToolbarFilterValues = computed(() => {
-  return !isToolbarFilterEmpty(toolbarFilters.value)
-})
+  return !isToolbarFilterEmpty(toolbarFilters.value);
+});
 const hasToolbarFilterItems = computed(() => {
-  return toolbarFilters.value.fields.length > 0
-})
+  return toolbarFilters.value.fields.length > 0;
+});
 
 function clearToolbarFilters(withRefresh = true) {
   toolbarFilters.value = addMissingIds({
     operator: defaultFiltersOperator,
     fields: [],
-  })
-  if (withRefresh) refresh()
+  });
+  if (withRefresh) refresh();
 }
 
 function onToolbarFiltersChange() {
-  fastLazyRefresh()
+  fastLazyRefresh();
 }
 
 // Pagination
 
 async function onPageChange(event: DataTablePageEvent) {
-  currentPage.value = event.page + 1
-  await refresh()
-  recheckIfAllIsSelected()
+  currentPage.value = event.page + 1;
+  await refresh();
+  recheckIfAllIsSelected();
 }
 
 async function onRowsPerPageChanged() {
-  currentPage.value = 1
-  await refresh()
+  currentPage.value = 1;
+  await refresh();
 }
 
 // Function to convert the ServerDataTableDataProviderEvent into JSON API format
@@ -854,23 +856,23 @@ const globalFilterNames = computed(
     globalFilterFields ??
     map(
       filter(mappedColumns.value, (i) => i.globalFilter !== false),
-      (column) => column.filterField ?? column.fullFieldName
-    )
-)
+      (column) => column.filterField ?? column.fullFieldName,
+    ),
+);
 
 const rowsPerPageOptions = computed(() => {
-  const options = [5, 10, 15, 25, 50, 100, 500, 1000]
-  if (!options.includes(perPage.value) && perPage.value !== -1) options.push(perPage.value)
+  const options = [5, 10, 15, 25, 50, 100, 500, 1000];
+  if (!options.includes(perPage.value) && perPage.value !== -1) options.push(perPage.value);
 
-  return [...options.map((i: number) => ({ value: i, label: i })), { value: -1, label: t('All') }]
-})
+  return [...options.map((i: number) => ({ value: i, label: i })), { value: -1, label: t("All") }];
+});
 
 const columnsRequestPayloadMapped = computed(() => {
   return reduce(
     mappedColumns.value,
     (carry, column) => {
-      const fieldName = column.field ?? column.name
-      if (!fieldName) return carry
+      const fieldName = column.field ?? column.name;
+      if (!fieldName) return carry;
       const item: ServerDataTableColumnPayload = {
         name: fieldName,
         relation: column.relation,
@@ -880,31 +882,31 @@ const columnsRequestPayloadMapped = computed(() => {
         filterSource: column.filterSource,
         sortSource: column.sortSource,
         morphableTo: column.morphableTo,
-      }
-      carry.push(item)
-      return carry
+      };
+      carry.push(item);
+      return carry;
     },
-    [] as ServerDataTableColumnPayload[]
-  )
-})
-const customGetDataConfig = ref<AxiosRequestConfig>({})
+    [] as ServerDataTableColumnPayload[],
+  );
+});
+const customGetDataConfig = ref<AxiosRequestConfig>({});
 
 function setCustomGetDataConfig(
   config: AxiosRequestConfig,
-  autoRefresh: boolean = false
+  autoRefresh: boolean = false,
 ): Promise<void> {
-  customGetDataConfig.value = config
+  customGetDataConfig.value = config;
   if (autoRefresh) {
-    return refresh()
+    return refresh();
   } else {
-    return Promise.resolve()
+    return Promise.resolve();
   }
 }
 
 async function getData(
   specificPerPage: number | null = null,
   specificPage: number | null = null,
-  requestConfig: AxiosRequestConfig = {}
+  requestConfig: AxiosRequestConfig = {},
 ) {
   const payload = {
     globalFilters: hasFilledGlobalFilter.value ? globalFilterNames.value : [],
@@ -917,7 +919,7 @@ async function getData(
     fixedFilters: fixedFilters,
     groupedFilters: toolbarFilters.value,
     fixedGroupedFilters: {
-      operator: 'and',
+      operator: "and",
       fields: fixedToolbarFilters,
     },
     options: {
@@ -925,19 +927,19 @@ async function getData(
       primaryKey: primaryKey,
     },
     ...computedExtraGetDataPayload.value,
-  }
-  const urlObject = typeof url === 'object' ? url : { url, method: 'get' }
+  };
+  const urlObject = typeof url === "object" ? url : { url, method: "get" };
   return apiClient.request<ApiResponseData<ResponseData>>({
     ...urlObject,
-    params: urlObject.method === 'get' ? payload : undefined,
-    data: urlObject.method === 'post' ? payload : undefined,
+    params: urlObject.method === "get" ? payload : undefined,
+    data: urlObject.method === "post" ? payload : undefined,
     ...requestConfig,
     ...customGetDataConfig.value,
-  })
+  });
 }
 
 async function refresh() {
-  isLoading.value = true
+  isLoading.value = true;
   return new Promise<void>((resolve) => {
     if (dataProvider) {
       dataProvider({
@@ -946,72 +948,72 @@ async function refresh() {
         sorts: mappedSorts.value,
         filters: filtersListOfPrimeVueColumnFilters.value,
       }).then((response: ServerDataTablePaginationResponse) => {
-        records.value = response.data
-        totalRecords.value = response.total_records
-        perPage.value = response.per_page || perPage.value
-        firstRowIndex.value = (response.current_page - 1) * perPage.value
-        resolve()
-      })
+        records.value = response.data;
+        totalRecords.value = response.total_records;
+        perPage.value = response.per_page || perPage.value;
+        firstRowIndex.value = (response.current_page - 1) * perPage.value;
+        resolve();
+      });
     } else if (url) {
       getData()
         .then((response) => {
-          let responseData = response.data.data
+          let responseData = response.data.data;
           if (transformResponseData) {
-            responseData = transformResponseData(responseData)
+            responseData = transformResponseData(responseData);
           }
-          records.value = responseData.data
-          totalRecords.value = responseData.total
-          totalWithoutFilters.value = responseData.total_without_filters
-          perPage.value = responseData.per_page || perPage.value
-          firstRowIndex.value = (responseData.current_page - 1) * perPage.value
-          from.value = responseData.from ?? 0
-          to.value = responseData.to ?? 0
+          records.value = responseData.data;
+          totalRecords.value = responseData.total;
+          totalWithoutFilters.value = responseData.total_without_filters;
+          perPage.value = responseData.per_page || perPage.value;
+          firstRowIndex.value = (responseData.current_page - 1) * perPage.value;
+          from.value = responseData.from ?? 0;
+          to.value = responseData.to ?? 0;
           if (selectedRecords.value.length > 0) {
-            const existingKeys = selectedRecords.value.map((e) => e[primaryKey])
+            const existingKeys = selectedRecords.value.map((e) => e[primaryKey]);
             selectedRecords.value = records.value.filter((e) =>
-              existingKeys.includes(e[primaryKey])
-            )
+              existingKeys.includes(e[primaryKey]),
+            );
           }
-          extraData.value = responseData.extra
+          extraData.value = responseData.extra;
         })
         .catch((error) => {
-          console.error(error)
-          apiClient.toastRequestError(error)
+          console.error(error);
+          apiClient.toastRequestError(error);
         })
-        .finally(resolve)
+        .finally(resolve);
     } else {
-      resolve()
+      resolve();
     }
   }).finally(() => {
-    isLoading.value = false
-  })
+    isLoading.value = false;
+  });
 }
 
 const lazyRefresh = useDebounceFn(() => {
-  refresh()
-}, 500)
+  refresh();
+}, 500);
 const fastLazyRefresh = useDebounceFn(() => {
-  refresh()
-}, 100)
+  refresh();
+}, 100);
 const veryFastLazyRefresh = useDebounceFn(() => {
-  refresh()
-}, 10)
+  refresh();
+}, 10);
 
 // Infinite Scrolling
-const localItemSize = ref()
+const localItemSize = ref();
 watch(
   () => itemSize,
   (val) => {
-    localItemSize.value = val
+    localItemSize.value = val;
   },
   {
     immediate: true,
-  }
-)
-const isLazyLoading = ref(false)
+  },
+);
+const isLazyLoading = ref(false);
 
 const localVirtualScrollerOptions = computed(() => {
-  if (!infiniteScroll) return
+  if (!infiniteScroll) return;
   return {
     itemSize: localItemSize.value,
     delay: 50,
@@ -1020,8 +1022,8 @@ const localVirtualScrollerOptions = computed(() => {
     autoSize: true,
     loading: isLazyLoading.value,
     onLazyLoad: loadRecordsLazily,
-  } as VirtualScrollerProps
-})
+  } as VirtualScrollerProps;
+});
 
 // async function loadRecordsLazily(event: VirtualScrollerLazyEvent) {
 
@@ -1034,80 +1036,80 @@ const {
   visibleColumnsPopoverRef,
   saveVisibleColumnsState,
   toggleableColumns,
-} = useServerDataTableColumnVisibility(tableName, mappedColumns)
+} = useServerDataTableColumnVisibility(tableName, mappedColumns);
 
 // Deletions
-const isDeleting = ref(false)
-const idsBeingDeleted = ref<(string | number)[]>([])
-const { updateDialogVisibility: updateDeleteDialogVisibility } = useStackableDialog()
+const isDeleting = ref(false);
+const idsBeingDeleted = ref<(string | number)[]>([]);
+const { updateDialogVisibility: updateDeleteDialogVisibility } = useStackableDialog();
 
 function deleteRecords(item: T | T[]) {
-  if (!item) return
-  let cnt = 1
+  if (!item) return;
+  let cnt = 1;
   if (Array.isArray(item)) {
-    cnt = item.length
+    cnt = item.length;
   }
-  updateDeleteDialogVisibility(true)
+  updateDeleteDialogVisibility(true);
   confirm.require({
-    message: t('Are you sure to delete n records?', { n: cnt }, cnt),
-    header: t('Confirmation'),
-    icon: 'pi pi-info-circle',
-    rejectLabel: t('Cancel'),
-    acceptLabel: t('Delete'),
-    group: 'dismissable',
-    rejectClass: 'p-button-secondary p-button-outlined',
-    acceptClass: 'p-button-danger',
+    message: t("Are you sure to delete n records?", { n: cnt }, cnt),
+    header: t("Confirmation"),
+    icon: "pi pi-info-circle",
+    rejectLabel: t("Cancel"),
+    acceptLabel: t("Delete"),
+    group: "dismissable",
+    rejectClass: "p-button-secondary p-button-outlined",
+    acceptClass: "p-button-danger",
     accept: async () => {
-      isDeleting.value = true
+      isDeleting.value = true;
       const ids = (Array.isArray(item) ? item.map((i) => i[primaryKey]) : [item[primaryKey]]) as (
         | string
         | number
-      )[]
+      )[];
       try {
         if (!url) {
-          throw new Error('No Url')
+          throw new Error("No Url");
         }
 
-        let urlLink = typeof url === 'object' ? url.url : url
+        let urlLink = typeof url === "object" ? url.url : url;
         if (cnt === 1) {
           if (singleDeleteUrl) {
-            urlLink = singleDeleteUrl(ids[0]).url
+            urlLink = singleDeleteUrl(ids[0]).url;
           } else {
-            urlLink = appendToUrl(urlLink, ids[0])
+            urlLink = appendToUrl(urlLink, ids[0]);
           }
         } else if (deleteUrl) {
-          urlLink = typeof deleteUrl === 'object' ? deleteUrl.url : deleteUrl
+          urlLink = typeof deleteUrl === "object" ? deleteUrl.url : deleteUrl;
         }
-        idsBeingDeleted.value = ids
-        await apiClient.delete(urlLink, { params: { ids } })
-        apiClient.toastSuccess(t('Deleted!'), t('n Record Deleted Successfully', { n: cnt }, cnt))
-        emits('rowDeleted', Array.isArray(item) ? ids : (item[primaryKey] as string | number))
-        emits('rowChanged', item, 'delete')
+        idsBeingDeleted.value = ids;
+        await apiClient.delete(urlLink, { params: { ids } });
+        apiClient.toastSuccess(t("Deleted!"), t("n Record Deleted Successfully", { n: cnt }, cnt));
+        emits("rowDeleted", Array.isArray(item) ? ids : (item[primaryKey] as string | number));
+        emits("rowChanged", item, "delete");
         selectedRecords.value = selectedRecords.value.filter(
-          (i) => !ids.includes(i[primaryKey] as string | number)
-        )
-        await refresh()
+          (i) => !ids.includes(i[primaryKey] as string | number),
+        );
+        await refresh();
       } catch (error: unknown) {
-        console.error(error)
-        apiClient.toastRequestError(error)
+        console.error(error);
+        apiClient.toastRequestError(error);
       }
-      isDeleting.value = false
-      updateDeleteDialogVisibility(false)
-      idsBeingDeleted.value = []
+      isDeleting.value = false;
+      updateDeleteDialogVisibility(false);
+      idsBeingDeleted.value = [];
     },
     reject() {
-      updateDeleteDialogVisibility(false)
+      updateDeleteDialogVisibility(false);
     },
     onHide() {
-      updateDeleteDialogVisibility(false)
+      updateDeleteDialogVisibility(false);
     },
-  })
+  });
 }
 
 //Server Form Dialog For Edit And Create
 
 const ServerFormDialogRef =
-  useTemplateRef<ComponentExposed<typeof ServerFormDialog>>('ServerFormDialogRef')
+  useTemplateRef<ComponentExposed<typeof ServerFormDialog>>("ServerFormDialogRef");
 const ServerFormDialogOptions = computed(() => {
   return {
     url: createUrl ?? url,
@@ -1121,163 +1123,163 @@ const ServerFormDialogOptions = computed(() => {
     size: toValue(computedSize),
     columns: mappedColumns.value.filter((e) => e.inForm === true),
     onSubmitted: onFormSubmitted,
-    onVisible: (status) => emits('dialogsVisibility', status),
+    onVisible: (status) => emits("dialogsVisibility", status),
     ...(formProps ?? {}),
-  } as ServerFormDialogProps<T>
-})
+  } as ServerFormDialogProps<T>;
+});
 
-function onFormSubmitted(item: T | T[], type: 'create' | 'update' | 'delete') {
-  if (type === 'create') {
-    emits('rowCreated', item)
-  } else if (type === 'update') {
-    emits('rowUpdated', item)
+function onFormSubmitted(item: T | T[], type: "create" | "update" | "delete") {
+  if (type === "create") {
+    emits("rowCreated", item);
+  } else if (type === "update") {
+    emits("rowUpdated", item);
   } else {
     emits(
-      'rowDeleted',
+      "rowDeleted",
       item instanceof Array
         ? (item.map((i) => i[primaryKey]) as (string | number)[])
-        : (item[primaryKey] as string | number)
-    )
+        : (item[primaryKey] as string | number),
+    );
   }
-  emits('rowChanged', item, type)
+  emits("rowChanged", item, type);
   if (refreshAfterFormSubmit) {
-    refresh()
+    refresh();
   }
 }
 
 function showCreateDialog() {
-  ServerFormDialogRef.value?.create()
+  ServerFormDialogRef.value?.create();
 }
 
 // Row Editing Editions
 
 function editRecord(item: T) {
-  emits('rowEdit', item)
+  emits("rowEdit", item);
   if (useFormForEdit) {
-    showEditDialog(item)
+    showEditDialog(item);
   }
 }
 
 function editMultiRecords(items: T[]) {
-  emits('multiRowsEdit', items)
+  emits("multiRowsEdit", items);
   if (useFormForEdit) {
-    showEditDialog(items)
+    showEditDialog(items);
   }
 }
 
 function editRecords(items: T[]) {
   if (items.length === 1) {
-    editRecord(items[0])
+    editRecord(items[0]);
   } else {
-    editMultiRecords(items)
+    editMultiRecords(items);
   }
 }
 
 function showEditDialog(item: T | T[]) {
   if (Array.isArray(item)) {
-    ServerFormDialogRef.value?.editMulti(item)
+    ServerFormDialogRef.value?.editMulti(item);
   } else {
-    ServerFormDialogRef.value?.edit(item)
+    ServerFormDialogRef.value?.edit(item);
   }
 }
 
 // Row Click
 
 const hasRowClickEventListener = computed(() => {
-  return !!onRowClick || (openOnClick && onRowOpen)
-})
+  return !!onRowClick || (openOnClick && onRowOpen);
+});
 
 function onLocalRowDblClick(evt: DataTableRowDoubleClickEvent) {
   if (onRowDblClick) {
-    emits('rowDblClick', evt.data, evt.index, evt.originalEvent)
+    emits("rowDblClick", evt.data, evt.index, evt.originalEvent);
   }
 }
 
 function onLocalRowClick(evt: DataTableRowClickEvent) {
   if (!window.getSelection()?.isCollapsed) {
-    return
+    return;
   }
-  const path = evt.originalEvent.composedPath() as HTMLElement[]
-  const toggleButton = path.find((e) => e.classList?.contains('p-datatable-row-toggle-button'))
-  const editableColumn = path.find((e) => e?.getAttribute?.('data-p-editable-column') === 'true')
-  const checkboxColumn = path.find((e) => e.classList?.contains('p-selection-column'))
+  const path = evt.originalEvent.composedPath() as HTMLElement[];
+  const toggleButton = path.find((e) => e.classList?.contains("p-datatable-row-toggle-button"));
+  const editableColumn = path.find((e) => e?.getAttribute?.("data-p-editable-column") === "true");
+  const checkboxColumn = path.find((e) => e.classList?.contains("p-selection-column"));
 
-  const anyButton = path.find((e) => e.classList?.contains('p-button'))
+  const anyButton = path.find((e) => e.classList?.contains("p-button"));
   if (toggleButton || editableColumn || checkboxColumn || anyButton) {
-    return
+    return;
   }
 
-  emits('rowClick', evt.data, evt.index, evt.originalEvent)
-  const onRowClickOrOpenEnabled = onRowClick || (onRowOpen && openOnClick)
+  emits("rowClick", evt.data, evt.index, evt.originalEvent);
+  const onRowClickOrOpenEnabled = onRowClick || (onRowOpen && openOnClick);
   const isClickedOnCheckboxCell =
-    (evt.originalEvent.target as HTMLDivElement).getAttribute('data-p-selection-column') === 'true'
+    (evt.originalEvent.target as HTMLDivElement).getAttribute("data-p-selection-column") === "true";
 
   if (!onRowClickOrOpenEnabled && withExpansion && expandOnRowClick) {
-    toggleRowExpansion(evt.data)
+    toggleRowExpansion(evt.data);
   } else if (
     (isClickedOnCheckboxCell || !onRowClickOrOpenEnabled) &&
     selectable &&
     selectOnRowClick
   ) {
-    toggleRowSelection(evt.data)
+    toggleRowSelection(evt.data);
   } else if (!onRowClick && openOnClick && openable) {
-    emits('rowOpen', evt.data)
+    emits("rowOpen", evt.data);
   }
 }
 
 //Context Menu
-const contextMenuRef = useTemplateRef<InstanceType<typeof ContextMenu>>('contextMenuRef')
+const contextMenuRef = useTemplateRef<InstanceType<typeof ContextMenu>>("contextMenuRef");
 
 function onRowContextMenu(event: DataTableRowContextMenuEvent) {
-  contextMenuRef.value?.show(event.originalEvent)
+  contextMenuRef.value?.show(event.originalEvent);
 }
 
 const contextMenuModel = computed<MenuItem[]>(() => {
-  const list: MenuItem[] = []
+  const list: MenuItem[] = [];
   if (contextMenuSelectedRecord.value) {
     if (openable) {
       list.push({
-        label: openButtonLabel ?? openButtonTitle ?? t('Open'),
-        icon: openButtonIcon ?? 'i-material-symbols:open-jam-outline-rounded',
+        label: openButtonLabel ?? openButtonTitle ?? t("Open"),
+        icon: openButtonIcon ?? "i-material-symbols:open-jam-outline-rounded",
         url: openButtonUrl ? openButtonUrl(contextMenuSelectedRecord.value) : undefined,
         command: () =>
           contextMenuSelectedRecord.value
-            ? emits('rowOpen', contextMenuSelectedRecord.value)
+            ? emits("rowOpen", contextMenuSelectedRecord.value)
             : undefined,
-      })
+      });
     }
     if (
       printableRows == true ||
-      (typeof printableRows === 'function' && printableRows(contextMenuSelectedRecord.value))
+      (typeof printableRows === "function" && printableRows(contextMenuSelectedRecord.value))
     ) {
       list.push({
-        label: t('Print'),
-        icon: 'i-mdi-printer',
+        label: t("Print"),
+        icon: "i-mdi-printer",
         command: () =>
           contextMenuSelectedRecord.value
-            ? emits('rowPrint', contextMenuSelectedRecord.value)
+            ? emits("rowPrint", contextMenuSelectedRecord.value)
             : undefined,
-      })
+      });
     }
     if (editable && (!rowEditable || rowEditable(contextMenuSelectedRecord.value))) {
       list.push({
-        label: t('Edit'),
-        icon: 'i-mdi-edit',
+        label: t("Edit"),
+        icon: "i-mdi-edit",
         command: () =>
           contextMenuSelectedRecord.value ? editRecord(contextMenuSelectedRecord.value) : undefined,
-      })
+      });
     }
 
     if (deletable && (!rowDeletable || rowDeletable(contextMenuSelectedRecord.value))) {
       list.push({
-        label: t('Delete'),
-        icon: 'i-mdi-trash',
+        label: t("Delete"),
+        icon: "i-mdi-trash",
         disabled: isLoading.value || isDeleting.value,
         command: () =>
           contextMenuSelectedRecord.value
             ? deleteRecords(contextMenuSelectedRecord.value)
             : undefined,
-      })
+      });
     }
   }
 
@@ -1285,79 +1287,83 @@ const contextMenuModel = computed<MenuItem[]>(() => {
     list.push(
       ...cloneDeep(extraToolAndContextButtons).map((e) => {
         if (e.command) {
-          e.command2 = e.command
-          e.command = () => e.command2(contextMenuSelectedRecord.value)
+          e.command2 = e.command;
+          e.command = () => e.command2(contextMenuSelectedRecord.value);
         }
-        if (typeof e.visible === 'function') {
-          e.visible2 = e.visible
-          e.visible = () => e.visible2(contextMenuSelectedRecord.value)
+        if (typeof e.visible === "function") {
+          e.visible2 = e.visible;
+          e.visible = () => e.visible2(contextMenuSelectedRecord.value);
         }
-        if (typeof e.icon === 'function') {
-          e.icon2 = e.icon
-          e.icon = () => e.icon2(contextMenuSelectedRecord.value)
+        if (typeof e.icon === "function") {
+          e.icon2 = e.icon;
+          e.icon = () => e.icon2(contextMenuSelectedRecord.value);
         }
 
-        const badgeResult = isFunction(e.badge) ? e.badge(contextMenuSelectedRecord.value) : e.badge
-        if (typeof e.label === 'function') {
-          e.label2 = e.label
+        const badgeResult = isFunction(e.badge)
+          ? e.badge(contextMenuSelectedRecord.value)
+          : e.badge;
+        if (typeof e.label === "function") {
+          e.label2 = e.label;
           e.label = () =>
-            e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : '')
+            e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : "");
         } else {
-          e.label = e.label + (badgeResult ? ` (${badgeResult})` : '')
+          e.label = e.label + (badgeResult ? ` (${badgeResult})` : "");
         }
-        return e as MenuItem
-      })
-    )
+        return e as MenuItem;
+      }),
+    );
   }
   if (extraContextMenuOptions && extraContextMenuOptions.length > 0) {
     list.push(
       ...cloneDeep(extraContextMenuOptions).map((e) => {
-        if (typeof e.visible === 'function') {
-          e.visible2 = e.visible
-          e.visible = () => e.visible2(contextMenuSelectedRecord.value)
+        if (typeof e.visible === "function") {
+          e.visible2 = e.visible;
+          e.visible = () => e.visible2(contextMenuSelectedRecord.value);
         }
         if (e.command) {
-          e.command2 = e.command
-          e.command = () => e.command2(contextMenuSelectedRecord.value)
+          e.command2 = e.command;
+          e.command = () => e.command2(contextMenuSelectedRecord.value);
         }
-        if (typeof e.labelFn === 'function') {
-          e.label = e.labelFn(contextMenuSelectedRecord.value)
+        if (typeof e.labelFn === "function") {
+          e.label = e.labelFn(contextMenuSelectedRecord.value);
         }
-        if (typeof e.icon === 'function') {
-          e.icon2 = e.icon
-          e.icon = () => e.icon2(contextMenuSelectedRecord.value)
+        if (typeof e.icon === "function") {
+          e.icon2 = e.icon;
+          e.icon = () => e.icon2(contextMenuSelectedRecord.value);
         }
-        const badgeResult = isFunction(e.badge) ? e.badge(contextMenuSelectedRecord.value) : e.badge
-        if (typeof e.label === 'function') {
-          e.label2 = e.label
+        const badgeResult = isFunction(e.badge)
+          ? e.badge(contextMenuSelectedRecord.value)
+          : e.badge;
+        if (typeof e.label === "function") {
+          e.label2 = e.label;
           e.label = () =>
-            e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : '')
+            e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : "");
         } else {
-          e.label = e.label + (badgeResult ? ` (${badgeResult})` : '')
+          e.label = e.label + (badgeResult ? ` (${badgeResult})` : "");
         }
-        return e as MenuItem
-      })
-    )
+        return e as MenuItem;
+      }),
+    );
   }
 
-  return list
-})
+  return list;
+});
 
 // Rows Expansions & Expanders
 
 function toggleRowExpansion(row: T) {
   if (isExpandedRow(row)) {
-    collapseRow(row)
+    collapseRow(row);
   } else {
-    expandRow(row)
+    expandRow(row);
   }
 }
 
 function isExpandedRow(row: T) {
   if (expandedRecords.value) {
-    return expandedRecords.value[row[primaryKey] as string | number]
+    return expandedRecords.value[row[primaryKey] as string | number];
   } else {
-    return false
+    return false;
   }
 }
 
@@ -1365,41 +1371,41 @@ function expandRow(row: T) {
   if (oneExpansionAtATime) {
     expandedRecords.value = {
       [row[primaryKey] as string | number]: true,
-    }
+    };
   } else {
-    expandedRecords.value[row[primaryKey] as string | number] = true
+    expandedRecords.value[row[primaryKey] as string | number] = true;
   }
 }
 
 function collapseRow(row: T) {
-  unset(expandedRecords.value, row[primaryKey] as string | number)
+  unset(expandedRecords.value, row[primaryKey] as string | number);
 }
 
 function onRowExpand(event: DataTableRowExpandEvent) {
   if (oneExpansionAtATime) {
     expandedRecords.value = {
       [event.data[primaryKey] as string | number]: true,
-    }
+    };
   }
   // toast.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 })
-  emits('rowExpand', event.data)
+  emits("rowExpand", event.data);
 }
 
 function onRowCollapse(event: DataTableRowCollapseEvent) {
   // toast.add({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 })
-  emits('rowCollapse', event.data)
+  emits("rowCollapse", event.data);
 }
 
-const isReordering = ref(false)
+const isReordering = ref(false);
 
 async function onRowReorder(event: DataTableRowReorderEvent) {
-  isReordering.value = true
+  isReordering.value = true;
 
-  let urlLink = (typeof url === 'object' ? url.url : url) + '/reorder'
-  let urlMethod = 'put'
+  let urlLink = (typeof url === "object" ? url.url : url) + "/reorder";
+  let urlMethod = "put";
   if (reorderUrl) {
-    urlLink = typeof reorderUrl === 'object' ? reorderUrl.url : reorderUrl
-    urlMethod = typeof reorderUrl === 'object' ? reorderUrl.method : 'put'
+    urlLink = typeof reorderUrl === "object" ? reorderUrl.url : reorderUrl;
+    urlMethod = typeof reorderUrl === "object" ? reorderUrl.method : "put";
   }
 
   return apiClient
@@ -1413,43 +1419,43 @@ async function onRowReorder(event: DataTableRowReorderEvent) {
       } as ReorderRequestData,
     })
     .then(() => {
-      refresh()
+      refresh();
     })
     .catch((error: AxiosError) => {
-      apiClient.toastRequestError(error)
+      apiClient.toastRequestError(error);
     })
     .finally(() => {
-      isReordering.value = false
-    })
+      isReordering.value = false;
+    });
 }
 
 // Printing
 
 const printTableContextMenuRef = useTemplateRef<InstanceType<typeof ContextMenu>>(
-  'printTableContextMenuRef'
-)
+  "printTableContextMenuRef",
+);
 const printTableContextMenuItems = computed(() => {
   return [
     {
-      label: t('Print Current Page'),
-      icon: 'i-mdi:printer-pos',
+      label: t("Print Current Page"),
+      icon: "i-mdi:printer-pos",
       command: () => {
-        printTable()
+        printTable();
       },
     },
     {
-      label: t('Print All Pages'),
-      icon: 'i-mdi:printer-pos-star',
+      label: t("Print All Pages"),
+      icon: "i-mdi:printer-pos-star",
       command: () => {
-        printTable(true)
+        printTable(true);
       },
     },
-  ] as MenuItem[]
-})
+  ] as MenuItem[];
+});
 
 const printableColumns = computed(() => {
-  return mappedColumns.value.filter((e) => e.printable !== false)
-})
+  return mappedColumns.value.filter((e) => e.printable !== false);
+});
 const printPaperProps = computed(() => {
   return {
     columns: printableColumns.value,
@@ -1466,7 +1472,7 @@ const printPaperProps = computed(() => {
     toolbarFilters: isToolbarFilterEmpty(fixedToolbarFilters)
       ? toolbarFilters.value
       : {
-          operator: 'and',
+          operator: "and",
           fields: [...fixedToolbarFilters, toolbarFilters.value],
         },
     filters: filters.value,
@@ -1475,17 +1481,17 @@ const printPaperProps = computed(() => {
     showPageCounter: true,
     showCurrentPrintTime: true,
     ...(printingProps ?? {}),
-  } as unknown as PrintPaperForServerDataTableProps<T>
-})
+  } as unknown as PrintPaperForServerDataTableProps<T>;
+});
 
-const isPrinting = ref(false)
+const isPrinting = ref(false);
 const printPaperForServerDataTableRef = useTemplateRef<
   ComponentExposed<typeof PrintPaperForServerDataTable>
->('printPaperForServerDataTableRef')
+>("printPaperForServerDataTableRef");
 
 function printTable(allPage: boolean = false) {
   if (customPrintMethod) {
-    customPrintMethod()
+    customPrintMethod();
   } else if (printTableAsInView) {
     if (wrapperRef.value) {
       printDomWithStyles(wrapperRef.value, {
@@ -1498,29 +1504,29 @@ function printTable(allPage: boolean = false) {
         firstPageHeaderImageUrl: firstPageHeaderImageUrl,
         headerImageUrl: headerImageUrl,
         footerImageUrl: footerImageUrl,
-      })
+      });
     }
   } else {
-    printPaperForServerDataTableRef.value?.print(allPage)
+    printPaperForServerDataTableRef.value?.print(allPage);
   }
 }
 
 function printTableOnContextMenu(event: MouseEvent) {
   if (hasPagination) {
-    printTableContextMenuRef.value?.show(event)
+    printTableContextMenuRef.value?.show(event);
   }
 }
 
 function printWithCustomConfig(requestConfig: AxiosRequestConfig) {
-  printPaperForServerDataTableRef.value?.print(true, requestConfig)
+  printPaperForServerDataTableRef.value?.print(true, requestConfig);
 }
 
 function startLoading() {
-  isLoading.value = true
+  isLoading.value = true;
 }
 
 function endLoading() {
-  isLoading.value = false
+  isLoading.value = false;
 }
 
 defineExpose({
@@ -1538,55 +1544,55 @@ defineExpose({
   clearFilterFor,
   ServerFormDialogRef,
   printWithCustomConfig,
-})
+});
 
 const dataTableComputedClass = computed(() => {
-  const classList = []
-  if (tableSeverity && tableSeverity !== 'none') {
-    classList.push(`p-datatable-${tableSeverity}`)
-    classList.push(`p-datatable-header-${tableSeverity}`)
+  const classList = [];
+  if (tableSeverity && tableSeverity !== "none") {
+    classList.push(`p-datatable-${tableSeverity}`);
+    classList.push(`p-datatable-header-${tableSeverity}`);
   }
-  return classList
-})
+  return classList;
+});
 
 // Inline editing
 
 function onCellEditComplete(event: DataTableCellEditCompleteEvent) {
-  const oldValue = event.value
-  const newValue = event.newValue
+  const oldValue = event.value;
+  const newValue = event.newValue;
   if (oldValue !== newValue) {
-    ServerFormDialogRef.value?.updateDirectly(event.data, [event.field, event.newValue])
+    ServerFormDialogRef.value?.updateDirectly(event.data, [event.field, event.newValue]);
   }
 }
 
-const auditsPopoverRef = useTemplateRef<InstanceType<typeof AuditsPopover>>('auditsPopoverRef')
+const auditsPopoverRef = useTemplateRef<InstanceType<typeof AuditsPopover>>("auditsPopoverRef");
 
 function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumnScoped, row: T) {
   if (column.auditHistory) {
-    event.stopPropagation()
-    event.preventDefault()
+    event.stopPropagation();
+    event.preventDefault();
     if (url) {
       auditsPopoverRef.value?.showAudits(
         event,
         url,
         column.fullFieldName,
         (_value) =>
-          typeof column.formatter === 'function'
+          typeof column.formatter === "function"
             ? column.formatter(_value, row, column.fullFieldName)
             : _value,
-        () => (column.type === 'textarea' ? 'whitespace-pre-wrap' : ''),
-        `${get(row, primaryKey)}/audits`
-      )
+        () => (column.type === "textarea" ? "whitespace-pre-wrap" : ""),
+        `${get(row, primaryKey)}/audits`,
+      );
     }
   }
 }
 
 // Element Sizes
-const wrapperSize = useElementSize(wrapperRef)
-const headerSegmentSize = useElementSize(headerSegmentRef)
+const wrapperSize = useElementSize(wrapperRef);
+const headerSegmentSize = useElementSize(headerSegmentRef);
 const computedTableHeight = computed(() => {
-  return scrollable ? wrapperSize.height.value - headerSegmentSize.height.value + 'px' : undefined
-})
+  return scrollable ? wrapperSize.height.value - headerSegmentSize.height.value + "px" : undefined;
+});
 </script>
 
 <template>
@@ -1601,34 +1607,34 @@ const computedTableHeight = computed(() => {
         v-for="field in ServerFormDialogRef?.mappedFormFields"
         #[`${getFieldSlotName(field)}BeforeControl`]
       >
-        <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
+        <slot :name="`${getFieldSlotName(field)}BeforeControl`" />
       </template>
       <template
         v-for="field in ServerFormDialogRef?.mappedFormFields"
         #[`${getFieldSlotName(field)}ControlBody`]
       >
-        <slot :name="`${getFieldSlotName(field)}ControlBody`"></slot>
+        <slot :name="`${getFieldSlotName(field)}ControlBody`" />
       </template>
       <template
         v-for="field in ServerFormDialogRef?.mappedFormFields"
         #[`${getFieldSlotName(field)}AfterControl`]
       >
-        <slot :name="`${getFieldSlotName(field)}AfterControl`"></slot>
+        <slot :name="`${getFieldSlotName(field)}AfterControl`" />
       </template>
       <template #beforeCancelButton="slotProps">
-        <slot name="beforeCancelButton" v-bind="slotProps"></slot>
+        <slot name="beforeCancelButton" v-bind="slotProps" />
       </template>
       <template #afterCancel="slotProps">
-        <slot name="afterCancel" v-bind="slotProps"></slot>
+        <slot name="afterCancel" v-bind="slotProps" />
       </template>
       <template #beforeSubmitButton="slotProps">
-        <slot name="beforeSubmitButton" v-bind="slotProps"></slot>
+        <slot name="beforeSubmitButton" v-bind="slotProps" />
       </template>
       <template #afterSubmitButton="slotProps">
-        <slot name="afterSubmitButton" v-bind="slotProps"></slot>
+        <slot name="afterSubmitButton" v-bind="slotProps" />
       </template>
       <template #beforeControls="slotProps">
-        <slot name="beforeFormControls" v-bind="slotProps"></slot>
+        <slot name="beforeFormControls" v-bind="slotProps" />
       </template>
     </ServerFormDialog>
     <PrintPaperForServerDataTable
@@ -1643,12 +1649,12 @@ const computedTableHeight = computed(() => {
               {{ printingTitle ?? title }}
             </div>
           </slot>
-          <slot name="subTitle"></slot>
+          <slot name="subTitle" />
         </slot>
       </template>
       <template #printPageFooter="slotProps">
         <slot name="printPageFooter" :records="slotProps.records" :extra="slotProps.extra">
-          <slot name="footer" :records="slotProps.records" :extra="slotProps.extra"></slot>
+          <slot name="footer" :records="slotProps.records" :extra="slotProps.extra" />
         </slot>
       </template>
     </PrintPaperForServerDataTable>
@@ -1671,7 +1677,7 @@ const computedTableHeight = computed(() => {
             {{ title }}
           </div>
         </slot>
-        <slot name="subTitle"></slot>
+        <slot name="subTitle" />
         <div class="flex justify-between">
           <div>
             <div class="flex justify-between">
@@ -1708,7 +1714,7 @@ const computedTableHeight = computed(() => {
                             <Button
                               :disabled="
                                 filledToolbarColumnNames.includes(
-                                  column.filterField ?? column.field
+                                  column.filterField ?? column.field,
                                 ) && !allowMultipleToolbarFiltersForSameField
                               "
                               severity="info"
@@ -1973,17 +1979,17 @@ const computedTableHeight = computed(() => {
       @cell-edit-complete="onCellEditComplete"
     >
       <template v-if="$slots.header" #header>
-        <slot name="header" :records="records" :extra="extraData"></slot>
+        <slot name="header" :records="records" :extra="extraData" />
       </template>
       <template v-if="$slots.footer" #footer>
-        <slot name="footer" :records="records" :extra="extraData"></slot>
+        <slot name="footer" :records="records" :extra="extraData" />
       </template>
       <template #paginatorstart>
         <div class="flex w-full justify-end gap-1 text-sm">
           <span>
             <template v-if="hasFilters">
               {{
-                t('Showing start To end From filtered (Filtered From total)', {
+                t("Showing start To end From filtered (Filtered From total)", {
                   start: from,
                   end: to,
                   total: totalWithoutFilters,
@@ -1993,7 +1999,7 @@ const computedTableHeight = computed(() => {
             </template>
             <template v-else>
               {{
-                t('Showing start To end From total', {
+                t("Showing start To end From total", {
                   start: from,
                   end: to,
                   total: totalWithoutFilters,
@@ -2003,14 +2009,14 @@ const computedTableHeight = computed(() => {
           </span>
           <span v-if="selectedRecords.length">
             {{
-              t('(n Records selected)', { n: selectedRecords.length }, selectedRecords.length)
+              t("(n Records selected)", { n: selectedRecords.length }, selectedRecords.length)
             }}</span
           >
         </div>
       </template>
       <template #paginatorend>
         <div class="flex items-center gap-1 text-sm">
-          <span>{{ t('Show') }} </span>
+          <span>{{ t("Show") }} </span>
           <Select
             v-model="perPage"
             size="small"
@@ -2020,7 +2026,7 @@ const computedTableHeight = computed(() => {
             option-value="value"
             @change="onRowsPerPageChanged()"
           />
-          <span v-if="perPage !== -1"> {{ t('Entries') }}</span>
+          <span v-if="perPage !== -1"> {{ t("Entries") }}</span>
         </div>
       </template>
       <template v-if="$slots.groupheader || rowGroupHeaderFormatter" #groupheader="slotProps">
@@ -2034,16 +2040,16 @@ const computedTableHeight = computed(() => {
                 ? get(slotProps.data, groupRowsBy)
                 : rowGroupHeaderFormatter(get(slotProps.data, groupRowsBy), slotProps.data)
             "
-          ></span>
+          />
         </slot>
       </template>
       <template v-if="$slots.groupfooter" #groupfooter="slotProps">
-        <slot name="groupfooter" :data="slotProps.data" :index="slotProps.index"></slot>
+        <slot name="groupfooter" :data="slotProps.data" :index="slotProps.index" />
       </template>
       <template #empty>
         <slot name="empty" :record="records">
           <div v-if="!noEmptyMessage" class="text-secondary-1 text-center text-sm italic">
-            {{ t('No Records') }}
+            {{ t("No Records") }}
           </div>
         </slot>
       </template>
@@ -2157,7 +2163,7 @@ const computedTableHeight = computed(() => {
             <template v-if="column.footer" #footer>
               <span
                 v-html="typeof column.footer === 'string' ? column.footer : column.footer(records)"
-              ></span>
+              />
             </template>
             <template v-if="showOnlySortedIcon" #sorticon="slotProps">
               <template v-if="slotProps.sorted">
@@ -2165,8 +2171,8 @@ const computedTableHeight = computed(() => {
                   v-if="slotProps.sortOrder === 1"
                   :title="t('Ascending')"
                   class="i-mdi:sort-ascending scale-y-[-1]"
-                ></i>
-                <i v-else :title="t('Descending')" class="i-mdi:sort-descending scale-y-[-1]"></i>
+                />
+                <i v-else :title="t('Descending')" class="i-mdi:sort-descending scale-y-[-1]" />
               </template>
             </template>
             <template #body="{ data }">
@@ -2261,7 +2267,7 @@ const computedTableHeight = computed(() => {
                 class="rounded-md p-2"
                 icon="i-mdi-trash"
                 @click="deleteRecords(row.data)"
-              ></Button>
+              />
               <template v-if="extraToolAndContextButtons?.length">
                 <Button
                   v-for="(btn, btnIndex) in extraToolAndContextButtons"
@@ -2288,7 +2294,7 @@ const computedTableHeight = computed(() => {
                   "
                   :icon="typeof btn.icon === 'function' ? btn.icon(row.data) : btn.icon"
                   @click="btn.command?.(row.data)"
-                ></Button>
+                />
               </template>
               <slot name="toolsColumnExtraButton" :row="row.data" :is-loading="isLoading" />
             </div>
@@ -2306,7 +2312,7 @@ const computedTableHeight = computed(() => {
     </DataTable>
     <DataView v-if="withDataView" :value="records">
       <template #list="slotProps">
-        <slot name="dataViewBody" :items="slotProps.items" :records="records"></slot>
+        <slot name="dataViewBody" :items="slotProps.items" :records="records" />
       </template>
     </DataView>
   </div>
@@ -2467,7 +2473,7 @@ const computedTableHeight = computed(() => {
 
 .editing-cursor {
   cursor:
-    url('../../assets/icons/pencil-green-700.svg') 0 24,
+    url("../../assets/icons/pencil-green-700.svg") 0 24,
     pointer;
 }
 
@@ -2489,7 +2495,7 @@ const computedTableHeight = computed(() => {
 
   .editing-cursor {
     cursor:
-      url('../../assets/icons/pencil-green-300.svg') 0 24,
+      url("../../assets/icons/pencil-green-300.svg") 0 24,
       pointer;
   }
 }
@@ -2500,10 +2506,10 @@ const computedTableHeight = computed(() => {
 
 .row-open-cursor {
   cursor:
-    url('../../assets/icons/cursor-click-blue-700.svg') 10 10,
+    url("../../assets/icons/cursor-click-blue-700.svg") 10 10,
     pointer;
 
-  [data-p-selection-column='true'] {
+  [data-p-selection-column="true"] {
     cursor: default;
   }
 }
@@ -2511,7 +2517,7 @@ const computedTableHeight = computed(() => {
 .dark {
   .row-open-cursor {
     cursor:
-      url('../../assets/icons/cursor-click-blue-300.svg') 10 10,
+      url("../../assets/icons/cursor-click-blue-300.svg") 10 10,
       pointer;
   }
 }

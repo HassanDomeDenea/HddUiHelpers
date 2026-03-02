@@ -1,47 +1,47 @@
 <script setup lang="ts">
-import type { DynamicComponentMounterEventBus } from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounterUtilities.ts'
-import { DynamicComponentMounterDialogKey } from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounterUtilities.ts'
-import { last, uniqueId } from 'lodash-es'
+import type { DynamicComponentMounterEventBus } from "HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounterUtilities.ts";
+import { DynamicComponentMounterDialogKey } from "HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounterUtilities.ts";
+import { last, uniqueId } from "lodash-es";
 
-const bus = useEventBus(DynamicComponentMounterDialogKey)
-const componentsListRefs = useTemplateRefsList<any>()
+const bus = useEventBus(DynamicComponentMounterDialogKey);
+const componentsListRefs = useTemplateRefsList<any>();
 
 const componentsList = shallowRef<
   {
-    options: DynamicComponentMounterEventBus['options']
-    id: string
+    options: DynamicComponentMounterEventBus["options"];
+    id: string;
   }[]
->([])
+>([]);
 function busListener({ event, options, setRefAndUnMounter }: DynamicComponentMounterEventBus) {
-  if (event === 'mount') {
-    const newComponentId = uniqueId('HddDynamicComponent-')
+  if (event === "mount") {
+    const newComponentId = uniqueId("HddDynamicComponent-");
     const newItem = {
       options: options,
       id: newComponentId,
-    }
+    };
     if (options?.stacked !== true) {
-      componentsList.value = [newItem]
+      componentsList.value = [newItem];
     } else {
-      componentsList.value.push(newItem)
+      componentsList.value.push(newItem);
     }
 
     nextTick(() => {
       setRefAndUnMounter?.(last(componentsListRefs.value), () => {
-        const indexToRemove = componentsList.value.findIndex((e) => e.id === newComponentId)
-        componentsList.value.splice(indexToRemove, 1)
-      })
-    })
-  } else if (event === 'clear') {
-    componentsList.value = []
+        const indexToRemove = componentsList.value.findIndex((e) => e.id === newComponentId);
+        componentsList.value.splice(indexToRemove, 1);
+      });
+    });
+  } else if (event === "clear") {
+    componentsList.value = [];
   }
 }
 onMounted(() => {
-  bus.on(busListener)
-})
+  bus.on(busListener);
+});
 
 onBeforeUnmount(() => {
-  bus.off(busListener)
-})
+  bus.off(busListener);
+});
 </script>
 
 <template>
@@ -51,7 +51,7 @@ onBeforeUnmount(() => {
       v-if="item.options?.component"
       :ref="componentsListRefs.set"
       v-bind="item.options?.props"
-    ></component>
+    />
   </template>
 </template>
 

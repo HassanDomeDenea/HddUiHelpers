@@ -1,14 +1,14 @@
-import { mergeAttributes, Node } from '@tiptap/core';
-import { VueNodeViewRenderer } from '@tiptap/vue-3';
+import { mergeAttributes, Node } from "@tiptap/core";
+import { VueNodeViewRenderer } from "@tiptap/vue-3";
 
-import Component from './TipTapPageBreakerNode.vue';
+import Component from "./TipTapPageBreakerNode.vue";
 // import { canInsertNode, isNodeSelection, mergeAttributes, Node, nodeInputRule } from "@tiptap/core";
 // import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 
 export default Node.create({
-  name: 'TipTapPageBreakerNode',
+  name: "TipTapPageBreakerNode",
 
-  group: 'block',
+  group: "block",
 
   atom: true,
 
@@ -37,13 +37,13 @@ export default Node.create({
   parseHTML() {
     return [
       {
-        tag: 'tip-tap-page-breaker-node',
+        tag: "tip-tap-page-breaker-node",
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ['tip-tap-page-breaker-node', mergeAttributes(HTMLAttributes)];
+    return ["tip-tap-page-breaker-node", mergeAttributes(HTMLAttributes)];
   },
 
   addNodeView() {
@@ -51,7 +51,7 @@ export default Node.create({
   },
 });
 
-declare module '@tiptap/core' {
+declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     TipTapPageBreakerNode: {
       /**

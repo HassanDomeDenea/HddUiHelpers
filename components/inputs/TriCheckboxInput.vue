@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { ref } from 'vue';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { ref } from "vue";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
     {
-      notSelectedValue?: 'null' | 'undefined';
+      notSelectedValue?: "null" | "undefined";
     } & BaseInputProps
   >(),
   {
-    notSelectedValue: 'null',
+    notSelectedValue: "null",
     controlBeforeLabel: true,
     hideLabelDoubleDots: true,
   },
 );
-const value = defineModel<any>('modelValue');
+const value = defineModel<any>("modelValue");
 
 const inputRef = ref();
 
@@ -38,9 +38,9 @@ function onCheckboxStateChange() {
       value.value = false;
       break;
     case false:
-      value.value = props.notSelectedValue === 'null' ? null : undefined;
+      value.value = props.notSelectedValue === "null" ? null : undefined;
       break;
-    case '':
+    case "":
     case undefined:
     case null:
     default:
@@ -49,13 +49,18 @@ function onCheckboxStateChange() {
   }
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-  <BaseInput v-bind="baseInputForwardedProps" :label-class="`${labelClass} select-none`" @label-clicked.stop.prevent="onCheckboxStateChange">
+  <BaseInput
+    v-bind="baseInputForwardedProps"
+    :label-class="`${labelClass} select-none`"
+    @label-clicked.stop.prevent="onCheckboxStateChange"
+  >
     <!--    <pre>Is stated {{ isStated }}</pre> -->
     <!--    <pre>Is Indeterminate {{ isIndeterminate }}</pre> -->
     <Checkbox
@@ -69,8 +74,14 @@ defineExpose({ focus, ...exposed });
       @click="onCheckboxStateChange"
     >
       <template #icon="slotProps">
-        <i v-if="slotProps.checked" class="pi pi-check text-[var(--p-checkbox-icon-checked-color)]" />
-        <i v-if="slotProps.indeterminate" class="pi pi-times light:text-red-100 dark:text-red-700" />
+        <i
+          v-if="slotProps.checked"
+          class="pi pi-check text-[var(--p-checkbox-icon-checked-color)]"
+        />
+        <i
+          v-if="slotProps.indeterminate"
+          class="pi pi-times light:text-red-100 dark:text-red-700"
+        />
       </template>
     </Checkbox>
     <template #labelText>

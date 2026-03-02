@@ -17,17 +17,27 @@
     @update:visible="onHide"
   >
     <template v-if="$slots.container" #container="slotProps">
-      <slot name="container" :message="confirmation" :close-callback="slotProps.onclose" :accept-callback="accept" :reject-callback="reject" />
+      <slot
+        name="container"
+        :message="confirmation"
+        :close-callback="slotProps.onclose"
+        :accept-callback="accept"
+        :reject-callback="reject"
+      />
     </template>
     <template v-if="!$slots.container">
       <template v-if="!$slots.message">
         <slot name="icon">
           <component :is="$slots.icon" v-if="$slots.icon" :class="cx('icon')" />
-          <span v-else-if="confirmation.icon" :class="[confirmation.icon, cx('icon')]" v-bind="ptm('icon')" />
+          <span
+            v-else-if="confirmation.icon"
+            :class="[confirmation.icon, cx('icon')]"
+            v-bind="ptm('icon')"
+          />
         </slot>
         <span :class="cx('message')" v-bind="ptm('message')">{{ message }}</span>
       </template>
-      <component :is="$slots.message" v-else :message="confirmation"></component>
+      <component :is="$slots.message" v-else :message="confirmation" />
     </template>
     <template v-if="!$slots.container" #footer>
       <Button
@@ -42,7 +52,11 @@
       >
         <template v-if="rejectIcon || $slots.rejecticon" #icon="iconProps">
           <slot name="rejecticon">
-            <span :class="[rejectIcon, iconProps.class]" v-bind="ptm('pcRejectButton')['icon']" data-pc-section="rejectbuttonicon" />
+            <span
+              :class="[rejectIcon, iconProps.class]"
+              v-bind="ptm('pcRejectButton')['icon']"
+              data-pc-section="rejectbuttonicon"
+            />
           </slot>
         </template>
       </Button>
@@ -57,7 +71,11 @@
       >
         <template v-if="acceptIcon || $slots.accepticon" #icon="iconProps">
           <slot name="accepticon">
-            <span :class="[acceptIcon, iconProps.class]" v-bind="ptm('pcAcceptButton')['icon']" data-pc-section="acceptbuttonicon" />
+            <span
+              :class="[acceptIcon, iconProps.class]"
+              v-bind="ptm('pcAcceptButton')['icon']"
+              data-pc-section="acceptbuttonicon"
+            />
           </slot>
         </template>
       </Button>
@@ -66,13 +84,13 @@
 </template>
 
 <script>
-import Button from 'primevue/button';
-import ConfirmationEventBus from 'primevue/confirmationeventbus';
-import BaseConfirmDialog from 'primevue/confirmdialog';
-import Dialog from 'primevue/dialog';
+import Button from "primevue/button";
+import ConfirmationEventBus from "primevue/confirmationeventbus";
+import BaseConfirmDialog from "primevue/confirmdialog";
+import Dialog from "primevue/dialog";
 
 export default {
-  name: 'DismissableConfirmDialog',
+  name: "DismissableConfirmDialog",
   components: {
     Dialog,
     Button,
@@ -88,13 +106,17 @@ export default {
   },
   computed: {
     appendTo() {
-      return this.confirmation ? this.confirmation.appendTo : 'body';
+      return this.confirmation ? this.confirmation.appendTo : "body";
     },
     target() {
       return this.confirmation ? this.confirmation.target : null;
     },
     modal() {
-      return this.confirmation ? (this.confirmation.modal == null ? true : this.confirmation.modal) : true;
+      return this.confirmation
+        ? this.confirmation.modal == null
+          ? true
+          : this.confirmation.modal
+        : true;
     },
     header() {
       return this.confirmation ? this.confirmation.header : null;
@@ -112,7 +134,11 @@ export default {
       if (this.confirmation) {
         const confirmation = this.confirmation;
 
-        return confirmation.acceptLabel || confirmation.acceptProps?.label || this.$primevue.config.locale.accept;
+        return (
+          confirmation.acceptLabel ||
+          confirmation.acceptProps?.label ||
+          this.$primevue.config.locale.accept
+        );
       }
 
       return this.$primevue.config.locale.accept;
@@ -121,22 +147,37 @@ export default {
       if (this.confirmation) {
         const confirmation = this.confirmation;
 
-        return confirmation.rejectLabel || confirmation.rejectProps?.label || this.$primevue.config.locale.reject;
+        return (
+          confirmation.rejectLabel ||
+          confirmation.rejectProps?.label ||
+          this.$primevue.config.locale.reject
+        );
       }
 
       return this.$primevue.config.locale.reject;
     },
     acceptIcon() {
-      return this.confirmation ? this.confirmation.acceptIcon : this.confirmation?.acceptProps ? this.confirmation.acceptProps.icon : null;
+      return this.confirmation
+        ? this.confirmation.acceptIcon
+        : this.confirmation?.acceptProps
+          ? this.confirmation.acceptProps.icon
+          : null;
     },
     rejectIcon() {
-      return this.confirmation ? this.confirmation.rejectIcon : this.confirmation?.rejectProps ? this.confirmation.rejectProps.icon : null;
+      return this.confirmation
+        ? this.confirmation.rejectIcon
+        : this.confirmation?.rejectProps
+          ? this.confirmation.rejectProps.icon
+          : null;
     },
     autoFocusAccept() {
-      return this.confirmation.defaultFocus === undefined || this.confirmation.defaultFocus === 'accept' ? true : false;
+      return this.confirmation.defaultFocus === undefined ||
+        this.confirmation.defaultFocus === "accept"
+        ? true
+        : false;
     },
     autoFocusReject() {
-      return this.confirmation.defaultFocus === 'reject' ? true : false;
+      return this.confirmation.defaultFocus === "reject" ? true : false;
     },
     closeOnEscape() {
       return this.confirmation ? this.confirmation.closeOnEscape : true;
@@ -164,12 +205,12 @@ export default {
       this.confirmation = null;
     };
 
-    ConfirmationEventBus.on('confirm', this.confirmListener);
-    ConfirmationEventBus.on('close', this.closeListener);
+    ConfirmationEventBus.on("confirm", this.confirmListener);
+    ConfirmationEventBus.on("close", this.closeListener);
   },
   beforeUnmount() {
-    ConfirmationEventBus.off('confirm', this.confirmListener);
-    ConfirmationEventBus.off('close', this.closeListener);
+    ConfirmationEventBus.off("confirm", this.confirmListener);
+    ConfirmationEventBus.off("close", this.closeListener);
   },
   methods: {
     accept() {

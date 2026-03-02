@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import MediaController from '@/wayfinder/actions/HassanDomeDenea/HddLaravelHelpers/Controllers/MediaController.ts';
-import downloadJs from 'downloadjs';
-import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
-import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts';
-import { debounce, get } from 'lodash-es';
-import moment from 'moment';
-import { useConfirm } from 'primevue/useconfirm';
+import MediaController from "@/wayfinder/actions/HassanDomeDenea/HddLaravelHelpers/Controllers/MediaController.ts";
+import downloadJs from "downloadjs";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
+import { useStackableDialog } from "HddUiHelpers/stores/stackableDialogs.ts";
+import { debounce, get } from "lodash-es";
+import moment from "moment";
+import { useConfirm } from "primevue/useconfirm";
 
 type AttachmentModelType = any;
 
@@ -50,22 +50,22 @@ const props = withDefaults(
     maxZoom?: number;
   }>(),
   {
-    originalOrderProperty: 'order_original',
-    orderProperty: 'order',
-    idProperty: 'id',
-    orderChangedProperty: 'order_changed',
-    descriptionProperty: 'description',
-    captionProperty: 'caption',
-    dateProperty: 'date',
-    downloadProperty: 'download_url',
-    nameProperty: 'file_name',
-    mimeTypeProperty: 'mime_type',
+    originalOrderProperty: "order_original",
+    orderProperty: "order",
+    idProperty: "id",
+    orderChangedProperty: "order_changed",
+    descriptionProperty: "description",
+    captionProperty: "caption",
+    dateProperty: "date",
+    downloadProperty: "download_url",
+    nameProperty: "file_name",
+    mimeTypeProperty: "mime_type",
     deletable: false,
     thumbnailSize: 60,
     hasThumbnails: true,
-    sizeProperty: 'size',
-    srcProperty: 'original_url',
-    thumbProperty: 'thumb_url',
+    sizeProperty: "size",
+    srcProperty: "original_url",
+    thumbProperty: "thumb_url",
     canEditDate: true,
     canEditDescription: true,
     toolbarButtons: true,
@@ -79,7 +79,9 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-  sorted: [event: { oldIndex: number; newIndex: number; indexesChanges: { [number: number]: number } }];
+  sorted: [
+    event: { oldIndex: number; newIndex: number; indexesChanges: { [number: number]: number } },
+  ];
   toggled: [state: boolean];
   dateChanged: [file: AttachmentModelType, newDate: string];
   descriptionChanged: [file: AttachmentModelType, newDescription: string];
@@ -94,27 +96,27 @@ const emits = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const mainWrapper = useTemplateRef<HTMLDivElement>('mainWrapper');
-const loading = defineModel<boolean>('loading', { default: false });
+const mainWrapper = useTemplateRef<HTMLDivElement>("mainWrapper");
+const loading = defineModel<boolean>("loading", { default: false });
 const isVisible = ref(false);
 const activeIndex = ref(0);
 const showCaption = ref(false);
 const windowSize = useWindowSize();
 const responsiveOptions = ref([
   {
-    breakpoint: '1500px',
+    breakpoint: "1500px",
     numVisible: 20,
   },
   {
-    breakpoint: '1024px',
+    breakpoint: "1024px",
     numVisible: 10,
   },
   {
-    breakpoint: '768px',
+    breakpoint: "768px",
     numVisible: 7,
   },
   {
-    breakpoint: '560px',
+    breakpoint: "560px",
     numVisible: 5,
   },
 ]);
@@ -125,17 +127,17 @@ watch(
   () => isVisible.value,
   (state) => {
     if (state) {
-      window.addEventListener('click', onGalleryMaskClick);
-      window.addEventListener('keydown', onGalleryKeyboardPress);
-      emits('shown');
+      window.addEventListener("click", onGalleryMaskClick);
+      window.addEventListener("keydown", onGalleryKeyboardPress);
+      emits("shown");
       updateDialogVisibility(true);
     } else {
-      window.removeEventListener('click', onGalleryMaskClick);
-      window.removeEventListener('keydown', onGalleryKeyboardPress);
-      emits('hidden');
+      window.removeEventListener("click", onGalleryMaskClick);
+      window.removeEventListener("keydown", onGalleryKeyboardPress);
+      emits("hidden");
       updateDialogVisibility(false);
     }
-    emits('toggled', state);
+    emits("toggled", state);
   },
 );
 
@@ -148,26 +150,26 @@ watch(activeIndex, () => {
 
 function onGalleryMaskClick(event: PointerEvent) {
   const target = event.target as Element | null;
-  if (target?.classList.contains('galleriaMaskDismissClass')) {
+  if (target?.classList.contains("galleriaMaskDismissClass")) {
     isVisible.value = false;
   }
 }
 
 function onGalleryKeyboardPress(event: KeyboardEvent) {
-  if (event.code === 'Escape') {
+  if (event.code === "Escape") {
     isVisible.value = false;
     return;
   }
   const direction = getComputedStyle(mainWrapper.value).direction;
-  const isRtl = direction === 'rtl';
+  const isRtl = direction === "rtl";
 
-  if (event.code === 'ArrowRight') {
+  if (event.code === "ArrowRight") {
     if (isRtl) {
       moveToPrevious();
     } else {
       moveToNext();
     }
-  } else if (event.code === 'ArrowLeft') {
+  } else if (event.code === "ArrowLeft") {
     if (isRtl) {
       moveToNext();
     } else {
@@ -275,8 +277,17 @@ function resetTransformation() {
 
 const imageTransformationStyle = computed(() => {
   return {
-    transition: panningState.value.isPanning ? 'none' : 'transform 0.15s',
-    transform: 'rotate(' + rotate.value + 'deg) scale(' + scale.value + ') translate(' + translateX.value + 'px, ' + translateY.value + 'px)',
+    transition: panningState.value.isPanning ? "none" : "transform 0.15s",
+    transform:
+      "rotate(" +
+      rotate.value +
+      "deg) scale(" +
+      scale.value +
+      ") translate(" +
+      translateX.value +
+      "px, " +
+      translateY.value +
+      "px)",
   };
 });
 const imageIsRotate = computed(() => {
@@ -324,20 +335,23 @@ function onFileDateUpdated(file: AttachmentModelType, newDate: string) {
           },
         })
         .then(() => {
-          emits('dateChanged', file, newDate);
-          emits('changed');
+          emits("dateChanged", file, newDate);
+          emits("changed");
         })
         .catch(apiClient.toastRequestError)
         .finally(() => {
           loading.value = false;
         });
     } else {
-      emits('dateChanged', file, newDate);
+      emits("dateChanged", file, newDate);
     }
   }
 }
 // Update date
-const onFileDescriptionUpdated = debounce(function (file: AttachmentModelType, newDescription: string) {
+const onFileDescriptionUpdated = debounce(function (
+  file: AttachmentModelType,
+  newDescription: string,
+) {
   if (props.canEditDescription) {
     if (props.autoSubmitChanges && file[props.idProperty]) {
       loading.value = true;
@@ -349,15 +363,15 @@ const onFileDescriptionUpdated = debounce(function (file: AttachmentModelType, n
           },
         })
         .then(() => {
-          emits('descriptionChanged', file, newDescription);
-          emits('changed');
+          emits("descriptionChanged", file, newDescription);
+          emits("changed");
         })
         .catch(apiClient.toastRequestError)
         .finally(() => {
           loading.value = false;
         });
     } else {
-      emits('descriptionChanged', file, newDescription);
+      emits("descriptionChanged", file, newDescription);
     }
   }
 }, 500);
@@ -380,35 +394,35 @@ function saveManipulations(file: AttachmentModelType) {
         })
         .then(() => {
           resetTransformation();
-          emits('transformationApplied', file, payload);
-          emits('changed');
+          emits("transformationApplied", file, payload);
+          emits("changed");
         })
         .catch(apiClient.toastRequestError)
         .finally(() => {
           loading.value = false;
         });
     } else {
-      emits('transformationApplied', file, payload);
+      emits("transformationApplied", file, payload);
     }
   }
 }
 
 const confirm = useConfirm();
 function confirmDelete(file: AttachmentModelType) {
-  emits('confirming');
+  emits("confirming");
   updateDialogVisibility(true);
   confirm.require({
-    group: 'dismissable',
-    header: t('Delete Confirmation'),
-    message: t('Are you sure you want to delete this file?'),
-    icon: 'i-material-symbols:warning-outline-rounded',
+    group: "dismissable",
+    header: t("Delete Confirmation"),
+    message: t("Are you sure you want to delete this file?"),
+    icon: "i-material-symbols:warning-outline-rounded",
     acceptProps: {
-      severity: 'danger',
-      icon: 'i-line-md:confirm',
+      severity: "danger",
+      icon: "i-line-md:confirm",
     },
-    acceptClass: 'font-bold',
+    acceptClass: "font-bold",
     rejectProps: {
-      severity: 'secondary',
+      severity: "secondary",
       // icon: 'i-line-md:cancel',
     },
     accept() {
@@ -419,22 +433,22 @@ function confirmDelete(file: AttachmentModelType) {
             ...MediaController.destroy(file[props.idProperty]),
           })
           .then(() => {
-            emits('changed');
-            emits('deleted', file);
+            emits("changed");
+            emits("deleted", file);
           })
           .catch(apiClient.toastRequestError)
           .finally(() => {
             loading.value = false;
           });
       } else {
-        emits('delete', file);
+        emits("delete", file);
       }
-      emits('confirmed');
+      emits("confirmed");
       updateDialogVisibility(false);
     },
     reject() {
       updateDialogVisibility(false);
-      emits('confirmed');
+      emits("confirmed");
     },
     onHide() {
       updateDialogVisibility(false);
@@ -530,16 +544,27 @@ defineExpose({ resetTransformation });
             :style="{ width: (thumbnailSize || 60) + 'px', height: (thumbnailSize || 60) + 'px' }"
           >
             <div v-if="deletable" class="z-2 absolute top-0 ltr:right-0 rtl:left-0">
-              <Button v-tooltip="t('Delete')" icon="i-mdi-trash" severity="danger" text size="small" raised @click="confirmDelete(image)"></Button>
+              <Button
+                v-tooltip="t('Delete')"
+                icon="i-mdi-trash"
+                severity="danger"
+                text
+                size="small"
+                raised
+                @click="confirmDelete(image)"
+              />
             </div>
             <div
               class="light:bg-gray-100/45 z-1 absolute inset-0 hidden cursor-pointer items-center justify-center hover:visible group-hover:flex dark:bg-gray-900/45"
               @click="previewImage(index)"
             >
-              <i class="i-mdi:eye light:text-teal-700 dark:text-teal-200" :style="{ fontSize: Math.max((thumbnailSize || 60) / 5, 12) + 'px' }" />
+              <i
+                class="i-mdi:eye light:text-teal-700 dark:text-teal-200"
+                :style="{ fontSize: Math.max((thumbnailSize || 60) / 5, 12) + 'px' }"
+              />
             </div>
             <div v-if="loading" class="z-100 absolute bottom-0 left-0 right-0 top-0">
-              <Skeleton class="!h-full !w-full"></Skeleton>
+              <Skeleton class="!h-full !w-full" />
             </div>
             <img
               :src="image[hasThumbnails ? thumbProperty : srcProperty]"
@@ -573,9 +598,9 @@ defineExpose({ resetTransformation });
         :style="{ width: (thumbnailSize || 60) + 'px', height: (thumbnailSize || 60) + 'px' }"
       >
         <div class="h-full w-full space-y-1">
-          <Skeleton style="height: 65%"></Skeleton>
-          <Skeleton style="height: 15%"></Skeleton>
-          <Skeleton style="height: 15%"></Skeleton>
+          <Skeleton style="height: 65%" />
+          <Skeleton style="height: 15%" />
+          <Skeleton style="height: 15%" />
         </div>
       </div>
     </div>
@@ -607,9 +632,29 @@ defineExpose({ resetTransformation });
           class="rounded-4xl z-1 border-1 absolute right-1 top-1 inline-block space-y-1 border-gray-700 bg-gray-100/50 px-3 py-1 backdrop-blur-sm dark:border-gray-300 dark:bg-gray-900/50"
         >
           <div class="flex items-center gap-2">
-            <Button rounded severity="contrast" variant="text" icon="i-fa7-solid:times  " @click="close"></Button>
-            <Button v-if="scalable" rounded severity="contrast" variant="text" icon="i-fa7-solid:rotate-right" @click="rotateRight"></Button>
-            <Button v-if="scalable" rounded severity="contrast" variant="text" icon="i-fa7-solid:rotate-left" @click="rotateLeft"></Button>
+            <Button
+              rounded
+              severity="contrast"
+              variant="text"
+              icon="i-fa7-solid:times  "
+              @click="close"
+            />
+            <Button
+              v-if="scalable"
+              rounded
+              severity="contrast"
+              variant="text"
+              icon="i-fa7-solid:rotate-right"
+              @click="rotateRight"
+            />
+            <Button
+              v-if="scalable"
+              rounded
+              severity="contrast"
+              variant="text"
+              icon="i-fa7-solid:rotate-left"
+              @click="rotateLeft"
+            />
             <Button
               v-if="zoomable"
               rounded
@@ -618,7 +663,7 @@ defineExpose({ resetTransformation });
               :disabled="isZoomOutDisabled"
               icon="i-fa:search-minus"
               @click="zoomOut"
-            ></Button>
+            />
             <Button
               v-if="zoomable"
               rounded
@@ -627,9 +672,12 @@ defineExpose({ resetTransformation });
               :disabled="isZoomInDisabled"
               icon="i-fa:search-plus"
               @click="zoomIn"
-            ></Button>
+            />
           </div>
-          <div v-if="savableTransformation && imageTransformationsApplied && imageIsRotate" class="flex justify-center">
+          <div
+            v-if="savableTransformation && imageTransformationsApplied && imageIsRotate"
+            class="flex justify-center"
+          >
             <Button
               icon="i-material-symbols:save-rounded"
               variant="outlined"
@@ -637,7 +685,7 @@ defineExpose({ resetTransformation });
               :label="t('Save Changes')"
               size="small"
               @click="saveManipulations(activeFile)"
-            ></Button>
+            />
           </div>
         </div>
       </template>
@@ -654,7 +702,10 @@ defineExpose({ resetTransformation });
         <i v-if="hasGalleryThumbnailsNavigationButtons" class="rtl:i-mdi-chevron-left ltr:i-mdi-chevron-right text-3xl" />
       </template>-->
       <template #item="slotProps">
-        <div class="light:bg-gray-50/95 relative touch-none dark:bg-slate-900/95" :style="imageTransformationStyle">
+        <div
+          class="light:bg-gray-50/95 relative touch-none dark:bg-slate-900/95"
+          :style="imageTransformationStyle"
+        >
           <slot name="viewerImageIcons" :item="slotProps.item" :active-index="activeIndex" />
           <template v-if="slotProps.item.mime_type === 'application/pdf'">
             <embed
@@ -698,19 +749,37 @@ defineExpose({ resetTransformation });
           />
         </div>
       </template>
-      <template v-if="attachments[activeIndex] && !attachments[activeIndex].mime_type.startsWith('video/') && showCaption" #caption="slotProps">
+      <template
+        v-if="
+          attachments[activeIndex] &&
+          !attachments[activeIndex].mime_type.startsWith('video/') &&
+          showCaption
+        "
+        #caption="slotProps"
+      >
         <div class="cols-2 grid gap-4">
-          <div v-if="!slotProps.item[captionProperty]" class="ms-2 overflow-x-clip text-ellipsis text-xs" :title="slotProps.item[nameProperty]">
+          <div
+            v-if="!slotProps.item[captionProperty]"
+            class="ms-2 overflow-x-clip text-ellipsis text-xs"
+            :title="slotProps.item[nameProperty]"
+          >
             {{ slotProps.item[nameProperty] }}
           </div>
           <div class="text-end">
             <span class="text-xs" :title="moment(slotProps.item[dateProperty]).fromNow()">
-              {{ moment(slotProps.item[dateProperty]).format('YYYY-MM-DD hh:mm A') }}
+              {{ moment(slotProps.item[dateProperty]).format("YYYY-MM-DD hh:mm A") }}
             </span>
-            <i class="i-mdi-download hover:light:text-blue-400 ms-2 cursor-pointer hover:dark:text-blue-300" @click="downloadItem(slotProps.item)" />
+            <i
+              class="i-mdi-download hover:light:text-blue-400 ms-2 cursor-pointer hover:dark:text-blue-300"
+              @click="downloadItem(slotProps.item)"
+            />
           </div>
         </div>
-        <div v-if="slotProps.item[captionProperty]" class="mb-2 font-bold" :title="slotProps.item[nameProperty]">
+        <div
+          v-if="slotProps.item[captionProperty]"
+          class="mb-2 font-bold"
+          :title="slotProps.item[nameProperty]"
+        >
           {{ slotProps.item[captionProperty] }}
         </div>
       </template>

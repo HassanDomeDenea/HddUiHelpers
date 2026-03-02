@@ -1,26 +1,39 @@
 <script setup lang="ts" generic="T extends string">
-import { isAxiosError } from 'axios'
-import { getFieldSlotName } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts'
-import CheckboxInput from 'HddUiHelpers/components/inputs/CheckboxInput.vue'
-import FormObjectInput from 'HddUiHelpers/components/inputs/FormObjectInput.vue'
-import ListBoxInput from 'HddUiHelpers/components/inputs/ListBoxInput.vue'
-import MultiSelectInput from 'HddUiHelpers/components/inputs/MultiSelectInput.vue'
-import RadioButtonInput from 'HddUiHelpers/components/inputs/RadioButtonInput.vue'
-import SelectInput from 'HddUiHelpers/components/inputs/SelectInput.vue'
-import TextInput from 'HddUiHelpers/components/inputs/TextInput.vue'
-import type { BaseInputProps } from 'HddUiHelpers/components/inputs/types'
-import { useApiClient } from 'HddUiHelpers/stores/apiClient'
-import { cloneDeep, find, get, map, mapValues, maxBy, omit, reduce, set, throttle, uniqueId, unset } from 'lodash-es'
-import Button from 'primevue/button'
-import { toValue } from 'vue'
-import { ComponentExposed } from 'vue-component-type-helpers'
-import type { UseHddFormOptions } from '../../utils/useHddForm'
-import { useHddForm } from '../../utils/useHddForm'
-import type { FieldError, HddFormField, HddFormProps, HddFormValues } from './types'
-import { isAxiosValidationError } from './types'
+import { AxiosResponse, isAxiosError } from "axios";
+import { getFieldSlotName } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import CheckboxInput from "HddUiHelpers/components/inputs/CheckboxInput.vue";
+import FormObjectInput from "HddUiHelpers/components/inputs/FormObjectInput.vue";
+import ListBoxInput from "HddUiHelpers/components/inputs/ListBoxInput.vue";
+import MultiSelectInput from "HddUiHelpers/components/inputs/MultiSelectInput.vue";
+import RadioButtonInput from "HddUiHelpers/components/inputs/RadioButtonInput.vue";
+import SelectInput from "HddUiHelpers/components/inputs/SelectInput.vue";
+import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
+import type { BaseInputProps } from "HddUiHelpers/components/inputs/types";
+import { useApiClient } from "HddUiHelpers/stores/apiClient";
+import {
+  cloneDeep,
+  find,
+  get,
+  map,
+  mapValues,
+  maxBy,
+  omit,
+  reduce,
+  set,
+  throttle,
+  uniqueId,
+  unset,
+} from "lodash-es";
+import Button from "primevue/button";
+import { toValue } from "vue";
+import { ComponentExposed } from "vue-component-type-helpers";
+import type { UseHddFormOptions } from "../../utils/useHddForm";
+import { useHddForm } from "../../utils/useHddForm";
+import type { FieldError, HddFormField, HddFormProps, HddFormValues } from "./types";
+import { isAxiosValidationError } from "./types";
 
 const {
-  defaultValidationMode = 'onSubmit',
+  defaultValidationMode = "onSubmit",
   summarizeErrorsAtTop = true,
   showFieldErrorBelowIt = false,
   showFieldErrorsPopover = false,
@@ -30,8 +43,8 @@ const {
   isEditing,
   fieldsContainerClass,
   formName,
-  urlMethod = 'post',
-  submitText = '',
+  urlMethod = "post",
+  submitText = "",
   unifyLabelsWidth = false,
   fields,
   fixedLabelWidth,
@@ -47,146 +60,149 @@ const {
   infieldTopAlignedLabel,
   autoFocusFirstOnMount = true,
   withFooterButtons = true,
-} = defineProps<HddFormProps<T>>()
+} = defineProps<HddFormProps<T>>();
 
-const formModelValue = defineModel<any>()
+const formModelValue = defineModel<any>();
 
 const emits = defineEmits<{
-  reset: []
+  reset: [];
   submit: [
     values: HddFormValues<T>,
     context: {
-      setFieldErrors: (fieldName: T, errors: FieldError[] | string[]) => void
-      addFieldError: (fieldName: T, error: FieldError | string) => void
-      setMultiFieldsErrors: (errors: Record<T, FieldError[] | string[]>) => void
+      setFieldErrors: (fieldName: T, errors: FieldError[] | string[]) => void;
+      addFieldError: (fieldName: T, error: FieldError | string) => void;
+      setMultiFieldsErrors: (errors: Record<T, FieldError[] | string[]>) => void;
     },
-  ]
-}>()
+  ];
+}>();
 
-const apiClient = useApiClient()
+const apiClient = useApiClient();
 
-const { t } = useI18n()
+const { t } = useI18n();
 const hddFormOptions = computed(() => {
   return {
     fields,
     defaultValidationMode,
     staticInitialValues: initialValues,
     onSubmit: (values, context) => {
-      emits('submit', values, context)
+      emits("submit", values, context);
       if (url) {
         return submitToUrl()
           .then((result: unknown) => {
             if (onSuccess) {
-              onSuccess(result)
+              onSuccess(result);
             }
-            return result
+            return result;
           })
           .catch((error: Error) => {
-            console.error(error)
+            console.error(error);
             if (onFailure) {
-              onFailure(error)
+              onFailure(error);
             }
-          })
+          });
       }
     },
-  } as UseHddFormOptions<T>
-})
+  } as UseHddFormOptions<T>;
+});
 
-const containerRef = useTemplateRef('containerRef')
-const fieldsContainerRef = useTemplateRef('fieldsContainerRef')
-const submitButtonRef = useTemplateRef<ComponentExposed>('submitButtonRef')
-const form = useHddForm<T>(hddFormOptions.value as UseHddFormOptions<T>)
+const containerRef = useTemplateRef("containerRef");
+const fieldsContainerRef = useTemplateRef("fieldsContainerRef");
+const submitButtonRef = useTemplateRef<ComponentExposed>("submitButtonRef");
+const form = useHddForm<T>(hddFormOptions.value as UseHddFormOptions<T>);
 
-const isSubmitting = ref(false)
+const isSubmitting = ref(false);
 
 async function submitToUrl(): Promise<any> {
-  return new Promise(async (resolve, reject) => {
-    if (!url) return reject('No url provided')
-    isSubmitting.value = true
-    form.clearErrors()
+  return new Promise((resolve, reject) => {
+    if (!url) return reject("No url provided");
+    isSubmitting.value = true;
+    form.clearErrors();
 
-    let payload = form.currentValues.value
-    const files = form.currentFiles.value
-    const hasFiles = Object.values(files).filter((i) => i).length > 0
+    let payload = form.currentValues.value;
+    const files = form.currentFiles.value;
+    const hasFiles = Object.values(files).filter((i) => i).length > 0;
     if (submitPayloadTransformer) {
-      payload = submitPayloadTransformer(cloneDeep(payload), form as any)
+      payload = submitPayloadTransformer(cloneDeep(payload), form as any);
     }
-    try {
-      let res: any
-      if (hasFiles) {
-        res = await apiClient.upload(url, files, payload)
+    let request: Promise<AxiosResponse<any>>;
+    if (hasFiles) {
+      request = apiClient.upload(url, files, payload);
+    } else {
+      if (typeof url === "object") {
+        request = apiClient.request(url, payload, false);
       } else {
-        if (typeof url === 'object') {
-          res = await apiClient.request(url, payload, false)
+        switch (urlMethod) {
+          case "post":
+            request = apiClient.post(url, payload);
+            break;
+          case "put":
+            request = apiClient.put(url, payload);
+            break;
+          case "get":
+            request = apiClient.get(url, { params: payload });
+            break;
+          case "delete":
+            request = apiClient.delete(url, { params: payload });
+            break;
+        }
+      }
+    }
+    request
+      .then((response) => {
+        resolve(response.data);
+      })
+      .catch(async (error) => {
+        if (isAxiosValidationError(error)) {
+          form.setMultiFieldsErrors(
+            mapValues(error.response.data.errors, (i) => i.map((e) => ({ message: e }))) as Record<
+              T,
+              FieldError[]
+            >,
+          );
+        } else if (isAxiosError(error)) {
+          form.addGlobalError(t(error.response?.data.message ?? error.message ?? "Error Occurred"));
         } else {
-          switch (urlMethod) {
-            case 'post':
-              res = await apiClient.post(url, payload)
-              break
-            case 'put':
-              res = await apiClient.put(url, payload)
-              break
-            case 'get':
-              res = await apiClient.get(url, { params: payload })
-              break
-            case 'delete':
-              res = await apiClient.delete(url, { params: payload })
-              break
+          form.addGlobalError(t("Error Occurred"));
+        }
+        await nextTick();
+        if (
+          !document.activeElement ||
+          document.activeElement.getAttribute("aria-invalid") !== "true"
+        ) {
+          if (false === focusFirstWithError()) {
+            focusFirst();
           }
         }
-      }
-      isSubmitting.value = false
-      return resolve(res.data)
-    } catch (error: unknown) {
-      if (isAxiosValidationError(error)) {
-        form.setMultiFieldsErrors(
-          mapValues(error.response.data.errors, (i) => i.map((e) => ({ message: e }))) as Record<
-            T,
-            FieldError[]
-          >
-        )
-      } else if (isAxiosError(error)) {
-        form.addGlobalError(t(error.response?.data.message ?? error.message ?? 'Error Occurred'))
-      } else {
-        form.addGlobalError(t('Error Occurred'))
-      }
-      await nextTick()
-      if (
-        !document.activeElement ||
-        document.activeElement.getAttribute('aria-invalid') !== 'true'
-      ) {
-        if (false === focusFirstWithError()) {
-          focusFirst()
-        }
-      }
-      isSubmitting.value = false
-      return reject(error as Error)
-    }
-  })
+        reject(error as Error);
+      })
+      .finally(() => {
+        isSubmitting.value = false;
+      });
+  });
 }
 
 // const currentValues = toRef(() => form.currentValues)
 
-const { requiredFieldsNames, formState, fields: formFields } = form
+const { requiredFieldsNames, formState, fields: formFields } = form;
 
-const currentValues = form.currentValues as any
-const currentFiles = form.currentFiles as any
-const fieldsStates = form.fieldsStates as any
+const currentValues = form.currentValues as any;
+const currentFiles = form.currentFiles as any;
+const fieldsStates = form.fieldsStates as any;
 
 const labelWidthStyle = computed(() => {
-  return fixedLabelWidth && fixedLabelWidth > 0 ? `width: ${fixedLabelWidth}px` : ''
-})
+  return fixedLabelWidth && fixedLabelWidth > 0 ? `width: ${fixedLabelWidth}px` : "";
+});
 
-const fieldRefs = ref<{ [k in string]: any }>({})
-const localFormName = computed(() => formName || uniqueId('hdd-form-'))
+const fieldRefs = ref<{ [k in string]: any }>({});
+const localFormName = computed(() => formName || uniqueId("hdd-form-"));
 const labelsLargestWidth = computed(() => {
-  if (typeof unifyLabelsWidth === 'number') {
-    return unifyLabelsWidth
+  if (typeof unifyLabelsWidth === "number") {
+    return unifyLabelsWidth;
   } else if (unifyLabelsWidth === true) {
-    return maxBy(map(fieldRefs.value, (e) => e?.baseInputRef?.labelWidth ?? e?.labelWidth))
+    return maxBy(map(fieldRefs.value, (e) => e?.baseInputRef?.labelWidth ?? e?.labelWidth));
   }
-  return null
-})
+  return null;
+});
 
 const generalInputsProps = computed<Partial<BaseInputProps>>(() => {
   return {
@@ -200,9 +216,9 @@ const generalInputsProps = computed<Partial<BaseInputProps>>(() => {
     floatingLabel,
     floatingLabelVariant,
     infieldTopAlignedLabel,
-    onKeydown: (e: KeyboardEvent) => e.key === 'Enter' && submitOnEnter && form.submitForm(),
-  }
-})
+    onKeydown: (e: KeyboardEvent) => e.key === "Enter" && submitOnEnter && form.submitForm(),
+  };
+});
 
 function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProps> & { ref: any } {
   return {
@@ -214,9 +230,9 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
     name: field.name,
     autocomplete: field.autocomplete,
     disabled:
-      typeof field.disabled === 'function' ? field.disabled(currentValues.value) : field.disabled,
+      typeof field.disabled === "function" ? field.disabled(currentValues.value) : field.disabled,
     readonly:
-      typeof field.readonly === 'function' ? field.readonly(currentValues.value) : field.readonly,
+      typeof field.readonly === "function" ? field.readonly(currentValues.value) : field.readonly,
     icon: field.icon,
     placeholder: field.placeholder,
     size: field.size ?? size,
@@ -224,10 +240,10 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
     showErrorMessage: showFieldErrorBelowIt,
     ...(field.labelWidth || field.labelWidth === 0
       ? {
-          labelMinWidth: field.labelWidth || 'unset',
+          labelMinWidth: field.labelWidth || "unset",
         }
       : {}),
-    ...(['text', 'password'].includes(field.type ?? 'text')
+    ...(["text", "password"].includes(field.type ?? "text")
       ? {
           onFocusNext: () => focusNext(field),
           onFocusPrevious: () => focusPrevious(field),
@@ -236,19 +252,19 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
     ...(field.addonCallback
       ? {
           textAddon: (value: any) => {
-            return field.addonCallback({ value, row: toValue(currentValues) })
+            return field.addonCallback({ value, row: toValue(currentValues) });
           },
         }
       : {}),
     ...(field.onValueUpdate
       ? {
-          'onUpdate:modelValue': (value: any) => {
-            triggerOnValueUpdate(field, value)
+          "onUpdate:modelValue": (value: any) => {
+            triggerOnValueUpdate(field, value);
           },
         }
       : {}),
     ...(field.binds
-      ? typeof field.binds === 'function'
+      ? typeof field.binds === "function"
         ? field.binds({
             isEditing,
             row: toValue(currentValues),
@@ -257,10 +273,10 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
       : {}),
     ...(field.teleport && !field.labelWidth
       ? {
-          labelMinWidth: 'unset',
+          labelMinWidth: "unset",
         }
       : {}),
-  }
+  };
 }
 
 function triggerOnValueUpdate(field: HddFormField, value: any) {
@@ -269,7 +285,7 @@ function triggerOnValueUpdate(field: HddFormField, value: any) {
     row: toValue(currentValues),
     setValue: form.setValue,
     fieldRef: fieldRefs.value[field.name],
-  })
+  });
 }
 
 const calculateUnifiedLabelsSpacing = throttle(() => {
@@ -287,119 +303,119 @@ const calculateUnifiedLabelsSpacing = throttle(() => {
            document.documentElement.style.setProperty(`--label-width-for-form-${localFormName.value}`, `${maxWidth}px`);
        }*/
   // console.log(maxWidth)
-}, 50)
+}, 50);
 
 watch(
   () => unifyLabelsWidth,
   () => {
-    calculateUnifiedLabelsSpacing()
+    calculateUnifiedLabelsSpacing();
   },
   {
     immediate: true,
-    flush: 'post',
-  }
-)
+    flush: "post",
+  },
+);
 
 watch(
   () => form.fields.value.map((e) => !e.hidden).length,
   () => {
     if (unifyLabelsWidth === true) {
-      calculateUnifiedLabelsSpacing()
+      calculateUnifiedLabelsSpacing();
     }
   },
   {
     immediate: false,
-    flush: 'post',
-  }
-)
+    flush: "post",
+  },
+);
 
 onMounted(() => {
   if (autoFocusFirstOnMount) {
-    focusFirst()
+    focusFirst();
   }
-  calculateUnifiedLabelsSpacing()
-})
+  calculateUnifiedLabelsSpacing();
+});
 
 function focusFirstWithError(): boolean | null {
   const item = find(fieldRefs.value, (item) => {
-    return item?.hasError
-  })
+    return item?.hasError;
+  });
   if (item) {
-    item.focus()
-    return null
+    item.focus();
+    return null;
   } else {
-    return false
+    return false;
   }
 }
 
 function focusFirst() {
   nextTick(() => {
-    let firstFieldName = formFields.value[0]?.name
+    let firstFieldName = formFields.value[0]?.name;
     if (firstFieldName) {
-      focusField(firstFieldName)
+      focusField(firstFieldName);
     } else {
       Object.values(fieldRefs.value)
         .filter((e) => !e?.disabled)[0]
-        ?.focus()
+        ?.focus();
     }
-  })
+  });
 }
 
 function focusPrevious(field: HddFormField) {
-  const enabledFields = Object.entries(fieldRefs.value).filter((e) => !e[1]?.disabled)
-  const currentFieldIndex = enabledFields.findIndex((e) => e[0] === field.name)
-  enabledFields[currentFieldIndex - 1]?.[1].focus?.()
+  const enabledFields = Object.entries(fieldRefs.value).filter((e) => !e[1]?.disabled);
+  const currentFieldIndex = enabledFields.findIndex((e) => e[0] === field.name);
+  enabledFields[currentFieldIndex - 1]?.[1].focus?.();
 }
 
 function focusNext(field: HddFormField) {
-  const enabledFields = Object.entries(fieldRefs.value).filter((e) => !e[1]?.disabled)
-  const currentFieldIndex = enabledFields.findIndex((e) => e[0] === field.name)
+  const enabledFields = Object.entries(fieldRefs.value).filter((e) => !e[1]?.disabled);
+  const currentFieldIndex = enabledFields.findIndex((e) => e[0] === field.name);
   if (currentFieldIndex + 1 === enabledFields.length) {
-    focusSubmit()
+    focusSubmit();
   } else {
-    enabledFields[currentFieldIndex + 1]?.[1].focus?.()
+    enabledFields[currentFieldIndex + 1]?.[1].focus?.();
   }
 }
 
 function focusLast() {
-  const enabledFields = Object.values(fieldRefs.value).filter((e) => !e?.disabled)
-  enabledFields[enabledFields.length - 1]?.focus?.()
+  const enabledFields = Object.values(fieldRefs.value).filter((e) => !e?.disabled);
+  enabledFields[enabledFields.length - 1]?.focus?.();
 }
 
 function focusSubmit() {
-  submitButtonRef.value?.$el.focus()
+  submitButtonRef.value?.$el.focus();
 }
 
 function setFieldRef(el: any, name: string) {
-  fieldRefs.value[name] = el
+  fieldRefs.value[name] = el;
 }
 
 function focusField(name: string) {
-  fieldRefs.value[name]?.focus()
+  fieldRefs.value[name]?.focus();
 }
 
-defineExpose({ form, currentValues, fieldRefs, isSubmitting, focusFirst, focusField })
+defineExpose({ form, currentValues, fieldRefs, isSubmitting, focusFirst, focusField });
 
 const fieldNamePaths = computed(() => {
   return reduce(
     formFields.value,
     (carry, field) => {
-      carry[field.name] = field.name.split('.')
-      return carry
+      carry[field.name] = field.name.split(".");
+      return carry;
     },
-    {} as Record<string, string[]>
-  )
-})
+    {} as Record<string, string[]>,
+  );
+});
 
 function resolveFieldOptions(
   _options: MaybeRefOrGetter<any[] | ((form: unknown) => any[])>,
-  _currentValues: unknown
+  _currentValues: unknown,
 ) {
-  return typeof _options === 'function' ? _options(_currentValues) : (toValue(_options) ?? [])
+  return typeof _options === "function" ? _options(_currentValues) : (toValue(_options) ?? []);
 }
 
 if (formModelValue.value) {
-  syncRef(formModelValue, form.currentValues)
+  syncRef(formModelValue, form.currentValues);
 }
 </script>
 
@@ -423,7 +439,7 @@ if (formModelValue.value) {
           </ul>
         </Message>
       </div>
-      <slot name="beforeControls"></slot>
+      <slot name="beforeControls" />
       <div ref="fieldsContainerRef" :class="fieldsContainerClass">
         <template v-for="field in formFields" :key="field.name">
           <Teleport :to="field.teleport ?? fieldsContainerRef" defer :disabled="!field.teleport">
@@ -436,7 +452,7 @@ if (formModelValue.value) {
                 !(isEditing && field.editable === false)
               "
             >
-              <slot :name="`${getFieldSlotName(field)}BeforeControl`"></slot>
+              <slot :name="`${getFieldSlotName(field)}BeforeControl`" />
               <slot :name="`${getFieldSlotName(field)}ControlBody`">
                 <div class="mb-2">
                   <div class="flex items-center gap-1">
@@ -689,7 +705,7 @@ if (formModelValue.value) {
                               set(
                                 currentValues,
                                 field.imageUrlKey ?? fieldNamePaths[field.name],
-                                $event
+                                $event,
                               )
                             "
                             @clear="
@@ -732,7 +748,7 @@ if (formModelValue.value) {
                   </div>
                 </div>
               </slot>
-              <slot :name="`${getFieldSlotName(field)}AfterControl`"></slot>
+              <slot :name="`${getFieldSlotName(field)}AfterControl`" />
             </template>
           </Teleport>
         </template>
@@ -741,7 +757,7 @@ if (formModelValue.value) {
     <slot name="buttons-area">
       <div v-if="withFooterButtons" class="mt-4">
         <div class="flex items-center justify-between gap-2">
-          <slot name="beforeFooter" :is-submitting="isSubmitting"></slot>
+          <slot name="beforeFooter" :is-submitting="isSubmitting" />
           <Button
             ref="submitButtonRef"
             :name="localFormName + '_submit'"
@@ -756,7 +772,7 @@ if (formModelValue.value) {
             @keydown.up="focusLast"
             @click="form.submitForm()"
           />
-          <slot name="afterFooter" :is-submitting="isSubmitting"></slot>
+          <slot name="afterFooter" :is-submitting="isSubmitting" />
         </div>
       </div>
     </slot>

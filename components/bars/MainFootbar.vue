@@ -14,28 +14,28 @@ async function toggleLocales() {
 const { logout } = useUserStore()
 const { isLoggedIn } = storeToRefs(useUserStore())*/
 
-import ChatWidget from 'HddUiHelpers/components/Widgets/Chat/ChatWidget.vue'
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts'
-import { useDimensionsStore } from 'HddUiHelpers/stores/dimensions.ts'
+import ChatWidget from "../Widgets/Chat/ChatWidget.vue";
+import { useBasicAuthStore } from "../../stores/basicAuth";
+import { useDimensionsStore } from "../../stores/dimensions";
 
-const authStore = useBasicAuthStore()
+const authStore = useBasicAuthStore();
 
-const footerRef = ref()
-const dimensionsStore = useDimensionsStore()
+const footerRef = ref();
+const dimensionsStore = useDimensionsStore();
 
 const { height: footerHeight } = useElementSize(footerRef, undefined, {
-  box: 'border-box',
-})
+  box: "border-box",
+});
 
 watch(
   footerHeight,
   (val) => {
-    dimensionsStore.botFooterHeight = val
+    dimensionsStore.botFooterHeight = val;
   },
   {
     immediate: true,
-  }
-)
+  },
+);
 </script>
 
 <template>

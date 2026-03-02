@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { pick } from 'lodash-es';
-import moment from 'moment';
-import { ref } from 'vue';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { pick } from "lodash-es";
+import moment from "moment";
+import { ref } from "vue";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
@@ -17,14 +17,16 @@ const props = withDefaults(
     } & BaseInputProps
   >(),
   {
-    outputDateFormat: 'YYYY-MM-DD HH:mm:ss',
+    outputDateFormat: "YYYY-MM-DD HH:mm:ss",
     manualInput: true,
     formatAsString: true,
   },
 );
-const emits = defineEmits<{ changed: [newRange: [Date | string | null, Date | null | string] | null] }>();
+const emits = defineEmits<{
+  changed: [newRange: [Date | string | null, Date | null | string] | null];
+}>();
 const { t } = useI18n();
-const value = defineModel<[Date | string | null, Date | null | string] | null>('modelValue');
+const value = defineModel<[Date | string | null, Date | null | string] | null>("modelValue");
 
 const fromDateValue = computed({
   get: () => {
@@ -35,7 +37,7 @@ const fromDateValue = computed({
     newRange[0] = evt && props.formatAsString ? moment(evt).format(props.outputDateFormat) : evt;
     value.value = newRange;
     nextTick(() => {
-      emits('changed', newRange);
+      emits("changed", newRange);
     });
   },
 });
@@ -49,7 +51,7 @@ const toDateValue = computed({
     newRange[1] = evt && props.formatAsString ? moment(evt).format(props.outputDateFormat) : evt;
     value.value = newRange;
     nextTick(() => {
-      emits('changed', newRange);
+      emits("changed", newRange);
     });
   },
 });
@@ -71,8 +73,16 @@ const { exposed, baseInputForwardedProps, fieldUniqueId } = useHddBaseInputUtils
 const dateInputBinds = computed(() => {
   return {
     labelSingleLine: true,
-    ...pick(props, ['placeholder', 'size', 'disabled', 'readonly', 'error', 'manualInput', 'clearable']),
-    placeholder: props.placeholder ?? t('Unspecified'),
+    ...pick(props, [
+      "placeholder",
+      "size",
+      "disabled",
+      "readonly",
+      "error",
+      "manualInput",
+      "clearable",
+    ]),
+    placeholder: props.placeholder ?? t("Unspecified"),
     withSuggestionsButtons: true,
     inline: true,
   };
@@ -81,9 +91,19 @@ defineExpose({ focus, ...exposed });
 </script>
 
 <template>
-  <BaseInput v-bind="baseInputForwardedProps" :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown" @click="focus">
+  <BaseInput
+    v-bind="baseInputForwardedProps"
+    :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown"
+    @click="focus"
+  >
     <div class="flex items-center gap-6">
-      <DatePickerInput ref="inputRef" v-model="fromDateValue" :label="t('From')" v-bind="dateInputBinds" :unique-id="fieldUniqueId" />
+      <DatePickerInput
+        ref="inputRef"
+        v-model="fromDateValue"
+        :label="t('From')"
+        v-bind="dateInputBinds"
+        :unique-id="fieldUniqueId"
+      />
       <DatePickerInput v-model="toDateValue" :label="t('To')" v-bind="dateInputBinds" />
     </div>
   </BaseInput>

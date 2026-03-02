@@ -1,40 +1,40 @@
 <script setup lang="ts" generic="TRow extends any">
-import { pick } from 'lodash-es'
-import { ButtonProps } from 'primevue'
+import { pick } from "lodash-es";
+import { ButtonProps } from "primevue";
 
 const {
   rounded = true,
   only,
   values,
   title,
-  severity = 'primary',
+  severity = "primary",
 } = defineProps<{
-  values: TRow[]
-  only?: string[]
-  headers?: string[]
-  hideHead?: boolean
-  rounded?: boolean
-  showEmptyMessage?: boolean
-  title?: string
-  showSequenceColumn?: boolean
-  severity?: ButtonProps['severity']
-  size?: ButtonProps['size']
-  onRowClick?: (row: TRow) => void
-}>()
-const { t } = useI18n()
-const theadCellRefs = useTemplateRefsList()
-const theadRef = useTemplateRef<HTMLDivElement>('theadRef')
+  values: TRow[];
+  only?: string[];
+  headers?: string[];
+  hideHead?: boolean;
+  rounded?: boolean;
+  showEmptyMessage?: boolean;
+  title?: string;
+  showSequenceColumn?: boolean;
+  severity?: ButtonProps["severity"];
+  size?: ButtonProps["size"];
+  onRowClick?: (row: TRow) => void;
+}>();
+const { t } = useI18n();
+const theadCellRefs = useTemplateRefsList();
+const theadRef = useTemplateRef<HTMLDivElement>("theadRef");
 const mappedValues = computed(() => {
   if (only) {
-    return values.map((i) => pick(i, only))
+    return values.map((i) => pick(i, only));
   } else {
-    return values
+    return values;
   }
-})
+});
 
 const emits = defineEmits<{
-  rowClick: [row: unknown]
-}>()
+  rowClick: [row: unknown];
+}>();
 </script>
 
 <template>
@@ -72,7 +72,7 @@ const emits = defineEmits<{
                 class="font-italic text-muted text-center"
                 :colspan="(theadRef?.firstChild as HTMLTableRowElement)?.children?.length || 1"
               >
-                {{ t('No Records') }}
+                {{ t("No Records") }}
               </td>
             </slot>
           </tr>
@@ -80,7 +80,9 @@ const emits = defineEmits<{
         <template v-else>
           <template v-for="(row, rowIndex) in mappedValues" :key="rowIndex">
             <tr :class="{ 'cursor-pointer': !!onRowClick }" @click="emits('rowClick', row)">
-              <td v-if="showSequenceColumn">{{ rowIndex + 1 }}</td>
+              <td v-if="showSequenceColumn">
+                {{ rowIndex + 1 }}
+              </td>
               <slot name="row" :row="row as any">
                 <td v-for="(cellValue, cellIndex) in row" :key="cellIndex">
                   {{ cellValue }}

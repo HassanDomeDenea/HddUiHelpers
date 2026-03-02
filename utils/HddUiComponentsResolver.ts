@@ -1,13 +1,13 @@
-import type { ComponentResolver } from 'unplugin-vue-components/types';
+import type { ComponentResolver } from "unplugin-vue-components/types";
 
 export function HddUiComponentsResolver(): ComponentResolver[] {
   return [
     {
-      type: 'component',
+      type: "component",
       resolve: (componentName) => {
         // console.log(componentName)
-        if (componentName === 'HddForm') {
-          return { from: 'HddUiHelpers/components/FormWrapper/HddForm.vue' };
+        if (componentName === "HddForm") {
+          return { from: "HddUiHelpers/components/FormWrapper/HddForm.vue" };
         }
       },
     },

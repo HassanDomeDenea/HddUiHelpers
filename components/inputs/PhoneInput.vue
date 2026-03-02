@@ -3,84 +3,84 @@ import {
   cursorAtEndOfInput,
   cursorAtStartOfInput,
   useHddBaseInputUtils,
-} from 'HddUiHelpers/components/inputs/inputsUtils.ts'
-import { InputMask } from 'primevue'
-import InputText from 'primevue/inputtext'
-import { ref } from 'vue'
-import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
+} from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { InputMask } from "primevue";
+import InputText from "primevue/inputtext";
+import { ref } from "vue";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
     {
-      mask?: string
-      withCountryCode?: boolean
-      defaultCountryCode?: string
+      mask?: string;
+      withCountryCode?: boolean;
+      defaultCountryCode?: string;
     } & BaseInputProps
   >(),
   {
-    defaultCountryCode: '964',
-    autocomplete: 'off',
+    defaultCountryCode: "964",
+    autocomplete: "off",
     withCountryCode: true,
-  }
-)
+  },
+);
 const emits = defineEmits<{
-  keydown: [e: KeyboardEvent]
-  focusPrevious: []
-  focusNext: []
-}>()
-const value = defineModel<any>('modelValue')
-const countryCode = defineModel<string>('countryCode')
-const { t } = useI18n()
+  keydown: [e: KeyboardEvent];
+  focusPrevious: [];
+  focusNext: [];
+}>();
+const value = defineModel<any>("modelValue");
+const countryCode = defineModel<string>("countryCode");
+const { t } = useI18n();
 
-const inputRef = ref()
+const inputRef = ref();
 
 function focus() {
-  inputRef.value.$el.focus()
+  inputRef.value.$el.focus();
 }
 
 const countryCodesList = computed(() => {
   return [
     {
-      value: '964',
-      label: '+964',
-      code: 'IQ',
-      flag: 'i-twemoji:flag-iraq',
-      placeholder: '7x xxxx xxxx',
-      mask: '99 9999 9999',
+      value: "964",
+      label: "+964",
+      code: "IQ",
+      flag: "i-twemoji:flag-iraq",
+      placeholder: "7x xxxx xxxx",
+      mask: "99 9999 9999",
     },
     {
-      value: '98',
-      label: '+98',
-      code: 'IR',
-      flag: 'i-twemoji-flag-iran',
-      placeholder: '', // ?
-      mask: '', // ?
+      value: "98",
+      label: "+98",
+      code: "IR",
+      flag: "i-twemoji-flag-iran",
+      placeholder: "", // ?
+      mask: "", // ?
     },
-  ]
-})
+  ];
+});
 
 const selectedCountryCode = computed(() =>
-  countryCodesList.value.find((e) => e.value === countryCode.value)
-)
+  countryCodesList.value.find((e) => e.value === countryCode.value),
+);
 
 onMounted(() => {
   if (props.defaultCountryCode && !countryCode.value) {
-    countryCode.value = props.defaultCountryCode
+    countryCode.value = props.defaultCountryCode;
   }
-})
+});
 
 function onCountryCodeChange() {
-  setTimeout(focus, 5)
+  setTimeout(focus, 5);
 }
 
-const onArrowUp = () => cursorAtStartOfInput(inputRef.value.$el) && emits('focusPrevious')
-const onArrowDown = () => cursorAtEndOfInput(inputRef.value.$el) && emits('focusNext')
+const onArrowUp = () => cursorAtStartOfInput(inputRef.value.$el) && emits("focusPrevious");
+const onArrowDown = () => cursorAtEndOfInput(inputRef.value.$el) && emits("focusNext");
 
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props)
+  useHddBaseInputUtils(props);
 
-defineExpose({ focus, ...exposed })
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>
@@ -107,17 +107,17 @@ defineExpose({ focus, ...exposed })
         @change="onCountryCodeChange"
       >
         <template #dropdownicon>
-          <span></span>
+          <span />
         </template>
         <template #value>
           <div v-if="selectedCountryCode" class="flex h-full items-center gap-1 text-sm">
-            <i :class="[selectedCountryCode.flag, '!w-[30px]']"></i>
+            <i :class="[selectedCountryCode.flag, '!w-[30px]']" />
             <span class="text-xs font-bold">{{ selectedCountryCode.label }}</span>
           </div>
         </template>
         <template #option="slotProps">
           <div class="flex items-center gap-1 text-sm">
-            <i :class="slotProps.option.flag"></i>
+            <i :class="slotProps.option.flag" />
             <span>{{ slotProps.option.label }}</span>
           </div>
         </template>

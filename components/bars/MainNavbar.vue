@@ -1,119 +1,121 @@
 <script setup lang="ts">
-import type { AppPermission } from '@/types/laravel_generated'
-import DarkModeButton from 'HddUiHelpers/components/misc/DarkModeButton.vue'
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth'
-import { useDimensionsStore } from 'HddUiHelpers/stores/dimensions.ts'
-import { Menubar } from 'primevue'
+import type { AppPermission } from "@/types/laravel_generated";
+import DarkModeButton from "HddUiHelpers/components/misc/DarkModeButton.vue";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
+import { useDimensionsStore } from "HddUiHelpers/stores/dimensions.ts";
+import { Menubar } from "primevue";
 
-const authStore = useBasicAuthStore()
+const authStore = useBasicAuthStore();
 
 export interface NavbarMenuItemInterface {
-  label: string
-  icon: string
-  to?: string
-  disabled?: boolean
-  badge?: number
-  class?: any
-  items?: NavbarMenuItemInterface[]
-  shortcut?: string
-  command?: () => any
-  auth?: boolean
-  permission?: AppPermission | AppPermission[]
+  label: string;
+  icon: string;
+  to?: string;
+  disabled?: boolean;
+  badge?: number;
+  class?: any;
+  items?: NavbarMenuItemInterface[];
+  shortcut?: string;
+  command?: () => any;
+  auth?: boolean;
+  permission?: AppPermission | AppPermission[];
 }
 
 const {
-  navbarClass = 'light:!bg-sky-200 light:!border-b-sky-300 ',
-  activeItemClass = 'light:bg-sky-100 dark:bg-gray-800 rounded-lg font-bold',
+  navbarClass = "light:!bg-sky-200 light:!border-b-sky-300 ",
+  activeItemClass = "light:bg-sky-100 dark:bg-gray-800 rounded-lg font-bold",
   withDarkModeButton = true,
   items,
 } = defineProps<{
-  withDarkModeButton?: boolean
-  items: NavbarMenuItemInterface[]
-  navbarClass?: any
-  activeItemClass?: any
-}>()
-const { t } = useI18n()
-const menuBarRef = useTemplateRef('menuBarRef')
+  withDarkModeButton?: boolean;
+  items: NavbarMenuItemInterface[];
+  navbarClass?: any;
+  activeItemClass?: any;
+}>();
+const { t } = useI18n();
+const menuBarRef = useTemplateRef("menuBarRef");
 
 const filteredItems = computed(() => {
-  const mainItems = []
-  const otherItems = []
+  const mainItems = [];
+  const otherItems = [];
 
   const _filtered = items
     .filter((item) => {
       if (item.auth === true && !authStore.user) {
-        return false
+        return false;
       }
 
       if (item.auth === false && authStore.user) {
-        return false
+        return false;
       }
 
       if (item.permission && !authStore.can(item.permission)) {
-        return false
+        return false;
       }
-      return true
+      return true;
     })
     .map((item): NavbarMenuItemInterface & { estimated_width: number } => {
       return {
         ...item,
         estimated_width: item.label.length * 13,
-      }
-    })
+      };
+    });
 
-  const othersItemEstimatedWidth = 13 * 13
-  let currentEstimatedWidth = othersItemEstimatedWidth
+  const othersItemEstimatedWidth = 13 * 13;
+  let currentEstimatedWidth = othersItemEstimatedWidth;
   _filtered.forEach((item) => {
     if (currentEstimatedWidth + item.estimated_width > itemsAvailableWidth.value) {
-      otherItems.push(item)
+      otherItems.push(item);
     } else {
-      mainItems.push(item)
+      mainItems.push(item);
     }
-    currentEstimatedWidth += item.estimated_width
-  })
+    currentEstimatedWidth += item.estimated_width;
+  });
 
   if (otherItems.length > 0) {
     mainItems.push({
-      label: t('Others'),
+      label: t("Others"),
       items: otherItems,
-    })
+    });
   }
 
-  return mainItems
-})
-const dimensionsStore = useDimensionsStore()
+  return mainItems;
+});
+const dimensionsStore = useDimensionsStore();
 const menuBarStartAreaElement = computed(() =>
-  menuBarRef.value?.$el?.querySelector('.p-menubar-start')
-)
-const menuBarEndAreaElement = computed(() => menuBarRef.value?.$el?.querySelector('.p-menubar-end'))
+  menuBarRef.value?.$el?.querySelector(".p-menubar-start"),
+);
+const menuBarEndAreaElement = computed(() =>
+  menuBarRef.value?.$el?.querySelector(".p-menubar-end"),
+);
 const { width: menuBarWidth, height: menuBarHeight } = useElementSize(
   menuBarRef,
   {},
   {
-    box: 'border-box',
-  }
-)
-const { width: menuBarStartAreaWidth } = useElementSize(menuBarStartAreaElement)
-const { width: menuBarEndAreaWidth } = useElementSize(menuBarEndAreaElement)
+    box: "border-box",
+  },
+);
+const { width: menuBarStartAreaWidth } = useElementSize(menuBarStartAreaElement);
+const { width: menuBarEndAreaWidth } = useElementSize(menuBarEndAreaElement);
 const itemsAvailableWidth = computed(() => {
-  return menuBarWidth.value - menuBarStartAreaWidth.value - menuBarEndAreaWidth.value - 12
-})
+  return menuBarWidth.value - menuBarStartAreaWidth.value - menuBarEndAreaWidth.value - 12;
+});
 
 watch(
   menuBarHeight,
   (val) => {
-    dimensionsStore.topNavbarHeight = val
+    dimensionsStore.topNavbarHeight = val;
   },
   {
     immediate: true,
-  }
-)
+  },
+);
 </script>
 
 <template>
   <Menubar ref="menuBarRef" :model="filteredItems" :class="navbarClass" class="z-2">
     <template #start>
-      <slot name="start"></slot>
+      <slot name="start" />
     </template>
     <template #item="{ item, props, hasSubmenu, root }">
       <component
@@ -148,7 +150,7 @@ watch(
         <DarkModeButton v-if="withDarkModeButton" />
         <UserAvatar v-if="authStore.user" class="ms-1" :user="authStore.user" />
 
-        <slot name="end"></slot>
+        <slot name="end" />
       </div>
     </template>
   </Menubar>

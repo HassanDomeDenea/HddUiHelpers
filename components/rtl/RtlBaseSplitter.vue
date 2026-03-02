@@ -1,9 +1,9 @@
 <script>
-import BaseComponent from '@primevue/core/basecomponent';
-import SplitterStyle from 'primevue/splitter/style';
+import BaseComponent from "@primevue/core/basecomponent";
+import SplitterStyle from "primevue/splitter/style";
 
 export default {
-  name: 'BaseSplitter',
+  name: "BaseSplitter",
   extends: BaseComponent,
   provide() {
     return {
@@ -14,7 +14,7 @@ export default {
   props: {
     layout: {
       type: String,
-      default: 'horizontal',
+      default: "horizontal",
     },
     gutterSize: {
       type: Number,
@@ -26,7 +26,7 @@ export default {
     },
     stateStorage: {
       type: String,
-      default: 'session',
+      default: "session",
     },
     step: {
       type: Number,

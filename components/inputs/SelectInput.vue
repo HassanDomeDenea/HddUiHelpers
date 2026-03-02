@@ -1,66 +1,66 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
-import { isBoolean } from 'lodash-es'
-import type { SelectChangeEvent } from 'primevue/select'
-import Select from 'primevue/select'
-import { ref } from 'vue'
-import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { isBoolean } from "lodash-es";
+import type { SelectChangeEvent } from "primevue/select";
+import Select from "primevue/select";
+import { ref } from "vue";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
     {
-      options: any[]
-      optionLabelProperty?: string | null
-      optionDisabledProperty?: string | null
-      optionValueProperty?: string | null
-      valueFormatter?: (value: any) => string
-      formatter?: (OptionOrValue: any, type: 'option' | 'value') => string
-      clearable?: boolean
-      checkmark?: boolean
-      hasFilter?: boolean
+      options: any[];
+      optionLabelProperty?: string | null;
+      optionDisabledProperty?: string | null;
+      optionValueProperty?: string | null;
+      valueFormatter?: (value: any) => string;
+      formatter?: (OptionOrValue: any, type: "option" | "value") => string;
+      clearable?: boolean;
+      checkmark?: boolean;
+      hasFilter?: boolean;
     } & BaseInputProps
   >(),
   {
-    optionLabelProperty: 'name',
-    optionDisabledProperty: 'disabled',
-    optionValueProperty: 'id',
+    optionLabelProperty: "name",
+    optionDisabledProperty: "disabled",
+    optionValueProperty: "id",
     clearable: false,
     checkmark: true,
     hasFilter: undefined,
-  }
-)
+  },
+);
 const emits = defineEmits<{
-  change: [event: SelectChangeEvent]
-}>()
-const value = defineModel<any>('modelValue')
+  change: [event: SelectChangeEvent];
+}>();
+const value = defineModel<any>("modelValue");
 
-const inputRef = ref()
+const inputRef = ref();
 
 function focus(_show: boolean = false) {
   if (!props.disabled) {
     if (_show) {
-      inputRef.value.show()
+      inputRef.value.show();
     } else {
-      inputRef.value.$refs.focusInput.focus()
+      inputRef.value.$refs.focusInput.focus();
     }
   }
 }
 
 const guessHasFilter = computed(() => {
   if (isBoolean(props.hasFilter)) {
-    return props.hasFilter
+    return props.hasFilter;
   } else {
-    return props.options.length > 7
+    return props.options.length > 7;
   }
-})
+});
 
 function onInputBlur() {}
 
 const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props)
+  useHddBaseInputUtils(props);
 
-defineExpose({ focus, ...exposed })
+defineExpose({ focus, ...exposed });
 </script>
 
 <template>

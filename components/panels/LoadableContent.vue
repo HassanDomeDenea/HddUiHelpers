@@ -10,14 +10,16 @@ const { t } = useI18n();
   <div>
     <template v-if="isLoading">
       <div class="text-center">
-        <ProgressSpinner class="!size-12"></ProgressSpinner>
+        <ProgressSpinner class="!size-12" />
       </div>
     </template>
     <template v-else-if="!item">
-      <InlineMessage severity="danger">{{ t('Error') }}</InlineMessage>
+      <InlineMessage severity="danger">
+        {{ t("Error") }}
+      </InlineMessage>
     </template>
     <template v-else>
-      <slot></slot>
+      <slot />
     </template>
   </div>
 </template>

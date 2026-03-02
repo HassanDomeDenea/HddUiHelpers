@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts'
-import { take, uniq } from 'lodash-es'
-import type { ButtonProps } from 'primevue'
-import PrimeVuePopover from 'primevue/popover'
-import { ref } from 'vue'
-import BaseInput from './BaseInput.vue'
-import type { BaseInputProps } from './types'
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { take, uniq } from "lodash-es";
+import type { ButtonProps } from "primevue";
+import PrimeVuePopover from "primevue/popover";
+import { ref } from "vue";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
     {
-      colors?: string[]
-      autoOpen?: boolean
-      autoDismiss?: boolean
-      asPopover?: boolean
-      appendInline?: boolean
-      withTrigger?: boolean
-      clearable?: boolean
-      customSelector?: boolean
-      withRecentColors?: boolean
-      recentColorsGroupName?: string
-      triggerButtonColorBoxClass?: any
-      triggerButtonSeverity?: ButtonProps['severity']
+      colors?: string[];
+      autoOpen?: boolean;
+      autoDismiss?: boolean;
+      asPopover?: boolean;
+      appendInline?: boolean;
+      withTrigger?: boolean;
+      clearable?: boolean;
+      customSelector?: boolean;
+      withRecentColors?: boolean;
+      recentColorsGroupName?: string;
+      triggerButtonColorBoxClass?: any;
+      triggerButtonSeverity?: ButtonProps["severity"];
     } & BaseInputProps
   >(),
   {
@@ -30,75 +30,75 @@ const props = withDefaults(
     asPopover: true,
     appendInline: false,
     customSelector: true,
-    triggerButtonSeverity: 'secondary',
+    triggerButtonSeverity: "secondary",
     withRecentColors: true,
-  }
-)
+  },
+);
 
 const emits = defineEmits<{
-  change: [value: string | null]
-}>()
+  change: [value: string | null];
+}>();
 
-const value = defineModel<any>('modelValue', { default: ref().value })
-const { t } = useI18n()
-const inputRef = ref()
-const customColorInputRef = useTemplateRef('customColorInputRef')
+const value = defineModel<any>("modelValue", { default: ref().value });
+const { t } = useI18n();
+const inputRef = ref();
+const customColorInputRef = useTemplateRef("customColorInputRef");
 const colorPalateContainerRef = useTemplateRef<HTMLDivElement | ComponentExposed<typeof Popover>>(
-  'colorPalateContainerRef'
-)
-const colorsContainerDivRef = useTemplateRef<HTMLDivElement>('colorsContainerDivRef')
-const popoverShowContainerRef = useTemplateRef<HTMLDivElement>('popoverShowContainerRef')
+  "colorPalateContainerRef",
+);
+const colorsContainerDivRef = useTemplateRef<HTMLDivElement>("colorsContainerDivRef");
+const popoverShowContainerRef = useTemplateRef<HTMLDivElement>("popoverShowContainerRef");
 
 // onClickOutside(colorsContainerDivRef, event => console.log(event));
 
 function focus() {
-  inputRef.value.$el.click()
+  inputRef.value.$el.click();
 }
 
 const colorPalate = computed(() => {
   return (
     props.colors ?? [
-      '#000000',
-      '#ffffff',
-      '#cccccc',
-      '#8d8d8d',
-      '#525252',
-      '#2d2d2d',
-      '#ffb0b0',
-      '#ff7171',
-      '#ff3636',
-      '#ff0000',
-      '#980000',
-      '#480000',
-      '#acacff',
-      '#5151ff',
-      '#0000ff',
-      '#0000a2',
-      '#00004b',
-      '#c7ffc7',
-      '#65ff65',
-      '#00ff00',
-      '#009300',
-      '#004b00',
-      '#f6b3ff',
-      '#ee5dff',
-      '#e600ff',
-      '#6b0077',
-      '#ffe2b3',
-      '#ffbb58',
-      '#ff9900',
-      '#774800',
-      '#eaff9a',
-      '#c8ff00',
-      '#708d00',
-      '#00ffff',
-      '#007575',
+      "#000000",
+      "#ffffff",
+      "#cccccc",
+      "#8d8d8d",
+      "#525252",
+      "#2d2d2d",
+      "#ffb0b0",
+      "#ff7171",
+      "#ff3636",
+      "#ff0000",
+      "#980000",
+      "#480000",
+      "#acacff",
+      "#5151ff",
+      "#0000ff",
+      "#0000a2",
+      "#00004b",
+      "#c7ffc7",
+      "#65ff65",
+      "#00ff00",
+      "#009300",
+      "#004b00",
+      "#f6b3ff",
+      "#ee5dff",
+      "#e600ff",
+      "#6b0077",
+      "#ffe2b3",
+      "#ffbb58",
+      "#ff9900",
+      "#774800",
+      "#eaff9a",
+      "#c8ff00",
+      "#708d00",
+      "#00ffff",
+      "#007575",
     ]
-  )
-})
+  );
+});
 
 const recentColors = useStorage(
-  () => 'recent_colors_' + props.recentColorsGroupName,
+  () => "recent_colors_" + props.recentColorsGroupName,
   null,
   localStorage,
   {
@@ -106,34 +106,34 @@ const recentColors = useStorage(
       read: (v: any) => (v ? JSON.parse(v) : null) || null,
       write: (v: any) => JSON.stringify(v),
     },
-  }
-)
+  },
+);
 
 function selectColor(color) {
-  value.value = color
-  emits('change', value.value)
+  value.value = color;
+  emits("change", value.value);
   if (props.autoDismiss && props.asPopover) {
-    colorPalateContainerRef.value?.hide()
+    colorPalateContainerRef.value?.hide();
   }
 }
 
 function clearColor() {
-  value.value = null
-  emits('change', value.value)
+  value.value = null;
+  emits("change", value.value);
   if (props.autoDismiss && props.asPopover) {
-    colorPalateContainerRef.value?.hide()
+    colorPalateContainerRef.value?.hide();
   }
 }
 
 function customColorSelected(event: Event) {
-  value.value = (event.target as HTMLInputElement).value
-  emits('change', value.value)
+  value.value = (event.target as HTMLInputElement).value;
+  emits("change", value.value);
   if (props.withRecentColors) {
-    const newRecentColors = uniq([value.value, ...(recentColors.value || [])])
-    recentColors.value = take(newRecentColors, 5)
+    const newRecentColors = uniq([value.value, ...(recentColors.value || [])]);
+    recentColors.value = take(newRecentColors, 5);
   }
   if (props.autoDismiss && props.asPopover) {
-    colorPalateContainerRef.value?.hide()
+    colorPalateContainerRef.value?.hide();
   }
 }
 
@@ -141,27 +141,27 @@ onMounted(() => {
   if (props.autoOpen) {
     // The timeout was added to prevent showing popover at page edge, and to wait if other focus happens
     setTimeout(() => {
-      focus()
+      focus();
       setTimeout(() => {
-        console.log(colorPalateContainerRef.value)
-        colorPalateContainerRef.value.alignOverlay()
+        console.log(colorPalateContainerRef.value);
+        colorPalateContainerRef.value.alignOverlay();
         /*colorPalateContainerRef.value.container.addEventListener('click', (e) => {
                     console.log('Clicked Here');
                     e.stopPropagation();
                     e.preventDefault();
                 });*/
-      }, 10)
-    }, 10)
+      }, 10);
+    }, 10);
   }
-})
+});
 
-const { exposed, baseInputForwardedProps } = useHddBaseInputUtils(props)
+const { exposed, baseInputForwardedProps } = useHddBaseInputUtils(props);
 
 function toggle(event: PointerEvent | MouseEvent) {
-  colorPalateContainerRef.value?.toggle?.(event)
+  colorPalateContainerRef.value?.toggle?.(event);
 }
 
-defineExpose({ focus, toggle, ...exposed })
+defineExpose({ focus, toggle, ...exposed });
 </script>
 
 <template>
@@ -175,7 +175,7 @@ defineExpose({ focus, toggle, ...exposed })
         v-if="appendInline"
         ref="popoverShowContainerRef"
         class="fixed left-0 top-0 h-screen w-screen"
-      ></div>
+      />
       <component
         :is="asPopover ? PrimeVuePopover : 'div'"
         ref="colorPalateContainerRef"
@@ -198,7 +198,7 @@ defineExpose({ focus, toggle, ...exposed })
               :style="{ backgroundColor: color }"
               :class="{ active: color === value, disabled: disabled }"
               @click="selectColor(color)"
-            ></button>
+            />
           </div>
           <div v-if="withRecentColors" class="m-1 mt-3 flex flex-wrap gap-1">
             <button
@@ -209,7 +209,7 @@ defineExpose({ focus, toggle, ...exposed })
               :style="{ backgroundColor: color }"
               :class="{ active: color === value, disabled: disabled }"
               @click="selectColor(color)"
-            ></button>
+            />
           </div>
           <div class="flex justify-center">
             <div v-if="customSelector" class="mt-2 flex items-center justify-center gap-1">
@@ -219,7 +219,7 @@ defineExpose({ focus, toggle, ...exposed })
                 :label="t('Select a Color')"
                 severity="info"
                 @click="() => customColorInputRef.click()"
-              ></Button>
+              />
               <input
                 ref="customColorInputRef"
                 v-model="value"
@@ -262,7 +262,7 @@ defineExpose({ focus, toggle, ...exposed })
               class="hdd-color-box inline-block"
               :class="[{ '!size-4': size === 'small' }, triggerButtonColorBoxClass]"
               :style="{ backgroundColor: value }"
-            ></span>
+            />
           </template>
         </Button>
       </slot>

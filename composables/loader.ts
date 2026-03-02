@@ -1,14 +1,14 @@
 export const useLoader = () => {
-  const isLoading = ref(false)
-  const isLoadedOnce = ref(false)
+  const isLoading = ref(false);
+  const isLoadedOnce = ref(false);
   function startLoading() {
-    isLoading.value = true
+    isLoading.value = true;
   }
 
   function endLoading() {
-    isLoading.value = false
+    isLoading.value = false;
     if (!isLoadedOnce.value) {
-      isLoadedOnce.value = true
+      isLoadedOnce.value = true;
     }
   }
   return {
@@ -16,5 +16,5 @@ export const useLoader = () => {
     isLoading,
     startLoading,
     endLoading,
-  }
-}
+  };
+};

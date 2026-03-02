@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { reduce } from 'lodash-es';
-import { rotateImageFile } from '../../utils/filesManipulations';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { reduce } from "lodash-es";
+import { rotateImageFile } from "../../utils/filesManipulations";
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
@@ -44,13 +44,15 @@ interface FileModifyType {
   remove?: boolean;
 }
 
-const newFiles = defineModel<File[]>('newFiles', { default: ref([]).value });
-const oldFiles = defineModel<MediaFileModelType[]>('oldFiles', { default: ref([]).value });
-const toBeRemovedFiles = defineModel<string[]>('toBeRemovedFiles', { default: ref([]).value });
-const toBeModifiedFiles = defineModel<{ [p: string]: FileModifyType }>('toBeModifiedFiles', { default: ref({}).value });
+const newFiles = defineModel<File[]>("newFiles", { default: ref([]).value });
+const oldFiles = defineModel<MediaFileModelType[]>("oldFiles", { default: ref([]).value });
+const toBeRemovedFiles = defineModel<string[]>("toBeRemovedFiles", { default: ref([]).value });
+const toBeModifiedFiles = defineModel<{ [p: string]: FileModifyType }>("toBeModifiedFiles", {
+  default: ref({}).value,
+});
 
-const fileInputRef = templateRef<HTMLInputElement>('fileInputRef');
-const buttonRef = templateRef<Component>('buttonRef');
+const fileInputRef = templateRef<HTMLInputElement>("fileInputRef");
+const buttonRef = templateRef<Component>("buttonRef");
 const newFilesImageRefs = ref({});
 const oldFilesImageRefs = ref({});
 const { t } = useI18n();
@@ -70,7 +72,7 @@ function onFileSelection() {
     newFiles.value = Object.values(fileInputRef.value.files || []);
     // newFiles.value.push(...Object.values(fileInputRef.value.files || []))
   }
-  fileInputRef.value.value = '';
+  fileInputRef.value.value = "";
 }
 
 function fileToObjectUrl(file: File) {
@@ -90,7 +92,7 @@ function removeFile(fileIndex: number) {
 }
 
 const filesToAccept = computed(() => {
-  return (props.accept ?? props.acceptImages) ? 'image/png,image/jpeg' : undefined;
+  return (props.accept ?? props.acceptImages) ? "image/png,image/jpeg" : undefined;
 });
 
 function markOldFileToBeRemoved(id, remove = true) {
@@ -140,7 +142,7 @@ function onOldImageThumbClick(image: MediaFileModelType, imageIndex: number) {
   }
 }
 
-function onOldImageRotate(image: MediaFileModelType, direction: 'left' | 'right') {
+function onOldImageRotate(image: MediaFileModelType, direction: "left" | "right") {
   if (!toBeModifiedFiles.value) {
     toBeModifiedFiles.value = {};
   }
@@ -150,7 +152,7 @@ function onOldImageRotate(image: MediaFileModelType, direction: 'left' | 'right'
   if (!toBeModifiedFiles.value[image.id].rotate) {
     toBeModifiedFiles.value[image.id].rotate = 0;
   }
-  toBeModifiedFiles.value[image.id].rotate += direction === 'left' ? -90 : +90;
+  toBeModifiedFiles.value[image.id].rotate += direction === "left" ? -90 : +90;
   if (toBeModifiedFiles.value[image.id].rotate >= 360) {
     toBeModifiedFiles.value[image.id].rotate = toBeModifiedFiles.value[image.id].rotate % 360;
   }
@@ -158,8 +160,12 @@ function onOldImageRotate(image: MediaFileModelType, direction: 'left' | 'right'
 
 const currentNewImageRotate = ref(0);
 
-function onNewImageRotate(imageIndex: number, direction: 'left' | 'right', autoSubmit: boolean = false) {
-  currentNewImageRotate.value += direction === 'left' ? -90 : +90;
+function onNewImageRotate(
+  imageIndex: number,
+  direction: "left" | "right",
+  autoSubmit: boolean = false,
+) {
+  currentNewImageRotate.value += direction === "left" ? -90 : +90;
   if (currentNewImageRotate.value >= 360) {
     currentNewImageRotate.value = currentNewImageRotate.value % 360;
   }
@@ -171,11 +177,15 @@ function onNewImageRotate(imageIndex: number, direction: 'left' | 'right', autoS
 
 async function onNewImagePreviewHide(imageIndex: number) {
   if (currentNewImageRotate.value !== 0) {
-    newFiles.value[imageIndex] = await rotateImageFile(newFiles.value[imageIndex], currentNewImageRotate.value);
+    newFiles.value[imageIndex] = await rotateImageFile(
+      newFiles.value[imageIndex],
+      currentNewImageRotate.value,
+    );
   }
   currentNewImageRotate.value = 0;
 }
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>
@@ -202,11 +212,13 @@ defineExpose({ focus, ...exposed });
         :multiple="true"
         @change="onFileSelection"
       />
-      <div v-if="oldFiles?.length && newFiles?.length" class="mb-1 font-bold">{{ t('New Files') }}:</div>
+      <div v-if="oldFiles?.length && newFiles?.length" class="mb-1 font-bold">
+        {{ t("New Files") }}:
+      </div>
       <div class="flex items-center gap-2">
         <div>
           <template v-if="!newFiles?.length">
-            <span v-if="!oldFiles?.length" class="italic">{{ t('No File Selected') }}</span>
+            <span v-if="!oldFiles?.length" class="italic">{{ t("No File Selected") }}</span>
           </template>
           <template v-else>
             <div class="flex flex-wrap items-start gap-4">
@@ -227,7 +239,11 @@ defineExpose({ focus, ...exposed });
                     @hide="onNewImagePreviewHide(itemIndex)"
                   >
                     <template #image>
-                      <img :src="fileToObjectUrl(item)" :alt="item.name" class="max-h-60px max-w-60px" />
+                      <img
+                        :src="fileToObjectUrl(item)"
+                        :alt="item.name"
+                        class="max-h-60px max-w-60px"
+                      />
                     </template>
                   </Image>
                   <div class="flex flex-col gap-1">
@@ -266,27 +282,44 @@ defineExpose({ focus, ...exposed });
             />
           </div>
           <div>
-            <Button v-tooltip="t('Use Scanner')" icon="i-mdi-scanner" severity="warn" size="small" @click="onButtonClick" />
+            <Button
+              v-tooltip="t('Use Scanner')"
+              icon="i-mdi-scanner"
+              severity="warn"
+              size="small"
+              @click="onButtonClick"
+            />
           </div>
         </template>
       </div>
 
       <template v-if="oldFiles && oldFiles.length > 0">
         <div>
-          <div class="font-bold" :class="{ 'mt-2': newFiles?.length }">{{ t('Current Files') }}:</div>
+          <div class="font-bold" :class="{ 'mt-2': newFiles?.length }">
+            {{ t("Current Files") }}:
+          </div>
           <div class="flex flex-wrap items-start gap-4">
             <template v-for="(item, itemIndex) in oldFiles" :key="itemIndex">
               <div class="flex items-start gap-1">
                 <div class="relative">
-                  <div v-if="oldFilesToBeRemovedStatus[item.id]" class="z-1 pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <div class="size-40px flex items-center justify-center rounded-lg bg-white/50 p-2">
-                      <i class="i-pepicons-print-times-off light:text-red-800/75 text-4xl font-bold dark:text-red-400/75" />
+                  <div
+                    v-if="oldFilesToBeRemovedStatus[item.id]"
+                    class="z-1 pointer-events-none absolute inset-0 flex items-center justify-center"
+                  >
+                    <div
+                      class="size-40px flex items-center justify-center rounded-lg bg-white/50 p-2"
+                    >
+                      <i
+                        class="i-pepicons-print-times-off light:text-red-800/75 text-4xl font-bold dark:text-red-400/75"
+                      />
                     </div>
                   </div>
 
                   <Image
                     ref="oldFilesImageRefs"
-                    v-tooltip="oldFilesToBeRemovedStatus[item.id] ? t('Will be deleted') : undefined"
+                    v-tooltip="
+                      oldFilesToBeRemovedStatus[item.id] ? t('Will be deleted') : undefined
+                    "
                     :src="item.original_url"
                     :alt="item.name"
                     preview
@@ -305,7 +338,11 @@ defineExpose({ focus, ...exposed });
                         :src="item.thumb_url"
                         :alt="item.name"
                         class="max-h-60px max-w-60px"
-                        :style="toBeModifiedFiles?.[item.id]?.rotate ? { transform: `rotate(${toBeModifiedFiles[item.id].rotate}deg)` } : undefined"
+                        :style="
+                          toBeModifiedFiles?.[item.id]?.rotate
+                            ? { transform: `rotate(${toBeModifiedFiles[item.id].rotate}deg)` }
+                            : undefined
+                        "
                       />
                     </template>
                   </Image>

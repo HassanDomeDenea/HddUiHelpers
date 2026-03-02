@@ -1,51 +1,100 @@
-# hdduihelpers
+# HDD Ui Helpers
 
-To add to your project
+Tools to build Vue 3 applications with laravel as an api, and mainly PrimeVue as frontend framework.
 
-```bash
-git submodule add https://github.com/HassanDomeDenea/HddUiHelpers.git resources/js/HddUiHelpers
+## For local development:
+
+- Run `bun link` in this library folder.
+- Run `bun link @hassandomedenea/hdduihelpers` in the project folder.
+- Add a dependency to project package.json:
+
+```json5
+{
+  dependencies: {
+    "@hassandomedenea/hdduihelpers": "github:HassanDomeDenea/HddUiHelpers",
+    // "@hassandomedenea/hdduihelpers": "github:HassanDomeDenea/HddUiHelpers#v0.2.0" // With version hash
+    // "@hassandomedenea/hdduihelpers": "github:HassanDomeDenea/HddUiHelpers#abc1234" // With commit hash
+  },
+}
 ```
 
-When pulling:
+- To remove the link and install the pushed version from GitHub:
 
 ```bash
-git pull --recurse-submodules
+bun unlink @hassandomedenea/hdduihelpers
+bun install
 ```
 
-When pushing:
+## Setting up files
 
-```bash
-
-# Commit the submodule changes
-git -C ./resources/js/HddUiHelpers add .
-git -C ./resources/js/HddUiHelpers commit -m "New Updates"
-
-# Commit the main repo to update submodule reference
-git add resources/js/HddUiHelpers
-git commit -m "Update HddUiHelpers submodule"
-
-# Push everything in one go
-git push --recurse-submodules=on-demand
-```
-
-Packages to install:
-
-```bash
-bun add -D unocss unplugin-vue-components unplugin-vue-router unplugin-auto-import unplugin-vue-components unocss @unhead/vue unplugin-vue-markdown @primevue/auto-import-resolver @intlify/unplugin-vue-i18n @types/lodash-es  vue-component-type-helpers @types/jsonpath @types/sortablejs @types/downloadjs unocss-preset-animatecss -D unocss-preset-magicss
-```
-
-```bash
-bun add axios lodash-es primevue @primeuix/themes vue-i18n vue-router pinia moment lodash-es nprogress @vueuse/components @vueuse/core jsonpath sortablejs @vueuse/integrations downloadjs quill @tiptap/extension-text-style @tiptap/starter-kit @tiptap/vue-3 @tiptap/extension-list @tiptap/extension-table @vueuse/router universal-cookie async-validator mathjs 
-```
-
-Add this to vite.config.ts
+- **Step 1**: In `vite.config.ts`, resolve symlink and watch it in dev:
 
 ```ts
-({
+import path from "path";
+import HddVitePlugin from "@hassandomedenea/hdduihelpers/plugins/HddVitePlugin";
+
+export default defineConfig({
   resolve: {
+    // Follow symlinks to their real path so imports work correctly
+    preserveSymlinks: false, // this is default, but be explicit
+
+    dedupe: ["vue", "primevue"],
     alias: {
-      'HddUiHelpers/': `${path.resolve(__dirname, 'resources/js/HddUiHelpers')}/`,
+      "@": path.resolve(__dirname, "resources/js"),
+      HddUiHelpers: `${path.resolve(__dirname, "node_modules/@hassandomedenea/hdduihelpers")}`,
     },
   },
+  server: {
+    fs: {
+      allow: [path.resolve(__dirname), path.resolve(__dirname, "../HddUiHelpers")],
+    },
+    watch: {
+      // By default Vite ignores node_modules for file watching
+      // This tells it to watch your linked package
+      ignored: ["!**/node_modules/@hassandomedenea/hdduihelpers/**"],
+    },
+  },
+  plugins: [HddVitePlugin()],
+  // Tell Vite to process .vue and .ts files from this dependency
+  // (normally it skips node_modules from transformation)
+  optimizeDeps: {
+    exclude: ["@hassandomedenea/hdduihelpers"],
+  },
 });
+```
+
+- **Step 2**: In `unocss.config.ts`, include the preset:
+
+```ts
+import HddUnoCssPreset from "@hassandomedenea/hdduihelpers/plugins/HddUnoCssPreset";
+
+export default defineConfig({
+  content: {
+    filesystem: ["node_modules/@hassandomedenea/hdduihelpers/**/*.{vue,ts}"],
+  },
+  presets: [
+    //... Other Presets
+    HddUnoCssPreset(),
+  ],
+  safelist: "prose prose-sm m-auto text-left".split(" "),
+});
+```
+
+- **Step 3**: In `tsconfig.json`, include the linked package:
+
+```json5
+{
+  compilerOptions: {
+    paths: {
+      "HddUiHelpers/*": ["./node_modules/@hassandomedenea/hdduihelpers/*"],
+    },
+  },
+  // Make sure TS doesn't skip it
+  include: [
+    "resources/js/**/*",
+    "node_modules/@hassandomedenea/hdduihelpers/**/*.d.ts",
+    "node_modules/@hassandomedenea/hdduihelpers/**/*.ts",
+    "node_modules/@hassandomedenea/hdduihelpers/**/*.vue",
+  ],
+}
 ```

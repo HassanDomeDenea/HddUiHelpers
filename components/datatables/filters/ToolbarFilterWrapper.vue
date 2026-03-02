@@ -1,33 +1,43 @@
 <script setup lang="ts">
-import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable';
-import ToolbarFilterValue from 'HddUiHelpers/components/datatables/filters/ToolbarFilterValue.vue';
-import ToolbarFilterWrapper from 'HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue';
-import { isToolbarFilterEmpty } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
-import { hidePrimevuePopovers } from 'HddUiHelpers/plugins/primevue.ts';
-import { pullAt, uniqueId } from 'lodash-es';
-import Popover from 'primevue/popover';
-import type { ComponentExposed } from 'vue-component-type-helpers';
-import type { ServerDataTableToolbarFilter, ServerDataTableToolbarFilterValue } from '../ServerDataTableTypes.ts';
-import { isToolbarFilterValue, type ServerDataTableColumn, type ServerDataTableToolbarFilterWrapper } from '../ServerDataTableTypes.ts';
+import { moveArrayElement, useSortable } from "@vueuse/integrations/useSortable";
+import ToolbarFilterValue from "HddUiHelpers/components/datatables/filters/ToolbarFilterValue.vue";
+import ToolbarFilterWrapper from "HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue";
+import { isToolbarFilterEmpty } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import { hidePrimevuePopovers } from "HddUiHelpers/plugins/primevue.ts";
+import { pullAt, uniqueId } from "lodash-es";
+import Popover from "primevue/popover";
+import type { ComponentExposed } from "vue-component-type-helpers";
+import type {
+  ServerDataTableToolbarFilter,
+  ServerDataTableToolbarFilterValue,
+} from "../ServerDataTableTypes.ts";
+import {
+  isToolbarFilterValue,
+  type ServerDataTableColumn,
+  type ServerDataTableToolbarFilterWrapper,
+} from "../ServerDataTableTypes.ts";
 
 const emits = defineEmits<{
   filterCallback: [filter: ServerDataTableToolbarFilterValue];
   filtersChanged: [];
   remove: [filterWrapper: ServerDataTableToolbarFilterWrapper];
-  operatorChanged: [operator: ServerDataTableToolbarFilterWrapper['operator']];
+  operatorChanged: [operator: ServerDataTableToolbarFilterWrapper["operator"]];
 }>();
 const { operator, isPrinting = false } = defineProps<{
-  operator: ServerDataTableToolbarFilterWrapper['operator'];
+  operator: ServerDataTableToolbarFilterWrapper["operator"];
   columns: ServerDataTableColumn[];
   hideOperator?: boolean;
   isPrinting?: boolean;
   isGrouped?: boolean;
   makeOperatorAfterFields?: boolean;
 }>();
-const filters = defineModel<ServerDataTableToolbarFilterWrapper>('filters');
-const filtersRefs = useTemplateRef<ComponentExposed<typeof ToolbarFilterWrapper | typeof ToolbarFilterValue>[]>('filtersRefs');
+const filters = defineModel<ServerDataTableToolbarFilterWrapper>("filters");
+const filtersRefs =
+  useTemplateRef<ComponentExposed<typeof ToolbarFilterWrapper | typeof ToolbarFilterValue>[]>(
+    "filtersRefs",
+  );
 const { t } = useI18n();
-const toolbarFiltersSortedEventName = 'toolbarFiltersSortedEvent';
+const toolbarFiltersSortedEventName = "toolbarFiltersSortedEvent";
 
 function onRemove(filterIndex: number) {
   let emitChanges = true;
@@ -39,18 +49,18 @@ function onRemove(filterIndex: number) {
   filters.value.fields = newFields;
 
   if (filters.value.fields.length === 0) {
-    emits('remove', filters.value);
+    emits("remove", filters.value);
   }
 
   if (emitChanges) {
-    emits('filtersChanged');
+    emits("filtersChanged");
   }
 }
 
-const filtersListWrapperRef = useTemplateRef<HTMLElement>('filtersListWrapperRef');
+const filtersListWrapperRef = useTemplateRef<HTMLElement>("filtersListWrapperRef");
 if (!isPrinting) {
   useSortable(filtersListWrapperRef, filters.value.fields, {
-    group: 'toolbar-filters',
+    group: "toolbar-filters",
     swapThreshold: 0.3,
     invertSwap: true,
     onEnd: function (e) {
@@ -79,17 +89,20 @@ if (!isPrinting) {
 
         const [removed] = pullAt(newFields, e.oldIndex);
 
-        const customEvent = new CustomEvent<ToolbarFiltersSortedEvent>(toolbarFiltersSortedEventName, {
-          detail: {
-            toIndex: e.newIndex,
-            item: removed,
-            callback: () => {
-              if (filters.value.fields.length === 0) {
-                emits('remove', filters.value);
-              }
+        const customEvent = new CustomEvent<ToolbarFiltersSortedEvent>(
+          toolbarFiltersSortedEventName,
+          {
+            detail: {
+              toIndex: e.newIndex,
+              item: removed,
+              callback: () => {
+                if (filters.value.fields.length === 0) {
+                  emits("remove", filters.value);
+                }
+              },
             },
           },
-        });
+        );
         e.to.dispatchEvent(customEvent);
 
         nextTick(() => {
@@ -105,14 +118,14 @@ if (!isPrinting) {
 }
 
 function onFilterCallback(filter: ServerDataTableToolbarFilterValue) {
-  emits('filterCallback', filter);
-  emits('filtersChanged');
+  emits("filterCallback", filter);
+  emits("filtersChanged");
 }
 
-function onOperatorChanges(newOperator: 'and' | 'or') {
+function onOperatorChanges(newOperator: "and" | "or") {
   filters.value.operator = newOperator;
   if (!isToolbarFilterEmpty(filters.value)) {
-    emits('filtersChanged');
+    emits("filtersChanged");
   }
 }
 
@@ -129,14 +142,14 @@ function isolateIntoGroup(filterIndex: number) {
   }
   const newFields = [...filters.value.fields];
   newFields[filterIndex] = {
-    operator: 'and',
+    operator: "and",
     fields: [filter],
-    id: uniqueId('toolbar-filter-'),
+    id: uniqueId("toolbar-filter-"),
   } as ServerDataTableToolbarFilterWrapper;
   filters.value.fields = newFields;
 
   if (emitChanges) {
-    emits('filtersChanged');
+    emits("filtersChanged");
   }
 }
 
@@ -147,25 +160,28 @@ interface ToolbarFiltersSortedEvent {
 }
 
 onMounted(() => {
-  filtersListWrapperRef.value.addEventListener(toolbarFiltersSortedEventName, function (event: CustomEvent<ToolbarFiltersSortedEvent>) {
-    const { toIndex, item, callback } = event.detail;
-    const newFields = [...filters.value.fields];
-    newFields.splice(toIndex, 0, item);
-    nextTick(() => {
-      filtersListWrapperRef.value.children[toIndex].remove();
-      filters.value.fields = newFields;
-      if (!isToolbarFilterEmpty(item)) {
-        emits('filtersChanged');
-      }
-      if (callback) {
-        nextTick(callback);
-      }
-    });
-  });
+  filtersListWrapperRef.value.addEventListener(
+    toolbarFiltersSortedEventName,
+    function (event: CustomEvent<ToolbarFiltersSortedEvent>) {
+      const { toIndex, item, callback } = event.detail;
+      const newFields = [...filters.value.fields];
+      newFields.splice(toIndex, 0, item);
+      nextTick(() => {
+        filtersListWrapperRef.value.children[toIndex].remove();
+        filters.value.fields = newFields;
+        if (!isToolbarFilterEmpty(item)) {
+          emits("filtersChanged");
+        }
+        if (callback) {
+          nextTick(callback);
+        }
+      });
+    },
+  );
 });
 
 const localOperator = ref();
-const operatorChangerRef = useTemplateRef<ComponentExposed<typeof Popover>>('operatorChangerRef');
+const operatorChangerRef = useTemplateRef<ComponentExposed<typeof Popover>>("operatorChangerRef");
 
 function onOperatorSpanClick(evt: PointerEvent) {
   if (isPrinting) return;
@@ -174,9 +190,9 @@ function onOperatorSpanClick(evt: PointerEvent) {
   operatorChangerRef.value.toggle(evt);
 }
 
-function onWrapperOperatorChanges(newOperator: ServerDataTableToolbarFilterWrapper['operator']) {
+function onWrapperOperatorChanges(newOperator: ServerDataTableToolbarFilterWrapper["operator"]) {
   if (newOperator && newOperator !== operator) {
-    emits('operatorChanged', newOperator);
+    emits("operatorChanged", newOperator);
   }
   operatorChangerRef.value.hide();
 }
@@ -215,7 +231,12 @@ defineExpose({
         />
       </div>
     </Popover>
-    <div :class="{ 'border-1 my-2 me-1 ms-6 rounded-lg border-dashed border-zinc-600 dark:border-zinc-500/75': isGrouped }">
+    <div
+      :class="{
+        'border-1 my-2 me-1 ms-6 rounded-lg border-dashed border-zinc-600 dark:border-zinc-500/75':
+          isGrouped,
+      }"
+    >
       <span
         v-if="!hideOperator && filters.fields.length && !makeOperatorAfterFields"
         :title="t('Change Filtering Method')"
@@ -223,7 +244,11 @@ defineExpose({
         @click.stop="onOperatorSpanClick"
         >{{ t(operator) }} :</span
       >
-      <div ref="filtersListWrapperRef" :data-custom-id="filters.id" @contextmenu.prevent="onWrapperContextMenu">
+      <div
+        ref="filtersListWrapperRef"
+        :data-custom-id="filters.id"
+        @contextmenu.prevent="onWrapperContextMenu"
+      >
         <template v-for="(filter, filterIndex) in filters.fields" :key="filter.id">
           <template v-if="isToolbarFilterValue(filters.fields[filterIndex])">
             <ToolbarFilterValue

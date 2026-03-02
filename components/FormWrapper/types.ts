@@ -1,4 +1,4 @@
-import type { ButtonProps } from 'primevue'
+import type { ButtonProps } from "primevue";
 import type {
   BooleanSchema,
   DateSchema,
@@ -6,124 +6,124 @@ import type {
   ObjectSchema,
   Schema,
   StringSchema,
-} from 'yup'
-import type { HddFormComposer, UseHddFormOptions } from '../../utils/useHddForm'
-import type { AutocompleteInputProps, BaseInputProps, TextInputProps } from '../inputs/types'
+} from "yup";
+import type { HddFormComposer, UseHddFormOptions } from "../../utils/useHddForm";
+import type { AutocompleteInputProps, BaseInputProps, TextInputProps } from "../inputs/types";
 
-export type HddFormValues<T extends string> = Record<T, any>
+export type HddFormValues<T extends string> = Record<T, any>;
 
 export type ServerDataTableColumnPayload = {
-  name: string
-  filterField?: string
-  relation?: string
-  sortField?: string
-  source?: ServerDataTableColumnSource
-  sortSource?: ServerDataTableColumnSource
-  filterSource?: ServerDataTableColumnSource
-  morphableTo?: string
-}
+  name: string;
+  filterField?: string;
+  relation?: string;
+  sortField?: string;
+  source?: ServerDataTableColumnSource;
+  sortSource?: ServerDataTableColumnSource;
+  filterSource?: ServerDataTableColumnSource;
+  morphableTo?: string;
+};
 
 export type ServerDataTableColumnSource =
-  | 'main'
-  | 'main_count'
-  | 'relation'
-  | 'relation_count'
-  | 'custom'
-  | 'json'
-  | 'json_array'
-  | 'relation_many'
+  | "main"
+  | "main_count"
+  | "relation"
+  | "relation_count"
+  | "custom"
+  | "json"
+  | "json_array"
+  | "relation_many";
 
 export type RecordItem = {
-  id: number | string
-}
+  id: number | string;
+};
 
-export type UrlMethod = 'get' | 'post' | 'put' | 'delete'
+export type UrlMethod = "get" | "post" | "put" | "delete";
 export type UrlObject = {
-  url: string
-  method: UrlMethod
-}
-export type UrlWithParameterFunction = (id: number | string) => UrlObject
+  url: string;
+  method: UrlMethod;
+};
+export type UrlWithParameterFunction = (id: number | string) => UrlObject;
 
 export type HddFormProps<
   TFieldName extends string = string,
   TFieldType extends FormFieldType = FormFieldType,
 > = {
-  url?: string | UrlObject
-  fields?: MaybeRef<HddFormField<TFieldName, TFieldType>[] | TFieldName[]>
-  urlMethod?: UrlMethod
-  formName?: string
-  fieldsContainerClass?: any
-  submitPayloadTransformer?: (payload: any, form: HddFormComposer) => any
-  size?: 'small' | 'large'
-  onSuccess?: (data: any) => void
-  onFailure?: (error: any) => void
-  unifyLabelsWidth?: boolean | number
-  onSubmit?: UseHddFormOptions<TFieldName>['onSubmit']
-  summarizeErrorsAtTop?: boolean
-  showFieldErrorBelowIt?: boolean
-  autoFocusFirstOnMount?: boolean
-  submitOnEnter?: boolean
-  showFieldErrorsPopover?: boolean
-  inlineFields?: boolean
-  iconAsAddon?: boolean
-  withFooterButtons?: boolean
-  showRequiredAsterisk?: boolean
-  submitText?: string | false
-  initialValues?: Record<TFieldName, any>
-  submitIcon?: string
-  submitSeverity?: ButtonProps['severity']
+  url?: string | UrlObject;
+  fields?: MaybeRef<HddFormField<TFieldName, TFieldType>[] | TFieldName[]>;
+  urlMethod?: UrlMethod;
+  formName?: string;
+  fieldsContainerClass?: any;
+  submitPayloadTransformer?: (payload: any, form: HddFormComposer) => any;
+  size?: "small" | "large";
+  onSuccess?: (data: any) => void;
+  onFailure?: (error: any) => void;
+  unifyLabelsWidth?: boolean | number;
+  onSubmit?: UseHddFormOptions<TFieldName>["onSubmit"];
+  summarizeErrorsAtTop?: boolean;
+  showFieldErrorBelowIt?: boolean;
+  autoFocusFirstOnMount?: boolean;
+  submitOnEnter?: boolean;
+  showFieldErrorsPopover?: boolean;
+  inlineFields?: boolean;
+  iconAsAddon?: boolean;
+  withFooterButtons?: boolean;
+  showRequiredAsterisk?: boolean;
+  submitText?: string | false;
+  initialValues?: Record<TFieldName, any>;
+  submitIcon?: string;
+  submitSeverity?: ButtonProps["severity"];
   /**
    * Fixed Labels Width in pixels
    */
-  fixedLabelWidth?: number
-  isEditing?: boolean
+  fixedLabelWidth?: number;
+  isEditing?: boolean;
 
   /** Autocomplete on form tag*/
-  autoComplete?: string
-} & Pick<UseHddFormOptions<TFieldName>, 'defaultValidationMode'> &
+  autoComplete?: string;
+} & Pick<UseHddFormOptions<TFieldName>, "defaultValidationMode"> &
   Pick<
     BaseInputProps,
-    'floatingLabel' | 'floatingLabelVariant' | 'infieldTopAlignedLabel' | 'iconAsAddon'
-  >
+    "floatingLabel" | "floatingLabelVariant" | "infieldTopAlignedLabel" | "iconAsAddon"
+  >;
 
 export interface FieldError {
-  message: string
+  message: string;
 }
 
 export function createHddFormProps<
   TFieldName extends string = string,
   TFieldType extends FormFieldType = FormFieldType,
 >(props: HddFormProps<TFieldName, TFieldType>): HddFormProps<TFieldName, TFieldType> {
-  return props
+  return props;
 }
 
 export type FormFieldType =
-  | 'image'
-  | 'text'
-  | 'server_select'
-  | 'server_multi_select'
-  | 'textarea'
-  | 'password'
-  | 'select'
-  | 'multiselect'
-  | 'tree_select'
-  | 'checkbox'
-  | 'radio'
-  | 'switch'
-  | 'autocomplete'
-  | 'date'
-  | 'custom'
-  | 'number'
-  | 'price'
-  | 'math'
-  | 'phone'
-  | 'listbox'
-  | 'divider'
-  | 'form'
-  | 'separator'
-  | 'editor'
+  | "image"
+  | "text"
+  | "server_select"
+  | "server_multi_select"
+  | "textarea"
+  | "password"
+  | "select"
+  | "multiselect"
+  | "tree_select"
+  | "checkbox"
+  | "radio"
+  | "switch"
+  | "autocomplete"
+  | "date"
+  | "custom"
+  | "number"
+  | "price"
+  | "math"
+  | "phone"
+  | "listbox"
+  | "divider"
+  | "form"
+  | "separator"
+  | "editor";
 
-export type ValidationModeType = 'onBlur' | 'onValueUpdate' | 'onMount' | 'onSubmit' | 'none'
+export type ValidationModeType = "onBlur" | "onValueUpdate" | "onMount" | "onSubmit" | "none";
 
 type FieldDefaultValue =
   | string
@@ -132,117 +132,117 @@ type FieldDefaultValue =
   | string[]
   | number[]
   | boolean[]
-  | ((value?: any, row?: any) => any)
+  | ((value?: any, row?: any) => any);
 
 export interface FormField<T extends FormFieldType = FormFieldType> {
-  name: string
-  icon?: string
-  label?: string
-  type: T
-  component?: any
-  modelName?: string
-  modelValue?: string
-  namedModel?: boolean
-  useIdModal?: boolean
-  noSubmitOnEnter?: boolean
-  placeholder?: string
-  url?: string
-  options?: any[] | ((form: any) => any[])
-  binds?: T extends 'autocomplete' ? AutocompleteInputProps : object
-  visible?: boolean
-  size?: 'small' | 'large'
-  disabled?: boolean
-  readonly?: boolean
-  validationMode?: ValidationModeType
-  entireFormAsModel?: boolean
-  defaultValue: FieldDefaultValue
-  notes?: string
-  currency?: string
-  lazy?: boolean
-  rules?: StringSchema | NumberSchema | BooleanSchema | DateSchema | ObjectSchema<any>
+  name: string;
+  icon?: string;
+  label?: string;
+  type: T;
+  component?: any;
+  modelName?: string;
+  modelValue?: string;
+  namedModel?: boolean;
+  useIdModal?: boolean;
+  noSubmitOnEnter?: boolean;
+  placeholder?: string;
+  url?: string;
+  options?: any[] | ((form: any) => any[]);
+  binds?: T extends "autocomplete" ? AutocompleteInputProps : object;
+  visible?: boolean;
+  size?: "small" | "large";
+  disabled?: boolean;
+  readonly?: boolean;
+  validationMode?: ValidationModeType;
+  entireFormAsModel?: boolean;
+  defaultValue: FieldDefaultValue;
+  notes?: string;
+  currency?: string;
+  lazy?: boolean;
+  rules?: StringSchema | NumberSchema | BooleanSchema | DateSchema | ObjectSchema<any>;
 }
 
 export type HddFormFieldOnValueUpdateEvent = {
-  value: any
-  row: any
-  setValue: (fieldName: string, value: any) => void
-  fieldRef: any
-}
+  value: any;
+  row: any;
+  setValue: (fieldName: string, value: any) => void;
+  fieldRef: any;
+};
 
 export type HddFormField<
   N extends string = string,
   T extends FormFieldType = FormFieldType,
   TRow = unknown,
 > = {
-  readonly name: T extends 'separator' | 'divider' ? undefined : N
-  icon?: string
-  label?: string
-  readonly type?: T
+  readonly name: T extends "separator" | "divider" ? undefined : N;
+  icon?: string;
+  label?: string;
+  readonly type?: T;
   binds?:
-    | (T extends 'autocomplete'
+    | (T extends "autocomplete"
         ? AutocompleteInputProps
-        : T extends 'text'
+        : T extends "text"
           ? TextInputProps
           : object)
-    | ((event: { isEditing: boolean; row: TRow }) => object)
-  disabled?: boolean | ((currentValues: any) => boolean)
-  readonly?: boolean | ((currentValues: any) => boolean)
-  placeholder?: string
-  options?: MaybeRefOrGetter<any[] | ((form: unknown) => any[])>
-  multiEditable?: boolean
-  addonCallback?: (event: { value: any; row: any }) => string
-  size?: 'small' | 'large'
-  validationMode?: ValidationModeType
-  defaultValue?: FieldDefaultValue
-  onValueUpdate?: (event: HddFormFieldOnValueUpdateEvent) => void
-  customEditGetter?: any | ((data: any, row: any) => any)
-  notes?: string
-  hidden?: boolean
-  rules?: any
-  autocomplete?: string
-  showable?: MaybeRef<((event: { row: TRow; isEditing: boolean }) => boolean) | boolean>
-  url?: ((event: { row: TRow }) => string | UrlObject) | MaybeRef<string | UrlObject>
-  editable?: MaybeRef<boolean>
-  fields?: HddFormField[]
-  imageUrlKey?: string
-  imageClearKey?: string
-  teleport?: MaybeRefOrGetter<string | HTMLElement | Component>
+    | ((event: { isEditing: boolean; row: TRow }) => object);
+  disabled?: boolean | ((currentValues: any) => boolean);
+  readonly?: boolean | ((currentValues: any) => boolean);
+  placeholder?: string;
+  options?: MaybeRefOrGetter<any[] | ((form: unknown) => any[])>;
+  multiEditable?: boolean;
+  addonCallback?: (event: { value: any; row: any }) => string;
+  size?: "small" | "large";
+  validationMode?: ValidationModeType;
+  defaultValue?: FieldDefaultValue;
+  onValueUpdate?: (event: HddFormFieldOnValueUpdateEvent) => void;
+  customEditGetter?: any | ((data: any, row: any) => any);
+  notes?: string;
+  hidden?: boolean;
+  rules?: any;
+  autocomplete?: string;
+  showable?: MaybeRef<((event: { row: TRow; isEditing: boolean }) => boolean) | boolean>;
+  url?: ((event: { row: TRow }) => string | UrlObject) | MaybeRef<string | UrlObject>;
+  editable?: MaybeRef<boolean>;
+  fields?: HddFormField[];
+  imageUrlKey?: string;
+  imageClearKey?: string;
+  teleport?: MaybeRefOrGetter<string | HTMLElement | Component>;
   //rules?:HddFormFieldSchema<T>
   // rules?: Schema
   /** Fixed width for the label of the field */
-  labelWidth?: number
+  labelWidth?: number;
 
   /** Used for phone input to integrate country code field*/
-  countyCodeFieldName?: string
-}
+  countyCodeFieldName?: string;
+};
 
-export type HddFormFieldSchema<T> = T extends 'text' | 'autocomplete'
+export type HddFormFieldSchema<T> = T extends "text" | "autocomplete"
   ? StringSchema
-  : T extends 'number'
+  : T extends "number"
     ? NumberSchema
-    : T extends 'checkbox'
+    : T extends "checkbox"
       ? BooleanSchema
-      : T extends 'date'
+      : T extends "date"
         ? DateSchema
-        : Schema
+        : Schema;
 
 export function createField<TName extends string, TType extends FormFieldType>(
-  field: HddFormField<TName, TType>
+  field: HddFormField<TName, TType>,
 ): HddFormField<TName, TType> {
-  return field
+  return field;
 }
 
-export type FieldsNames<T extends HddFormField[]> = T[number]['name']
+export type FieldsNames<T extends HddFormField[]> = T[number]["name"];
 export type FieldValues<T extends HddFormField[]> = {
-  [key in T[number]['name'] as string]: unknown | undefined
-}
+  [key in T[number]["name"] as string]: unknown | undefined;
+};
 
 export function isAxiosValidationError(error: unknown): error is {
-  response: { data: { errors: { [key: string]: string[] } } }
+  response: { data: { errors: { [key: string]: string[] } } };
 } {
   return !!(
     error as {
-      response: { data: { errors: { [key: string]: string[] } } }
+      response: { data: { errors: { [key: string]: string[] } } };
     }
-  ).response?.data?.errors
+  ).response?.data?.errors;
 }

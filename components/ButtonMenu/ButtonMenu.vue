@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { uniqueId } from 'lodash-es';
-import type { ButtonProps } from 'primevue';
-import type { MenuItem } from 'primevue/menuitem';
+import { uniqueId } from "lodash-es";
+import type { ButtonProps } from "primevue";
+import type { MenuItem } from "primevue/menuitem";
 
 defineProps<{
-  severity?: ButtonProps['severity'];
+  severity?: ButtonProps["severity"];
   label?: string;
-  size?: 'small' | 'large' | string;
+  size?: "small" | "large" | string;
   icon?: string;
   tooltip?: string;
   items: MenuItem[];
 }>();
 
-const menuId = computed(() => uniqueId('button-menu-overlay-'));
-const menuRef = useTemplateRef('menuRef');
+const menuId = computed(() => uniqueId("button-menu-overlay-"));
+const menuRef = useTemplateRef("menuRef");
 </script>
 
 <template>
@@ -38,7 +38,7 @@ const menuRef = useTemplateRef('menuRef');
       :severity="severity"
       :aria-controls="menuId"
       @click="(event) => menuRef.toggle(event)"
-    ></Button>
+    />
   </div>
 </template>
 

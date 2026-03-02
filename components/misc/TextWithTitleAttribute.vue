@@ -7,7 +7,9 @@ defineProps<{
 </script>
 
 <template>
-  <component :is="component ?? 'span'" v-tooltip="asTooltip ? text : undefined" :title="text">{{ text }}</component>
+  <component :is="component ?? 'span'" v-tooltip="asTooltip ? text : undefined" :title="text">
+    {{ text }}
+  </component>
 </template>
 
 <style scoped></style>

@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { useDark, useToggle } from '@vueuse/core';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
+import { useDark, useToggle } from "@vueuse/core";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
 
 const authStore = useBasicAuthStore();
 const { t } = useI18n();
 const isDark = useDark({
   initialValue: authStore.options.darkMode,
-  valueLight: 'light',
-  valueDark: 'dark',
+  valueLight: "light",
+  valueDark: "dark",
 });
 const preferredDark = usePreferredDark({ window });
 
 watch(
   () => authStore.options.darkMode,
   (_value) => {
-    console.log('Option Changed Dark Mode', _value);
+    console.log("Option Changed Dark Mode", _value);
 
-    if (_value !== 'auto') {
-      const _isDark = _value === 'dark';
+    if (_value !== "auto") {
+      const _isDark = _value === "dark";
       if (_isDark !== isDark.value) {
         isDark.value = _isDark;
       }
     } else {
-      localStorage.removeItem('vueuse-color-scheme');
+      localStorage.removeItem("vueuse-color-scheme");
       if (isDark.value !== preferredDark.value) {
         isDark.value = preferredDark.value;
       }
@@ -34,8 +34,8 @@ const toggleDark = useToggle(isDark);
 
 function toggleDarkAndSave() {
   toggleDark();
-  console.log('H');
-  authStore.changeOption('dark_mode', isDark.value ? 'dark' : 'light');
+  console.log("H");
+  authStore.changeOption("dark_mode", isDark.value ? "dark" : "light");
 }
 </script>
 

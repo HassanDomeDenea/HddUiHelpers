@@ -1,19 +1,19 @@
 <script setup lang="ts" generic="TRecord extends RecordItem = RecordItem">
-import type { AxiosRequestConfig } from 'axios';
-import CellContent from 'HddUiHelpers/components/datatables/CellContent.vue';
-import ToolbarFilterWrapper from 'HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue';
+import type { AxiosRequestConfig } from "axios";
+import CellContent from "HddUiHelpers/components/datatables/CellContent.vue";
+import ToolbarFilterWrapper from "HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue";
 import {
   getColumnBodyClass,
   getColumnName as getColumnName2,
   getColumnSlotName,
   getColumnTitle,
   isToolbarFilterEmpty,
-} from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
-import type { RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
-import { printDomWithStyles } from 'HddUiHelpers/utils/printDom.ts';
-import { ref } from 'vue';
-import type { PrintPaperForServerDataTableProps } from './ServerDataTableTypes.ts';
+} from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import type { RecordItem } from "HddUiHelpers/components/FormWrapper/types.ts";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
+import { printDomWithStyles } from "HddUiHelpers/utils/printDom.ts";
+import { ref } from "vue";
+import type { PrintPaperForServerDataTableProps } from "./ServerDataTableTypes.ts";
 
 const getColumnName = getColumnName2;
 const {
@@ -30,14 +30,14 @@ const {
   footerImageUrl,
   showPageCounter,
   showCurrentPrintTime,
-  primaryKey = 'id' as keyof TRecord,
+  primaryKey = "id" as keyof TRecord,
 } = defineProps<PrintPaperForServerDataTableProps<TRecord>>();
 const recordsToPrint = ref<TRecord[]>([]) as Ref<TRecord[]>;
 const extraDataToPrint = ref();
 
 const renderPrintNode = ref(false);
-const printNodeRef = useTemplateRef<HTMLDivElement>('printNodeRef');
-const isPrinting = defineModel<boolean>('isPrinting', { default: false });
+const printNodeRef = useTemplateRef<HTMLDivElement>("printNodeRef");
+const isPrinting = defineModel<boolean>("isPrinting", { default: false });
 const authStore = useBasicAuthStore();
 async function print(printAllRows: boolean = false, requestConfig: AxiosRequestConfig = {}) {
   isPrinting.value = true;
@@ -82,7 +82,7 @@ const sortsIntoObject = computed(() => {
       carry[item.field] = item.direction;
       return carry;
     },
-    {} as Record<string, 'asc' | 'desc'>,
+    {} as Record<string, "asc" | "desc">,
   );
 });
 const printableColumns = computed(() => {
@@ -97,8 +97,16 @@ const anyColumnHasFooter = computed(() => {
 <template>
   <div class="hidden">
     <div v-if="renderPrintNode" ref="printNodeRef" class="bg-white text-black">
-      <div v-if="toValue(headerImageUrl)" hidden class="flex items-center justify-center text-3xl font-bold">
-        <img :src="toValue(headerImageUrl)" style="width: 100%" :alt="authStore.user.global_options.city_name" />
+      <div
+        v-if="toValue(headerImageUrl)"
+        hidden
+        class="flex items-center justify-center text-3xl font-bold"
+      >
+        <img
+          :src="toValue(headerImageUrl)"
+          style="width: 100%"
+          :alt="authStore.user.global_options.city_name"
+        />
       </div>
       <slot name="printPageHeader" :records="recordsToPrint" :extra="extraDataToPrint">
         <div class="my-2 text-center text-xl font-bold">
@@ -108,13 +116,13 @@ const anyColumnHasFooter = computed(() => {
       <div class="flex justify-start ps-4">
         <div>
           <div v-if="filters._global?.value" class="mt-1">
-            <span class="underline-offset-5 underline">{{ t('Search') }}</span>
+            <span class="underline-offset-5 underline">{{ t("Search") }}</span>
             <span class="">: </span>
             <span>{{ filters._global.value }}</span>
           </div>
           <div v-if="!isToolbarFilterEmpty(toolbarFilters)">
             <div class="mt-1">
-              <span class="underline-offset-5 underline">{{ t('Filtering Options') }}</span>
+              <span class="underline-offset-5 underline">{{ t("Filtering Options") }}</span>
               <span>: </span>
             </div>
             <ToolbarFilterWrapper
@@ -128,7 +136,13 @@ const anyColumnHasFooter = computed(() => {
         </div>
       </div>
 
-      <div :dir="printDirection" :class="{ 'ltr text-left': printDirection === 'ltr', 'rtl text-right': printDirection === 'rtl' }">
+      <div
+        :dir="printDirection"
+        :class="{
+          'ltr text-left': printDirection === 'ltr',
+          'rtl text-right': printDirection === 'rtl',
+        }"
+      >
         <table class="printable-table mx-auto mt-3">
           <thead>
             <tr>
@@ -136,10 +150,17 @@ const anyColumnHasFooter = computed(() => {
               <template v-for="column in printableColumns" :key="getColumnName(column)">
                 <th>
                   <div class="flex items-center gap-1">
-                    <span class="flex-grow-1">{{ column.printLabel ?? getColumnTitle(column, t) }}</span>
-                    <span v-if="hasSorts && sortsIntoObject[column.sortField ?? column.fullFieldName]">
-                      <i v-if="sortsIntoObject[column.sortField ?? column.fullFieldName] === 'asc'" class="i-mdi:sort-ascending scale-y-[-1]"></i>
-                      <i v-else class="i-mdi:sort-descending scale-y-[-1]"></i>
+                    <span class="flex-grow-1">{{
+                      column.printLabel ?? getColumnTitle(column, t)
+                    }}</span>
+                    <span
+                      v-if="hasSorts && sortsIntoObject[column.sortField ?? column.fullFieldName]"
+                    >
+                      <i
+                        v-if="sortsIntoObject[column.sortField ?? column.fullFieldName] === 'asc'"
+                        class="i-mdi:sort-ascending scale-y-[-1]"
+                      />
+                      <i v-else class="i-mdi:sort-descending scale-y-[-1]" />
                     </span>
                   </div>
                 </th>
@@ -148,11 +169,20 @@ const anyColumnHasFooter = computed(() => {
           </thead>
           <tbody>
             <tr v-for="(row, rowIndex) in recordsToPrint" :key="row[primaryKey] as PropertyKey">
-              <td v-if="hasSequenceColumn">{{ rowIndex + 1 }}</td>
+              <td v-if="hasSequenceColumn">
+                {{ rowIndex + 1 }}
+              </td>
               <template v-for="column in printableColumns" :key="getColumnName(column)">
-                <td :style="column.bodyStyle" :class="column.bodyClass ? getColumnBodyClass(row, column) : null">
+                <td
+                  :style="column.bodyStyle"
+                  :class="column.bodyClass ? getColumnBodyClass(row, column) : null"
+                >
                   <slot :name="`${getColumnSlotName(column)}ColumnPrintBody`">
-                    <CellContent :column="column" :rendered-data="getColumnBody(row, column)" :row="row" />
+                    <CellContent
+                      :column="column"
+                      :rendered-data="getColumnBody(row, column)"
+                      :row="row"
+                    />
                   </slot>
                 </td>
               </template>
@@ -163,7 +193,14 @@ const anyColumnHasFooter = computed(() => {
               <th v-if="hasSequenceColumn">xx</th>
               <template v-for="column in printableColumns" :key="getColumnName(column)">
                 <th>
-                  <span v-if="column.footer" v-html="typeof column.footer === 'string' ? column.footer : column.footer(recordsToPrint)"></span>
+                  <span
+                    v-if="column.footer"
+                    v-html="
+                      typeof column.footer === 'string'
+                        ? column.footer
+                        : column.footer(recordsToPrint)
+                    "
+                  />
                 </th>
               </template>
             </tr>
@@ -171,7 +208,7 @@ const anyColumnHasFooter = computed(() => {
         </table>
       </div>
       <div>
-        <slot name="printPageFooter" :records="recordsToPrint" :extra="extraDataToPrint"></slot>
+        <slot name="printPageFooter" :records="recordsToPrint" :extra="extraDataToPrint" />
       </div>
     </div>
   </div>
