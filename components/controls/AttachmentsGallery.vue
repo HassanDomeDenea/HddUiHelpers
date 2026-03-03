@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import MediaController from "@/wayfinder/actions/HassanDomeDenea/HddLaravelHelpers/Controllers/MediaController.ts";
 import downloadJs from "downloadjs";
 import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
 import { useStackableDialog } from "HddUiHelpers/stores/stackableDialogs.ts";
@@ -329,7 +328,8 @@ function onFileDateUpdated(file: AttachmentModelType, newDate: string) {
       loading.value = true;
       apiClient
         .request({
-          ...MediaController.updateDate(file[props.idProperty]),
+          method:"patch",
+          url: `/api/medias/${file[props.idProperty]}/update-date`,
           data: {
             date: newDate,
           },
@@ -357,7 +357,8 @@ const onFileDescriptionUpdated = debounce(function (
       loading.value = true;
       apiClient
         .request({
-          ...MediaController.updateDescription(file[props.idProperty]),
+          method: 'patch',
+          url: `/api/medias/${file[props.idProperty]}/update-description`,
           data: {
             description: newDescription,
           },
@@ -389,7 +390,8 @@ function saveManipulations(file: AttachmentModelType) {
       loading.value = true;
       apiClient
         .request({
-          ...MediaController.manipulate(file[props.idProperty]),
+          method: 'patch',
+          url: `/api/medias/${file[props.idProperty]}/manipulate`,
           data: payload,
         })
         .then(() => {
@@ -430,7 +432,8 @@ function confirmDelete(file: AttachmentModelType) {
         loading.value = true;
         apiClient
           .request({
-            ...MediaController.destroy(file[props.idProperty]),
+            method: 'delete',
+            url: `/api/medias/${file[props.idProperty]}`,
           })
           .then(() => {
             emits("changed");

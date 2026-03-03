@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import UserController from "@/wayfinder/actions/App/Http/Controllers/UserController";
 import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers";
 import { useApiClient } from "HddUiHelpers/stores/apiClient";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
@@ -37,7 +36,7 @@ const items = computed<MenuItem[]>(() => {
       class: "text-sm",
       command() {
         apiClient
-          .request(UserController.logout())
+          .request({url:'/api/logout', method: 'POST'})
           .then(() => {
             basicAuthStore.logout();
             router.push("/login");

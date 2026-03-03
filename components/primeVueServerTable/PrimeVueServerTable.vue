@@ -38,7 +38,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import usePrimeVueServerUi from "../../utils/usePrimeVueServerUi";
 
-import { printDomWithStyles } from "@/HddUiHelpers/utils/printDom";
+import { printDomWithStyles } from "HddUiHelpers/utils/printDom";
 import type { DialogFormWrapperProps } from "../FormWrapper/DialogFormWrapper.vue";
 import DialogFormWrapper from "../FormWrapper/DialogFormWrapper.vue";
 import MultiSelectColumnFilter from "./MultiSelectColumnFilter.vue";

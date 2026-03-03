@@ -3,7 +3,7 @@ import type { ServerDataTableProps } from "HddUiHelpers/components/datatables/Se
 import { i18n } from "HddUiHelpers/plugins/i18n";
 import pinia from "HddUiHelpers/plugins/pinia";
 import primevue from "HddUiHelpers/plugins/primevue";
-import { useApiClient } from "HddUiHelpers/stores/apiClient";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
 import primeVueLocales from "HddUiHelpers/utils/primeVueLocales";
 import { merge } from "lodash-es";
 import "moment/locale/ar";

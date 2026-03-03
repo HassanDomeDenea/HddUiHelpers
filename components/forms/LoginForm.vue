@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import UserController from "@/wayfinder/actions/App/Http/Controllers/UserController";
 import type { HddFormProps } from "HddUiHelpers/components/FormWrapper/types";
 import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
@@ -11,7 +10,10 @@ const router = useRouter();
 const apiClient = useApiClient();
 const route = useRoute();
 const formBinds = ref<HddFormProps>({
-  url: UserController.login(),
+  url: {
+    url: '/api/login',
+    method: 'post'
+  },
   unifyLabelsWidth: 120,
   submitSeverity: "primary",
   submitText: t("Login"),

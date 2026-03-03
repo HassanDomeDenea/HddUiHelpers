@@ -41,7 +41,12 @@ export default function HddUiHelpersPlugin(): PluginOption {
       // Disable dts generation in dev mode for faster updates
     }),
     Vue({
-      include: [/\.vue$/, /\.md$/],
+      include: [
+        /\.vue$/,
+        /\.md$/,
+        /node_modules\/@hassandomedenea\/hdduihelpers\/.+\.vue$/,
+        /HddUiHelpers\/.+\.vue$/,
+      ],
       // Disable template compilation caching in dev mode for faster updates
       template: {
         compilerOptions: {

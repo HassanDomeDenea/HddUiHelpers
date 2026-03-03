@@ -1,6 +1,6 @@
 import { defineConfig, presetWebFonts, presetWind4 } from "unocss";
 import { createLocalFontProcessor } from "@unocss/preset-web-fonts/local";
-import HddUnoCssPreset from "@hassandomedenea/hdduihelpers/plugins/HddUnoCssPreset";
+import HddUnoCssPreset from "HddUiHelpers/plugins/HddUnoCssPreset";
 
 export default defineConfig({
   content: {
