@@ -89,14 +89,15 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: ["vue", "primevue", /^primevue\//],
+      external: (id) => {
+        // Only bundle your own source files
+        if (id.startsWith(".") || id.startsWith("/") || id.startsWith("\0")) {
+          return false;
+        }
+        // Externalize all dependencies
+        return true;
+      },
     },
     outDir: "dist",
-  },
-  css: {
-    // Don't process CSS at all during lib build
-    preprocessorOptions: {
-      scss: { api: "modern-compiler" },
-    },
   },
 });

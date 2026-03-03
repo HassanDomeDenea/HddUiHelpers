@@ -36,11 +36,11 @@ import DatePicker from "primevue/datepicker";
 import type { MenuItem } from "primevue/menuitem";
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
-import usePrimeVueServerUi from "../../utils/usePrimeVueServerUi";
+import usePrimeVueServerUi from "HddUiHelpers/utils/usePrimeVueServerUi";
 
 import { printDomWithStyles } from "HddUiHelpers/utils/printDom";
-import type { DialogFormWrapperProps } from "../FormWrapper/DialogFormWrapper.vue";
-import DialogFormWrapper from "../FormWrapper/DialogFormWrapper.vue";
+import type { DialogFormWrapperProps } from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
+import DialogFormWrapper from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
 import MultiSelectColumnFilter from "./MultiSelectColumnFilter.vue";
 import SelectColumnFilter from "./SelectColumnFilter.vue";
 import type {
