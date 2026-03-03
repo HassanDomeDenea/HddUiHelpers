@@ -1,17 +1,17 @@
-import t from "@intlify/unplugin-vue-i18n/vite";
+import d from "@intlify/unplugin-vue-i18n/vite";
 import { PrimeVueResolver as n } from "@primevue/auto-import-resolver";
 import { unheadVueComposablesImports as l } from "@unhead/vue";
 import m from "@vitejs/plugin-vue";
 import e from "node:path";
-import { fileURLToPath as a } from "node:url";
-import i from "unocss/vite";
+import { fileURLToPath as i } from "node:url";
+import a from "unocss/vite";
 import p from "unplugin-auto-import/vite";
 import c from "unplugin-vue-components/vite";
-import h from "unplugin-vue-markdown/vite";
-import { VueRouterAutoImports as v } from "unplugin-vue-router";
+import v from "unplugin-vue-markdown/vite";
+import { VueRouterAutoImports as h } from "unplugin-vue-router";
 import f from "unplugin-vue-router/vite";
-function O() {
-  const o = e.dirname(a(import.meta.url)), d = {
+function P() {
+  const o = e.dirname(i(import.meta.url)), t = {
     name: "hdd-ui-helpers-plugin"
   }, u = process.env.NODE_ENV === "development" || process.env.NODE_ENV === void 0, r = [
     f({
@@ -48,13 +48,13 @@ function O() {
         }
       }
     }),
-    d,
+    t,
     p({
       imports: [
         "vue",
         "vue-i18n",
         "@vueuse/core",
-        v,
+        h,
         l
       ],
       dts: "resources/js/types/auto-imports.d.ts",
@@ -69,12 +69,7 @@ function O() {
       ],
       // Disable directory scanning in dev mode
       vueTemplate: !0,
-      include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /HddUiHelpers\/.+\.(vue|ts)/],
-      eslintrc: {
-        enabled: !0,
-        filepath: ".eslintrc-auto-import.json",
-        globalsPropValue: !0
-      }
+      include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /HddUiHelpers\/.+\.(vue|ts)/]
     }),
     c({
       resolvers: [n()],
@@ -82,12 +77,11 @@ function O() {
       extensions: ["vue", "md"],
       include: [/\.vue$/, /\.vue\?vue/, /\.md$/, /HddUiHelpers\/.+\.(vue|ts)/],
       dts: "resources/js/types/components.d.ts"
-      //dts: false, // Disable DTS generation in dev mode for faster work
     }),
-    i({
+    a({
       fetchMode: "no-cors"
     }),
-    h({
+    v({
       headEnabled: !0
     })
   ];
@@ -96,11 +90,11 @@ function O() {
     // Only include essential plugins in dev mode
     {
       name: "debug-paths",
-      transform(g, s) {
+      transform(y, s) {
         s.includes("basicAuth") && console.log("Resolved 3 path:", s, /HddUiHelpers\/.+\.(vue|ts)/.test(s));
       }
     },
-    t({
+    d({
       compositionOnly: !0,
       fullInstall: !1,
       include: [
@@ -112,7 +106,7 @@ function O() {
     })
   ] : [
     ...r,
-    t({
+    d({
       include: [
         e.resolve(o, "../locales/*.yaml"),
         e.resolve(e.dirname(""), "lang/*.yaml")
@@ -121,5 +115,5 @@ function O() {
   ];
 }
 export {
-  O as default
+  P as default
 };

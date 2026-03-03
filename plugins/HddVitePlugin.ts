@@ -80,11 +80,6 @@ export default function HddUiHelpersPlugin(): PluginOption {
       ], // Disable directory scanning in dev mode
       vueTemplate: true,
       include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /HddUiHelpers\/.+\.(vue|ts)/],
-      eslintrc: {
-        enabled: true,
-        filepath: ".eslintrc-auto-import.json",
-        globalsPropValue: true,
-      },
     }),
     Components({
       resolvers: [PrimeVueResolver()],
@@ -92,7 +87,6 @@ export default function HddUiHelpersPlugin(): PluginOption {
       extensions: ["vue", "md"],
       include: [/\.vue$/, /\.vue\?vue/, /\.md$/, /HddUiHelpers\/.+\.(vue|ts)/],
       dts: "resources/js/types/components.d.ts",
-      //dts: false, // Disable DTS generation in dev mode for faster work
     }),
     UnoCSS({
       fetchMode: "no-cors",

@@ -63,11 +63,6 @@ export default defineConfig({
       dirs: ["composables", "stores"], // Disable directory scanning in dev mode
       vueTemplate: true,
       include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/],
-      eslintrc: {
-        enabled: true,
-        filepath: ".eslintrc-auto-import.json",
-        globalsPropValue: true,
-      },
     }),
     Components({
       resolvers: [PrimeVueResolver()],
