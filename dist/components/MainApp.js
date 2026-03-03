@@ -1,73 +1,68 @@
-import C from "primevue/confirmpopup";
-import D from "primevue/dynamicdialog";
-import v from "primevue/confirmdialog";
-import b from "primevue/toast";
-import { defineComponent as w, watch as s, resolveComponent as B, openBlock as n, createElementBlock as x, createVNode as o, unref as r, withCtx as y, createBlock as l, KeepAlive as A, resolveDynamicComponent as P } from "vue";
-import T from "HddUiHelpers/components/datatables/DynamicServerFormDialog.vue";
-import k from "HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue";
-import I from "HddUiHelpers/components/misc/TopProgressBar.vue";
-import S from "HddUiHelpers/components/modified/DismissableConfirmDialog.vue";
-import { setPageDirection as V } from "HddUiHelpers/plugins/i18n";
-import { useBasicAuthStore as M } from "HddUiHelpers/stores/basicAuth";
-import E from "HddUiHelpers/utils/primeVueLocales";
-import { usePrimeVue as F } from "primevue";
-import { defaultOptions as K } from "primevue/config";
-import { useToast as L } from "primevue/usetoast";
-import { useApiClient as N } from "HddUiHelpers/stores/apiClient";
-import O from "HddUiHelpers/components/ConfirmDialogWithInput/ConfirmDialogWithInput.vue";
-import { useI18n as W } from "vue-i18n";
-const j = { class: "flex-1 overflow-auto" }, so = /* @__PURE__ */ w({
+import { defineComponent as C, resolveComponent as e, openBlock as m, createElementBlock as h, createVNode as o, unref as n, withCtx as v, createBlock as l, KeepAlive as b, resolveDynamicComponent as w } from "vue";
+import y from "HddUiHelpers/components/datatables/DynamicServerFormDialog.vue";
+import B from "HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue";
+import P from "HddUiHelpers/components/misc/TopProgressBar.vue";
+import T from "HddUiHelpers/components/modified/DismissableConfirmDialog.vue";
+import { setPageDirection as x } from "HddUiHelpers/plugins/i18n";
+import { useBasicAuthStore as A } from "HddUiHelpers/stores/basicAuth";
+import k from "HddUiHelpers/utils/primeVueLocales";
+import { usePrimeVue as I } from "primevue";
+import { defaultOptions as S } from "primevue/config";
+import { useToast as V } from "primevue/usetoast";
+import { useApiClient as M } from "HddUiHelpers/stores/apiClient";
+import E from "HddUiHelpers/components/ConfirmDialogWithInput/ConfirmDialogWithInput.vue";
+const F = { class: "flex-1 overflow-auto" }, Y = /* @__PURE__ */ C({
   __name: "MainApp",
-  setup(q) {
-    const { t, locale: m } = W(), c = L(), u = M(), p = N();
-    p.setI18n(t), p.setToast(c);
-    const a = F();
-    return s(
-      () => u.options.language,
+  setup(K) {
+    const { t, locale: p } = useI18n(), a = V(), c = A(), s = M();
+    s.setI18n(t), s.setToast(a);
+    const u = I();
+    return watch(
+      () => c.options.language,
       (i) => {
-        i && (m.value = i, V());
+        i && (p.value = i, x());
       },
       {
         immediate: !0
       }
-    ), s(
-      m,
+    ), watch(
+      p,
       (i) => {
-        a.config.locale = E[i] ?? K.locale;
+        u.config.locale = k[i] ?? S.locale;
       },
       {
         immediate: !0
       }
-    ), (i, z) => {
-      const e = b, _ = v, f = D, g = C, d = B("router-view");
-      return n(), x("main", j, [
-        o(I),
-        o(e, {
+    ), (i, L) => {
+      const r = e("Toast"), f = e("ConfirmDialog"), _ = e("DynamicDialog"), g = e("ConfirmPopup"), D = e("router-view");
+      return m(), h("main", F, [
+        o(P),
+        o(r, {
           group: "errors",
-          position: r(t)("dir") === "ltr" ? "bottom-right" : "bottom-left"
+          position: n(t)("dir") === "ltr" ? "bottom-right" : "bottom-left"
         }, null, 8, ["position"]),
-        o(e, {
+        o(r, {
           group: "success",
-          position: r(t)("dir") === "ltr" ? "bottom-right" : "bottom-left"
+          position: n(t)("dir") === "ltr" ? "bottom-right" : "bottom-left"
         }, null, 8, ["position"]),
-        o(e, {
+        o(r, {
           group: "notifications",
-          position: r(t)("dir") === "ltr" ? "top-right" : "top-left"
+          position: n(t)("dir") === "ltr" ? "top-right" : "top-left"
         }, null, 8, ["position"]),
-        o(e, {
-          position: r(t)("dir") === "ltr" ? "top-right" : "top-left"
+        o(r, {
+          position: n(t)("dir") === "ltr" ? "top-right" : "top-left"
         }, null, 8, ["position"]),
-        o(_),
-        o(S, { group: "dismissable" }),
-        o(T),
         o(f),
-        o(O),
+        o(T, { group: "dismissable" }),
+        o(y),
+        o(_),
+        o(E),
         o(g, { group: "popup" }),
-        o(k),
-        o(d, null, {
-          default: y(({ Component: h }) => [
-            (n(), l(A, null, [
-              (n(), l(P(h)))
+        o(B),
+        o(D, null, {
+          default: v(({ Component: d }) => [
+            (m(), l(b, null, [
+              (m(), l(w(d)))
             ], 1024))
           ]),
           _: 1
@@ -77,5 +72,5 @@ const j = { class: "flex-1 overflow-auto" }, so = /* @__PURE__ */ w({
   }
 });
 export {
-  so as default
+  Y as default
 };

@@ -1,8 +1,7 @@
-import h from "primevue/inputotp";
-import { defineComponent as w, useModel as I, ref as L, watch as C, openBlock as V, createBlock as k, mergeProps as s, unref as a, withCtx as _, createVNode as q, mergeModels as d } from "vue";
+import { defineComponent as h, useModel as w, ref as I, resolveComponent as C, openBlock as L, createBlock as V, mergeProps as u, unref as a, withCtx as k, createVNode as q, mergeModels as d } from "vue";
 import { useHddBaseInputUtils as x } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { _ as A } from "../../BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-const D = /* @__PURE__ */ w({
+import { _ as A } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const O = /* @__PURE__ */ h({
   __name: "OneTimePasswordInput",
   props: /* @__PURE__ */ d({
     length: { default: 4 },
@@ -51,19 +50,19 @@ const D = /* @__PURE__ */ w({
   }),
   emits: /* @__PURE__ */ d(["keydown", "complete"], ["update:modelValue"]),
   setup(e, { expose: m, emit: c }) {
-    const r = e, p = c, l = I(e, "modelValue"), i = L();
-    function u() {
+    const r = e, p = c, l = w(e, "modelValue"), i = I();
+    function s() {
       i.value.$el.querySelector("input").focus();
     }
-    C(l, (n) => {
+    watch(l, (n) => {
       n.length >= r.length && p("complete", n);
     });
-    const { exposed: f, baseInputForwardedProps: y, fieldUniqueId: B, generalInputProps: g } = x(r);
-    return m({ focus: u, ...f }), (n, o) => {
-      const b = h;
-      return V(), k(A, s(a(y), { onClick: u }), {
-        default: _(() => [
-          q(b, s(a(g), {
+    const { exposed: f, baseInputForwardedProps: y, fieldUniqueId: B, generalInputProps: b } = x(r);
+    return m({ focus: s, ...f }), (n, o) => {
+      const g = C("InputOtp");
+      return L(), V(A, u(a(y), { onClick: s }), {
+        default: k(() => [
+          q(g, u(a(b), {
             ref_key: "inputRef",
             ref: i,
             modelValue: l.value,
@@ -92,5 +91,5 @@ const D = /* @__PURE__ */ w({
   }
 });
 export {
-  D as default
+  O as default
 };

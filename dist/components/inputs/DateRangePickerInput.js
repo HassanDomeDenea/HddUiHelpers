@@ -1,12 +1,10 @@
-import D from "primevue/datepicker";
-import { defineComponent as I, useModel as V, computed as Y, ref as M, openBlock as v, createBlock as C, mergeProps as d, unref as n, withCtx as m, createVNode as L, isRef as k, mergeModels as x } from "vue";
-import { useHddBaseInputUtils as A } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import p from "moment";
-import { _ as P } from "../../BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-import { useI18n as _ } from "vue-i18n";
-const N = /* @__PURE__ */ I({
+import { defineComponent as D, useModel as I, ref as V, resolveComponent as Y, openBlock as v, createBlock as C, mergeProps as d, unref as n, withCtx as m, createVNode as M, isRef as L, mergeModels as k } from "vue";
+import { useHddBaseInputUtils as x } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import s from "moment";
+import { _ as A } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const S = /* @__PURE__ */ D({
   __name: "DateRangePickerInput",
-  props: /* @__PURE__ */ x({
+  props: /* @__PURE__ */ k({
     autocomplete: {},
     icon: {},
     uniqueId: {},
@@ -52,34 +50,34 @@ const N = /* @__PURE__ */ I({
   }),
   emits: ["update:modelValue"],
   setup(r, { expose: c }) {
-    const f = r, { t: y } = _(), t = V(r, "modelValue"), i = Y({
-      get: () => t.value?.map((e) => e ? p(e).toDate() : null),
+    const f = r, { t: y } = useI18n(), t = I(r, "modelValue"), i = computed({
+      get: () => t.value?.map((e) => e ? s(e).toDate() : null),
       set: (e) => {
-        t.value = e?.map((o) => o ? p(o).format("YYYY-MM-DD") : null);
+        t.value = e?.map((o) => o ? s(o).format("YYYY-MM-DD") : null);
       }
-    }), s = M();
+    }), p = V();
     function u() {
-      s.value.$el.focus();
+      p.value.$el.focus();
     }
     function b(e) {
       if (e.key === "Enter") {
         const a = e.target.value;
         if (a.split("-").length === 3) {
-          const l = p(a);
+          const l = s(a);
           l.isValid() && (t.value ? t.value[0] = l.format("YYYY-MM-DD") : t.value = [l.format("YYYY-MM-DD"), null]);
         }
       }
     }
-    const { exposed: B, baseInputForwardedProps: g, fieldUniqueId: h, generalInputProps: w } = A(f);
+    const { exposed: B, baseInputForwardedProps: g, fieldUniqueId: h, generalInputProps: w } = x(f);
     return c({ focus: u, ...B }), (e, o) => {
-      const a = D;
-      return v(), C(P, d(n(g), { onClick: u }), {
+      const a = Y("DatePicker");
+      return v(), C(A, d(n(g), { onClick: u }), {
         default: m(() => [
-          L(a, d(n(w), {
+          M(a, d(n(w), {
             ref_key: "inputRef",
-            ref: s,
+            ref: p,
             modelValue: n(i),
-            "onUpdate:modelValue": o[0] || (o[0] = (l) => k(i) ? i.value = l : null),
+            "onUpdate:modelValue": o[0] || (o[0] = (l) => L(i) ? i.value = l : null),
             "input-id": n(h),
             "selection-mode": "range",
             "number-of-months": 2,
@@ -111,5 +109,5 @@ const N = /* @__PURE__ */ I({
   }
 });
 export {
-  N as default
+  S as default
 };

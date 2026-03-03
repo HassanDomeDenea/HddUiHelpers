@@ -1,15 +1,10 @@
-import _ from "primevue/panel";
-import { _ as d } from "../../HddForm.vue_vue_type_script_setup_true_lang-Dq3asCvM.js";
-import f from "primevue/message";
-import { defineComponent as g, ref as b, openBlock as h, createBlock as x, withCtx as o, createVNode as r, createElementVNode as w, toDisplayString as y, unref as s, normalizeProps as C, guardReactiveProps as v } from "vue";
-import { useApiClient as P } from "HddUiHelpers/stores/apiClient.ts";
-import { useBasicAuthStore as S } from "HddUiHelpers/stores/basicAuth";
-import { useI18n as B } from "vue-i18n";
-import { useRouter as L, useRoute as k } from "vue-router";
-const z = { class: "w-full text-center text-lg font-bold" }, D = /* @__PURE__ */ g({
+import { defineComponent as f, resolveComponent as o, openBlock as _, createBlock as g, withCtx as r, createVNode as s, createElementVNode as b, toDisplayString as h, unref as n, normalizeProps as x, guardReactiveProps as w } from "vue";
+import { useApiClient as y } from "HddUiHelpers/stores/apiClient.ts";
+import { useBasicAuthStore as C } from "HddUiHelpers/stores/basicAuth";
+const v = { class: "w-full text-center text-lg font-bold" }, z = /* @__PURE__ */ f({
   __name: "LoginForm",
-  setup(E) {
-    const { t: e } = B(), n = S(), i = L(), l = P(), m = k(), a = b({
+  setup(P) {
+    const { t: e } = useI18n(), i = C(), l = useRouter(), a = y(), u = useRoute(), c = ref({
       url: {
         url: "/api/login",
         method: "post"
@@ -37,28 +32,28 @@ const z = { class: "w-full text-center text-lg font-bold" }, D = /* @__PURE__ */
       ],
       onSuccess: (t) => {
         if (!t.user) {
-          l.toastError(e("Error Occurred"));
+          a.toastError(e("Error Occurred"));
           return;
         }
-        i.push((m.query?.redirect_url ?? "/") || "/"), n.login(t.user, t.token);
+        l.push((u.query?.redirect_url ?? "/") || "/"), i.login(t.user, t.token);
       }
     });
-    return (t, I) => {
-      const u = f, c = d, p = _;
-      return h(), x(p, { class: "font-tajawal w-400px light:bg-primary-1 light:border-blue-200 max-w-full" }, {
-        default: o(() => [
-          r(u, {
+    return (t, S) => {
+      const m = o("Message"), p = o("HddForm"), d = o("Panel");
+      return _(), g(d, { class: "font-tajawal w-400px light:bg-primary-1 light:border-blue-200 max-w-full" }, {
+        default: r(() => [
+          s(m, {
             severity: "success",
             size: "large",
             class: "mb-4",
             variant: "simple"
           }, {
-            container: o(() => [
-              w("div", z, y(s(e)("Welcome, Please Log In")) + ":", 1)
+            container: r(() => [
+              b("div", v, h(n(e)("Welcome, Please Log In")) + ":", 1)
             ]),
             _: 1
           }),
-          r(c, C(v(s(a))), null, 16)
+          s(p, x(w(n(c))), null, 16)
         ]),
         _: 1
       });
@@ -66,5 +61,5 @@ const z = { class: "w-full text-center text-lg font-bold" }, D = /* @__PURE__ */
   }
 });
 export {
-  D as default
+  z as default
 };

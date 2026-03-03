@@ -1,9 +1,8 @@
-import k from "primevue/listbox";
-import { defineComponent as I, useModel as C, computed as V, ref as v, openBlock as w, createBlock as M, mergeProps as s, unref as r, createSlots as P, withCtx as i, createVNode as S, renderSlot as d, createElementVNode as x, mergeModels as m } from "vue";
-import { useHddBaseInputUtils as A } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { reduce as T, groupBy as H } from "lodash-es";
-import { _ as $ } from "../../BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-const q = ["innerHTML"], O = /* @__PURE__ */ I({
+import { defineComponent as k, useModel as C, ref as I, resolveComponent as V, openBlock as v, createBlock as w, mergeProps as u, unref as r, createSlots as x, withCtx as i, createVNode as M, renderSlot as d, createElementVNode as P, mergeModels as m } from "vue";
+import { useHddBaseInputUtils as S } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { reduce as A, groupBy as T } from "lodash-es";
+import { _ as H } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const $ = ["innerHTML"], N = /* @__PURE__ */ k({
   __name: "ListBoxInput",
   props: /* @__PURE__ */ m({
     options: {},
@@ -62,9 +61,9 @@ const q = ["innerHTML"], O = /* @__PURE__ */ I({
   }),
   emits: /* @__PURE__ */ m(["change"], ["update:modelValue"]),
   setup(e, { expose: c, emit: f }) {
-    const o = e, y = f, p = C(e, "modelValue"), b = V(
-      () => o.groupItemsBy ? T(
-        H(o.options, o.groupItemsBy),
+    const o = e, y = f, p = C(e, "modelValue"), b = computed(
+      () => o.groupItemsBy ? A(
+        T(o.options, o.groupItemsBy),
         function(l, t, n) {
           return l.push({
             label: o.groupsLabels?.[n] ?? n,
@@ -73,18 +72,18 @@ const q = ["innerHTML"], O = /* @__PURE__ */ I({
         },
         []
       ) : o.options
-    ), g = v();
-    function u() {
+    ), h = I();
+    function s() {
       o.disabled;
     }
-    const { exposed: h, baseInputForwardedProps: B, generalInputProps: L } = A(o);
-    return c({ focus: u, ...h }), (l, t) => {
-      const n = k;
-      return w(), M($, s(r(B), { onClick: u }), P({
+    const { exposed: B, baseInputForwardedProps: g, generalInputProps: L } = S(o);
+    return c({ focus: s, ...B }), (l, t) => {
+      const n = V("Listbox");
+      return v(), w(H, u(r(g), { onClick: s }), x({
         default: i(() => [
-          S(n, s(r(L), {
+          M(n, u(r(L), {
             ref_key: "inputRef",
-            ref: g,
+            ref: h,
             modelValue: p.value,
             "onUpdate:modelValue": t[0] || (t[0] = (a) => p.value = a),
             filter: e.filter,
@@ -114,7 +113,7 @@ const q = ["innerHTML"], O = /* @__PURE__ */ I({
           name: "helper",
           fn: i(() => [
             d(l.$slots, "helper", {}, () => [
-              x("div", { innerHTML: e.helperText }, null, 8, q)
+              P("div", { innerHTML: e.helperText }, null, 8, $)
             ])
           ]),
           key: "1"
@@ -124,5 +123,5 @@ const q = ["innerHTML"], O = /* @__PURE__ */ I({
   }
 });
 export {
-  O as default
+  N as default
 };

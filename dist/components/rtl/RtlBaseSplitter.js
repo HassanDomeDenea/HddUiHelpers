@@ -1,7 +1,6 @@
 import t from "@primevue/core/basecomponent";
 import e from "primevue/splitter/style";
-import "vue";
-const s = {
+const p = {
   name: "BaseSplitter",
   extends: t,
   provide() {
@@ -35,5 +34,5 @@ const s = {
   style: e
 };
 export {
-  s as default
+  p as default
 };

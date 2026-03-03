@@ -1,16 +1,12 @@
-import { _ as $ } from "../../UserAvatar.vue_vue_type_script_setup_true_lang-CjLdVMbP.js";
-import N from "primevue/badge";
-import { defineComponent as R, useTemplateRef as z, computed as c, watch as q, openBlock as s, createBlock as n, unref as d, normalizeClass as h, withCtx as f, createElementVNode as b, createCommentVNode as o, renderSlot as _, resolveDynamicComponent as H, mergeProps as V, toDisplayString as B, createElementBlock as k } from "vue";
-import O from "HddUiHelpers/components/misc/DarkModeButton.vue";
-import { useBasicAuthStore as P } from "HddUiHelpers/stores/basicAuth";
-import { useDimensionsStore as T } from "HddUiHelpers/stores/dimensions.ts";
-import { Menubar as U } from "primevue";
-import { useI18n as j } from "vue-i18n";
-import { useElementSize as g } from "@vueuse/core";
-const F = {
+import { defineComponent as z, resolveComponent as g, openBlock as a, createBlock as n, unref as d, normalizeClass as m, withCtx as h, createElementVNode as p, createCommentVNode as l, renderSlot as v, resolveDynamicComponent as M, mergeProps as N, toDisplayString as B, createElementBlock as k } from "vue";
+import R from "HddUiHelpers/components/misc/DarkModeButton.vue";
+import { useBasicAuthStore as $ } from "HddUiHelpers/stores/basicAuth";
+import { useDimensionsStore as q } from "HddUiHelpers/stores/dimensions.ts";
+import { Menubar as H } from "primevue";
+const U = {
   key: 1,
   class: "surface-border border-round surface-100 border-1 me-auto p-1 text-xs"
-}, G = { class: "flex items-center" }, re = /* @__PURE__ */ R({
+}, V = { class: "flex items-center" }, G = /* @__PURE__ */ z({
   __name: "MainNavbar",
   props: {
     withDarkModeButton: { type: Boolean, default: !0 },
@@ -18,89 +14,89 @@ const F = {
     navbarClass: { default: "light:!bg-sky-200 light:!border-b-sky-300 " },
     activeItemClass: { default: "light:bg-sky-100 dark:bg-gray-800 rounded-lg font-bold" }
   },
-  setup(l) {
-    const a = P(), { t: y } = j(), u = z("menuBarRef"), w = c(() => {
-      const r = [], i = [], p = l.items.filter((e) => !(e.auth === !0 && !a.user || e.auth === !1 && a.user || e.permission && !a.can(e.permission))).map((e) => ({
+  setup(o) {
+    const r = $(), { t: y } = useI18n(), u = useTemplateRef("menuBarRef"), E = computed(() => {
+      const s = [], i = [], f = o.items.filter((e) => !(e.auth === !0 && !r.user || e.auth === !1 && r.user || e.permission && !r.can(e.permission))).map((e) => ({
         ...e,
         estimated_width: e.label.length * 13
       }));
       let t = 169;
-      return p.forEach((e) => {
-        t + e.estimated_width > D.value ? i.push(e) : r.push(e), t += e.estimated_width;
-      }), i.length > 0 && r.push({
+      return f.forEach((e) => {
+        t + e.estimated_width > x.value ? i.push(e) : s.push(e), t += e.estimated_width;
+      }), i.length > 0 && s.push({
         label: y("Others"),
         items: i
-      }), r;
-    }), E = T(), S = c(
+      }), s;
+    }), S = q(), _ = computed(
       () => u.value?.$el?.querySelector(".p-menubar-start")
-    ), C = c(
+    ), w = computed(
       () => u.value?.$el?.querySelector(".p-menubar-end")
-    ), { width: I, height: A } = g(
+    ), { width: C, height: A } = useElementSize(
       u,
       {},
       {
         box: "border-box"
       }
-    ), { width: W } = g(S), { width: x } = g(C), D = c(() => I.value - W.value - x.value - 12);
-    return q(
+    ), { width: I } = useElementSize(_), { width: W } = useElementSize(w), x = computed(() => C.value - I.value - W.value - 12);
+    return watch(
       A,
-      (r) => {
-        E.topNavbarHeight = r;
+      (s) => {
+        S.topNavbarHeight = s;
       },
       {
         immediate: !0
       }
-    ), (r, i) => {
-      const p = N, v = $;
-      return s(), n(d(U), {
+    ), (s, i) => {
+      const f = g("Badge"), b = g("UserAvatar");
+      return a(), n(d(H), {
         ref_key: "menuBarRef",
         ref: u,
-        model: d(w),
-        class: h([l.navbarClass, "z-2"])
+        model: d(E),
+        class: m([o.navbarClass, "z-2"])
       }, {
-        start: f(() => [
-          _(r.$slots, "start")
+        start: h(() => [
+          v(s.$slots, "start")
         ]),
-        item: f(({ item: t, props: e, hasSubmenu: M, root: m }) => [
-          (s(), n(H(t.to ? "router-link" : "a"), V({
+        item: h(({ item: t, props: e, hasSubmenu: D, root: c }) => [
+          (a(), n(M(t.to ? "router-link" : "a"), N({
             to: t.to
           }, e.action, {
             class: t.class,
-            "active-class": l.activeItemClass
+            "active-class": o.activeItemClass
           }), {
-            default: f(() => [
-              b("i", {
-                class: h(t.icon)
+            default: h(() => [
+              p("i", {
+                class: m(t.icon)
               }, null, 2),
-              b("span", null, B(t.label), 1),
-              t.badge ? (s(), n(p, {
+              p("span", null, B(t.label), 1),
+              t.badge ? (a(), n(f, {
                 key: 0,
-                class: h({ "ms-auto": !m, "ms-2": m }),
+                class: m({ "ms-auto": !c, "ms-2": c }),
                 value: t.badge
-              }, null, 8, ["class", "value"])) : o("", !0),
-              t.shortcut ? (s(), k("span", F, B(t.shortcut), 1)) : o("", !0),
-              M ? (s(), k("i", {
+              }, null, 8, ["class", "value"])) : l("", !0),
+              t.shortcut ? (a(), k("span", U, B(t.shortcut), 1)) : l("", !0),
+              D ? (a(), k("i", {
                 key: 2,
-                class: h(["pi pi-angle-down", [
+                class: m(["pi pi-angle-down", [
                   {
-                    "i-uil:angle-down ms-auto": m,
-                    "ltr:i-uil-angle-right-b rtl:i-uil-angle-left-b i-mdi-angle-left ms-auto": !m
+                    "i-uil:angle-down ms-auto": c,
+                    "ltr:i-uil-angle-right-b rtl:i-uil-angle-left-b i-mdi-angle-left ms-auto": !c
                   }
                 ]])
-              }, null, 2)) : o("", !0)
+              }, null, 2)) : l("", !0)
             ]),
             _: 2
           }, 1040, ["to", "class", "active-class"]))
         ]),
-        end: f(() => [
-          b("div", G, [
-            l.withDarkModeButton ? (s(), n(O, { key: 0 })) : o("", !0),
-            d(a).user ? (s(), n(v, {
+        end: h(() => [
+          p("div", V, [
+            o.withDarkModeButton ? (a(), n(R, { key: 0 })) : l("", !0),
+            d(r).user ? (a(), n(b, {
               key: 1,
               class: "ms-1",
-              user: d(a).user
-            }, null, 8, ["user"])) : o("", !0),
-            _(r.$slots, "end")
+              user: d(r).user
+            }, null, 8, ["user"])) : l("", !0),
+            v(s.$slots, "end")
           ])
         ]),
         _: 3
@@ -109,5 +105,5 @@ const F = {
   }
 });
 export {
-  re as default
+  G as default
 };

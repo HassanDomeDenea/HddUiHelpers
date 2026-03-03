@@ -1,39 +1,38 @@
-import { configureEcho as H, echo as d, echoIsConfigured as j } from "@laravel/echo-vue";
-import { useCookies as D } from "@vueuse/integrations/useCookies";
-import { useApiClient as U } from "HddUiHelpers/stores/apiClient";
-import { cloneDeep as h, each as E } from "lodash-es";
-import { defineStore as P } from "pinia";
-import { useHddUiHelpers as R } from "HddUiHelpers/plugins/HddUiHelpers";
-import { safeRequest as B } from "../utils/safeTry.js";
-import { useStorage as I } from "@vueuse/core";
-import { ref as u, computed as p, watch as L } from "vue";
-const x = P("basicAuth", () => {
-  const o = u(null), r = R(), a = u([]), i = U(), v = D(), l = I(
+import { configureEcho as q, echo as f, echoIsConfigured as F } from "@laravel/echo-vue";
+import { useCookies as H } from "@vueuse/integrations/useCookies";
+import { useApiClient as _ } from "HddUiHelpers/stores/apiClient";
+import { cloneDeep as m, each as j } from "lodash-es";
+import { defineStore as D } from "pinia";
+import { useHddUiHelpers as E } from "HddUiHelpers/plugins/HddUiHelpers";
+import { safeRequest as P } from "../utils/safeTry.js";
+import { useStorage as R } from "@vueuse/core";
+const B = D("basicAuth", () => {
+  const o = ref(null), r = E(), a = ref([]), i = _(), d = H(), u = R(
     "authorizationToken",
     new URLSearchParams(window.location.search).get("_authorization_token")
-  ), g = p(() => !!o.value), m = u(h(r.defaultUserOptions)), c = u(h({}));
-  function w(e = null) {
-    const n = h(r.defaultUserOptions);
-    e && E(e, (t, s) => {
+  ), h = computed(() => !!o.value), c = ref(m(r.defaultUserOptions)), l = ref(m({}));
+  function v(e = null) {
+    const n = m(r.defaultUserOptions);
+    e && j(e, (t, s) => {
       n[s] = t;
-    }), m.value = n;
+    }), c.value = n;
   }
-  function k(e, n) {
-    o.value = e, w(e.options), c.value = e.global_options ?? {}, l.value = n, v.set("authorizationToken", n, {
+  function C(e, n) {
+    o.value = e, v(e.options), l.value = e.global_options ?? {}, u.value = n, d.set("authorizationToken", n, {
       secure: window.location.protocol === "https:"
     });
   }
-  function T() {
-    o.value = null, w(), l.value = null, v.remove("authorizationToken");
+  function U() {
+    o.value = null, v(), u.value = null, d.remove("authorizationToken");
   }
-  async function y(e, n) {
+  async function k(e, n) {
     try {
-      await i.request({ method: "post", url: "/api/change-option" }, { option: e, value: n }), m.value[e] = n;
+      await i.request({ method: "post", url: "/api/change-option" }, { option: e, value: n }), c.value[e] = n;
     } catch (t) {
       throw i.toastError(t?.response?.data?.message ?? ""), t;
     }
   }
-  async function b(e, n) {
+  async function T(e, n) {
     try {
       const t = {
         method: "put",
@@ -42,7 +41,7 @@ const x = P("basicAuth", () => {
       if (n instanceof File) {
         const s = new FormData();
         s.append("option", e), s.append("value", n), s.append("_method", t.method);
-        const F = await i.request(
+        const S = await i.request(
           {
             url: t.url,
             method: "POST",
@@ -52,78 +51,78 @@ const x = P("basicAuth", () => {
           },
           s
         );
-        c.value[e] = F.data.data;
+        l.value[e] = S.data.data;
       } else
-        await i.request(t, { option: e, value: n }), c.value[e] = n;
+        await i.request(t, { option: e, value: n }), l.value[e] = n;
     } catch (t) {
       throw i.toastError(t?.response?.data?.message ?? ""), t;
     }
   }
-  function O(e) {
+  function y(e) {
     return o.value?.role_names?.includes(e) === !0;
   }
-  const z = p(() => o.value?.role_names?.includes("super_admin") === !0);
-  function A(...e) {
+  const b = computed(() => o.value?.role_names?.includes("super_admin") === !0);
+  function O(...e) {
     return o.value ? o.value.role_names?.includes("super_admin") ? !0 : o.value.permission_names ? e.some((n) => o.value?.permission_names?.includes(n)) : !1 : !1;
   }
-  function _(e, n, t = void 0) {
-    return f(e) ? n : t;
+  function g(e, n, t = void 0) {
+    return p(e) ? n : t;
   }
-  function S(e) {
-    return !f(e);
+  function z(e) {
+    return !p(e);
   }
-  function f(e) {
+  function p(e) {
     return o.value ? o.value.role_names?.includes("super_admin") ? !0 : o.value.permission_names ? Array.isArray(e) ? e.every((n) => o.value?.permission_names?.includes(n)) : o.value.permission_names.includes(e) : !1 : !1;
   }
-  const C = u();
-  r.withBroadcasting && L(
-    g,
+  const w = ref();
+  r.withBroadcasting && watch(
+    h,
     (e) => {
-      console.log(r.presenceUsersChannel), e ? (H({
+      console.log(r.presenceUsersChannel), e ? (q({
         broadcaster: "reverb",
-        bearerToken: l.value
-      }), r.presenceUsersChannel && (C.value = d().join(r.presenceUsersChannel).here((n) => {
+        bearerToken: u.value
+      }), r.presenceUsersChannel && (w.value = f().join(r.presenceUsersChannel).here((n) => {
         a.value = n;
       }).joining((n) => {
         a.value.push(n);
       }).leaving((n) => {
         a.value = a.value.filter((t) => t.id !== n.id);
-      }))) : r.presenceUsersChannel && (j() && (d().leave(r.presenceUsersChannel), d().disconnect()), C.value = null, a.value = []);
+      }))) : r.presenceUsersChannel && (F() && (f().leave(r.presenceUsersChannel), f().disconnect()), w.value = null, a.value = []);
     },
     {
       immediate: !0
     }
   );
-  const q = p(() => o.value?.name ?? "");
+  const A = computed(() => o.value?.name ?? "");
   return {
-    canAny: A,
-    ifCan: _,
-    userFullName: q,
-    ifHasPermission: _,
-    can: f,
-    cannot: S,
-    hasRole: O,
-    isSuperAdmin: z,
-    changeOption: y,
-    changeGlobalOption: b,
-    options: m,
+    canAny: O,
+    ifCan: g,
+    userFullName: A,
+    ifHasPermission: g,
+    can: p,
+    cannot: z,
+    hasRole: y,
+    isSuperAdmin: b,
+    changeOption: k,
+    changeGlobalOption: T,
+    options: c,
     connectedUsers: a,
-    globalOptions: c,
-    isLoggedIn: g,
+    globalOptions: l,
+    isLoggedIn: h,
     user: o,
-    authorizationToken: p(() => l.value),
-    login: k,
-    logout: T
+    authorizationToken: computed(() => u.value),
+    login: C,
+    logout: U
   };
 });
-async function Y() {
-  const o = x(), r = U();
+async function Q() {
+  const o = B(), r = _();
   if (o.authorizationToken) {
-    const [a] = await B(() => r.get("/api/me"));
+    const [a] = await P(() => r.get("/api/me"));
     a && o.login(a, o.authorizationToken);
   }
 }
 export {
-  Y as setUserFromToken,
-  x as useBasicAuthStore
+  Q as setUserFromToken,
+  B as useBasicAuthStore
 };

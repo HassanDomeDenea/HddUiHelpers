@@ -1,33 +1,22 @@
-import { _ as f } from "../../TipTapListsControls.vue_vue_type_script_setup_true_lang-qvKHcyHe.js";
-import { _ as l } from "../../TipTapFontControls.vue_vue_type_script_setup_true_lang-DeyVKOKJ.js";
-import { defineComponent as d, computed as n, openBlock as a, createElementBlock as m, createElementVNode as s, renderSlot as e, createVNode as t } from "vue";
-import g from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapColorsControls.vue";
-import u from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapPageControls.vue";
+import { defineComponent as l, resolveComponent as e, openBlock as d, createElementBlock as f, createElementVNode as a, renderSlot as i, createVNode as t } from "vue";
+import s from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapColorsControls.vue";
+import g from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapPageControls.vue";
 import T from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTableControls.vue";
-import C from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTextStyleControls.vue";
-import { useI18n as p } from "vue-i18n";
-const h = { class: "control-group text-center" }, $ = { class: "button-group" }, F = /* @__PURE__ */ d({
+import m from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTextStyleControls.vue";
+const u = { class: "control-group text-center" }, C = { class: "button-group" }, E = /* @__PURE__ */ l({
   __name: "TipTapToolBar",
   props: {
     editor: {},
     config: {}
   },
   setup(o) {
-    const { t: B } = p();
-    return n(() => o.editor.can().chain().focus()), n(() => o.editor.chain().focus()), (i, b) => {
-      const r = l, c = f;
-      return a(), m("div", h, [
-        s("div", $, [
-          e(i.$slots, "start"),
-          t(C, {
-            editor: o.editor,
-            config: o.config
-          }, null, 8, ["editor", "config"]),
-          t(r, {
-            editor: o.editor,
-            config: o.config
-          }, null, 8, ["editor", "config"]),
-          t(g, {
+    const { t: p } = useI18n();
+    return computed(() => o.editor.can().chain().focus()), computed(() => o.editor.chain().focus()), (n, h) => {
+      const c = e("TipTapFontControls"), r = e("TipTapListsControls");
+      return d(), f("div", u, [
+        a("div", C, [
+          i(n.$slots, "start"),
+          t(m, {
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
@@ -35,20 +24,28 @@ const h = { class: "control-group text-center" }, $ = { class: "button-group" },
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
+          t(s, {
+            editor: o.editor,
+            config: o.config
+          }, null, 8, ["editor", "config"]),
+          t(r, {
+            editor: o.editor,
+            config: o.config
+          }, null, 8, ["editor", "config"]),
           t(T, {
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
-          t(u, {
+          t(g, {
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
-          e(i.$slots, "end")
+          i(n.$slots, "end")
         ])
       ]);
     };
   }
 });
 export {
-  F as default
+  E as default
 };

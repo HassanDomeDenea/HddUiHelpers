@@ -1,12 +1,9 @@
-import C from "primevue/tooltip";
-import k from "primevue/button";
-import x from "primevue/divider";
-import { defineComponent as M, useTemplateRef as g, ref as L, openBlock as t, createElementBlock as n, renderSlot as w, toDisplayString as f, createCommentVNode as i, Fragment as m, renderList as D, normalizeClass as d, createBlock as p, createElementVNode as _, normalizeStyle as R, withDirectives as S, withModifiers as z, unref as b } from "vue";
-import N from "primevue/contextmenu";
-const P = { class: "summeryDataPanel mx-4 space-y-1" }, T = {
+import { defineComponent as k, resolveComponent as f, resolveDirective as x, openBlock as t, createElementBlock as n, renderSlot as M, toDisplayString as v, createCommentVNode as i, Fragment as b, renderList as D, normalizeClass as d, createBlock as p, createElementVNode as m, normalizeStyle as L, withDirectives as w, withModifiers as g, unref as y } from "vue";
+import R from "primevue/contextmenu";
+const S = { class: "summeryDataPanel mx-4 space-y-1" }, z = {
   key: 0,
   class: "underline-offset-6 !mb-4 mt-2 text-center text-xl font-bold underline"
-}, E = ["innerHTML"], F = /* @__PURE__ */ M({
+}, N = ["innerHTML"], E = /* @__PURE__ */ k({
   __name: "SummaryDataPanel",
   props: {
     title: {},
@@ -16,33 +13,33 @@ const P = { class: "summeryDataPanel mx-4 space-y-1" }, T = {
     minimumAfterLabelSpace: {}
   },
   setup(o) {
-    const y = g("itemLabelRefs"), u = L({});
-    function B(l, c, a) {
+    const B = useTemplateRef("itemLabelRefs"), u = ref({});
+    function h(l, c, a) {
       c.appendContextMenu && (u[a].show(l), l.preventDefault());
     }
     return (l, c) => {
-      const a = x, h = k, v = C;
-      return t(), n("div", P, [
-        w(l.$slots, "title", {}, () => [
-          o.title ? (t(), n("div", T, f(o.title), 1)) : i("", !0)
+      const a = f("Divider"), C = f("Button"), _ = x("tooltip");
+      return t(), n("div", S, [
+        M(l.$slots, "title", {}, () => [
+          o.title ? (t(), n("div", z, v(o.title), 1)) : i("", !0)
         ]),
-        (t(!0), n(m, null, D(o.items, (e, r) => (t(), n("div", {
+        (t(!0), n(b, null, D(o.items, (e, r) => (t(), n("div", {
           key: r,
           class: d([e.hidden ? "hidden" : "", e.noPrint ? "print:hidden" : "", e.wrapperClass])
         }, [
-          e.type === "divider" ? (t(), p(a, { key: 0 })) : (t(), n(m, { key: 1 }, [
-            _("span", {
+          e.type === "divider" ? (t(), p(a, { key: 0 })) : (t(), n(b, { key: 1 }, [
+            m("span", {
               ref_for: !0,
               ref_key: "itemLabelRefs",
-              ref: y,
+              ref: B,
               class: d(e.labelClass),
-              style: R({ width: o.labelWidth + "px" })
-            }, f(e.label) + ": ", 7),
-            _("span", {
+              style: L({ width: o.labelWidth + "px" })
+            }, v(e.label) + ": ", 7),
+            m("span", {
               class: d(["font-bold", e.valueClass]),
               innerHTML: e.value
-            }, null, 10, E),
-            e.appendButton && e.appendButton.visible !== !1 ? S((t(), p(h, {
+            }, null, 10, N),
+            e.appendButton && e.appendButton.visible !== !1 ? w((t(), p(C, {
               key: 0,
               icon: e.appendButton.icon ? `${e.appendButton.icon} !min-w-0.5rem` : null,
               size: "small",
@@ -55,20 +52,20 @@ const P = { class: "summeryDataPanel mx-4 space-y-1" }, T = {
               href: e.appendButton.href,
               as: e.appendButton.href ? "a" : void 0,
               title: e.appendButton.title,
-              onClick: z(e.appendButton.onClick, ["prevent"]),
-              onContextmenu: (s) => B(s, e, r)
+              onClick: g(e.appendButton.onClick, ["prevent"]),
+              onContextmenu: (s) => h(s, e, r)
             }, null, 8, ["icon", "severity", "loading", "disabled", "label", "href", "as", "title", "onClick", "onContextmenu"])), [
               [
-                v,
+                _,
                 e.appendButton.tooltip,
                 void 0,
                 { top: !0 }
               ]
             ]) : i("", !0),
-            e.appendContextMenu ? (t(), p(b(N), {
+            e.appendContextMenu ? (t(), p(y(R), {
               key: 1,
               ref_for: !0,
-              ref: (s) => b(u)[r] = s,
+              ref: (s) => y(u)[r] = s,
               model: e.appendContextMenu
             }, null, 8, ["model"])) : i("", !0)
           ], 64))
@@ -78,5 +75,5 @@ const P = { class: "summeryDataPanel mx-4 space-y-1" }, T = {
   }
 });
 export {
-  F as default
+  E as default
 };

@@ -1,17 +1,15 @@
-import oe from "primevue/autocomplete";
-import le from "primevue/button";
-import { defineComponent as ae, useModel as S, ref as s, computed as ne, watch as $, nextTick as x, openBlock as g, createBlock as E, normalizeProps as ie, guardReactiveProps as ue, unref as c, createSlots as se, withCtx as y, createVNode as re, mergeProps as de, createElementVNode as B, createElementBlock as M, createCommentVNode as O, withDirectives as ce, renderSlot as I, mergeModels as q } from "vue";
-import { vElementVisibility as pe } from "@vueuse/components";
-import { useHddBaseInputUtils as fe } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { useLoader as me } from "HddUiHelpers/composables/loader.ts";
-import { useApiClient as ye } from "HddUiHelpers/stores/apiClient.ts";
-import { _ as ve } from "./BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-const he = ["innerHTML"], be = { key: 0 }, ge = ["innerHTML"], Ie = { key: 1 }, Be = ["innerHTML"], Le = { class: "flex justify-center" }, Me = {
+import { defineComponent as te, useModel as x, ref as s, resolveComponent as S, openBlock as I, createBlock as $, normalizeProps as oe, guardReactiveProps as le, unref as c, createSlots as ae, withCtx as y, createVNode as ne, mergeProps as ie, createElementVNode as B, createElementBlock as C, createCommentVNode as A, withDirectives as ue, renderSlot as g, mergeModels as E } from "vue";
+import { vElementVisibility as se } from "@vueuse/components";
+import { useHddBaseInputUtils as re } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { useLoader as de } from "HddUiHelpers/composables/loader.ts";
+import { useApiClient as ce } from "HddUiHelpers/stores/apiClient.ts";
+import { _ as pe } from "./BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const fe = ["innerHTML"], me = { key: 0 }, ye = ["innerHTML"], ve = { key: 1 }, he = ["innerHTML"], be = { class: "flex justify-center" }, Ie = {
   key: 0,
   class: "i-mdi-loading mx-auto my-1 animate-spin"
-}, xe = /* @__PURE__ */ ae({
+}, Pe = /* @__PURE__ */ te({
   __name: "AutoCompleteInput",
-  props: /* @__PURE__ */ q({
+  props: /* @__PURE__ */ E({
     url: {},
     c: {},
     disabled: { type: Boolean },
@@ -78,9 +76,9 @@ const he = ["innerHTML"], be = { key: 0 }, ge = ["innerHTML"], Ie = { key: 1 }, 
     id: {},
     idModifiers: {}
   }),
-  emits: /* @__PURE__ */ q(["containerDblClick", "keydown", "blur", "itemSelected", "cleared"], ["update:modelValue", "update:id"]),
-  setup(o, { expose: A, emit: D }) {
-    const t = o, v = D, n = S(o, "modelValue"), u = S(o, "id"), i = s([]), V = s(!1), C = s(0), w = s(), h = s(!1), p = s(), P = ye(), { isLoading: H, startLoading: N, endLoading: R } = me(), b = s(null), r = ne({
+  emits: /* @__PURE__ */ E(["containerDblClick", "keydown", "blur", "itemSelected", "cleared"], ["update:modelValue", "update:id"]),
+  setup(o, { expose: O, emit: q }) {
+    const t = o, v = q, n = x(o, "modelValue"), u = x(o, "id"), i = s([]), D = s(!1), M = s(0), w = s(), h = s(!1), p = s(), P = ce(), { isLoading: V, startLoading: H, endLoading: N } = de(), b = s(null), r = computed({
       get() {
         return t.withoutObject ? n.value : n.value?.[t.optionLabelProperty];
       },
@@ -117,31 +115,31 @@ const he = ["innerHTML"], be = { key: 0 }, ge = ["innerHTML"], Ie = { key: 1 }, 
             }
           });
         });
-      return N(), f.then((l) => {
-        e.offset ? i.value.push(...l.data.data.items) : i.value.length === 0 && l.data.data.items.length === 0 || (i.value = l.data.data.items), V.value = l.data.data.hasMore, C.value = l.data.data.total, h.value = !1, R();
+      return H(), f.then((l) => {
+        e.offset ? i.value.push(...l.data.data.items) : i.value.length === 0 && l.data.data.items.length === 0 || (i.value = l.data.data.items), D.value = l.data.data.hasMore, M.value = l.data.data.total, h.value = !1, N();
       });
     }
-    function W(e) {
-      e && C.value > i.value.length && h.value === !1 && (h.value = !0, L({ query: w.value, offset: i.value.length - 1 }));
+    function R(e) {
+      e && M.value > i.value.length && h.value === !1 && (h.value = !0, L({ query: w.value, offset: i.value.length - 1 }));
     }
-    function z(e) {
+    function W(e) {
       v("itemSelected", e.value), t.useIdModel && (u.value = e.value[t.optionIdProperty]), t.noManualInput && (r.value = e.value);
     }
-    function F() {
+    function z() {
     }
     function k() {
       p.value?.$refs.focusInput.$el.focus();
     }
-    function K() {
+    function F() {
       const e = p.value?.$refs.focusInput.$el;
       e.selectionStart = e.selectionEnd;
       const a = e.value.length;
       e.setSelectionRange(a, a), e.focus();
     }
-    function U(e) {
+    function K(e) {
       v("containerDblClick", e), t.clearOnDblClick && T();
     }
-    $(
+    watch(
       () => r.value,
       (e) => {
         t.noManualInput && (b.value = e);
@@ -151,22 +149,22 @@ const he = ["innerHTML"], be = { key: 0 }, ge = ["innerHTML"], Ie = { key: 1 }, 
         deep: !0
       }
     );
-    function Q(e) {
+    function U(e) {
       t.noManualInput ? b.value = e : r.value = e;
     }
-    function G(e) {
+    function Q(e) {
       v("blur", e), t.noManualInput && n.value && (b.value = t.withoutObject ? n.value : n.value?.[t.optionLabelProperty]);
     }
-    function J(e) {
+    function G(e) {
       p.value.overlayVisible || v("keydown", e), e.code === "Enter" && t.noManualInput && b.value === "" && (n.value = null, t.useIdModel && (u.value = null));
     }
-    function X(e = !0) {
+    function J(e = !0) {
       p.value.show(e);
     }
-    function Y(e = !0) {
+    function X(e = !0) {
       p.value.hide(e);
     }
-    $(
+    watch(
       () => u.value,
       () => {
         if (t.useIdModel) {
@@ -174,7 +172,7 @@ const he = ["innerHTML"], be = { key: 0 }, ge = ["innerHTML"], Ie = { key: 1 }, 
             return;
           let e = i.value.find((a) => a[t.optionIdProperty] === u.value);
           e ? r.value = e : L({ query: `${u.value}`, limit: 1, onlyId: !0 }).then(() => {
-            e = i.value.find((a) => a[t.optionIdProperty] === u.value), x(() => {
+            e = i.value.find((a) => a[t.optionIdProperty] === u.value), nextTick(() => {
               e && (r.value = e);
             });
           });
@@ -185,31 +183,31 @@ const he = ["innerHTML"], be = { key: 0 }, ge = ["innerHTML"], Ie = { key: 1 }, 
       }
     );
     function T() {
-      t.useIdModel && (u.value = null), n.value = null, x(() => {
+      t.useIdModel && (u.value = null), n.value = null, nextTick(() => {
         setTimeout(k, 50);
       }), v("cleared");
     }
     function j(e) {
       return t.formatter ? t.formatter(e) : e[t.optionLabelProperty];
     }
-    const { exposed: Z, baseInputForwardedProps: _, fieldUniqueId: ee, generalInputProps: te } = fe(t);
-    return A({
+    const { exposed: Y, baseInputForwardedProps: Z, fieldUniqueId: _, generalInputProps: ee } = re(t);
+    return O({
       focus: k,
-      deselectAndMoveCaretToEnd: K,
-      showList: X,
-      hideList: Y,
-      ...Z
+      deselectAndMoveCaretToEnd: F,
+      showList: J,
+      hideList: X,
+      ...Y
     }), (e, a) => {
-      const f = le, l = oe;
-      return g(), E(ve, ie(ue(c(_))), se({
+      const f = S("Button"), l = S("AutoComplete");
+      return I(), $(pe, oe(le(c(Z))), ae({
         labelText: y(() => [
-          I(e.$slots, "label-text")
+          g(e.$slots, "label-text")
         ]),
         default: y(() => [
-          re(l, de(c(te), {
+          ne(l, ie(c(ee), {
             ref_key: "inputRef",
             ref: p,
-            "input-id": c(ee),
+            "input-id": c(_),
             "show-empty-message": !o.hideListWhenEmpty,
             "model-value": o.noManualInput ? b.value : c(r),
             class: ["!w-full", o.autoCompleteClass],
@@ -225,41 +223,41 @@ const he = ["innerHTML"], be = { key: 0 }, ge = ["innerHTML"], Ie = { key: 1 }, 
             pt: {
               pcInput: { root: { name: o.name } }
             },
-            loading: h.value || c(H),
+            loading: h.value || c(V),
             dropdown: o.dropdown,
             "dropdown-mode": o.dropdownMode,
-            onDblclick: U,
-            "onUpdate:modelValue": Q,
-            onBlur: G,
-            onItemSelect: z,
-            onInput: F,
+            onDblclick: K,
+            "onUpdate:modelValue": U,
+            onBlur: Q,
+            onItemSelect: W,
+            onInput: z,
             onComplete: L,
-            onKeydown: J
+            onKeydown: G
           }), {
             option: y(({ option: d, index: m }) => [
-              m + 1 === i.value.length ? ce((g(), M("span", be, [
-                I(e.$slots, "option", {
+              m + 1 === i.value.length ? ue((I(), C("span", me, [
+                g(e.$slots, "option", {
                   option: { option: d, index: m }
                 }, () => [
                   B("div", {
                     innerHTML: j(d)
-                  }, null, 8, ge)
+                  }, null, 8, ye)
                 ])
               ])), [
-                [c(pe), W]
-              ]) : (g(), M("span", Ie, [
-                I(e.$slots, "option", {
+                [c(se), R]
+              ]) : (I(), C("span", ve, [
+                g(e.$slots, "option", {
                   option: { option: d, index: m }
                 }, () => [
                   B("div", {
                     innerHTML: j(d)
-                  }, null, 8, Be)
+                  }, null, 8, he)
                 ])
               ]))
             ]),
             footer: y(() => [
-              B("div", Le, [
-                h.value ? (g(), M("i", Me)) : O("", !0)
+              B("div", be, [
+                h.value ? (I(), C("i", Ie)) : A("", !0)
               ])
             ]),
             _: 3
@@ -270,23 +268,23 @@ const he = ["innerHTML"], be = { key: 0 }, ge = ["innerHTML"], Ie = { key: 1 }, 
         e.$slots.addon || o.clearable ? {
           name: "addon",
           fn: y(() => [
-            o.clearable && c(r) ? (g(), E(f, {
+            o.clearable && c(r) ? (I(), $(f, {
               key: 0,
               disabled: o.disabled,
               size: "small",
               severity: "danger",
               icon: "i-mdi-times",
               onClick: T
-            }, null, 8, ["disabled"])) : O("", !0),
-            I(e.$slots, "addon")
+            }, null, 8, ["disabled"])) : A("", !0),
+            g(e.$slots, "addon")
           ]),
           key: "0"
         } : void 0,
         e.$slots.helper || o.helperText ? {
           name: "helper",
           fn: y(() => [
-            I(e.$slots, "helper", {}, () => [
-              B("div", { innerHTML: o.helperText }, null, 8, he)
+            g(e.$slots, "helper", {}, () => [
+              B("div", { innerHTML: o.helperText }, null, 8, fe)
             ])
           ]),
           key: "1"
@@ -296,5 +294,5 @@ const he = ["innerHTML"], be = { key: 0 }, ge = ["innerHTML"], Ie = { key: 1 }, 
   }
 });
 export {
-  xe as _
+  Pe as _
 };

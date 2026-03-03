@@ -9,6 +9,7 @@ import { merge } from "lodash-es";
 import "moment/locale/ar";
 import moment from "moment/moment";
 import type { App, InjectionKey } from "vue";
+import { shallowReactive } from "vue";
 import { inject } from "vue";
 import type { I18n } from "vue-i18n";
 import YAML from "yaml";

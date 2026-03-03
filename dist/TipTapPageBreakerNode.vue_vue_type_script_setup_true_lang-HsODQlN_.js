@@ -1,11 +1,9 @@
-import l from "primevue/button";
-import { defineComponent as c, openBlock as o, createBlock as i, unref as n, withCtx as p, createElementVNode as t, createElementBlock as m, createCommentVNode as s, toDisplayString as g } from "vue";
-import { NodeViewWrapper as u } from "@tiptap/vue-3";
-import { useI18n as b } from "vue-i18n";
-const k = { class: "flex items-center gap-1 px-1" }, x = {
+import { defineComponent as l, resolveComponent as c, openBlock as o, createBlock as i, unref as n, withCtx as p, createElementVNode as t, createElementBlock as g, createCommentVNode as s, toDisplayString as u } from "vue";
+import { NodeViewWrapper as m } from "@tiptap/vue-3";
+const b = { class: "flex items-center gap-1 px-1" }, k = {
   key: 0,
   class: "inline-block size-[25px]"
-}, f = { class: "light:text-gray-400 italic dark:text-gray-600" }, w = /* @__PURE__ */ c({
+}, x = { class: "light:text-gray-400 italic dark:text-gray-600" }, h = /* @__PURE__ */ l({
   __name: "TipTapPageBreakerNode",
   props: {
     decorations: {},
@@ -21,15 +19,15 @@ const k = { class: "flex items-center gap-1 px-1" }, x = {
     HTMLAttributes: {}
   },
   setup(r) {
-    const { t: a } = b();
+    const { t: a } = useI18n();
     return (y, e) => {
-      const d = l;
-      return o(), i(n(u), { class: "break-after-page print:invisible print:h-[1px] print:overflow-hidden" }, {
+      const d = c("Button");
+      return o(), i(n(m), { class: "break-after-page print:invisible print:h-[1px] print:overflow-hidden" }, {
         default: p(() => [
-          t("div", k, [
-            r.editor.isEditable ? (o(), m("span", x)) : s("", !0),
+          t("div", b, [
+            r.editor.isEditable ? (o(), g("span", k)) : s("", !0),
             e[0] || (e[0] = t("div", { class: "border-t-1 border-t-dashed flex-grow-1 light:border-t-gray-400 dark:border-t-gray-600" }, null, -1)),
-            t("span", f, g(n(a)("Page Break")), 1),
+            t("span", x, u(n(a)("Page Break")), 1),
             e[1] || (e[1] = t("div", { class: "border-t-1 border-t-dashed flex-grow-1 light:border-t-gray-400 dark:border-t-gray-600" }, null, -1)),
             r.editor.isEditable ? (o(), i(d, {
               key: 1,
@@ -48,5 +46,5 @@ const k = { class: "flex items-center gap-1 px-1" }, x = {
   }
 });
 export {
-  w as _
+  h as _
 };

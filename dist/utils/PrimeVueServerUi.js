@@ -1,11 +1,11 @@
 import { _ as l, a as _ } from "../en-CxIK6t2V.js";
 import c from "axios";
 import n from "yaml";
-import { _ as f } from "../AutoCompleteInput.vue_vue_type_script_setup_true_lang-D1Dc1iXJ.js";
-import { _ as v } from "../SelectInput.vue_vue_type_script_setup_true_lang-Ck-rW3-O.js";
-import { _ as u } from "../TextInput.vue_vue_type_script_setup_true_lang-CDqh5_am.js";
-import { _ as b } from "../TriCheckboxInput.vue_vue_type_script_setup_true_lang-K0dlQ5gU.js";
-import { _ as d } from "../PrimeVueServerTable.vue_vue_type_script_setup_true_lang-BUDvL_4f.js";
+import { _ as f } from "../AutoCompleteInput.vue_vue_type_script_setup_true_lang-Dhielhtf.js";
+import { _ as v } from "../SelectInput.vue_vue_type_script_setup_true_lang-oqssJ2qZ.js";
+import { _ as u } from "../TextInput.vue_vue_type_script_setup_true_lang-XGANSAmJ.js";
+import { _ as b } from "../TriCheckboxInput.vue_vue_type_script_setup_true_lang-CSJlgTq2.js";
+import { _ as d } from "../PrimeVueServerTable.vue_vue_type_script_setup_true_lang-CGEh6J-N.js";
 import { primeVueServerUiDefaultAxiosSymbol as S, primeVueServerUiRouteNameResolverSymbol as p, primeVueServerUiDataTableRecordsService as $ } from "./symbols.js";
 const T = {
   install(o, a = {}) {

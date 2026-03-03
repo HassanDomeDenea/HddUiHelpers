@@ -1,5 +1,4 @@
-import k from "primevue/button";
-import { defineComponent as f, useModel as b, openBlock as o, createElementBlock as a, createVNode as h, createCommentVNode as l, renderSlot as s, withDirectives as p, createElementVNode as v, vShow as B, mergeModels as d } from "vue";
+import { defineComponent as k, useModel as v, resolveComponent as b, openBlock as o, createElementBlock as n, createVNode as f, createCommentVNode as i, renderSlot as s, withDirectives as h, createElementVNode as p, vShow as B, mergeModels as d } from "vue";
 const _ = {
   key: "listItems",
   class: "animate-slide-in-down animate-duration-75 animate-count-1"
@@ -9,7 +8,7 @@ const _ = {
 }, y = {
   key: "lists",
   class: "animate-slide-in-up animate-duration-75 animate-count-1"
-}, N = /* @__PURE__ */ f({
+}, M = /* @__PURE__ */ k({
   __name: "SlidingParentChildContainer",
   props: /* @__PURE__ */ d({
     withBackButton: { type: Boolean, default: !0 },
@@ -19,31 +18,31 @@ const _ = {
     modelModifiers: {}
   }),
   emits: /* @__PURE__ */ d(["back"], ["update:modelValue"]),
-  setup(t, { expose: c, emit: r }) {
-    const u = r, e = b(t, "modelValue");
-    function n() {
-      e.value = void 0, u("back");
+  setup(t, { expose: c, emit: u }) {
+    const r = u, e = v(t, "modelValue");
+    function a() {
+      e.value = void 0, r("back");
     }
     return c({
-      backToParent: n,
+      backToParent: a,
       selectedChild: e
-    }), (i, C) => {
-      const m = k;
-      return o(), a("div", null, [
-        e.value ? (o(), a("div", _, [
-          t.withBackButton ? (o(), a("div", w, [
-            h(m, {
+    }), (l, C) => {
+      const m = b("Button");
+      return o(), n("div", null, [
+        e.value ? (o(), n("div", _, [
+          t.withBackButton ? (o(), n("div", w, [
+            f(m, {
               size: "small",
               icon: "i-material-symbols:arrow-upward-alt-rounded",
               severity: "info",
               label: t.backButtonLabel,
-              onClick: n
+              onClick: a
             }, null, 8, ["label"])
-          ])) : l("", !0),
-          s(i.$slots, "child")
-        ])) : l("", !0),
-        p(v("div", y, [
-          s(i.$slots, "parent")
+          ])) : i("", !0),
+          s(l.$slots, "child")
+        ])) : i("", !0),
+        h(p("div", y, [
+          s(l.$slots, "parent")
         ], 512), [
           [B, !e.value]
         ])
@@ -52,5 +51,5 @@ const _ = {
   }
 });
 export {
-  N as default
+  M as default
 };

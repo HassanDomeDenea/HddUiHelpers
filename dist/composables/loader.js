@@ -1,19 +1,18 @@
-import { ref as n } from "vue";
-const s = () => {
-  const e = n(!1), a = n(!1);
-  function o() {
+const t = () => {
+  const e = ref(!1), a = ref(!1);
+  function n() {
     e.value = !0;
   }
-  function t() {
+  function o() {
     e.value = !1, a.value || (a.value = !0);
   }
   return {
     isLoadedOnce: a,
     isLoading: e,
-    startLoading: o,
-    endLoading: t
+    startLoading: n,
+    endLoading: o
   };
 };
 export {
-  s as useLoader
+  t as useLoader
 };

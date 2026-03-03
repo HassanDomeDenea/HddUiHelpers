@@ -1,9 +1,8 @@
-import g from "primevue/editor";
-import { defineComponent as w, useModel as V, ref as A, computed as C, openBlock as I, createBlock as L, mergeProps as u, unref as a, withCtx as d, createVNode as _, createElementVNode as e, createCommentVNode as k, mergeModels as m } from "vue";
+import { defineComponent as g, useModel as w, ref as V, resolveComponent as C, openBlock as A, createBlock as I, mergeProps as u, unref as a, withCtx as d, createVNode as L, createElementVNode as e, createCommentVNode as k, mergeModels as m } from "vue";
 import { useHddBaseInputUtils as z } from "HddUiHelpers/components/inputs/inputsUtils.ts";
 import t from "quill";
-import { _ as M } from "../../BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-const P = /* @__PURE__ */ w({
+import { _ as E } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const U = /* @__PURE__ */ g({
   __name: "EditorInput",
   props: /* @__PURE__ */ m({
     autocomplete: {},
@@ -51,8 +50,8 @@ const P = /* @__PURE__ */ w({
     modelModifiers: {}
   }),
   emits: /* @__PURE__ */ m(["keydown", "change"], ["update:modelValue"]),
-  setup(n, { expose: c, emit: E }) {
-    const b = n, s = V(n, "modelValue"), p = A();
+  setup(n, { expose: c, emit: M }) {
+    const b = n, s = w(n, "modelValue"), p = V();
     function i() {
       p.value.$el.focus();
     }
@@ -78,7 +77,7 @@ const P = /* @__PURE__ */ w({
       "40px",
       "48px"
     ], t.register(l, !0);
-    const f = C(() => ({
+    const f = computed(() => ({
       // toolbar: [{ direction: 'rtl' }, { direction: 'ltr' }],
       /*toolbar: [
             ['bold', 'italic', 'underline', 'strike'], // toggled buttons
@@ -102,13 +101,13 @@ const P = /* @__PURE__ */ w({
           ],*/
     })), { exposed: x, baseInputForwardedProps: y, fieldUniqueId: S, generalInputProps: q } = z(b);
     return c({ focus: i, ...x }), (j, o) => {
-      const v = g;
-      return I(), L(M, u(a(y), {
+      const v = C("Editor");
+      return A(), I(E, u(a(y), {
         class: "HDD_Quill_Editor",
         onClick: i
       }), {
         default: d(() => [
-          _(v, u({ id: "fieldUniqueId" }, a(q), {
+          L(v, u({ id: "fieldUniqueId" }, a(q), {
             ref_key: "inputRef",
             ref: p,
             modelValue: s.value,
@@ -199,5 +198,5 @@ const P = /* @__PURE__ */ w({
   }
 });
 export {
-  P as default
+  U as default
 };

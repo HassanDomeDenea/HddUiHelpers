@@ -1,10 +1,9 @@
-import L from "primevue/checkbox";
-import { defineComponent as k, useModel as v, ref as r, onMounted as x, openBlock as I, createBlock as V, mergeProps as p, unref as l, withCtx as w, createVNode as A, mergeModels as d } from "vue";
-import { useHddBaseInputUtils as M } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { _ as q } from "../../BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-const P = /* @__PURE__ */ k({
+import { defineComponent as L, useModel as v, ref as r, resolveComponent as x, openBlock as I, createBlock as V, mergeProps as d, unref as l, withCtx as _, createVNode as w, mergeModels as p } from "vue";
+import { useHddBaseInputUtils as A } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { _ as M } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const $ = /* @__PURE__ */ L({
   __name: "CheckboxInput",
-  props: /* @__PURE__ */ d({
+  props: /* @__PURE__ */ p({
     autocomplete: {},
     icon: {},
     uniqueId: {},
@@ -48,7 +47,7 @@ const P = /* @__PURE__ */ k({
     modelValue: { default: r().value },
     modelModifiers: {}
   }),
-  emits: /* @__PURE__ */ d(["change"], ["update:modelValue"]),
+  emits: /* @__PURE__ */ p(["change"], ["update:modelValue"]),
   setup(n, { expose: s, emit: u }) {
     const a = n, c = u, t = v(n, "modelValue"), e = r();
     function f() {
@@ -60,25 +59,25 @@ const P = /* @__PURE__ */ k({
     function b(o) {
       c("change", o);
     }
-    x(() => {
+    onMounted(() => {
       e.value.$el.children[0].addEventListener("keydown", (o) => {
         o.key === "Enter" && m();
       });
     });
-    const { exposed: y, baseInputForwardedProps: B, fieldUniqueId: g, generalInputProps: h } = M(a);
+    const { exposed: y, baseInputForwardedProps: B, fieldUniqueId: g, generalInputProps: h } = A(a);
     return s({ focus: f, ...y }), (o, i) => {
-      const C = L;
-      return I(), V(q, p(l(B), {
+      const C = x("Checkbox");
+      return I(), V(M, d(l(B), {
         "floating-label": !1,
         "infield-top-aligned-label": !1
       }), {
-        default: w(() => [
-          A(C, p({
+        default: _(() => [
+          w(C, d({
             ref_key: "inputRef",
             ref: e
           }, l(h), {
             modelValue: t.value,
-            "onUpdate:modelValue": i[0] || (i[0] = (_) => t.value = _),
+            "onUpdate:modelValue": i[0] || (i[0] = (k) => t.value = k),
             "input-id": l(g),
             binary: "",
             onChange: b
@@ -90,5 +89,5 @@ const P = /* @__PURE__ */ k({
   }
 });
 export {
-  P as default
+  $ as default
 };

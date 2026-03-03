@@ -1,16 +1,16 @@
-import y from "primevue/dialog";
-import v from "primevue/button";
+import C from "primevue/button";
 import a from "primevue/confirmationeventbus";
-import L from "primevue/confirmdialog";
-import { openBlock as c, createBlock as m, normalizeClass as d, createSlots as f, withCtx as r, createElementBlock as u, Fragment as b, renderSlot as l, resolveDynamicComponent as g, mergeProps as s, createCommentVNode as j, createElementVNode as p, toDisplayString as B, createVNode as k } from "vue";
+import B from "primevue/confirmdialog";
+import L from "primevue/dialog";
+import { resolveComponent as d, openBlock as c, createBlock as m, normalizeClass as b, createSlots as f, withCtx as r, createElementBlock as u, Fragment as g, renderSlot as l, resolveDynamicComponent as j, mergeProps as s, createCommentVNode as k, createElementVNode as p, toDisplayString as D, createVNode as v } from "vue";
 import { _ as P } from "../../_plugin-vue_export-helper-CHgC5LLL.js";
-const D = {
+const F = {
   name: "DismissableConfirmDialog",
   components: {
-    Dialog: y,
-    Button: v
+    Dialog: L,
+    Button: C
   },
-  extends: L,
+  extends: B,
   confirmListener: null,
   closeListener: null,
   data() {
@@ -93,16 +93,16 @@ const D = {
     }
   }
 };
-function F(e, i, I, S, n, o) {
-  const h = v, C = y;
-  return c(), m(C, {
-    visible: n.visible,
+function I(e, i, S, E, t, o) {
+  const h = d("Button"), y = d("Dialog");
+  return c(), m(y, {
+    visible: t.visible,
     "onUpdate:visible": [
-      i[2] || (i[2] = (t) => n.visible = t),
+      i[2] || (i[2] = (n) => t.visible = n),
       o.onHide
     ],
     role: "alertdialog",
-    class: d(e.cx("root")),
+    class: b(e.cx("root")),
     modal: o.modal,
     header: o.header,
     "block-scroll": o.blockScroll,
@@ -116,23 +116,23 @@ function F(e, i, I, S, n, o) {
     unstyled: e.unstyled
   }, f({
     default: r(() => [
-      e.$slots.container ? j("", !0) : (c(), u(b, { key: 0 }, [
-        e.$slots.message ? (c(), m(g(e.$slots.message), {
+      e.$slots.container ? k("", !0) : (c(), u(g, { key: 0 }, [
+        e.$slots.message ? (c(), m(j(e.$slots.message), {
           key: 1,
-          message: n.confirmation
-        }, null, 8, ["message"])) : (c(), u(b, { key: 0 }, [
+          message: t.confirmation
+        }, null, 8, ["message"])) : (c(), u(g, { key: 0 }, [
           l(e.$slots, "icon", {}, () => [
-            e.$slots.icon ? (c(), m(g(e.$slots.icon), {
+            e.$slots.icon ? (c(), m(j(e.$slots.icon), {
               key: 0,
-              class: d(e.cx("icon"))
-            }, null, 8, ["class"])) : n.confirmation.icon ? (c(), u("span", s({
+              class: b(e.cx("icon"))
+            }, null, 8, ["class"])) : t.confirmation.icon ? (c(), u("span", s({
               key: 1,
-              class: [n.confirmation.icon, e.cx("icon")]
-            }, e.ptm("icon")), null, 16)) : j("", !0)
+              class: [t.confirmation.icon, e.cx("icon")]
+            }, e.ptm("icon")), null, 16)) : k("", !0)
           ]),
           p("span", s({
             class: e.cx("message")
-          }, e.ptm("message")), B(o.message), 17)
+          }, e.ptm("message")), D(o.message), 17)
         ], 64))
       ], 64))
     ]),
@@ -140,10 +140,10 @@ function F(e, i, I, S, n, o) {
   }, [
     e.$slots.container ? {
       name: "container",
-      fn: r((t) => [
+      fn: r((n) => [
         l(e.$slots, "container", {
-          message: n.confirmation,
-          closeCallback: t.onclose,
+          message: t.confirmation,
+          closeCallback: n.onclose,
           acceptCallback: o.accept,
           rejectCallback: o.reject
         })
@@ -153,43 +153,43 @@ function F(e, i, I, S, n, o) {
     e.$slots.container ? void 0 : {
       name: "footer",
       fn: r(() => [
-        k(h, s({
-          class: [e.cx("pcRejectButton"), n.confirmation.rejectClass],
+        v(h, s({
+          class: [e.cx("pcRejectButton"), t.confirmation.rejectClass],
           autofocus: o.autoFocusReject,
           unstyled: e.unstyled,
-          text: n.confirmation.rejectProps?.text || !1
-        }, n.confirmation.rejectProps, {
+          text: t.confirmation.rejectProps?.text || !1
+        }, t.confirmation.rejectProps, {
           label: o.rejectLabel,
           pt: e.ptm("pcRejectButton"),
-          onClick: i[0] || (i[0] = (t) => o.reject())
+          onClick: i[0] || (i[0] = (n) => o.reject())
         }), f({ _: 2 }, [
           o.rejectIcon || e.$slots.rejecticon ? {
             name: "icon",
-            fn: r((t) => [
+            fn: r((n) => [
               l(e.$slots, "rejecticon", {}, () => [
                 p("span", s({
-                  class: [o.rejectIcon, t.class]
+                  class: [o.rejectIcon, n.class]
                 }, e.ptm("pcRejectButton").icon, { "data-pc-section": "rejectbuttonicon" }), null, 16)
               ])
             ]),
             key: "0"
           } : void 0
         ]), 1040, ["class", "autofocus", "unstyled", "text", "label", "pt"]),
-        k(h, s({
+        v(h, s({
           label: o.acceptLabel,
-          class: [e.cx("pcAcceptButton"), n.confirmation.acceptClass],
+          class: [e.cx("pcAcceptButton"), t.confirmation.acceptClass],
           autofocus: o.autoFocusAccept,
           unstyled: e.unstyled
-        }, n.confirmation.acceptProps, {
+        }, t.confirmation.acceptProps, {
           pt: e.ptm("pcAcceptButton"),
-          onClick: i[1] || (i[1] = (t) => o.accept())
+          onClick: i[1] || (i[1] = (n) => o.accept())
         }), f({ _: 2 }, [
           o.acceptIcon || e.$slots.accepticon ? {
             name: "icon",
-            fn: r((t) => [
+            fn: r((n) => [
               l(e.$slots, "accepticon", {}, () => [
                 p("span", s({
-                  class: [o.acceptIcon, t.class]
+                  class: [o.acceptIcon, n.class]
                 }, e.ptm("pcAcceptButton").icon, { "data-pc-section": "acceptbuttonicon" }), null, 16)
               ])
             ]),
@@ -201,7 +201,7 @@ function F(e, i, I, S, n, o) {
     }
   ]), 1032, ["visible", "class", "modal", "header", "block-scroll", "append-to", "position", "breakpoints", "close-on-escape", "draggable", "pt", "unstyled", "onUpdate:visible"]);
 }
-const O = /* @__PURE__ */ P(D, [["render", F]]);
+const T = /* @__PURE__ */ P(F, [["render", I]]);
 export {
-  O as default
+  T as default
 };

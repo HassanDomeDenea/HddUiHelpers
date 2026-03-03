@@ -1,6 +1,5 @@
-import o from "primevue/tooltip";
-import { defineComponent as i, withDirectives as n, openBlock as c, createBlock as a, resolveDynamicComponent as l, withCtx as r, createTextVNode as m, toDisplayString as p } from "vue";
-const f = /* @__PURE__ */ i({
+import { defineComponent as o, resolveDirective as i, withDirectives as n, openBlock as c, createBlock as l, resolveDynamicComponent as a, withCtx as r, createTextVNode as m, toDisplayString as p } from "vue";
+const u = /* @__PURE__ */ o({
   __name: "TextWithTitleAttribute",
   props: {
     component: {},
@@ -9,8 +8,8 @@ const f = /* @__PURE__ */ i({
   },
   setup(t) {
     return (s, x) => {
-      const e = o;
-      return n((c(), a(l(t.component ?? "span"), { title: t.text }, {
+      const e = i("tooltip");
+      return n((c(), l(a(t.component ?? "span"), { title: t.text }, {
         default: r(() => [
           m(p(t.text), 1)
         ]),
@@ -22,5 +21,5 @@ const f = /* @__PURE__ */ i({
   }
 });
 export {
-  f as default
+  u as default
 };

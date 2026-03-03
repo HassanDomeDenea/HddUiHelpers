@@ -1,8 +1,7 @@
-import { uniqueId as f, pick as b } from "lodash-es";
-import { computed as i, ref as h } from "vue";
-const T = {
+import { uniqueId as d, pick as f } from "lodash-es";
+const g = {
   hideLabelDoubleDots: !0
-}, m = [
+}, b = [
   "autocomplete",
   "icon",
   "uniqueId",
@@ -42,17 +41,17 @@ const T = {
   "size",
   "buttonAddon",
   "controlComponent"
-], v = function(e) {
-  const n = i(() => !!e.error), t = h(), r = i(() => e.uniqueId ?? f(e.name ?? "unnamed")), o = i(() => ({
+], L = function(e) {
+  const n = computed(() => !!e.error), t = ref(), r = computed(() => e.uniqueId ?? d(e.name ?? "unnamed")), o = computed(() => ({
     inputId: r.value,
-    ref: (u) => t.value = u,
-    ...b(e, m)
+    ref: (i) => t.value = i,
+    ...f(e, b)
   })), l = {
     hasError: n,
     baseInputRef: t,
     name: e.name,
     disabled: e.disabled
-  }, s = i(() => ({
+  }, s = computed(() => ({
     fluid: !0,
     size: e.size,
     name: e.name,
@@ -70,46 +69,46 @@ const T = {
     generalInputProps: s
   };
 };
-function I(e, n, t = "id", r = "children") {
+function m(e, n, t = "id", r = "children") {
   let o = null;
-  function l(s, u) {
+  function l(s, i) {
     for (const a of s) {
       if (o) return;
-      const c = u.concat(a);
+      const u = i.concat(a);
       if (a[t] === e) {
         o = [];
-        for (let d = c.length - 1; d >= 0; d--)
-          o.push(c[d]);
+        for (let c = u.length - 1; c >= 0; c--)
+          o.push(u[c]);
         return;
       }
-      a[r]?.length && l(a[r], c);
+      a[r]?.length && l(a[r], u);
     }
   }
   return l(n, []), o;
 }
-function x(e, n, t = "id", r = "label", o = "children") {
-  const l = I(e, n, t, o);
-  return l ? g(l, r) : "";
+function S(e, n, t = "id", r = "label", o = "children") {
+  const l = m(e, n, t, o);
+  return l ? h(l, r) : "";
 }
-function g(e, n = "label", t = ">>") {
+function h(e, n = "label", t = ">>") {
   return e.slice().reverse().map((r) => r[n]).join(`  ${t}  `);
 }
-function A(e) {
+function T(e) {
   if (!e) return !1;
   const n = e.selectionStart;
   return !(e.selectionStart !== e.selectionEnd) && n === 0;
 }
-function P(e) {
+function v(e) {
   if (!e) return !1;
   const n = e.selectionStart;
   return !(e.selectionStart !== e.selectionEnd) && n === e.value.length;
 }
 export {
-  T as DefaultBasInputProps,
-  P as cursorAtEndOfInput,
-  A as cursorAtStartOfInput,
-  g as getTextFromTreePath,
-  I as getTreeAncestorsById,
-  x as getTreeItemLabelWithParents,
-  v as useHddBaseInputUtils
+  g as DefaultBasInputProps,
+  v as cursorAtEndOfInput,
+  T as cursorAtStartOfInput,
+  h as getTextFromTreePath,
+  m as getTreeAncestorsById,
+  S as getTreeItemLabelWithParents,
+  L as useHddBaseInputUtils
 };

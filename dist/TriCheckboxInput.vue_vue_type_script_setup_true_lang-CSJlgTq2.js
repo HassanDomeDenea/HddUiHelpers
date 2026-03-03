@@ -1,14 +1,13 @@
-import $ from "primevue/checkbox";
-import { defineComponent as S, useModel as x, ref as I, computed as p, openBlock as s, createBlock as V, mergeProps as m, unref as l, withModifiers as T, createSlots as w, withCtx as t, createVNode as M, createElementBlock as f, createCommentVNode as b, renderSlot as n, createElementVNode as _, mergeModels as A } from "vue";
+import { defineComponent as g, useModel as $, ref as x, resolveComponent as S, openBlock as s, createBlock as I, mergeProps as p, unref as l, withModifiers as V, createSlots as T, withCtx as t, createVNode as w, createElementBlock as m, createCommentVNode as f, renderSlot as n, createElementVNode as M, mergeModels as A } from "vue";
 import { useHddBaseInputUtils as q } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { _ as E } from "./BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
+import { _ as E } from "./BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
 const N = {
   key: 0,
   class: "pi pi-check text-[var(--p-checkbox-icon-checked-color)]"
 }, D = {
   key: 1,
   class: "pi pi-times light:text-red-100 dark:text-red-700"
-}, H = ["innerHTML"], z = /* @__PURE__ */ S({
+}, H = ["innerHTML"], W = /* @__PURE__ */ g({
   __name: "TriCheckboxInput",
   props: /* @__PURE__ */ A({
     notSelectedValue: { default: "null" },
@@ -56,12 +55,12 @@ const N = {
     modelModifiers: {}
   }),
   emits: ["update:modelValue"],
-  setup(a, { expose: h }) {
-    const r = a, o = x(a, "modelValue"), y = I();
-    function k() {
-      y.value.$el.focus();
+  setup(a, { expose: b }) {
+    const r = a, o = $(a, "modelValue"), h = x();
+    function y() {
+      h.value.$el.focus();
     }
-    const i = p(() => o.value === !0 || o.value === !1), d = p(() => o.value === !1);
+    const i = computed(() => o.value === !0 || o.value === !1), d = computed(() => o.value === !1);
     function c() {
       if (!r.disabled)
         switch (o.value) {
@@ -76,19 +75,19 @@ const N = {
             break;
         }
     }
-    const { exposed: B, baseInputForwardedProps: v, fieldUniqueId: C, generalInputProps: L } = q(r);
-    return h({ focus: k, ...B }), (e, P) => {
-      const g = $;
-      return s(), V(E, m(l(v), {
+    const { exposed: k, baseInputForwardedProps: v, fieldUniqueId: B, generalInputProps: C } = q(r);
+    return b({ focus: y, ...k }), (e, _) => {
+      const L = S("Checkbox");
+      return s(), I(E, p(l(v), {
         "label-class": `${a.labelClass} select-none`,
-        onLabelClicked: T(c, ["stop", "prevent"])
-      }), w({
+        onLabelClicked: V(c, ["stop", "prevent"])
+      }), T({
         labelText: t(() => [
           n(e.$slots, "labelText")
         ]),
         default: t(() => [
-          M(g, m(l(L), {
-            "input-id": l(C),
+          w(L, p(l(C), {
+            "input-id": l(B),
             "model-value": l(i),
             indeterminate: l(d),
             binary: "",
@@ -97,8 +96,8 @@ const N = {
             onClick: c
           }), {
             icon: t((u) => [
-              u.checked ? (s(), f("i", N)) : b("", !0),
-              u.indeterminate ? (s(), f("i", D)) : b("", !0)
+              u.checked ? (s(), m("i", N)) : f("", !0),
+              u.indeterminate ? (s(), m("i", D)) : f("", !0)
             ]),
             _: 1
           }, 16, ["input-id", "model-value", "indeterminate", "class"])
@@ -130,7 +129,7 @@ const N = {
           name: "helper",
           fn: t(() => [
             n(e.$slots, "helper", {}, () => [
-              _("div", { innerHTML: a.helperText }, null, 8, H)
+              M("div", { innerHTML: a.helperText }, null, 8, H)
             ])
           ]),
           key: "3"
@@ -140,5 +139,5 @@ const N = {
   }
 });
 export {
-  z as _
+  W as _
 };

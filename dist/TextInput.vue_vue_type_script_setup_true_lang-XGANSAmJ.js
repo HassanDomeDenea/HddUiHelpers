@@ -1,11 +1,9 @@
-import V from "primevue/keyfilter";
-import T from "primevue/inputtext";
-import { defineComponent as q, useSlots as z, useModel as D, ref as f, watch as M, computed as N, openBlock as U, createBlock as E, mergeProps as m, unref as t, createSlots as K, withCtx as y, withDirectives as O, createVNode as R, withKeys as b, renderList as F, renderSlot as W, mergeModels as B } from "vue";
-import { useHddBaseInputUtils as j, cursorAtStartOfInput as H, cursorAtEndOfInput as G } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { _ as J } from "./BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-const ee = /* @__PURE__ */ q({
+import { defineComponent as P, useSlots as V, useModel as T, resolveComponent as q, resolveDirective as z, openBlock as D, createBlock as M, mergeProps as f, unref as t, createSlots as N, withCtx as y, withDirectives as U, createVNode as E, withKeys as m, renderList as K, renderSlot as O, mergeModels as b } from "vue";
+import { useHddBaseInputUtils as R, cursorAtStartOfInput as F, cursorAtEndOfInput as W } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { _ as j } from "./BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const Q = /* @__PURE__ */ P({
   __name: "TextInput",
-  props: /* @__PURE__ */ B({
+  props: /* @__PURE__ */ b({
     type: { default: "text" },
     lazy: { type: Boolean },
     filterPattern: {},
@@ -52,10 +50,10 @@ const ee = /* @__PURE__ */ q({
     modelValue: { required: !0 },
     modelModifiers: {}
   }),
-  emits: /* @__PURE__ */ B(["blur", "focus", "keydown", "focusPrevious", "focusNext"], ["update:modelValue"]),
-  setup(e, { expose: v, emit: w }) {
-    const n = e, g = z(), a = w, r = D(e, "modelValue"), s = f(null);
-    n.lazy && M(
+  emits: /* @__PURE__ */ b(["blur", "focus", "keydown", "focusPrevious", "focusNext"], ["update:modelValue"]),
+  setup(e, { expose: B, emit: v }) {
+    const n = e, w = V(), a = v, r = T(e, "modelValue"), s = ref(null);
+    n.lazy && watch(
       r,
       (i) => {
         s.value = i;
@@ -64,14 +62,14 @@ const ee = /* @__PURE__ */ q({
         immediate: !0
       }
     );
-    const u = f();
+    const u = ref();
     function p() {
       u.value.$el.focus();
     }
     function I() {
       u.value.$el.select();
     }
-    const x = N(() => ({
+    const g = computed(() => ({
       root: {
         readonly: n.readonly,
         type: n.type,
@@ -81,41 +79,41 @@ const ee = /* @__PURE__ */ q({
     function C() {
       n.lazy && (r.value = s.value);
     }
-    const { exposed: L, baseInputForwardedProps: h, fieldUniqueId: d, generalInputProps: A } = j(n), $ = () => H(u.value.$el) && a("focusPrevious"), S = () => G(u.value.$el) && a("focusNext");
-    return v({ select: I, focus: p, ...L }), (i, l) => {
-      const k = T, P = V;
-      return U(), E(J, m(t(h), { onLabelClicked: p }), K({
+    const { exposed: x, baseInputForwardedProps: L, fieldUniqueId: d, generalInputProps: h } = R(n), A = () => F(u.value.$el) && a("focusPrevious"), $ = () => W(u.value.$el) && a("focusNext");
+    return B({ select: I, focus: p, ...x }), (i, l) => {
+      const k = q("InputText"), S = z("keyfilter");
+      return D(), M(j, f(t(L), { onLabelClicked: p }), N({
         default: y(() => [
-          O(R(k, m({
+          U(E(k, f({
             id: t(d),
             ref_key: "inputRef",
             ref: u
-          }, t(A), {
+          }, t(h), {
             "model-value": e.lazy ? t(s) : r.value,
             placeholder: e.placeholder,
             class: [e.inputClass],
             "aria-describedby": `${e.error ? `${t(d)}-error` : ""} ${i.$slots.helper || e.helperText ? `${t(d)}-desc` : ""}`,
-            pt: t(x),
+            pt: t(g),
             autocomplete: e.autocomplete,
             "onUpdate:modelValue": l[0] || (l[0] = (o) => e.lazy ? s.value = o : r.value = o),
             onBlur: l[1] || (l[1] = (o) => a("blur", o)),
             onFocus: l[2] || (l[2] = (o) => a("focus", o)),
             onChange: C,
             onKeydown: [
-              b($, ["up"]),
-              b(S, ["down"]),
+              m(A, ["up"]),
+              m($, ["down"]),
               l[3] || (l[3] = (o) => a("keydown", o))
             ]
           }), null, 16, ["id", "model-value", "placeholder", "class", "aria-describedby", "pt", "autocomplete"]), [
-            [P, e.filterPattern]
+            [S, e.filterPattern]
           ])
         ]),
         _: 2
       }, [
-        F(g, (o, c) => ({
+        K(w, (o, c) => ({
           name: c,
           fn: y(() => [
-            W(i.$slots, c, { value: r.value })
+            O(i.$slots, c, { value: r.value })
           ])
         }))
       ]), 1040);
@@ -123,5 +121,5 @@ const ee = /* @__PURE__ */ q({
   }
 });
 export {
-  ee as _
+  Q as _
 };

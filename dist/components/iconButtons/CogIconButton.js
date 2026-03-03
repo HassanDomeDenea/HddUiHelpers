@@ -1,34 +1,33 @@
-import i from "primevue/popover";
-import { defineComponent as s, ref as n, openBlock as f, createElementBlock as p, createElementVNode as u, createVNode as d, withCtx as _, renderSlot as m } from "vue";
-const v = { class: "inline-flex items-center" }, C = /* @__PURE__ */ s({
+import { defineComponent as a, resolveComponent as s, openBlock as i, createElementBlock as f, createElementVNode as p, createVNode as u, withCtx as d, renderSlot as _ } from "vue";
+const m = { class: "inline-flex items-center" }, g = /* @__PURE__ */ a({
   __name: "CogIconButton",
-  setup(h) {
-    const t = n(), o = n(!1);
-    function r(e) {
+  setup(v) {
+    const t = ref(), o = ref(!1);
+    function n(e) {
       t.value.toggle(e);
     }
-    function l() {
+    function r() {
       o.value = !0;
     }
-    function c() {
+    function l() {
       o.value = !1;
     }
-    return (e, x) => {
-      const a = i;
-      return f(), p("div", v, [
-        u("i", {
+    return (e, h) => {
+      const c = s("Popover");
+      return i(), f("div", m, [
+        p("i", {
           tabindex: "0",
           class: "i-mdi-cog dark:(text-teal-300 hover:text-teal-200) light:(text-teal-500 hover:text-teal-700) cursor-pointer",
-          onClick: r
+          onClick: n
         }),
-        d(a, {
+        u(c, {
           ref_key: "popoverRef",
           ref: t,
-          onShow: l,
-          onHide: c
+          onShow: r,
+          onHide: l
         }, {
-          default: _(() => [
-            m(e.$slots, "default")
+          default: d(() => [
+            _(e.$slots, "default")
           ]),
           _: 3
         }, 512)
@@ -37,5 +36,5 @@ const v = { class: "inline-flex items-center" }, C = /* @__PURE__ */ s({
   }
 });
 export {
-  C as default
+  g as default
 };

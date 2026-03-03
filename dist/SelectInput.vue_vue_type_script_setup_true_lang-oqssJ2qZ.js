@@ -1,9 +1,9 @@
-import { defineComponent as M, useModel as w, ref as F, computed as H, openBlock as n, createBlock as P, mergeProps as m, unref as l, withCtx as p, createVNode as S, renderSlot as y, createElementBlock as u, createCommentVNode as b, toDisplayString as T, mergeModels as h } from "vue";
-import { useHddBaseInputUtils as A } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { isBoolean as D } from "lodash-es";
-import q from "primevue/select";
-import { _ as x } from "./BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-const $ = ["innerHTML"], E = ["innerHTML"], N = { key: 2 }, R = ["innerHTML"], O = /* @__PURE__ */ M({
+import { defineComponent as M, useModel as w, ref as S, openBlock as n, createBlock as F, mergeProps as m, unref as l, withCtx as p, createVNode as H, renderSlot as y, createElementBlock as u, createCommentVNode as b, toDisplayString as P, mergeModels as h } from "vue";
+import { useHddBaseInputUtils as T } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { isBoolean as A } from "lodash-es";
+import D from "primevue/select";
+import { _ as q } from "./BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const x = ["innerHTML"], $ = ["innerHTML"], E = { key: 2 }, N = ["innerHTML"], K = /* @__PURE__ */ M({
   __name: "SelectInput",
   props: /* @__PURE__ */ h({
     options: {},
@@ -60,17 +60,17 @@ const $ = ["innerHTML"], E = ["innerHTML"], N = { key: 2 }, R = ["innerHTML"], O
   }),
   emits: /* @__PURE__ */ h(["change"], ["update:modelValue"]),
   setup(e, { expose: B, emit: v }) {
-    const t = e, g = v, a = w(e, "modelValue"), d = F();
+    const t = e, L = v, a = w(e, "modelValue"), d = S();
     function c(r = !1) {
       t.disabled || (r ? d.value.show() : d.value.$refs.focusInput.focus());
     }
-    const f = H(() => D(t.hasFilter) ? t.hasFilter : t.options.length > 7);
-    function L() {
+    const f = computed(() => A(t.hasFilter) ? t.hasFilter : t.options.length > 7);
+    function g() {
     }
-    const { exposed: k, baseInputForwardedProps: V, fieldUniqueId: C, generalInputProps: I } = A(t);
-    return B({ focus: c, ...k }), (r, i) => (n(), P(x, m(l(V), { onClick: c }), {
+    const { exposed: k, baseInputForwardedProps: V, fieldUniqueId: C, generalInputProps: I } = T(t);
+    return B({ focus: c, ...k }), (r, i) => (n(), F(q, m(l(V), { onClick: c }), {
       default: p(() => [
-        S(l(q), m(l(I), {
+        H(l(D), m(l(I), {
           ref_key: "inputRef",
           ref: d,
           modelValue: a.value,
@@ -89,8 +89,8 @@ const $ = ["innerHTML"], E = ["innerHTML"], N = { key: 2 }, R = ["innerHTML"], O
           "option-value": e.optionValueProperty,
           class: "flex-1",
           "scroll-height": "18rem",
-          onBlur: L,
-          onChange: i[1] || (i[1] = (o) => g("change", o))
+          onBlur: g,
+          onChange: i[1] || (i[1] = (o) => L("change", o))
         }), {
           value: p((o) => [
             y(r.$slots, "value", {
@@ -99,10 +99,10 @@ const $ = ["innerHTML"], E = ["innerHTML"], N = { key: 2 }, R = ["innerHTML"], O
               e.valueFormatter ? (n(), u("div", {
                 key: 0,
                 innerHTML: e.valueFormatter(o.value)
-              }, null, 8, $)) : e.formatter ? (n(), u("div", {
+              }, null, 8, x)) : e.formatter ? (n(), u("div", {
                 key: 1,
                 innerHTML: e.formatter(o.value, "value")
-              }, null, 8, E)) : a.value ? (n(), u("div", N, T(e.options.find((s) => s[e.optionValueProperty] === a.value)?.[e.optionLabelProperty] ?? a.value), 1)) : b("", !0)
+              }, null, 8, $)) : a.value ? (n(), u("div", E, P(e.options.find((s) => s[e.optionValueProperty] === a.value)?.[e.optionLabelProperty] ?? a.value), 1)) : b("", !0)
             ])
           ]),
           option: p(({ option: o, index: s }) => [
@@ -112,7 +112,7 @@ const $ = ["innerHTML"], E = ["innerHTML"], N = { key: 2 }, R = ["innerHTML"], O
               e.formatter ? (n(), u("div", {
                 key: 0,
                 innerHTML: e.formatter(o, "option")
-              }, null, 8, R)) : b("", !0)
+              }, null, 8, N)) : b("", !0)
             ])
           ]),
           _: 3
@@ -123,5 +123,5 @@ const $ = ["innerHTML"], E = ["innerHTML"], N = { key: 2 }, R = ["innerHTML"], O
   }
 });
 export {
-  O as _
+  K as _
 };

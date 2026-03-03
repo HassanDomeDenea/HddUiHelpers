@@ -1,66 +1,65 @@
-import { defineComponent as y, ref as g, onMounted as b, onBeforeUnmount as k, openBlock as s, createElementBlock as f, Fragment as p, renderList as H, unref as v, createBlock as V, mergeProps as x, createCommentVNode as B, nextTick as l } from "vue";
-import { dynamicServerFormDialogKey as h } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
-import F from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
-import { uniqueId as a, last as c } from "lodash-es";
-import { useTemplateRefsList as O, useEventBus as R } from "@vueuse/core";
-const q = /* @__PURE__ */ y({
+import { defineComponent as _, openBlock as u, createElementBlock as m, Fragment as f, renderList as k, unref as p, createBlock as y, mergeProps as g, createCommentVNode as x } from "vue";
+import { dynamicServerFormDialogKey as b } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import H from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
+import { uniqueId as s, last as a } from "lodash-es";
+const O = /* @__PURE__ */ _({
   __name: "DynamicServerFormDialog",
-  setup(L) {
-    const t = O(), n = g([]), m = R(h);
+  setup(T) {
+    const t = useTemplateRefsList(), n = ref([]), c = useEventBus(b);
     function d({
       event: r,
       options: o,
       row: e,
-      specificId: _,
-      dialogRefGetter: u
+      specificId: D,
+      dialogRefGetter: l
     }) {
       r === "create" && (n.value.push({
         localOptions: o,
         isVisible: !0,
-        id: a("HddDynamicDialog-")
-      }), l(() => {
-        const i = c(t.value);
-        i.create(e, _), u.value = () => i;
+        id: s("HddDynamicDialog-")
+      }), nextTick(() => {
+        const i = a(t.value);
+        i.create(e, D), l.value = () => i;
       })), r === "edit" && (n.value.push({
         localOptions: o,
         isVisible: !0,
-        id: a("HddDynamicDialog-")
-      }), l(() => {
-        const i = c(t.value);
-        i.edit(e), u.value = () => i;
+        id: s("HddDynamicDialog-")
+      }), nextTick(() => {
+        const i = a(t.value);
+        i.edit(e), l.value = () => i;
       })), r === "delete" && (n.value.push({
         localOptions: o,
         isVisible: !0,
-        id: a("HddDynamicDialog-")
-      }), l(() => {
-        const i = c(t.value);
-        i.delete(e), u.value = () => i;
+        id: s("HddDynamicDialog-")
+      }), nextTick(() => {
+        const i = a(t.value);
+        i.delete(e), l.value = () => i;
       }));
     }
-    b(() => {
-      m.on(d);
-    }), k(() => {
-      m.off(d);
+    onMounted(() => {
+      c.on(d);
+    }), onBeforeUnmount(() => {
+      c.off(d);
     });
-    function D(r) {
+    function v(r) {
       const o = n.value.findIndex((e) => e.id === r);
-      n.value[o].isVisible = !1, l(() => {
+      n.value[o].isVisible = !1, nextTick(() => {
         n.value.splice(o, 1);
       });
     }
-    return (r, o) => (s(!0), f(p, null, H(v(n), (e) => (s(), f(p, {
+    return (r, o) => (u(!0), m(f, null, k(p(n), (e) => (u(), m(f, {
       key: e.id
     }, [
-      e.isVisible ? (s(), V(F, x({
+      e.isVisible ? (u(), y(H, g({
         key: 0,
         ref_for: !0,
-        ref: v(t).set
+        ref: p(t).set
       }, { ref_for: !0 }, e.localOptions, {
-        onHidden: () => D(e.id)
-      }), null, 16, ["onHidden"])) : B("", !0)
+        onHidden: () => v(e.id)
+      }), null, 16, ["onHidden"])) : x("", !0)
     ], 64))), 128));
   }
 });
 export {
-  q as default
+  O as default
 };

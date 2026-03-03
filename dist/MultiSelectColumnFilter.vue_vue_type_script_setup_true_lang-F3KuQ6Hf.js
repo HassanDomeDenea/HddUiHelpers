@@ -1,7 +1,6 @@
-import { defineComponent as a, useModel as n, openBlock as i, createBlock as p, unref as u, mergeModels as s } from "vue";
-import { _ as d } from "./MultiSelectInput.vue_vue_type_script_setup_true_lang-Md2hjlTs.js";
-import { useI18n as c } from "vue-i18n";
-const M = /* @__PURE__ */ a({
+import { defineComponent as r, useModel as n, openBlock as i, createBlock as p, unref as u, mergeModels as s } from "vue";
+import { _ as d } from "./MultiSelectInput.vue_vue_type_script_setup_true_lang-DpPUkLut.js";
+const b = /* @__PURE__ */ r({
   __name: "MultiSelectColumnFilter",
   props: /* @__PURE__ */ s({
     options: {},
@@ -14,11 +13,11 @@ const M = /* @__PURE__ */ a({
   }),
   emits: ["update:slotProps"],
   setup(l) {
-    const e = n(l, "slotProps"), { t } = c();
-    function r(o) {
+    const e = n(l, "slotProps"), { t } = useI18n();
+    function a(o) {
       o.length ? (e.value.filterModel.value = o, e.value.filterModel.matchMode = "whereIn") : (e.value.filterModel.value = null, e.value.filterModel.matchMode = "whereIn"), e.value.filterCallback();
     }
-    return (o, m) => (i(), p(d, {
+    return (o, c) => (i(), p(d, {
       "model-value": e.value.filterModel.value,
       clearable: "",
       "option-label-property": l.optionLabelProperty,
@@ -27,10 +26,10 @@ const M = /* @__PURE__ */ a({
       placeholder: u(t)("Choose to filter"),
       label: l.label,
       options: l.options,
-      "onUpdate:modelValue": r
+      "onUpdate:modelValue": a
     }, null, 8, ["model-value", "option-label-property", "option-value-property", "placeholder", "label", "options"]));
   }
 });
 export {
-  M as _
+  b as _
 };

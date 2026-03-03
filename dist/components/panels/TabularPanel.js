@@ -1,14 +1,8 @@
-import z from "primevue/tabpanels";
-import E from "primevue/tabpanel";
-import w from "primevue/tablist";
-import F from "primevue/tab";
-import { defineComponent as I, computed as y, ref as R, onActivated as U, watch as v, openBlock as t, createBlock as a, unref as o, isRef as _, withCtx as i, createVNode as g, createElementBlock as f, Fragment as p, renderList as A, createElementVNode as B, normalizeClass as $, createCommentVNode as q, toDisplayString as H, KeepAlive as K, resolveDynamicComponent as h, mergeProps as C, renderSlot as O } from "vue";
-import j from "primevue/tabs";
-import { useBasicAuthStore as G } from "HddUiHelpers/stores/basicAuth.ts";
-import { isBoolean as J, isString as M, startCase as W } from "lodash-es";
-import { useI18n as X } from "vue-i18n";
-import { useRoute as Y, useRouter as Z } from "vue-router";
-const ee = { class: "flex items-center gap-1" }, ce = /* @__PURE__ */ I({
+import { defineComponent as w, resolveComponent as d, openBlock as t, createBlock as o, unref as a, isRef as D, withCtx as i, createVNode as N, createElementBlock as y, Fragment as v, renderList as R, createElementVNode as b, normalizeClass as x, createCommentVNode as q, toDisplayString as z, KeepAlive as E, resolveDynamicComponent as A, mergeProps as h, renderSlot as B } from "vue";
+import F from "primevue/tabs";
+import { useBasicAuthStore as I } from "HddUiHelpers/stores/basicAuth.ts";
+import { isBoolean as U, isString as $, startCase as H } from "lodash-es";
+const K = { class: "flex items-center gap-1" }, W = /* @__PURE__ */ w({
   __name: "TabularPanel",
   props: {
     basedOnRouteQuery: { type: Boolean, default: !0 },
@@ -19,55 +13,55 @@ const ee = { class: "flex items-center gap-1" }, ce = /* @__PURE__ */ I({
     tabs: {}
   },
   setup(u, { expose: P }) {
-    const { t: Q } = X(), l = Y(), s = Z(), m = y(() => u.tabs.filter((n) => J(n.visible) ? n.visible : M(n.permission) ? T.can(n.permission) : n.permission instanceof Array ? n.permission.every((c) => T.can(c)) : !0)), d = y(
+    const { t: C } = useI18n(), l = useRoute(), s = useRouter(), m = computed(() => u.tabs.filter((n) => U(n.visible) ? n.visible : $(n.permission) ? T.can(n.permission) : n.permission instanceof Array ? n.permission.every((c) => T.can(c)) : !0)), f = computed(
       () => u.basedOnRouteQuery ? l.query[u.queryName] : void 0
-    ), T = G(), b = y(() => m.value.map((n) => n.name)), r = R(
+    ), T = I(), g = computed(() => m.value.map((n) => n.name)), r = ref(
       (u.basedOnRouteQuery ? l.query[u.queryName] : void 0) ?? u.initialTab ?? m.value[0]?.name
     );
-    function S(n) {
-      n !== r.value && b.value.includes(n) && (r.value = n);
+    function O(n) {
+      n !== r.value && g.value.includes(n) && (r.value = n);
     }
-    function k() {
-      u.basedOnRouteQuery && (typeof l.query[u.queryName] == "string" ? S(l.query[u.queryName]) : r.value ? s.replace({ query: { ...l.query, [u.queryName]: r.value } }) : r.value !== d.value && s.replace({ query: { ...l.query, [u.queryName]: r.value } }));
+    function p() {
+      u.basedOnRouteQuery && (typeof l.query[u.queryName] == "string" ? O(l.query[u.queryName]) : r.value ? s.replace({ query: { ...l.query, [u.queryName]: r.value } }) : r.value !== f.value && s.replace({ query: { ...l.query, [u.queryName]: r.value } }));
     }
-    U(() => {
-      k();
-    }), v(r, (n) => {
-      u.basedOnRouteQuery && (d.value ? s.push({ query: { ...l.query, [u.queryName]: n } }) : s.replace({ query: { ...l.query, [u.queryName]: n } }));
-    }), v(d, () => {
-      u.basedOnRouteQuery && k();
+    onActivated(() => {
+      p();
+    }), watch(r, (n) => {
+      u.basedOnRouteQuery && (f.value ? s.push({ query: { ...l.query, [u.queryName]: n } }) : s.replace({ query: { ...l.query, [u.queryName]: n } }));
+    }), watch(f, () => {
+      u.basedOnRouteQuery && p();
     });
-    const N = R([]);
-    return v(
+    const k = ref([]);
+    return watch(
       r,
       (n) => {
-        N.value.includes(n) || N.value.push(n);
+        k.value.includes(n) || k.value.push(n);
       },
       {
         immediate: !0
       }
     ), P({ currentTab: r }), (n, c) => {
-      const V = F, D = w, L = E, x = z;
-      return t(), a(o(j), {
-        value: o(r),
-        "onUpdate:value": c[0] || (c[0] = (e) => _(r) ? r.value = e : null),
+      const Q = d("Tab"), L = d("TabList"), S = d("TabPanel"), V = d("TabPanels");
+      return t(), o(a(F), {
+        value: a(r),
+        "onUpdate:value": c[0] || (c[0] = (e) => D(r) ? r.value = e : null),
         class: "HDD-TABULAR-PANEL"
       }, {
         default: i(() => [
-          g(D, null, {
+          N(L, null, {
             default: i(() => [
-              (t(!0), f(p, null, A(o(m), (e) => (t(), a(V, {
+              (t(!0), y(v, null, R(a(m), (e) => (t(), o(Q, {
                 key: e.name,
                 disabled: e.disabled,
                 value: e.name
               }, {
                 default: i(() => [
-                  B("div", ee, [
-                    e.icon ? (t(), f("i", {
+                  b("div", K, [
+                    e.icon ? (t(), y("i", {
                       key: 0,
-                      class: $(e.icon)
+                      class: x(e.icon)
                     }, null, 2)) : q("", !0),
-                    B("span", null, H(e.label ?? o(Q)(o(W)(e.name))), 1)
+                    b("span", null, z(e.label ?? a(C)(a(H)(e.name))), 1)
                   ])
                 ]),
                 _: 2
@@ -75,23 +69,23 @@ const ee = { class: "flex items-center gap-1" }, ce = /* @__PURE__ */ I({
             ]),
             _: 1
           }),
-          g(x, null, {
+          N(V, null, {
             default: i(() => [
-              (t(!0), f(p, null, A(o(m), (e) => (t(), a(L, {
+              (t(!0), y(v, null, R(a(m), (e) => (t(), o(S, {
                 key: e.name,
                 value: e.name
               }, {
                 default: i(() => [
-                  u.keepAlive ? (t(), a(K, { key: 0 }, [
-                    e.component && e.name === o(r) ? (t(), a(h(e.component), C({
+                  u.keepAlive ? (t(), o(E, { key: 0 }, [
+                    e.component && e.name === a(r) ? (t(), o(A(e.component), h({
                       key: 0,
                       ref_for: !0
-                    }, e.binds), null, 16)) : e.name === o(r) ? O(n.$slots, e.name, { key: 1 }) : q("", !0)
-                  ], 1024)) : !u.lazy || e.name === o(r) ? (t(), f(p, { key: 1 }, [
-                    e.component ? (t(), a(h(e.component), C({
+                    }, e.binds), null, 16)) : e.name === a(r) ? B(n.$slots, e.name, { key: 1 }) : q("", !0)
+                  ], 1024)) : !u.lazy || e.name === a(r) ? (t(), y(v, { key: 1 }, [
+                    e.component ? (t(), o(A(e.component), h({
                       key: 0,
                       ref_for: !0
-                    }, e.binds), null, 16)) : O(n.$slots, e.name, { key: 1 })
+                    }, e.binds), null, 16)) : B(n.$slots, e.name, { key: 1 })
                   ], 64)) : q("", !0)
                 ]),
                 _: 2
@@ -106,5 +100,5 @@ const ee = { class: "flex items-center gap-1" }, ce = /* @__PURE__ */ I({
   }
 });
 export {
-  ce as default
+  W as default
 };

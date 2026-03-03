@@ -1,10 +1,8 @@
-import w from "primevue/multiselect";
-import { defineComponent as $, useModel as x, ref as C, openBlock as P, createBlock as H, mergeProps as L, unref as r, createSlots as k, withCtx as i, createVNode as q, createElementVNode as s, renderSlot as d, mergeModels as h } from "vue";
+import { defineComponent as w, useModel as C, ref as $, resolveComponent as x, openBlock as P, createBlock as H, mergeProps as L, unref as i, createSlots as k, withCtx as r, createVNode as q, createElementVNode as s, renderSlot as d, mergeModels as h } from "vue";
 import { useHddBaseInputUtils as D } from "HddUiHelpers/components/inputs/inputsUtils.ts";
 import { get as p } from "lodash-es";
-import { _ as E } from "./BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-import { useI18n as N } from "vue-i18n";
-const O = ["innerHTML"], R = ["innerHTML"], U = ["aria-labelledby", "data-value"], W = ["innerHTML"], X = /* @__PURE__ */ $({
+import { _ as E } from "./BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const N = ["innerHTML"], O = ["innerHTML"], R = ["aria-labelledby", "data-value"], U = ["innerHTML"], G = /* @__PURE__ */ w({
   __name: "MultiSelectInput",
   props: /* @__PURE__ */ h({
     options: {},
@@ -63,33 +61,33 @@ const O = ["innerHTML"], R = ["innerHTML"], U = ["aria-labelledby", "data-value"
   }),
   emits: /* @__PURE__ */ h(["change"], ["update:modelValue"]),
   setup(l, { expose: g, emit: B }) {
-    const t = l, V = B, m = x(l, "modelValue"), c = C();
-    function f() {
+    const t = l, V = B, m = C(l, "modelValue"), c = $();
+    function b() {
       t.disabled || c.value.show();
     }
     function v() {
     }
-    const { exposed: S, baseInputForwardedProps: T, fieldUniqueId: A, generalInputProps: F } = D(t), { t: b } = N();
+    const { exposed: S, baseInputForwardedProps: T, fieldUniqueId: M, generalInputProps: A } = D(t), { t: f } = useI18n();
     function y(e, a) {
       return e ? t.optionLabelFormatter ? t.optionLabelFormatter(e, a) : t.optionAndValueLabelFormatter ? t.optionAndValueLabelFormatter(e) : p(e, t.optionLabelProperty) ?? "&nbsp;" : "&nbsp;";
     }
-    function I(e, a) {
+    function F(e, a) {
       const u = a ? `<span class="text-muted px-2">${a}</span>` : void 0;
-      return !e || e.length === 0 ? u ?? "&nbsp;" : e.length > t.maxSelectedLabels ? `${e.length} ${b("multiSelectItemsSelectedLabel")}` : e.map((o) => {
-        const n = t.options.find((M) => M[t.optionValueProperty] === o);
+      return !e || e.length === 0 ? u ?? "&nbsp;" : e.length > t.maxSelectedLabels ? `${e.length} ${f("multiSelectItemsSelectedLabel")}` : e.map((o) => {
+        const n = t.options.find((I) => I[t.optionValueProperty] === o);
         return n ? t.valueLabelFormatter ? t.valueLabelFormatter(n, placeholder) ?? "---" : t.optionAndValueLabelFormatter ? t.optionAndValueLabelFormatter(n) ?? "---" : p(n, t.optionLabelProperty) ?? "---" : "---";
       });
     }
-    return g({ focus: f, ...S }), (e, a) => {
-      const u = w;
-      return P(), H(E, L(r(T), { onClick: f }), k({
-        default: i(() => [
-          q(u, L(r(F), {
+    return g({ focus: b, ...S }), (e, a) => {
+      const u = x("MultiSelect");
+      return P(), H(E, L(i(T), { onClick: b }), k({
+        default: r(() => [
+          q(u, L(i(A), {
             ref_key: "inputRef",
             ref: c,
             modelValue: m.value,
             "onUpdate:modelValue": a[0] || (a[0] = (o) => m.value = o),
-            "input-id": r(A),
+            "input-id": i(M),
             placeholder: l.placeholder,
             "auto-filter-focus": !0,
             variant: "filled",
@@ -106,7 +104,7 @@ const O = ["innerHTML"], R = ["innerHTML"], U = ["aria-labelledby", "data-value"
             highlightonselect: "",
             filter: "",
             options: l.options,
-            "selected-items-label": `{0} ${r(b)("multiSelectItemsSelectedLabel")}`,
+            "selected-items-label": `{0} ${i(f)("multiSelectItemsSelectedLabel")}`,
             "option-label": l.optionLabelProperty,
             "option-value": l.optionValueProperty,
             class: "!w-full",
@@ -114,29 +112,29 @@ const O = ["innerHTML"], R = ["innerHTML"], U = ["aria-labelledby", "data-value"
             onBlur: v,
             onChange: a[1] || (a[1] = (o) => V("change", o))
           }), {
-            value: i(({ value: o, placeholder: n }) => [
+            value: r(({ value: o, placeholder: n }) => [
               d(e.$slots, "value", {
                 value: o,
                 placeholder: n
               }, () => [
                 s("div", {
-                  innerHTML: I(o, n)
-                }, null, 8, R)
+                  innerHTML: F(o, n)
+                }, null, 8, O)
               ])
             ]),
-            option: i(({ option: o, index: n }) => [
+            option: r(({ option: o, index: n }) => [
               s("span", {
                 "aria-labelledby": y(o, n),
-                "data-value": r(p)(o, l.optionValueProperty)
+                "data-value": i(p)(o, l.optionValueProperty)
               }, [
                 d(e.$slots, "option", {
                   option: { option: o, index: n }
                 }, () => [
                   s("div", {
                     innerHTML: y(o, n)
-                  }, null, 8, W)
+                  }, null, 8, U)
                 ])
-              ], 8, U)
+              ], 8, R)
             ]),
             _: 3
           }, 16, ["modelValue", "input-id", "placeholder", "display", "max-selected-labels", "selection-limit", "show-toggle-all", "name", "data-name", "options", "selected-items-label", "option-label", "option-value"])
@@ -145,16 +143,16 @@ const O = ["innerHTML"], R = ["innerHTML"], U = ["aria-labelledby", "data-value"
       }, [
         e.$slots.addon ? {
           name: "addon",
-          fn: i(() => [
+          fn: r(() => [
             d(e.$slots, "addon")
           ]),
           key: "0"
         } : void 0,
         e.$slots.helper || l.helperText ? {
           name: "helper",
-          fn: i(() => [
+          fn: r(() => [
             d(e.$slots, "helper", {}, () => [
-              s("div", { innerHTML: l.helperText }, null, 8, O)
+              s("div", { innerHTML: l.helperText }, null, 8, N)
             ])
           ]),
           key: "1"
@@ -164,5 +162,5 @@ const O = ["innerHTML"], R = ["innerHTML"], U = ["aria-labelledby", "data-value"
   }
 });
 export {
-  X as _
+  G as _
 };

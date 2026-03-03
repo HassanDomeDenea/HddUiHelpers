@@ -1,38 +1,33 @@
-import _ from "primevue/checkbox";
-import R from "primevue/inputnumber";
-import C from "primevue/message";
-import x from "primevue/button";
-import { defineComponent as A, ref as V, useTemplateRef as p, computed as H, openBlock as k, createElementBlock as B, createVNode as s, unref as e, withCtx as w, createElementVNode as a, toDisplayString as r } from "vue";
-import { uniqueId as c } from "lodash-es";
-import { Menu as M } from "primevue";
-import y from "primevue/popover";
-import { useI18n as O } from "vue-i18n";
-const z = { class: "inline-flex flex-wrap" }, P = { class: "space-y-2 p-1" }, D = { class: "text-lg font-bold" }, E = { class: "flex items-center gap-1" }, N = ["for"], S = { class: "flex items-center gap-1" }, U = ["for"], $ = { class: "flex items-center gap-1" }, j = ["for"], q = { class: "flex justify-end" }, Z = /* @__PURE__ */ A({
+import { defineComponent as R, resolveComponent as r, openBlock as C, createElementBlock as x, createVNode as s, unref as e, withCtx as w, createElementVNode as a, toDisplayString as u } from "vue";
+import { uniqueId as m } from "lodash-es";
+import { Menu as A } from "primevue";
+import V from "primevue/popover";
+const H = { class: "inline-flex flex-wrap" }, k = { class: "space-y-2 p-1" }, M = { class: "text-lg font-bold" }, B = { class: "flex items-center gap-1" }, y = ["for"], O = { class: "flex items-center gap-1" }, _ = ["for"], z = { class: "flex items-center gap-1" }, P = ["for"], D = { class: "flex justify-end" }, j = /* @__PURE__ */ R({
   __name: "TipTapTableControls",
   props: {
     editor: {},
     config: {}
   },
   setup(l) {
-    const { t } = O(), o = V({
+    const { t } = useI18n(), o = ref({
       rows: 2,
       cols: 2,
       withHeader: !0,
-      rowsId: c("insert-table-rows-input"),
-      colsId: c("insert-table-cols-input"),
-      withHeaderId: c("insert-table-with-headers-input")
-    }), u = p("insertTablePopoverRef");
+      rowsId: m("insert-table-rows-input"),
+      colsId: m("insert-table-cols-input"),
+      withHeaderId: m("insert-table-with-headers-input")
+    }), c = useTemplateRef("insertTablePopoverRef");
     function h(i) {
-      o.value.rows = 2, o.value.cols = 2, o.value.withHeader = !0, u.value.toggle(i);
+      o.value.rows = 2, o.value.cols = 2, o.value.withHeader = !0, c.value.toggle(i);
     }
     function v() {
       l.editor.chain().focus().insertTable({
         rows: o.value.rows,
         cols: o.value.cols,
         withHeaderRow: o.value.withHeader
-      }).run(), u.value.hide();
+      }).run(), c.value.hide();
     }
-    const m = p("tableOptionsMenuRef"), g = H(() => {
+    const f = useTemplateRef("tableOptionsMenuRef"), g = computed(() => {
       const i = l.editor.isActive("table");
       return [
         {
@@ -123,41 +118,41 @@ const z = { class: "inline-flex flex-wrap" }, P = { class: "space-y-2 p-1" }, D 
       ];
     });
     return (i, n) => {
-      const f = x, I = C, b = R, T = _;
-      return k(), B("div", z, [
-        s(f, {
+      const b = r("Button"), I = r("Message"), p = r("InputNumber"), T = r("Checkbox");
+      return C(), x("div", H, [
+        s(b, {
           size: "small",
           disabled: !l.editor.can().chain().focus().insertTable().run(),
           title: e(t)("Table Options"),
           severity: "info",
           outlined: !l.editor.isActive("table"),
           icon: "i-flowbite:insert-table-outline",
-          onClick: n[0] || (n[0] = (d) => e(m).toggle(d))
+          onClick: n[0] || (n[0] = (d) => e(f).toggle(d))
         }, null, 8, ["disabled", "title", "outlined"]),
-        s(e(M), {
+        s(e(A), {
           ref_key: "tableOptionsMenuRef",
-          ref: m,
+          ref: f,
           model: e(g),
           popup: ""
         }, null, 8, ["model"]),
-        s(e(y), {
+        s(e(V), {
           ref_key: "insertTablePopoverRef",
-          ref: u
+          ref: c
         }, {
           default: w(() => [
-            a("div", P, [
+            a("div", k, [
               s(I, { variant: "simple" }, {
                 default: w(() => [
-                  a("span", D, r(e(t)("Insert Table")) + ":", 1)
+                  a("span", M, u(e(t)("Insert Table")) + ":", 1)
                 ]),
                 _: 1
               }),
-              a("div", E, [
+              a("div", B, [
                 a("label", {
                   for: e(o).rowsId,
                   class: "w-24"
-                }, r(e(t)("Columns")) + ": ", 9, N),
-                s(b, {
+                }, u(e(t)("Columns")) + ": ", 9, y),
+                s(p, {
                   modelValue: e(o).cols,
                   "onUpdate:modelValue": n[1] || (n[1] = (d) => e(o).cols = d),
                   "input-id": e(o).colsId,
@@ -170,12 +165,12 @@ const z = { class: "inline-flex flex-wrap" }, P = { class: "space-y-2 p-1" }, D 
                   step: 1
                 }, null, 8, ["modelValue", "input-id"])
               ]),
-              a("div", S, [
+              a("div", O, [
                 a("label", {
                   for: e(o).colsId,
                   class: "w-24"
-                }, r(e(t)("Rows")) + ": ", 9, U),
-                s(b, {
+                }, u(e(t)("Rows")) + ": ", 9, _),
+                s(p, {
                   modelValue: e(o).rows,
                   "onUpdate:modelValue": n[2] || (n[2] = (d) => e(o).rows = d),
                   "input-id": e(o).rowsId,
@@ -188,10 +183,10 @@ const z = { class: "inline-flex flex-wrap" }, P = { class: "space-y-2 p-1" }, D 
                   step: 1
                 }, null, 8, ["modelValue", "input-id"])
               ]),
-              a("div", $, [
+              a("div", z, [
                 a("label", {
                   for: e(o).withHeaderId
-                }, r(e(t)("With Header Row")) + ": ", 9, j),
+                }, u(e(t)("With Header Row")) + ": ", 9, P),
                 s(T, {
                   modelValue: e(o).withHeader,
                   "onUpdate:modelValue": n[3] || (n[3] = (d) => e(o).withHeader = d),
@@ -200,8 +195,8 @@ const z = { class: "inline-flex flex-wrap" }, P = { class: "space-y-2 p-1" }, D 
                   binary: ""
                 }, null, 8, ["modelValue", "input-id"])
               ]),
-              a("div", q, [
-                s(f, {
+              a("div", D, [
+                s(b, {
                   label: e(t)("Insert"),
                   icon: "i-mdi-check",
                   size: "small",
@@ -218,5 +213,5 @@ const z = { class: "inline-flex flex-wrap" }, P = { class: "space-y-2 p-1" }, D 
   }
 });
 export {
-  Z as default
+  j as default
 };

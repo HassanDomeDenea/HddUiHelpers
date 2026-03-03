@@ -1,13 +1,11 @@
-import { _ } from "../../DatePickerInput.vue_vue_type_script_setup_true_lang-D6B1ypZM.js";
-import { defineComponent as A, useModel as C, computed as m, nextTick as g, ref as x, openBlock as q, createBlock as M, mergeProps as c, unref as l, withCtx as F, createElementVNode as R, createVNode as D, isRef as V, mergeModels as w } from "vue";
-import { useHddBaseInputUtils as T } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { pick as E } from "lodash-es";
+import { defineComponent as L, useModel as C, ref as S, resolveComponent as x, openBlock as A, createBlock as q, mergeProps as m, unref as l, withCtx as M, createElementVNode as T, createVNode as B, isRef as g, mergeModels as D } from "vue";
+import { useHddBaseInputUtils as _ } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { pick as F } from "lodash-es";
 import r from "moment";
-import { _ as P } from "../../BaseInput.vue_vue_type_script_setup_true_lang-Ca5DqyVP.js";
-import { useI18n as U } from "vue-i18n";
-const Y = { class: "flex items-center gap-6" }, O = /* @__PURE__ */ A({
+import { _ as P } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+const R = { class: "flex items-center gap-6" }, N = /* @__PURE__ */ L({
   __name: "DateFromToPickerInput",
-  props: /* @__PURE__ */ w({
+  props: /* @__PURE__ */ D({
     manualInput: { type: Boolean, default: !0 },
     clearable: { type: Boolean },
     outputDateFormat: { default: "YYYY-MM-DD HH:mm:ss" },
@@ -56,34 +54,34 @@ const Y = { class: "flex items-center gap-6" }, O = /* @__PURE__ */ A({
     modelValue: {},
     modelModifiers: {}
   }),
-  emits: /* @__PURE__ */ w(["changed"], ["update:modelValue"]),
-  setup(u, { expose: h, emit: I }) {
-    const t = u, f = I, { t: i } = U(), n = C(u, "modelValue"), s = m({
+  emits: /* @__PURE__ */ D(["changed"], ["update:modelValue"]),
+  setup(u, { expose: V, emit: w }) {
+    const t = u, c = w, { t: i } = useI18n(), n = C(u, "modelValue"), s = computed({
       get: () => n.value?.map((e) => e ? r(e).toDate() : null)[0] ?? null,
       set: (e) => {
         const o = n.value ?? [null, null];
-        o[0] = e && t.formatAsString ? r(e).format(t.outputDateFormat) : e, n.value = o, g(() => {
-          f("changed", o);
+        o[0] = e && t.formatAsString ? r(e).format(t.outputDateFormat) : e, n.value = o, nextTick(() => {
+          c("changed", o);
         });
       }
-    }), p = m({
+    }), p = computed({
       get: () => n.value?.map((e) => e ? r(e).toDate() : null)[1] ?? null,
       set: (e) => {
         const o = n.value ?? [null, null];
-        o[1] = e && t.formatAsString ? r(e).format(t.outputDateFormat) : e, n.value = o, g(() => {
-          f("changed", o);
+        o[1] = e && t.formatAsString ? r(e).format(t.outputDateFormat) : e, n.value = o, nextTick(() => {
+          c("changed", o);
         });
       }
-    }), a = x();
-    function y() {
+    }), a = S();
+    function f() {
       a.value.$el.focus();
     }
-    function L(e) {
+    function I(e) {
       a.value.overlayVisible && (a.value.overlayVisible = !1, e.stopPropagation());
     }
-    const { exposed: v, baseInputForwardedProps: k, fieldUniqueId: S } = T(t), b = m(() => ({
+    const { exposed: h, baseInputForwardedProps: k, fieldUniqueId: v } = _(t), y = computed(() => ({
       labelSingleLine: !0,
-      ...E(t, [
+      ...F(t, [
         "placeholder",
         "size",
         "disabled",
@@ -96,26 +94,26 @@ const Y = { class: "flex items-center gap-6" }, O = /* @__PURE__ */ A({
       withSuggestionsButtons: !0,
       inline: !0
     }));
-    return h({ focus: y, ...v }), (e, o) => {
-      const B = _;
-      return q(), M(P, c(l(k), {
-        "on-local-enter-key-down": u.onLocalEnterKeyDown ?? L,
-        onClick: y
+    return V({ focus: f, ...h }), (e, o) => {
+      const b = x("DatePickerInput");
+      return A(), q(P, m(l(k), {
+        "on-local-enter-key-down": u.onLocalEnterKeyDown ?? I,
+        onClick: f
       }), {
-        default: F(() => [
-          R("div", Y, [
-            D(B, c({
+        default: M(() => [
+          T("div", R, [
+            B(b, m({
               ref_key: "inputRef",
               ref: a,
               modelValue: l(s),
-              "onUpdate:modelValue": o[0] || (o[0] = (d) => V(s) ? s.value = d : null),
+              "onUpdate:modelValue": o[0] || (o[0] = (d) => g(s) ? s.value = d : null),
               label: l(i)("From")
-            }, l(b), { "unique-id": l(S) }), null, 16, ["modelValue", "label", "unique-id"]),
-            D(B, c({
+            }, l(y), { "unique-id": l(v) }), null, 16, ["modelValue", "label", "unique-id"]),
+            B(b, m({
               modelValue: l(p),
-              "onUpdate:modelValue": o[1] || (o[1] = (d) => V(p) ? p.value = d : null),
+              "onUpdate:modelValue": o[1] || (o[1] = (d) => g(p) ? p.value = d : null),
               label: l(i)("To")
-            }, l(b)), null, 16, ["modelValue", "label"])
+            }, l(y)), null, 16, ["modelValue", "label"])
           ])
         ]),
         _: 1
@@ -124,5 +122,5 @@ const Y = { class: "flex items-center gap-6" }, O = /* @__PURE__ */ A({
   }
 });
 export {
-  O as default
+  N as default
 };
