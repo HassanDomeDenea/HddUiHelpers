@@ -165,6 +165,7 @@ export function getFilterMatchModesByTypeOptions(t: ComposerTranslation) {
       { label: t("Not specified"), value: "isNull" },
       { label: t("Specified"), value: "isNotNull" },
     ],
+    image: [],
     color: [],
     select: [],
     hidden: [],
