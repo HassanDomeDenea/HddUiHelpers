@@ -87,6 +87,18 @@ function onShow() {
   }
 }
 defineExpose({ focus, inputRef, ...exposed });
+
+watch(
+  localValue,
+  (newValue?: string | Date | null) => {
+    if (props.formatAsString && newValue instanceof Date) {
+      value.value = moment(newValue).format(props.stringFormat ?? 'YYYY-MM-DD HH:mm:ss');
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 </script>
 
 <template>
@@ -95,6 +107,7 @@ defineExpose({ focus, inputRef, ...exposed });
     :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown"
     @click="focus"
   >
+    {{localValue}}
     <div class="relative !w-full">
       <DatePicker
         v-bind="generalInputProps"
