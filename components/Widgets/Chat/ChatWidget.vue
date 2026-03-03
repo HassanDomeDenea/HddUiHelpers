@@ -304,10 +304,10 @@ const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'));
     <div class="relative">
       <Button
           v-tooltip="t('Messenger')"
-          icon="i-bi:chat-text scale-80"
+          icon="i-line-md:chat"
           :severity
-          rounded
-          :size
+          :size="size"
+          :rounded="true"
           @click="isVisible = !isVisible"
       />
       <Badge
