@@ -23,11 +23,15 @@ export default {
 };
 
 export function setPageDirection() {
-  const direction = i18n.global.t("dir") || "ltr";
-  const align = i18n.global.t("textStart") || "left";
-  document.body.style.direction = direction;
-  document.body.style.textAlign = align;
-  document.body.dir = direction;
+  try {
+    const direction = i18n.global.t("dir") || "ltr";
+    const align = i18n.global.t("textStart") || "left";
+    document.body.style.direction = direction;
+    document.body.style.textAlign = align;
+    document.body.dir = direction;
+  } catch (_) {
+    // console.error(error);
+  }
 }
 
 setPageDirection();

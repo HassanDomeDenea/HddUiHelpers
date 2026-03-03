@@ -4,37 +4,13 @@ import DynamicComponentMounter from "HddUiHelpers/components/DynamicComponentMou
 import TopProgressBar from "HddUiHelpers/components/misc/TopProgressBar.vue";
 import DismissableConfirmDialog from "HddUiHelpers/components/modified/DismissableConfirmDialog.vue";
 import { setPageDirection } from "HddUiHelpers/plugins/i18n";
-import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
-import primeVueLocales from "HddUiHelpers/utils/primeVueLocales.ts";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
+import primeVueLocales from "HddUiHelpers/utils/primeVueLocales";
 import { usePrimeVue } from "primevue";
 import { defaultOptions as PrimeVueDefaultOptions } from "primevue/config";
 import { useToast } from "primevue/usetoast";
-
-/*useHead({
-    title: computed(() => route.meta.title || 'HDD Clinic'),
-    meta: [
-        {
-            name: 'description',
-            content: 'Opinionated Vite Starter Template',
-        },
-        {
-            name: 'theme-color',
-            content: computed(() => isDark.value ? '#00aba9' : '#ffffff'),
-        },
-    ],
-    link: [
-        {
-            rel: 'icon',
-            type: 'image/svg+xml',
-            href: computed(() => preferredDark.value ? '/favicon-dark.svg' : '/favicon.svg'),
-        },
-    ],
-})*/
-
-import { useApiClient } from "../stores/apiClient";
-import ConfirmDialogWithInput from "./ConfirmDialogWithInput/ConfirmDialogWithInput.vue";
-import { useI18n } from "vue-i18n";
-import { watch } from "vue";
+import { useApiClient } from "HddUiHelpers/stores/apiClient";
+import ConfirmDialogWithInput from "HddUiHelpers/components/ConfirmDialogWithInput/ConfirmDialogWithInput.vue";
 
 const { t, locale } = useI18n();
 const toast = useToast();
@@ -46,8 +22,10 @@ const primevue = usePrimeVue();
 watch(
   () => authStore.options.language,
   (language) => {
-    locale.value = language;
-    setPageDirection();
+    if(language){
+      locale.value = language;
+      setPageDirection();
+    }
   },
   {
     immediate: true,
@@ -87,7 +65,4 @@ watch(
 </template>
 
 <style>
-body {
-  @apply h-100vh font-tajawal flex flex-col;
-}
 </style>

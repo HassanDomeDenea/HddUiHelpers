@@ -18,7 +18,7 @@ export interface GlobalOptionsMap {
   _?: any;
 }
 export interface UserOptionsMap {
-  _?: any;
+  language?: string;
 }
 
 export type HddRole = keyof RolesMap & string;

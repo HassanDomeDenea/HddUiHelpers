@@ -6,7 +6,7 @@ import axios, {
   AxiosResponse,
   isAxiosError,
 } from "axios";
-import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers.ts";
+import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
 import { defineStore } from "pinia";
 import type { ToastMessageOptions, ToastServiceMethods } from "primevue";
