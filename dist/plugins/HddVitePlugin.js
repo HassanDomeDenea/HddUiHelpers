@@ -1,20 +1,20 @@
 import t from "@intlify/unplugin-vue-i18n/vite";
 import { PrimeVueResolver as n } from "@primevue/auto-import-resolver";
-import { unheadVueComposablesImports as d } from "@unhead/vue";
+import { unheadVueComposablesImports as l } from "@unhead/vue";
 import m from "@vitejs/plugin-vue";
 import e from "node:path";
-import { fileURLToPath as i } from "node:url";
-import a from "unocss/vite";
+import { fileURLToPath as a } from "node:url";
+import i from "unocss/vite";
 import p from "unplugin-auto-import/vite";
 import c from "unplugin-vue-components/vite";
-import v from "unplugin-vue-markdown/vite";
-import { VueRouterAutoImports as f } from "unplugin-vue-router";
-import h from "unplugin-vue-router/vite";
+import h from "unplugin-vue-markdown/vite";
+import { VueRouterAutoImports as v } from "unplugin-vue-router";
+import f from "unplugin-vue-router/vite";
 function O() {
-  const o = e.dirname(i(import.meta.url)), u = {
+  const o = e.dirname(a(import.meta.url)), d = {
     name: "hdd-ui-helpers-plugin"
-  }, l = process.env.NODE_ENV === "development" || process.env.NODE_ENV === void 0, r = [
-    h({
+  }, u = process.env.NODE_ENV === "development" || process.env.NODE_ENV === void 0, r = [
+    f({
       routesFolder: [
         {
           src: "resources/js/pages"
@@ -48,14 +48,14 @@ function O() {
         }
       }
     }),
-    u,
+    d,
     p({
       imports: [
         "vue",
         "vue-i18n",
         "@vueuse/core",
-        f,
-        d
+        v,
+        l
       ],
       dts: "resources/js/types/auto-imports.d.ts",
       //dts: false, // Disable DTS generation in dev mode for faster work
@@ -63,7 +63,9 @@ function O() {
         "resources/js/composables",
         "resources/js/stores",
         "node_modules/@hassandomedenea/hdduihelpers/stores",
-        "node_modules/@hassandomedenea/hdduihelpers/composables"
+        "node_modules/@hassandomedenea/hdduihelpers/composables",
+        "node_modules/@hassandomedenea/hdduihelpers/plugins",
+        "node_modules/@hassandomedenea/hdduihelpers/utils"
       ],
       // Disable directory scanning in dev mode
       vueTemplate: !0,
@@ -82,19 +84,19 @@ function O() {
       dts: "resources/js/types/components.d.ts"
       //dts: false, // Disable DTS generation in dev mode for faster work
     }),
-    a({
+    i({
       fetchMode: "no-cors"
     }),
-    v({
+    h({
       headEnabled: !0
     })
   ];
-  return l ? [
+  return u ? [
     ...r,
     // Only include essential plugins in dev mode
     {
       name: "debug-paths",
-      transform(y, s) {
+      transform(g, s) {
         s.includes("basicAuth") && console.log("Resolved 3 path:", s, /HddUiHelpers\/.+\.(vue|ts)/.test(s));
       }
     },

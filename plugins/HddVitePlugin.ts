@@ -75,6 +75,8 @@ export default function HddUiHelpersPlugin(): PluginOption {
         "resources/js/stores",
         "node_modules/@hassandomedenea/hdduihelpers/stores",
         "node_modules/@hassandomedenea/hdduihelpers/composables",
+        "node_modules/@hassandomedenea/hdduihelpers/plugins",
+        "node_modules/@hassandomedenea/hdduihelpers/utils",
       ], // Disable directory scanning in dev mode
       vueTemplate: true,
       include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/, /HddUiHelpers\/.+\.(vue|ts)/],
