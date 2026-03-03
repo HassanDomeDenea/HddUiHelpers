@@ -10,7 +10,7 @@ import { readdirSync, statSync } from "fs";
 import vue from "@vitejs/plugin-vue";
 
 // Collect all .ts and .vue entry points
-const SKIP = ["node_modules", "dist", "plugins", "vite.config.ts"];
+const SKIP = ["node_modules", "dist", "vite.config.ts"];
 
 function getEntries(dir: string, base = ""): Record<string, string> {
   const entries: Record<string, string> = {};
