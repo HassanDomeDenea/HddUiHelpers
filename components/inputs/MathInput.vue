@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { formatNumberGrouped } from "HddUiHelpers/utils/useFormatters.ts";
-import { evaluate } from "mathjs";
-import type { InputNumberInputEvent } from "primevue/inputnumber";
-import { ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps, ElementClassType } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { formatNumberGrouped } from 'HddUiHelpers/utils/useFormatters.ts';
+import { evaluate } from 'mathjs';
+import type { InputNumberInputEvent } from 'primevue/inputnumber';
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps, ElementClassType } from './types';
+
 const props = withDefaults(
   defineProps<
     {
@@ -22,11 +23,11 @@ const props = withDefaults(
   },
 );
 const emits = defineEmits<{
-  (e: "keydown", event: KeyboardEvent);
-  (e: "input", event: InputNumberInputEvent);
-  (e: "updated", event: number | null);
+  (e: 'keydown', event: KeyboardEvent);
+  (e: 'input', event: InputNumberInputEvent);
+  (e: 'updated', event: number | null);
 }>();
-const value = defineModel<number>("modelValue");
+const value = defineModel<number>('modelValue');
 const { t } = useI18n();
 const inputRef = ref();
 
@@ -38,12 +39,12 @@ function select() {
   inputRef.value.$el.select();
 }
 
-const targetDir = "ltr";
+const targetDir = 'ltr';
 const localValue = ref<string | null>();
 watch(
   value,
   (_newValue) => {
-    localValue.value = _newValue?.toString() ?? "";
+    localValue.value = _newValue?.toString() ?? '';
   },
   {
     immediate: true,
@@ -53,12 +54,12 @@ watch(
 function doCalculation(_updateValues: boolean = true) {
   let finalVal = null;
   const currentValue = localValue.value?.trim();
-  if (currentValue === null || currentValue === "") {
+  if (currentValue === null || currentValue === '') {
     value.value = null;
     return;
   }
   try {
-    const _value = ("" + currentValue).replaceAll(" ", "");
+    const _value = ('' + currentValue).replaceAll(' ', '');
     finalVal = evaluate(_value);
   } catch (e) {
     // console.error(e);
@@ -72,7 +73,7 @@ function doCalculation(_updateValues: boolean = true) {
 
 function onInputKeydownEnter(event: KeyboardEvent) {
   doCalculation();
-  emits("keydown", event);
+  emits('keydown', event);
 }
 
 function onInputKeydownUp() {
@@ -96,17 +97,16 @@ function onInputKeydownDown() {
 }
 
 function updateValues(numericResult: number | null = null) {
-  localValue.value = numericResult?.toString() ?? "";
+  localValue.value = numericResult?.toString() ?? '';
   value.value = numericResult;
-  emits("updated", value.value);
+  emits('updated', value.value);
 }
 
 function hasMathOperatorNotFirst(str: string) {
   // This regex checks for + - / * that are NOT the first character
   return /[^]{1}.*[+\-/*]/.test(str.slice(1));
 }
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed, select, hasMathOperatorNotFirst });
 </script>

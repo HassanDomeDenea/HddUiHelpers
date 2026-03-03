@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { DynamicDialogRefInjectionType } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
-import { inject } from "vue";
-import { useI18n } from "vue-i18n";
+import type { DynamicDialogRefInjectionType } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
+import { inject } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const dialogRef = inject<DynamicDialogRefInjectionType | null>("dialogRef", null);
-const dialogUrl = "https://hdd-clinic.com/hddscanner/HddScannerSetup.exe";
+const dialogRef = inject<DynamicDialogRefInjectionType | null>('dialogRef', null);
+const dialogUrl = 'https://hdd-clinic.com/hddscanner/HddScannerSetup.exe';
 function downloadUrl() {
-  window.open(dialogUrl, "_blank");
+  window.open(dialogUrl, '_blank');
   dialogRef.value.close();
 }
 </script>

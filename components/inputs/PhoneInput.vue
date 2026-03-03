@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import {
-  cursorAtEndOfInput,
-  cursorAtStartOfInput,
-  useHddBaseInputUtils,
-} from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { InputMask } from "primevue";
-import InputText from "primevue/inputtext";
-import { computed, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { cursorAtEndOfInput, cursorAtStartOfInput, useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { InputMask } from 'primevue';
+import InputText from 'primevue/inputtext';
+import { computed, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -20,8 +16,8 @@ const props = withDefaults(
     } & BaseInputProps
   >(),
   {
-    defaultCountryCode: "964",
-    autocomplete: "off",
+    defaultCountryCode: '964',
+    autocomplete: 'off',
     withCountryCode: true,
   },
 );
@@ -30,8 +26,8 @@ const emits = defineEmits<{
   focusPrevious: [];
   focusNext: [];
 }>();
-const value = defineModel<any>("modelValue");
-const countryCode = defineModel<string>("countryCode");
+const value = defineModel<any>('modelValue');
+const countryCode = defineModel<string>('countryCode');
 const { t } = useI18n();
 
 const inputRef = ref();
@@ -43,27 +39,25 @@ function focus() {
 const countryCodesList = computed(() => {
   return [
     {
-      value: "964",
-      label: "+964",
-      code: "IQ",
-      flag: "i-twemoji:flag-iraq",
-      placeholder: "7x xxxx xxxx",
-      mask: "99 9999 9999",
+      value: '964',
+      label: '+964',
+      code: 'IQ',
+      flag: 'i-twemoji:flag-iraq',
+      placeholder: '7x xxxx xxxx',
+      mask: '99 9999 9999',
     },
     {
-      value: "98",
-      label: "+98",
-      code: "IR",
-      flag: "i-twemoji-flag-iran",
-      placeholder: "", // ?
-      mask: "", // ?
+      value: '98',
+      label: '+98',
+      code: 'IR',
+      flag: 'i-twemoji-flag-iran',
+      placeholder: '', // ?
+      mask: '', // ?
     },
   ];
 });
 
-const selectedCountryCode = computed(() =>
-  countryCodesList.value.find((e) => e.value === countryCode.value),
-);
+const selectedCountryCode = computed(() => countryCodesList.value.find((e) => e.value === countryCode.value));
 
 onMounted(() => {
   if (props.defaultCountryCode && !countryCode.value) {
@@ -75,11 +69,10 @@ function onCountryCodeChange() {
   setTimeout(focus, 5);
 }
 
-const onArrowUp = () => cursorAtStartOfInput(inputRef.value.$el) && emits("focusPrevious");
-const onArrowDown = () => cursorAtEndOfInput(inputRef.value.$el) && emits("focusNext");
+const onArrowUp = () => cursorAtStartOfInput(inputRef.value.$el) && emits('focusPrevious');
+const onArrowDown = () => cursorAtEndOfInput(inputRef.value.$el) && emits('focusNext');
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>

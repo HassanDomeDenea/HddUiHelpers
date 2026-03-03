@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import Highlight from "@tiptap/extension-highlight";
-import { ListItem } from "@tiptap/extension-list";
-import Subscript from "@tiptap/extension-subscript";
-import Superscript from "@tiptap/extension-superscript";
-import { TableKit } from "@tiptap/extension-table";
-import TextAlign from "@tiptap/extension-text-align";
-import { Color, FontFamily, FontSize, LineHeight, TextStyle } from "@tiptap/extension-text-style";
-import { Placeholder } from "@tiptap/extensions";
-import StarterKit from "@tiptap/starter-kit";
-import type { Editor } from "@tiptap/vue-3";
-import { EditorContent, useEditor } from "@tiptap/vue-3";
-import { BubbleMenu } from "@tiptap/vue-3/menus";
-import { CustomParagraph } from "HddUiHelpers/components/TipTapEditor/Extensions/CustomParagraphExtension.ts";
-import TipTapPageBreakerNodeExtension from "HddUiHelpers/components/TipTapEditor/Extensions/PageBreaker/TipTapPageBreakerNodeExtension.ts";
-import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
-import TipTapToolBar from "HddUiHelpers/components/TipTapEditor/TipTapToolBar.vue";
-import Button from "primevue/button";
-import { ref, watch } from "vue";
+import { CustomParagraph } from 'HddUiHelpers/components/TipTapEditor/Extensions/CustomParagraphExtension.ts';
+import TipTapPageBreakerNodeExtension from 'HddUiHelpers/components/TipTapEditor/Extensions/PageBreaker/TipTapPageBreakerNodeExtension.ts';
+import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
+import TipTapToolBar from 'HddUiHelpers/components/TipTapEditor/TipTapToolBar.vue';
+import Highlight from '@tiptap/extension-highlight';
+import { ListItem } from '@tiptap/extension-list';
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import { TableKit } from '@tiptap/extension-table';
+import TextAlign from '@tiptap/extension-text-align';
+import { Color, FontFamily, FontSize, LineHeight, TextStyle } from '@tiptap/extension-text-style';
+import { Placeholder } from '@tiptap/extensions';
+import StarterKit from '@tiptap/starter-kit';
+import type { Editor } from '@tiptap/vue-3';
+import { EditorContent, useEditor } from '@tiptap/vue-3';
+import { BubbleMenu } from '@tiptap/vue-3/menus';
+import Button from 'primevue/button';
+import { ref, watch } from 'vue';
 
 const { config } = defineProps<{
   config?: TipTapEditorConfig;
@@ -28,7 +28,7 @@ const editor = useEditor({
   editable: !(config?.disabled || config?.readonly),
   extensions: [
     TextAlign.configure({
-      types: ["heading", "paragraph"],
+      types: ['heading', 'paragraph'],
       defaultAlignment: config?.defaultAlignment,
     }),
     Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -52,7 +52,7 @@ const editor = useEditor({
     CustomParagraph,
     TipTapPageBreakerNodeExtension,
     Placeholder.configure({
-      placeholder: config?.placeholder ?? "…",
+      placeholder: config?.placeholder ?? '…',
     }),
     ...(config?.extraExtensions ?? []),
   ],

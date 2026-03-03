@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import {
-  getTreeAncestorsById,
-  useHddBaseInputUtils,
-} from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import TextWithTitleAttribute from "HddUiHelpers/components/misc/TextWithTitleAttribute.vue";
-import { isEmpty, reduce } from "lodash-es";
-import type { TreeNode } from "primevue/treenode";
-import {computed, MaybeRefOrGetter, onMounted, ref, toValue} from "vue";
-import { useI18n } from "vue-i18n";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { getTreeAncestorsById, useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import TextWithTitleAttribute from 'HddUiHelpers/components/misc/TextWithTitleAttribute.vue';
+import { isEmpty, reduce } from 'lodash-es';
+import type { TreeNode } from 'primevue/treenode';
+import { computed, type MaybeRefOrGetter, onMounted, ref, toValue } from 'vue';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 type TreeNodeWithId = TreeNode & {
   id?: any;
@@ -19,42 +16,39 @@ const props = withDefaults(
     {
       options: TreeNodeWithId[];
       optionLabelProperty?: string | null;
-      optionDisabledProperty?:
-        | string
-        | null
-        | ((event: { option: TreeNodeWithId; value: any }) => boolean);
+      optionDisabledProperty?: string | null | ((event: { option: TreeNodeWithId; value: any }) => boolean);
       optionValueProperty?: string | null;
       optionChildrenProperty?: string | null;
-      formatter?: (OptionOrValue: any, type: "option" | "value") => string;
+      formatter?: (OptionOrValue: any, type: 'option' | 'value') => string;
       clearable?: boolean;
       disabledValues?: MaybeRefOrGetter<any[]>;
       checkmark?: boolean;
       expanded?: boolean;
       fullPathValueLabel?: boolean;
       hasFilter?: boolean;
-      display?: "comma" | "chip";
-      selectionMode?: "single" | "multiple" | "checkbox";
+      display?: 'comma' | 'chip';
+      selectionMode?: 'single' | 'multiple' | 'checkbox';
     } & BaseInputProps
   >(),
   {
-    optionChildrenProperty: "children",
-    optionLabelProperty: "name",
-    optionDisabledProperty: "disabled",
-    optionValueProperty: "id",
+    optionChildrenProperty: 'children',
+    optionLabelProperty: 'name',
+    optionDisabledProperty: 'disabled',
+    optionValueProperty: 'id',
     clearable: false,
     checkmark: true,
     hasFilter: true,
     fullPathValueLabel: false,
     expanded: false,
-    display: "comma",
-    selectionMode: "single",
+    display: 'comma',
+    selectionMode: 'single',
   },
 );
 const emits = defineEmits<{
   change: [event: string[]];
 }>();
 const { t } = useI18n();
-const value = defineModel<any>("modelValue");
+const value = defineModel<any>('modelValue');
 const localValue = computed({
   get() {
     if (value.value) {
@@ -87,7 +81,7 @@ const localValue = computed({
         setVisibleElementValue(value.value);
         return;
       }
-      if (props.selectionMode === "single") {
+      if (props.selectionMode === 'single') {
         value.value = ids[0];
       } else {
         value.value = ids;
@@ -103,7 +97,7 @@ function convertOptionToTreeNodeIfNeeded(_option: any): TreeNodeWithId {
     return _option;
   } else {
     let isDisabled =
-      typeof props.optionDisabledProperty === "function"
+      typeof props.optionDisabledProperty === 'function'
         ? props.optionDisabledProperty({ option: _option, value: value.value })
         : (_option[props.optionDisabledProperty] ?? false);
     const _disabledValues = toValue(props.disabledValues);
@@ -117,7 +111,7 @@ function convertOptionToTreeNodeIfNeeded(_option: any): TreeNodeWithId {
       key: _option[props.optionValueProperty].toString(),
       label: _option[props.optionLabelProperty],
       selectable: !isDisabled,
-      styleClass: isDisabled ? "text-muted" : null,
+      styleClass: isDisabled ? 'text-muted' : null,
       children: _option[props.optionChildrenProperty]?.map(convertOptionToTreeNodeIfNeeded) ?? [],
     };
   }
@@ -173,7 +167,7 @@ function onInputBlur() {}
 
 function setVisibleElementValue(value: any) {
   if (value) {
-    if (props.selectionMode === "single") {
+    if (props.selectionMode === 'single') {
       inputRef.value.d_value = {
         [Array.isArray(value) ? value[0] : value]: true,
       };
@@ -218,22 +212,17 @@ onMounted(() => {
 });
 
 function getFullPathLabel(node: TreeNodeWithId): string {
-  const path = getTreeAncestorsById(
-    node[props.optionValueProperty],
-    localOptions.value,
-    props.optionValueProperty,
-  );
+  const path = getTreeAncestorsById(node[props.optionValueProperty], localOptions.value, props.optionValueProperty);
   // join labels from root -> ... -> node
-  if (!path || !path.length) return "";
+  if (!path || !path.length) return '';
   return path
     .slice() // copy
     .reverse() // our helper returns [node, parent, ...root], reverse to root..node
     .map((n) => n.label)
-    .join(" > ");
+    .join(' > ');
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed, setVisibleElementValue, getFullPathLabel });
 </script>

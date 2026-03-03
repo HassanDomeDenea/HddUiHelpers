@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { get, set, snakeCase, startCase } from "lodash-es";
-import { RadioButton } from "primevue";
-import { computed, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import type { ComponentExposed } from "vue-component-type-helpers";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { get, set, snakeCase, startCase } from 'lodash-es';
+import type { RadioButton } from 'primevue';
+import { computed, useTemplateRef } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -15,32 +15,32 @@ const props = withDefaults(
       optionLabelProperty?: string | null;
       optionDisabledProperty?: string | null;
       optionValueProperty?: string | null;
-      formatter?: (OptionOrValue: any, type: "option" | "value") => string;
+      formatter?: (OptionOrValue: any, type: 'option' | 'value') => string;
       clearable?: boolean;
       autoTranslateLabels?: boolean;
     } & BaseInputProps
   >(),
   {
-    optionLabelProperty: "name",
-    optionDisabledProperty: "disabled",
-    optionValueProperty: "id",
+    optionLabelProperty: 'name',
+    optionDisabledProperty: 'disabled',
+    optionValueProperty: 'id',
     clearable: false,
   },
 );
 const emits = defineEmits<{
   change: [event: Event];
 }>();
-const value = defineModel<any>("modelValue", { default: null });
+const value = defineModel<any>('modelValue', { default: null });
 const { t } = useI18n();
 
-const inputRefs = useTemplateRef<ComponentExposed<typeof RadioButton>[]>("inputRefs");
+const inputRefs = useTemplateRef<ComponentExposed<typeof RadioButton>[]>('inputRefs');
 
 const inputRef = computed<any>(() => {
   return inputRefs.value?.[0];
 });
 
 function focus() {
-  inputRef.value.$el?.querySelector("input")?.focus();
+  inputRef.value.$el?.querySelector('input')?.focus();
 }
 
 function onLabelClicked() {
@@ -52,7 +52,7 @@ function onLabelClicked() {
 const mappedOptions = computed(() => {
   return props.options
     .map((option) => {
-      if (typeof option === "string") {
+      if (typeof option === 'string') {
         return {
           [props.optionValueProperty]: option,
           [props.optionLabelProperty]: props.autoTranslateLabels ? t(startCase(option)) : option,
@@ -61,11 +61,7 @@ const mappedOptions = computed(() => {
 
       if (props.autoTranslateLabels && !option._skip_auto_translation) {
         option = { ...option };
-        set(
-          option,
-          props.optionLabelProperty,
-          t(startCase(get(option, props.optionLabelProperty))),
-        );
+        set(option, props.optionLabelProperty, t(startCase(get(option, props.optionLabelProperty))));
       }
 
       return option;
@@ -73,8 +69,7 @@ const mappedOptions = computed(() => {
     .filter((option) => option.visible !== false);
 });
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>

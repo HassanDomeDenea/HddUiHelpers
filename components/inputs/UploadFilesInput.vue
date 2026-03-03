@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { reduce } from "lodash-es";
-import {computed, ref, useTemplateRef} from "vue";
-import { useI18n } from "vue-i18n";
-import { rotateImageFile } from "HddUiHelpers/utils/filesManipulations";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
-import {ComponentExposed} from "vue-component-type-helpers";
-import Button from "primevue/button";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { rotateImageFile } from 'HddUiHelpers/utils/filesManipulations';
+import { reduce } from 'lodash-es';
+import type Button from 'primevue/button';
+import { computed, ref, useTemplateRef } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -48,21 +48,21 @@ interface FileModifyType {
   remove?: boolean;
 }
 
-const newFiles = defineModel<File[]>("newFiles", { default: ref([]).value });
-const oldFiles = defineModel<MediaFileModelType[]>("oldFiles", { default: ref([]).value });
-const toBeRemovedFiles = defineModel<string[]>("toBeRemovedFiles", { default: ref([]).value });
-const toBeModifiedFiles = defineModel<{ [p: string]: FileModifyType }>("toBeModifiedFiles", {
+const newFiles = defineModel<File[]>('newFiles', { default: ref([]).value });
+const oldFiles = defineModel<MediaFileModelType[]>('oldFiles', { default: ref([]).value });
+const toBeRemovedFiles = defineModel<string[]>('toBeRemovedFiles', { default: ref([]).value });
+const toBeModifiedFiles = defineModel<{ [p: string]: FileModifyType }>('toBeModifiedFiles', {
   default: ref({}).value,
 });
 
-const fileInputRef = useTemplateRef<HTMLInputElement>("fileInputRef");
-const buttonRef = useTemplateRef<ComponentExposed<typeof Button>>("buttonRef");
+const fileInputRef = useTemplateRef<HTMLInputElement>('fileInputRef');
+const buttonRef = useTemplateRef<ComponentExposed<typeof Button>>('buttonRef');
 const newFilesImageRefs = ref({});
 const oldFilesImageRefs = ref({});
 const { t } = useI18n();
 
 function focus() {
-  //@ts-ignore
+  //@ts-expect-error
   buttonRef.value?.$el.focus();
 }
 
@@ -77,7 +77,7 @@ function onFileSelection() {
     newFiles.value = Object.values(fileInputRef.value.files || []);
     // newFiles.value.push(...Object.values(fileInputRef.value.files || []))
   }
-  fileInputRef.value.value = "";
+  fileInputRef.value.value = '';
 }
 
 function fileToObjectUrl(file: File) {
@@ -98,10 +98,10 @@ function removeFile(fileIndex: number) {
 }
 
 const filesToAccept = computed(() => {
-  return (props.accept ?? props.acceptImages) ? "image/png,image/jpeg" : undefined;
+  return (props.accept ?? props.acceptImages) ? 'image/png,image/jpeg' : undefined;
 });
 
-function markOldFileToBeRemoved(id: number|string, remove = true) {
+function markOldFileToBeRemoved(id: number | string, remove = true) {
   if (remove) {
     if (!toBeModifiedFiles.value) {
       toBeModifiedFiles.value = {};
@@ -148,7 +148,7 @@ function onOldImageThumbClick(image: MediaFileModelType, imageIndex: number) {
   }
 }
 
-function onOldImageRotate(image: MediaFileModelType, direction: "left" | "right") {
+function onOldImageRotate(image: MediaFileModelType, direction: 'left' | 'right') {
   if (!toBeModifiedFiles.value) {
     toBeModifiedFiles.value = {};
   }
@@ -158,7 +158,7 @@ function onOldImageRotate(image: MediaFileModelType, direction: "left" | "right"
   if (!toBeModifiedFiles.value[image.id].rotate) {
     toBeModifiedFiles.value[image.id].rotate = 0;
   }
-  toBeModifiedFiles.value[image.id].rotate += direction === "left" ? -90 : +90;
+  toBeModifiedFiles.value[image.id].rotate += direction === 'left' ? -90 : +90;
   if (toBeModifiedFiles.value[image.id].rotate >= 360) {
     toBeModifiedFiles.value[image.id].rotate = toBeModifiedFiles.value[image.id].rotate % 360;
   }
@@ -166,12 +166,8 @@ function onOldImageRotate(image: MediaFileModelType, direction: "left" | "right"
 
 const currentNewImageRotate = ref(0);
 
-function onNewImageRotate(
-  imageIndex: number,
-  direction: "left" | "right",
-  autoSubmit: boolean = false,
-) {
-  currentNewImageRotate.value += direction === "left" ? -90 : +90;
+function onNewImageRotate(imageIndex: number, direction: 'left' | 'right', autoSubmit: boolean = false) {
+  currentNewImageRotate.value += direction === 'left' ? -90 : +90;
   if (currentNewImageRotate.value >= 360) {
     currentNewImageRotate.value = currentNewImageRotate.value % 360;
   }
@@ -183,15 +179,11 @@ function onNewImageRotate(
 
 async function onNewImagePreviewHide(imageIndex: number) {
   if (currentNewImageRotate.value !== 0) {
-    newFiles.value[imageIndex] = await rotateImageFile(
-      newFiles.value[imageIndex],
-      currentNewImageRotate.value,
-    );
+    newFiles.value[imageIndex] = await rotateImageFile(newFiles.value[imageIndex], currentNewImageRotate.value);
   }
   currentNewImageRotate.value = 0;
 }
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>

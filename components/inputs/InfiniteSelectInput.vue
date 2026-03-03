@@ -1,15 +1,15 @@
 <script setup lang="ts" generic="T extends any">
-import { vElementVisibility } from "@vueuse/components";
-import type { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
-import { get } from "lodash-es";
-import type { SelectChangeEvent, SelectFilterEvent } from "primevue/select";
-import PSelect from "primevue/select";
-import { computed, nextTick, type Ref, ref, useTemplateRef, watch } from "vue";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps, ElementClassType } from "./types";
-import {ApiResponseData, InfiniteScrollResponseData} from "HddUiHelpers/types/types.ts";
+import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import type { ApiResponseData, InfiniteScrollResponseData } from 'HddUiHelpers/types/types.ts';
+import { vElementVisibility } from '@vueuse/components';
+import { get } from 'lodash-es';
+import type { SelectChangeEvent, SelectFilterEvent } from 'primevue/select';
+import PSelect from 'primevue/select';
+import { computed, nextTick, type Ref, ref, useTemplateRef, watch } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps, ElementClassType } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -32,23 +32,20 @@ const props = withDefaults(
       ajaxParams?: { [key: string]: any } | ((params: { [key: string]: any }) => void);
       autoCompleteClass?: ElementClassType;
       optionLabelFormatter?: (item: OptionInterface | ValueInterface, index: number) => string;
-      valueLabelFormatter?: (
-        item: OptionInterface | ValueInterface,
-        placeholder?: string,
-      ) => string;
+      valueLabelFormatter?: (item: OptionInterface | ValueInterface, placeholder?: string) => string;
       onKeydown?: (event: KeyboardEvent) => void;
       optionAndValueLabelFormatter?: (item: OptionInterface | ValueInterface) => string;
       valueSameAsLabel?: boolean;
     } & BaseInputProps
   >(),
   {
-    optionLabelProperty: "name",
-    optionValueProperty: "id",
-    optionDisabledProperty: "disabled",
+    optionLabelProperty: 'name',
+    optionValueProperty: 'id',
+    optionDisabledProperty: 'disabled',
     searchOnFocus: true,
     withoutObject: false,
-    inputClass: "w-full",
-    autoCompleteClass: "",
+    inputClass: 'w-full',
+    autoCompleteClass: '',
     noManualInput: false,
     useIdModel: false,
     clearOnDblClick: false,
@@ -63,11 +60,11 @@ const emits = defineEmits<{
   itemSelected: [event: T];
 }>();
 
-const selectedItem = defineModel<OptionInterface | ValueInterface | null>("item", {
+const selectedItem = defineModel<OptionInterface | ValueInterface | null>('item', {
   default: null,
 });
 
-const selectedItemId = defineModel<string | number | null>("modelValue", { default: null });
+const selectedItemId = defineModel<string | number | null>('modelValue', { default: null });
 const apiClient = useApiClient();
 const items: Ref<OptionInterface[]> = ref([]);
 const total = ref(0);
@@ -83,35 +80,28 @@ interface OptionInterface {
 
 type ValueInterface = string;
 
-const computedOptionValueProperty = computed(() =>
-  props.valueSameAsLabel ? props.optionLabelProperty : props.optionValueProperty,
-);
+const computedOptionValueProperty = computed(() => (props.valueSameAsLabel ? props.optionLabelProperty : props.optionValueProperty));
 
-async function search(event: {
-  query?: string;
-  offset?: number;
-  limit?: number;
-  onlyId?: boolean;
-}) {
-  searchQueryName.value = event.query || "";
+async function search(event: { query?: string; offset?: number; limit?: number; onlyId?: boolean }) {
+  searchQueryName.value = event.query || '';
   const params = {
-    name: event.query || "",
+    name: event.query || '',
     offset: event.offset || 0,
     limit: event.limit,
     only_id: event.onlyId ? 1 : 0,
     id_field: computedOptionValueProperty.value,
   };
-  if (typeof props.ajaxParams === "object") {
+  if (typeof props.ajaxParams === 'object') {
     for (const key in props.ajaxParams) {
       params[key] = props.ajaxParams[key];
     }
-  } else if (typeof props.ajaxParams === "function") {
+  } else if (typeof props.ajaxParams === 'function') {
     props.ajaxParams(params);
   }
   return apiClient
     .request<ApiResponseData<InfiniteScrollResponseData>>({
       // method: 'get',
-      ...(typeof props.url === "string" ? { url: props.url } : props.url),
+      ...(typeof props.url === 'string' ? { url: props.url } : props.url),
       params: params,
     })
     .then((response) => {
@@ -130,14 +120,14 @@ function lastElementVisibilityChanged(isVisible: boolean) {
   }
 }
 
-const inputRef = useTemplateRef("inputRef");
+const inputRef = useTemplateRef('inputRef');
 
 function focus(_show: boolean = false) {
   if (!props.disabled) {
     if (_show) {
       inputRef.value?.show();
     } else {
-      //@ts-ignore
+      //@ts-expect-error
       inputRef.value?.$refs.focusInput.focus();
     }
   }
@@ -145,19 +135,19 @@ function focus(_show: boolean = false) {
 
 function onFilterKeyDown(event: KeyboardEvent) {
   if ((!inputRef.value as any)?.overlayVisible as boolean) {
-    emits("keydown", event);
+    emits('keydown', event);
   }
 }
 
 function onSelectKeyDown(event: KeyboardEvent) {
-  if (props.onKeydown && event.code === "Enter") {
+  if (props.onKeydown && event.code === 'Enter') {
     inputRef.value?.hide();
   }
-  emits("keydown", event);
+  emits('keydown', event);
 }
 
 function onFilterBlur(event: FocusEvent) {
-  emits("blur", event);
+  emits('blur', event);
 }
 
 const localFilterFields = computed(() => {
@@ -173,9 +163,7 @@ watch(
     if (selectedItem.value?.[computedOptionValueProperty.value] === selectedItemId.value) {
       return;
     }
-    let existsItem = items.value.find(
-      (v) => v[computedOptionValueProperty.value] === selectedItemId.value,
-    );
+    let existsItem = items.value.find((v) => v[computedOptionValueProperty.value] === selectedItemId.value);
     if (existsItem) {
       selectedItem.value = existsItem;
     } else {
@@ -189,9 +177,7 @@ watch(
       } else {
         isInitiallyLoading.value = true;
         search({ query: `${selectedItemId.value}`, limit: 1, onlyId: true }).then(() => {
-          existsItem = items.value.find(
-            (v) => v[computedOptionValueProperty.value] === selectedItemId.value,
-          );
+          existsItem = items.value.find((v) => v[computedOptionValueProperty.value] === selectedItemId.value);
           nextTick(() => {
             if (existsItem) {
               selectedItem.value = existsItem;
@@ -215,7 +201,7 @@ function clear() {
   nextTick(() => {
     setTimeout(focus, 50);
   });
-  emits("cleared");
+  emits('cleared');
 }
 
 function getOptionText(option: OptionInterface, index: number) {
@@ -224,25 +210,21 @@ function getOptionText(option: OptionInterface, index: number) {
   } else if (props.optionAndValueLabelFormatter) {
     return props.optionAndValueLabelFormatter(option);
   } else {
-    return option[props.optionLabelProperty] ?? "&nbsp;";
+    return option[props.optionLabelProperty] ?? '&nbsp;';
   }
 }
 
 function getValueText(value: string, placeholder?: string) {
-  const placeholderText = placeholder
-    ? `<span class="text-muted px-2">${placeholder}</span>`
-    : undefined;
+  const placeholderText = placeholder ? `<span class="text-muted px-2">${placeholder}</span>` : undefined;
   if (!selectedItem.value) {
     return placeholderText ?? `&nbsp;`;
   }
   if (props.valueLabelFormatter) {
-    return (
-      props.valueLabelFormatter(selectedItem.value, placeholder) ?? placeholderText ?? "&nbsp;"
-    );
+    return props.valueLabelFormatter(selectedItem.value, placeholder) ?? placeholderText ?? '&nbsp;';
   } else if (props.optionAndValueLabelFormatter) {
-    return props.optionAndValueLabelFormatter(selectedItem.value) ?? placeholderText ?? "&nbsp;";
+    return props.optionAndValueLabelFormatter(selectedItem.value) ?? placeholderText ?? '&nbsp;';
   } else {
-    return selectedItem.value[props.optionLabelProperty] ?? placeholderText ?? value ?? "&nbsp;";
+    return selectedItem.value[props.optionLabelProperty] ?? placeholderText ?? value ?? '&nbsp;';
   }
 }
 
@@ -253,17 +235,15 @@ function onSelectBeforeShow() {
 
 function onSelectChange(evt: SelectChangeEvent) {
   selectedItemId.value = evt.value;
-  selectedItem.value =
-    items.value.find((e) => e[computedOptionValueProperty.value] === evt.value) || null;
-  emits("itemSelected", selectedItem.value as T);
+  selectedItem.value = items.value.find((e) => e[computedOptionValueProperty.value] === evt.value) || null;
+  emits('itemSelected', selectedItem.value as T);
 }
 
 function onSelectFilterInput(evt: SelectFilterEvent) {
   search({ query: evt.value });
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed, clear, disabled: props.disabled, selectedItem });
 </script>

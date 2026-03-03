@@ -1,31 +1,21 @@
-import type {
-  HddPermission,
-  HddGlobalOption,
-  HddUserOption,
-  GlobalOptionsMap,
-  UserOptionsMap,
-} from "HddUiHelpers/types/types";
-import { configureEcho, echo, echoIsConfigured } from "@laravel/echo-vue";
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { useApiClient } from "HddUiHelpers/stores/apiClient";
-import type { BasicUserData } from "HddUiHelpers/types/types";
-import { cloneDeep, each } from "lodash-es";
-import { defineStore } from "pinia";
-import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers";
-import { safeRequest } from "../utils/safeTry";
-import { useStorage } from "@vueuse/core";
-import { computed, Ref, ref, watch } from "vue";
+import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient';
+import type { BasicUserData, GlobalOptionsMap, HddGlobalOption, HddPermission, HddUserOption, UserOptionsMap } from 'HddUiHelpers/types/types';
+import { configureEcho, echo, echoIsConfigured } from '@laravel/echo-vue';
+import { useStorage } from '@vueuse/core';
+import { useCookies } from '@vueuse/integrations/useCookies';
+import { cloneDeep, each } from 'lodash-es';
+import { defineStore } from 'pinia';
+import { computed, type Ref, ref, watch } from 'vue';
+import { safeRequest } from '../utils/safeTry';
 
-export const useBasicAuthStore = defineStore("basicAuth", () => {
+export const useBasicAuthStore = defineStore('basicAuth', () => {
   const user = ref<BasicUserData | null>(null);
   const hddUiHelpers = useHddUiHelpers();
   const connectedUsers = ref<BasicUserData[]>([]);
   const apiClient = useApiClient();
   const cookies = useCookies();
-  const authorizationToken = useStorage<string | null>(
-    "authorizationToken",
-    new URLSearchParams(window.location.search).get("_authorization_token"),
-  );
+  const authorizationToken = useStorage<string | null>('authorizationToken', new URLSearchParams(window.location.search).get('_authorization_token'));
   const isLoggedIn = computed(() => !!user.value);
 
   const options = ref<UserOptionsMap>(cloneDeep(hddUiHelpers.defaultUserOptions));
@@ -46,8 +36,8 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
     resetOptions(_user.options);
     globalOptions.value = _user.global_options ?? {};
     authorizationToken.value = _token;
-    cookies.set("authorizationToken", _token, {
-      secure: window.location.protocol === "https:",
+    cookies.set('authorizationToken', _token, {
+      secure: window.location.protocol === 'https:',
     });
   }
 
@@ -55,40 +45,37 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
     user.value = null;
     resetOptions();
     authorizationToken.value = null;
-    cookies.remove("authorizationToken");
+    cookies.remove('authorizationToken');
   }
 
   async function changeOption(option: HddUserOption, value: UserOptionsMap[HddUserOption]) {
     try {
-      await apiClient.request({ method: "post", url: "/api/change-option" }, { option, value });
+      await apiClient.request({ method: 'post', url: '/api/change-option' }, { option, value });
       options.value[option] = value as any;
     } catch (error: any) {
-      apiClient.toastError(error?.response?.data?.message ?? "");
+      apiClient.toastError(error?.response?.data?.message ?? '');
       throw error;
     }
   }
 
-  async function changeGlobalOption(
-    option: HddGlobalOption,
-    value: GlobalOptionsMap[HddGlobalOption],
-  ) {
+  async function changeGlobalOption(option: HddGlobalOption, value: GlobalOptionsMap[HddGlobalOption]) {
     try {
       // Check if the value is a File
       const urlObject = {
-        method: "put",
-        url: "/api/global_options",
+        method: 'put',
+        url: '/api/global_options',
       };
       if (value instanceof File) {
         const formData = new FormData();
-        formData.append("option", option);
-        formData.append("value", value);
-        formData.append("_method", urlObject.method);
+        formData.append('option', option);
+        formData.append('value', value);
+        formData.append('_method', urlObject.method);
         const response = await apiClient.request(
           {
             url: urlObject.url,
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "multipart/form-data",
+              'Content-Type': 'multipart/form-data',
             },
           },
           formData,
@@ -100,7 +87,7 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
         globalOptions.value[option] = value;
       }
     } catch (error: any) {
-      apiClient.toastError(error?.response?.data?.message ?? "");
+      apiClient.toastError(error?.response?.data?.message ?? '');
       throw error;
     }
   }
@@ -110,14 +97,14 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
   }
 
   const isSuperAdmin = computed(() => {
-    return user.value?.role_names?.includes("super_admin") === true;
+    return user.value?.role_names?.includes('super_admin') === true;
   });
 
   function canAny(...permissions: HddPermission[]): boolean {
     if (!user.value) {
       return false;
     }
-    if (user.value.role_names?.includes("super_admin")) {
+    if (user.value.role_names?.includes('super_admin')) {
       return true;
     }
     if (!user.value.permission_names) {
@@ -126,11 +113,7 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
     return permissions.some((p) => user.value?.permission_names?.includes(p));
   }
 
-  function ifCan<TValue>(
-    permission: HddPermission | HddPermission[],
-    value: TValue,
-    elseValue = undefined,
-  ) {
+  function ifCan<TValue>(permission: HddPermission | HddPermission[], value: TValue, elseValue = undefined) {
     if (can(permission)) {
       return value;
     } else {
@@ -146,7 +129,7 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
     if (!user.value) {
       return false;
     }
-    if (user.value.role_names?.includes("super_admin")) {
+    if (user.value.role_names?.includes('super_admin')) {
       return true;
     }
     if (!user.value.permission_names) {
@@ -163,10 +146,9 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
     watch(
       isLoggedIn,
       (val) => {
-        console.log(hddUiHelpers.presenceUsersChannel);
         if (val) {
           configureEcho({
-            broadcaster: "reverb",
+            broadcaster: 'reverb',
             bearerToken: authorizationToken.value,
           });
           if (hddUiHelpers.presenceUsersChannel) {
@@ -203,7 +185,7 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
   }
 
   const userFullName = computed(() => {
-    return user.value?.name ?? "";
+    return user.value?.name ?? '';
   });
 
   return {
@@ -232,7 +214,7 @@ export async function setUserFromToken() {
   const authStore = useBasicAuthStore();
   const apiClient = useApiClient();
   if (authStore.authorizationToken) {
-    const [data] = await safeRequest(() => apiClient.get<BasicUserData>("/api/me"));
+    const [data] = await safeRequest(() => apiClient.get<BasicUserData>('/api/me'));
     if (data) {
       authStore.login(data, authStore.authorizationToken);
     }

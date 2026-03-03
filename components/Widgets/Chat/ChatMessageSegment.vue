@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useElementVisibility, useNow, watchOnce } from "@vueuse/core";
-import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
-import moment from "moment/moment";
-import { computed, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import {MessageData, UserChatData} from "HddUiHelpers/components/Widgets/Chat/chatTypes.ts";
+import type { MessageData, UserChatData } from 'HddUiHelpers/components/Widgets/Chat/chatTypes.ts';
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
+import { useElementVisibility, useNow, watchOnce } from '@vueuse/core';
+import moment from 'moment/moment';
+import { computed, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const authStore = useBasicAuthStore();
 const { message, activeContact } = defineProps<{
@@ -15,7 +15,7 @@ const emits = defineEmits<{
   seen: [message: MessageData];
 }>();
 const { t } = useI18n();
-const mainMessageRef = useTemplateRef<HTMLDivElement>("mainMessageRef");
+const mainMessageRef = useTemplateRef<HTMLDivElement>('mainMessageRef');
 const currentUserId = computed(() => authStore.user?.id);
 const isSender = computed(() => message.sender_id === currentUserId.value);
 const now = useNow({
@@ -24,28 +24,28 @@ const now = useNow({
 const avatarUrl = computed(() => {
   return isSender.value ? authStore.user?.avatar_thumb_url : activeContact?.avatar_thumb_url;
 });
-const today = computed(() => moment(now.value).format("YYYY-MM-DD"));
-const yesterday = computed(() => moment(now.value).subtract(1, "day").format("YYYY-MM-DD"));
+const today = computed(() => moment(now.value).format('YYYY-MM-DD'));
+const yesterday = computed(() => moment(now.value).subtract(1, 'day').format('YYYY-MM-DD'));
 const messageTimestampString = computed(() => {
   const messageMoment = moment(message.sent_at);
-  if (Math.abs(messageMoment.diff(now.value, "hours")) < 13) {
+  if (Math.abs(messageMoment.diff(now.value, 'hours')) < 13) {
     return {
-      date: messageMoment.locale(t("lang_code")).fromNow(),
-      time: "",
+      date: messageMoment.locale(t('lang_code')).fromNow(),
+      time: '',
     };
   }
-  const messageDate = messageMoment.format("YYYY-MM-DD");
-  let dateStmt = "";
+  const messageDate = messageMoment.format('YYYY-MM-DD');
+  let dateStmt = '';
   if (today.value === messageDate) {
-    dateStmt = t("Today");
+    dateStmt = t('Today');
   } else if (yesterday.value === messageDate) {
-    dateStmt = t("Yesterday");
+    dateStmt = t('Yesterday');
   } else {
     dateStmt = messageDate;
   }
   return {
     date: dateStmt,
-    time: messageMoment.format("HH:mm A"),
+    time: messageMoment.format('HH:mm A'),
   };
 });
 if (!isSender.value && !message.read_at) {
@@ -56,7 +56,7 @@ if (!isSender.value && !message.read_at) {
   });
   watchOnce(targetIsVisible, (value) => {
     if (value === true) {
-      emits("seen", message);
+      emits('seen', message);
     }
   });
 }

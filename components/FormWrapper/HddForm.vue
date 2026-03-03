@@ -1,55 +1,43 @@
 <script setup lang="ts" generic="T extends string">
-import { AxiosResponse, isAxiosError } from "axios";
-import { getFieldSlotName } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
-import CheckboxInput from "HddUiHelpers/components/inputs/CheckboxInput.vue";
-import FormObjectInput from "HddUiHelpers/components/inputs/FormObjectInput.vue";
-import ListBoxInput from "HddUiHelpers/components/inputs/ListBoxInput.vue";
-import MultiSelectInput from "HddUiHelpers/components/inputs/MultiSelectInput.vue";
-import RadioButtonInput from "HddUiHelpers/components/inputs/RadioButtonInput.vue";
-import SelectInput from "HddUiHelpers/components/inputs/SelectInput.vue";
-import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
-import type { BaseInputProps } from "HddUiHelpers/components/inputs/types";
-import { useApiClient } from "HddUiHelpers/stores/apiClient";
-import {
-  cloneDeep,
-  find,
-  get,
-  map,
-  mapValues,
-  maxBy,
-  omit,
-  reduce,
-  set,
-  throttle,
-  uniqueId,
-  unset,
-} from "lodash-es";
-import Button from "primevue/button";
-import { computed, nextTick, onMounted, ref, toValue, useTemplateRef, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { ComponentExposed } from "vue-component-type-helpers";
-import type { UseHddFormOptions } from "../../utils/useHddForm";
-import { useHddForm } from "../../utils/useHddForm";
-import type { FieldError, HddFormField, HddFormProps, HddFormValues } from "./types";
-import { isAxiosValidationError } from "./types";
-import {syncRef} from "@vueuse/core";
-import type {MaybeRefOrGetter} from 'vue'
-import ImageInput from "HddUiHelpers/components/inputs/ImageInput.vue";
-import InfiniteSelectInput from "HddUiHelpers/components/inputs/InfiniteSelectInput.vue";
-import TipTapEditorInput from "HddUiHelpers/components/inputs/TipTapEditorInput.vue";
-import InfiniteMultiSelectInput from "HddUiHelpers/components/inputs/InfiniteMultiSelectInput.vue";
-import AutoCompleteInput from "HddUiHelpers/components/inputs/AutoCompleteInput.vue";
-import DatePickerInput from "HddUiHelpers/components/inputs/DatePickerInput.vue";
-import TextAreaInput from "HddUiHelpers/components/inputs/TextAreaInput.vue";
-import MathInput from "HddUiHelpers/components/inputs/MathInput.vue";
-import NumberInput from "HddUiHelpers/components/inputs/NumberInput.vue";
-import TreeSelectInput from "HddUiHelpers/components/inputs/TreeSelectInput.vue";
-import PhoneInput from "HddUiHelpers/components/inputs/PhoneInput.vue";
-import PasswordInput from "HddUiHelpers/components/inputs/PasswordInput.vue";
-import ToggleSwitchInput from "HddUiHelpers/components/inputs/ToggleSwitchInput.vue";
-import ColorPickerInput from "HddUiHelpers/components/inputs/ColorPickerInput.vue";
+import { getFieldSlotName } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
+import AutoCompleteInput from 'HddUiHelpers/components/inputs/AutoCompleteInput.vue';
+import CheckboxInput from 'HddUiHelpers/components/inputs/CheckboxInput.vue';
+import ColorPickerInput from 'HddUiHelpers/components/inputs/ColorPickerInput.vue';
+import DatePickerInput from 'HddUiHelpers/components/inputs/DatePickerInput.vue';
+import FormObjectInput from 'HddUiHelpers/components/inputs/FormObjectInput.vue';
+import ImageInput from 'HddUiHelpers/components/inputs/ImageInput.vue';
+import InfiniteMultiSelectInput from 'HddUiHelpers/components/inputs/InfiniteMultiSelectInput.vue';
+import InfiniteSelectInput from 'HddUiHelpers/components/inputs/InfiniteSelectInput.vue';
+import ListBoxInput from 'HddUiHelpers/components/inputs/ListBoxInput.vue';
+import MathInput from 'HddUiHelpers/components/inputs/MathInput.vue';
+import MultiSelectInput from 'HddUiHelpers/components/inputs/MultiSelectInput.vue';
+import NumberInput from 'HddUiHelpers/components/inputs/NumberInput.vue';
+import PasswordInput from 'HddUiHelpers/components/inputs/PasswordInput.vue';
+import PhoneInput from 'HddUiHelpers/components/inputs/PhoneInput.vue';
+import RadioButtonInput from 'HddUiHelpers/components/inputs/RadioButtonInput.vue';
+import SelectInput from 'HddUiHelpers/components/inputs/SelectInput.vue';
+import TextAreaInput from 'HddUiHelpers/components/inputs/TextAreaInput.vue';
+import TextInput from 'HddUiHelpers/components/inputs/TextInput.vue';
+import TipTapEditorInput from 'HddUiHelpers/components/inputs/TipTapEditorInput.vue';
+import ToggleSwitchInput from 'HddUiHelpers/components/inputs/ToggleSwitchInput.vue';
+import TreeSelectInput from 'HddUiHelpers/components/inputs/TreeSelectInput.vue';
+import type { BaseInputProps } from 'HddUiHelpers/components/inputs/types';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient';
+import { syncRef } from '@vueuse/core';
+import { type AxiosResponse, isAxiosError } from 'axios';
+import { cloneDeep, find, get, map, mapValues, maxBy, omit, reduce, set, throttle, uniqueId, unset } from 'lodash-es';
+import type Button from 'primevue/button';
+import type { MaybeRefOrGetter } from 'vue';
+import { computed, nextTick, onMounted, ref, toValue, useTemplateRef, watch } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useI18n } from 'vue-i18n';
+import type { UseHddFormOptions } from '../../utils/useHddForm';
+import { useHddForm } from '../../utils/useHddForm';
+import type { FieldError, HddFormField, HddFormProps, HddFormValues } from './types';
+import { isAxiosValidationError } from './types';
+
 const {
-  defaultValidationMode = "onSubmit",
+  defaultValidationMode = 'onSubmit',
   summarizeErrorsAtTop = true,
   showFieldErrorBelowIt = false,
   showFieldErrorsPopover = false,
@@ -59,8 +47,8 @@ const {
   isEditing,
   fieldsContainerClass,
   formName,
-  urlMethod = "post",
-  submitText = "",
+  urlMethod = 'post',
+  submitText = '',
   unifyLabelsWidth = false,
   fields,
   fixedLabelWidth,
@@ -101,7 +89,7 @@ const hddFormOptions = computed(() => {
     defaultValidationMode,
     staticInitialValues: initialValues,
     onSubmit: (values, context) => {
-      emits("submit", values, context);
+      emits('submit', values, context);
       if (url) {
         return submitToUrl()
           .then((result: unknown) => {
@@ -121,16 +109,16 @@ const hddFormOptions = computed(() => {
   } as UseHddFormOptions<T>;
 });
 
-const containerRef = useTemplateRef("containerRef");
-const fieldsContainerRef = useTemplateRef("fieldsContainerRef");
-const submitButtonRef = useTemplateRef<ComponentExposed<typeof Button>>("submitButtonRef");
+const containerRef = useTemplateRef('containerRef');
+const fieldsContainerRef = useTemplateRef('fieldsContainerRef');
+const submitButtonRef = useTemplateRef<ComponentExposed<typeof Button>>('submitButtonRef');
 const form = useHddForm<T>(hddFormOptions.value as UseHddFormOptions<T>);
 
 const isSubmitting = ref(false);
 
 async function submitToUrl(): Promise<any> {
   return new Promise((resolve, reject) => {
-    if (!url) return reject("No url provided");
+    if (!url) return reject('No url provided');
     isSubmitting.value = true;
     form.clearErrors();
 
@@ -144,20 +132,20 @@ async function submitToUrl(): Promise<any> {
     if (hasFiles) {
       request = apiClient.upload(url, files, payload);
     } else {
-      if (typeof url === "object") {
+      if (typeof url === 'object') {
         request = apiClient.request(url, payload, false);
       } else {
         switch (urlMethod) {
-          case "post":
+          case 'post':
             request = apiClient.post(url, payload);
             break;
-          case "put":
+          case 'put':
             request = apiClient.put(url, payload);
             break;
-          case "get":
+          case 'get':
             request = apiClient.get(url, { params: payload });
             break;
-          case "delete":
+          case 'delete':
             request = apiClient.delete(url, { params: payload });
             break;
         }
@@ -169,22 +157,14 @@ async function submitToUrl(): Promise<any> {
       })
       .catch(async (error) => {
         if (isAxiosValidationError(error)) {
-          form.setMultiFieldsErrors(
-            mapValues(error.response.data.errors, (i) => i.map((e) => ({ message: e }))) as Record<
-              T,
-              FieldError[]
-            >,
-          );
+          form.setMultiFieldsErrors(mapValues(error.response.data.errors, (i) => i.map((e) => ({ message: e }))) as Record<T, FieldError[]>);
         } else if (isAxiosError(error)) {
-          form.addGlobalError(t(error.response?.data.message ?? error.message ?? "Error Occurred"));
+          form.addGlobalError(t(error.response?.data.message ?? error.message ?? 'Error Occurred'));
         } else {
-          form.addGlobalError(t("Error Occurred"));
+          form.addGlobalError(t('Error Occurred'));
         }
         await nextTick();
-        if (
-          !document.activeElement ||
-          document.activeElement.getAttribute("aria-invalid") !== "true"
-        ) {
+        if (!document.activeElement || document.activeElement.getAttribute('aria-invalid') !== 'true') {
           if (false === focusFirstWithError()) {
             focusFirst();
           }
@@ -206,13 +186,13 @@ const currentFiles = form.currentFiles as any;
 const fieldsStates = form.fieldsStates as any;
 
 const labelWidthStyle = computed(() => {
-  return fixedLabelWidth && fixedLabelWidth > 0 ? `width: ${fixedLabelWidth}px` : "";
+  return fixedLabelWidth && fixedLabelWidth > 0 ? `width: ${fixedLabelWidth}px` : '';
 });
 
 const fieldRefs = ref<{ [k in string]: any }>({});
-const localFormName = computed(() => formName || uniqueId("hdd-form-"));
+const localFormName = computed(() => formName || uniqueId('hdd-form-'));
 const labelsLargestWidth = computed(() => {
-  if (typeof unifyLabelsWidth === "number") {
+  if (typeof unifyLabelsWidth === 'number') {
     return unifyLabelsWidth;
   } else if (unifyLabelsWidth === true) {
     return maxBy(map(fieldRefs.value, (e) => e?.baseInputRef?.labelWidth ?? e?.labelWidth));
@@ -232,7 +212,7 @@ const generalInputsProps = computed<Partial<BaseInputProps>>(() => {
     floatingLabel,
     floatingLabelVariant,
     infieldTopAlignedLabel,
-    onKeydown: (e: KeyboardEvent) => e.key === "Enter" && submitOnEnter && form.submitForm(),
+    onKeydown: (e: KeyboardEvent) => e.key === 'Enter' && submitOnEnter && form.submitForm(),
   };
 });
 
@@ -245,10 +225,8 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
     helperText: field.notes,
     name: field.name,
     autocomplete: field.autocomplete,
-    disabled:
-      typeof field.disabled === "function" ? field.disabled(currentValues.value) : field.disabled,
-    readonly:
-      typeof field.readonly === "function" ? field.readonly(currentValues.value) : field.readonly,
+    disabled: typeof field.disabled === 'function' ? field.disabled(currentValues.value) : field.disabled,
+    readonly: typeof field.readonly === 'function' ? field.readonly(currentValues.value) : field.readonly,
     icon: field.icon,
     placeholder: field.placeholder,
     size: field.size ?? size,
@@ -256,10 +234,10 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
     showErrorMessage: showFieldErrorBelowIt,
     ...(field.labelWidth || field.labelWidth === 0
       ? {
-          labelMinWidth: field.labelWidth || "unset",
+          labelMinWidth: field.labelWidth || 'unset',
         }
       : {}),
-    ...(["text", "password"].includes(field.type ?? "text")
+    ...(['text', 'password'].includes(field.type ?? 'text')
       ? {
           onFocusNext: () => focusNext(field),
           onFocusPrevious: () => focusPrevious(field),
@@ -274,13 +252,13 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
       : {}),
     ...(field.onValueUpdate
       ? {
-          "onUpdate:modelValue": (value: any) => {
+          'onUpdate:modelValue': (value: any) => {
             triggerOnValueUpdate(field, value);
           },
         }
       : {}),
     ...(field.binds
-      ? typeof field.binds === "function"
+      ? typeof field.binds === 'function'
         ? field.binds({
             isEditing,
             row: toValue(currentValues),
@@ -289,7 +267,7 @@ function generalInputBindsByField(field: HddFormField<T>): Partial<BaseInputProp
       : {}),
     ...(field.teleport && !field.labelWidth
       ? {
-          labelMinWidth: "unset",
+          labelMinWidth: 'unset',
         }
       : {}),
   };
@@ -328,7 +306,7 @@ watch(
   },
   {
     immediate: true,
-    flush: "post",
+    flush: 'post',
   },
 );
 
@@ -341,7 +319,7 @@ watch(
   },
   {
     immediate: false,
-    flush: "post",
+    flush: 'post',
   },
 );
 
@@ -416,18 +394,15 @@ const fieldNamePaths = computed(() => {
   return reduce(
     formFields.value,
     (carry, field) => {
-      carry[field.name] = field.name.split(".");
+      carry[field.name] = field.name.split('.');
       return carry;
     },
     {} as Record<string, string[]>,
   );
 });
 
-function resolveFieldOptions(
-  _options: MaybeRefOrGetter<any[] | ((form: unknown) => any[])>,
-  _currentValues: unknown,
-) {
-  return typeof _options === "function" ? _options(_currentValues) : (toValue(_options) ?? []);
+function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown) => any[])>, _currentValues: unknown) {
+  return typeof _options === 'function' ? _options(_currentValues) : (toValue(_options) ?? []);
 }
 
 if (formModelValue.value) {

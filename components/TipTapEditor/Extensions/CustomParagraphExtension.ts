@@ -1,4 +1,4 @@
-import { Paragraph } from "@tiptap/extension-paragraph";
+import { Paragraph } from '@tiptap/extension-paragraph';
 
 export const CustomParagraph = Paragraph.extend({
   addAttributes() {
@@ -6,7 +6,7 @@ export const CustomParagraph = Paragraph.extend({
       ...this.parent?.(),
       class: {
         default: null,
-        parseHTML: (element) => element.getAttribute("class"),
+        parseHTML: (element) => element.getAttribute('class'),
         renderHTML: (attributes) => {
           return { class: attributes.class };
         },
@@ -17,7 +17,7 @@ export const CustomParagraph = Paragraph.extend({
           // collect all data-* attributes
           const dataset: Record<string, string> = {};
           for (const attr of Array.from(element.attributes)) {
-            if (attr.name.startsWith("data-")) {
+            if (attr.name.startsWith('data-')) {
               dataset[attr.name] = attr.value;
             }
           }

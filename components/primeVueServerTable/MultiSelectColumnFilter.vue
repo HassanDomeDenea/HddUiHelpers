@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import MultiSelectInput from "../inputs/MultiSelectInput.vue";
-import { useI18n } from "vue-i18n";
+import { useI18n } from 'vue-i18n';
+import MultiSelectInput from '../inputs/MultiSelectInput.vue';
 
 withDefaults(
   defineProps<{
@@ -10,21 +10,21 @@ withDefaults(
     optionValueProperty?: string;
   }>(),
   {
-    optionLabelProperty: "name",
-    optionValueProperty: "id",
+    optionLabelProperty: 'name',
+    optionValueProperty: 'id',
   },
 );
 
-const slotProps = defineModel("slotProps", { required: true });
+const slotProps = defineModel('slotProps', { required: true });
 
 const { t } = useI18n();
 function onValueChanged(val: any) {
   if (val.length) {
     slotProps.value.filterModel.value = val;
-    slotProps.value.filterModel.matchMode = "whereIn";
+    slotProps.value.filterModel.matchMode = 'whereIn';
   } else {
     slotProps.value.filterModel.value = null;
-    slotProps.value.filterModel.matchMode = "whereIn";
+    slotProps.value.filterModel.matchMode = 'whereIn';
   }
   slotProps.value.filterCallback();
 }

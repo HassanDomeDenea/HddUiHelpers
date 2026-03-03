@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
-import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
-import { useI18n } from "vue-i18n";
+import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
+import type { Editor } from '@tiptap/vue-3';
+import { useI18n } from 'vue-i18n';
 
 const {
   editor,

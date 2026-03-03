@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SelectInput from "../inputs/SelectInput.vue";
-import { useI18n } from "vue-i18n";
+import { useI18n } from 'vue-i18n';
+import SelectInput from '../inputs/SelectInput.vue';
 
 withDefaults(
   defineProps<{
@@ -10,17 +10,17 @@ withDefaults(
     optionValueProperty?: string;
   }>(),
   {
-    optionLabelProperty: "name",
-    optionValueProperty: "id",
+    optionLabelProperty: 'name',
+    optionValueProperty: 'id',
   },
 );
 
-const slotProps = defineModel("slotProps", { required: true });
+const slotProps = defineModel('slotProps', { required: true });
 
 const { t } = useI18n();
 function onValueChanged(val: any) {
   slotProps.value.filterModel.value = val;
-  slotProps.value.filterModel.matchMode = "equals";
+  slotProps.value.filterModel.matchMode = 'equals';
   slotProps.value.filterCallback();
 }
 </script>

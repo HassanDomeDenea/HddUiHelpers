@@ -10,7 +10,7 @@ const selectedChild = defineModel<any>({ required: false });
 
 function backToParent() {
   selectedChild.value = undefined;
-  emits("back");
+  emits('back');
 }
 defineExpose({
   backToParent,

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import {computedAsync, useDropZone} from "@vueuse/core";
-import { ref, useTemplateRef, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { computedAsync, useDropZone } from '@vueuse/core';
+import { ref, useTemplateRef, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -20,7 +20,7 @@ const props = withDefaults(
     } & BaseInputProps
   >(),
   {
-    accept: "image/png,image/jpeg,image/jpg,image/svg+xml",
+    accept: 'image/png,image/jpeg,image/jpg,image/svg+xml',
     previewMaxHeight: 120,
     clearable: true,
     previewMaxWidth: 120,
@@ -31,12 +31,12 @@ const emits = defineEmits<{
   clear: [];
   unclear: [];
 }>();
-const value = defineModel<any>("modelValue", { default: ref().value });
-const currentUrl = defineModel<any>("currentUrl", { default: ref().value });
+const value = defineModel<any>('modelValue', { default: ref().value });
+const currentUrl = defineModel<any>('currentUrl', { default: ref().value });
 const { t } = useI18n();
-const fileInputRef = useTemplateRef<HTMLInputElement>("fileInputRef");
+const fileInputRef = useTemplateRef<HTMLInputElement>('fileInputRef');
 
-const dropzoneRef = useTemplateRef("dropzoneRef");
+const dropzoneRef = useTemplateRef('dropzoneRef');
 const inputRef = ref();
 
 const { isOverDropZone } = useDropZone(dropzoneRef, {
@@ -44,7 +44,7 @@ const { isOverDropZone } = useDropZone(dropzoneRef, {
     if (props.disabled) return;
     value.value = files[0] ?? undefined;
   },
-  dataTypes: props.accept.split(","),
+  dataTypes: props.accept.split(','),
   multiple: false,
   preventDefaultForUnhandled: false,
 });
@@ -57,7 +57,7 @@ function onFileChange(event: Event) {
   const target = event.target as HTMLInputElement;
   value.value = target.files[0] ?? undefined;
 
-  target.value = "";
+  target.value = '';
 }
 
 const loadedImage = computedAsync(async () => {
@@ -78,14 +78,13 @@ const clear = () => {
 
 watch(value, (val) => {
   if (!val) {
-    emits("clear");
+    emits('clear');
   } else {
-    emits("unclear");
+    emits('unclear');
   }
 });
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>

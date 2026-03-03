@@ -13,13 +13,13 @@ export interface BasicUserData {
 export type ToMap<T extends string> = { [K in T]: true };
 
 export interface RolesMap extends Record<string, any> {}
-export interface PermissionsMap {}
+export type PermissionsMap = {};
 export interface GlobalOptionsMap {
   app_name?: any;
 }
 export interface UserOptionsMap {
   language?: string;
-  dark_mode?: "light" | "dark" | "auto";
+  dark_mode?: 'light' | 'dark' | 'auto';
 }
 
 export type HddRole = keyof RolesMap & string;
@@ -27,7 +27,7 @@ export type HddPermission = keyof PermissionsMap;
 export type HddGlobalOption = keyof GlobalOptionsMap;
 export type HddUserOption = keyof UserOptionsMap;
 
-declare module "vue-router" {
+declare module 'vue-router' {
   interface RouteMeta {
     roles?: HddRole | HddRole[];
     permissions?: HddPermission | HddPermission[];
@@ -64,4 +64,4 @@ export interface OptionInterface {
   id: number | string;
 }
 
-export interface ValueInterface {}
+export type ValueInterface = {};

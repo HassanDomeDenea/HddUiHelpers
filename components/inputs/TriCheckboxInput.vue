@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { computed, ref } from "vue";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { computed, ref } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
     {
-      notSelectedValue?: "null" | "undefined";
+      notSelectedValue?: 'null' | 'undefined';
     } & BaseInputProps
   >(),
   {
-    notSelectedValue: "null",
+    notSelectedValue: 'null',
     controlBeforeLabel: true,
     hideLabelDoubleDots: true,
   },
 );
-const value = defineModel<any>("modelValue");
+const value = defineModel<any>('modelValue');
 
 const inputRef = ref();
 
@@ -38,9 +38,9 @@ function onCheckboxStateChange() {
       value.value = false;
       break;
     case false:
-      value.value = props.notSelectedValue === "null" ? null : undefined;
+      value.value = props.notSelectedValue === 'null' ? null : undefined;
       break;
-    case "":
+    case '':
     case undefined:
     case null:
     default:
@@ -49,8 +49,7 @@ function onCheckboxStateChange() {
   }
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>

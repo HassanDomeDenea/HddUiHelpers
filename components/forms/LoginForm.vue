@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { HddFormProps } from "HddUiHelpers/components/FormWrapper/types";
-import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
-import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
-import type { BasicUserData } from "HddUiHelpers/types/types";
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
-import HddForm from "HddUiHelpers/components/FormWrapper/HddForm.vue";
+import HddForm from 'HddUiHelpers/components/FormWrapper/HddForm.vue';
+import type { HddFormProps } from 'HddUiHelpers/components/FormWrapper/types';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
+import type { BasicUserData } from 'HddUiHelpers/types/types';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 
 const { t } = useI18n();
 const authStore = useBasicAuthStore();
@@ -16,35 +16,35 @@ const route = useRoute();
 const formBinds = ref<HddFormProps>({
   url: {
     url: '/api/login',
-    method: 'post'
+    method: 'post',
   },
   unifyLabelsWidth: 120,
-  submitSeverity: "primary",
-  submitText: t("Login"),
-  submitIcon: "i-mdi-user",
-  size: "small",
-  formName: "login",
+  submitSeverity: 'primary',
+  submitText: t('Login'),
+  submitIcon: 'i-mdi-user',
+  size: 'small',
+  formName: 'login',
   fields: [
     {
-      name: "username",
-      icon: "i-mdi-user",
-      label: t("Username"),
-      binds: { inputClass: "dir-ltr text-left" },
+      name: 'username',
+      icon: 'i-mdi-user',
+      label: t('Username'),
+      binds: { inputClass: 'dir-ltr text-left' },
     },
     {
-      name: "password",
-      icon: "i-mdi-password",
-      type: "password",
-      label: t("Password"),
-      binds: { inputClass: "dir-ltr text-left" },
+      name: 'password',
+      icon: 'i-mdi-password',
+      type: 'password',
+      label: t('Password'),
+      binds: { inputClass: 'dir-ltr text-left' },
     },
   ],
   onSuccess: (data: { user: BasicUserData; token: string }) => {
     if (!data.user) {
-      apiClient.toastError(t("Error Occurred"));
+      apiClient.toastError(t('Error Occurred'));
       return;
     }
-    router.push(((route.query?.redirect_url ?? "/") || "/") as string);
+    router.push(((route.query?.redirect_url ?? '/') || '/') as string);
     authStore.login(data.user, data.token);
   },
 });

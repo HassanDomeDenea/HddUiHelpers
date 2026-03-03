@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import type { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
-import { useLoader } from "HddUiHelpers/composables/loader.ts";
-import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
-import moment from "moment";
-import Popover from "primevue/popover";
-import {nextTick, ref, useTemplateRef} from "vue";
-import type { ComponentExposed } from "vue-component-type-helpers";
-import {useI18n} from "vue-i18n";
-type AuditData  = {
+import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
+import { useLoader } from 'HddUiHelpers/composables/loader.ts';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import moment from 'moment';
+import type Popover from 'primevue/popover';
+import { nextTick, ref, useTemplateRef } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useI18n } from 'vue-i18n';
+
+type AuditData = {
   id: string | number;
   event: string;
   old_value: any;
@@ -23,7 +24,7 @@ type AuditData  = {
   auditable_type: string | null;
   auditable_id: string | number | null;
 };
-const popoverRef = useTemplateRef<ComponentExposed<typeof Popover>>("popoverRef");
+const popoverRef = useTemplateRef<ComponentExposed<typeof Popover>>('popoverRef');
 const audits = ref<AuditData[]>([]);
 const field = ref();
 const formatter = ref<(value: any) => string>(null);
@@ -45,7 +46,7 @@ async function showFor(
   formatter.value = _formatter;
   classFormatter.value = _classFormatter;
   apiClient
-    .get("/api/audits", {
+    .get('/api/audits', {
       params: {
         type: model,
         id: id,
@@ -66,7 +67,7 @@ async function showAudits(
   _field: string,
   _formatter: (value: any) => string = null,
   _classFormatter: (value: any) => any = null,
-  urlAppendedPath: string = "audits",
+  urlAppendedPath: string = 'audits',
 ) {
   field.value = _field;
   formatter.value = _formatter;
@@ -78,9 +79,8 @@ async function showAudits(
   startLoading();
   apiClient
     .request({
-      url:
-        (typeof url === "object" ? url.url : url) + (urlAppendedPath ? `/${urlAppendedPath}` : ""),
-      method: typeof url === "object" ? url.method : "get",
+      url: (typeof url === 'object' ? url.url : url) + (urlAppendedPath ? `/${urlAppendedPath}` : ''),
+      method: typeof url === 'object' ? url.method : 'get',
       params: {
         field: _field,
       },

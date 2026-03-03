@@ -1,16 +1,16 @@
-import { useStackableDialog } from "HddUiHelpers/stores/stackableDialogs.ts";
-import { omit } from "lodash-es";
-import { ConfirmationOptions } from "primevue/confirmationoptions";
-import { useConfirm } from "primevue/useconfirm";
+import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts';
+import { omit } from 'lodash-es';
+import type { ConfirmationOptions } from 'primevue/confirmationoptions';
+import { useConfirm } from 'primevue/useconfirm';
 
 export const useStackableConfirm = () => {
   const confirm = useConfirm();
   const { updateDialogVisibility: updateDeleteDialogVisibility } = useStackableDialog();
-  const show = function (options: ConfirmationOptions) {
+  const show = (options: ConfirmationOptions) => {
     updateDeleteDialogVisibility(true);
     confirm.require({
-      group: "dismissable",
-      ...omit(options, ["accept", "reject", "onHide"]),
+      group: 'dismissable',
+      ...omit(options, ['accept', 'reject', 'onHide']),
       accept: async () => {
         await options.accept?.();
         updateDeleteDialogVisibility(false);

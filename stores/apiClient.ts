@@ -1,29 +1,23 @@
-import { echo, echoIsConfigured } from "@laravel/echo-vue";
-import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  isAxiosError,
-} from "axios";
-import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers";
-import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
-import { defineStore } from "pinia";
-import type { ToastMessageOptions, ToastServiceMethods } from "primevue";
-import type { ComposerTranslation } from "vue-i18n";
-import type { Router } from "vue-router";
-import { computed, ref } from "vue";
+import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers';
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
+import { echo, echoIsConfigured } from '@laravel/echo-vue';
+import axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, isAxiosError } from 'axios';
+import { defineStore } from 'pinia';
+import type { ToastMessageOptions, ToastServiceMethods } from 'primevue';
+import { computed, ref } from 'vue';
+import type { ComposerTranslation } from 'vue-i18n';
+import type { Router } from 'vue-router';
 
-function appendFormData(formData: FormData, data: unknown, parentKey: string = "") {
-  if (data && typeof data === "object" && !(data instanceof File)) {
+function appendFormData(formData: FormData, data: unknown, parentKey: string = '') {
+  if (data && typeof data === 'object' && !(data instanceof File)) {
     const objectData = data as { [k: string | number]: unknown };
     Object.keys(objectData).forEach((key) => {
       let value = objectData[key];
       const newKey = parentKey ? `${parentKey}[${key}]` : key;
-      if (typeof value === "boolean") {
+      if (typeof value === 'boolean') {
         value = value ? 1 : 0;
       } else if (value === null) {
-        value = "";
+        value = '';
       }
       appendFormData(formData, value as { [k: string | number]: unknown }, newKey);
     });
@@ -32,7 +26,7 @@ function appendFormData(formData: FormData, data: unknown, parentKey: string = "
   }
 }
 
-export const useApiClient = defineStore("apiClient", () => {
+export const useApiClient = defineStore('apiClient', () => {
   const authStore = useBasicAuthStore();
   const t = ref<ComposerTranslation | null>(null);
   const toast = ref<ToastServiceMethods | null>(null);
@@ -56,10 +50,10 @@ export const useApiClient = defineStore("apiClient", () => {
   const isUploading = ref(false);
 
   const instance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || "/",
+    baseURL: import.meta.env.VITE_API_BASE_URL || '/',
     withCredentials: false,
     headers: {
-      accept: "application/json",
+      accept: 'application/json',
     },
   });
   instance.interceptors.request.use((config) => {
@@ -68,7 +62,7 @@ export const useApiClient = defineStore("apiClient", () => {
       config.headers.Authorization = `Bearer ${authStore.authorizationToken}`;
     }
     if (hddUiHelpers.withBroadcasting && echoIsConfigured()) {
-      config.headers["X-Socket-ID"] = echo().socketId();
+      config.headers['X-Socket-ID'] = echo().socketId();
     }
 
     return config;
@@ -84,9 +78,7 @@ export const useApiClient = defineStore("apiClient", () => {
       if (error.status === 401 && authStore.isLoggedIn) {
         authStore.logout();
         console.log(error);
-        router.value
-          ?.push({ path: "/login", query: { redirect_url: window.location.pathname } } as any)
-          .then();
+        router.value?.push({ path: '/login', query: { redirect_url: window.location.pathname } } as any).then();
       }
       return Promise.reject(error);
     },
@@ -105,15 +97,11 @@ export const useApiClient = defineStore("apiClient", () => {
 
   const axiosInstance = ref(instance);
 
-  function request<T = any>(
-    config: AxiosRequestConfig,
-    data: any = null,
-    withApiBaseUrl: boolean = false,
-  ): Promise<AxiosResponse<T>> {
+  function request<T = any>(config: AxiosRequestConfig, data: any = null, withApiBaseUrl: boolean = false): Promise<AxiosResponse<T>> {
     return axiosInstance.value.request<T>({
       ...config,
       ...(data ? { data } : {}),
-      ...(!withApiBaseUrl ? { baseURL: "/" } : {}),
+      ...(!withApiBaseUrl ? { baseURL: '/' } : {}),
     });
   }
 
@@ -125,11 +113,7 @@ export const useApiClient = defineStore("apiClient", () => {
     return axiosInstance.value.get<T>(url, config);
   }
 
-  function post<T = unknown>(
-    url: string,
-    data?: unknown,
-    config?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
+  function post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return axiosInstance.value.post<T>(url, data, config);
   }
 
@@ -143,66 +127,53 @@ export const useApiClient = defineStore("apiClient", () => {
 
     if (Array.isArray(files) || files instanceof FileList) {
       for (let i = 0; i < files.length; i++) {
-        form.append("files[]", files[i]); // change 'files[]' if needed
+        form.append('files[]', files[i]); // change 'files[]' if needed
       }
     } else if (Object.keys(files).length > 0 && !(files instanceof File)) {
       for (const i in files) {
         if (Array.isArray(files[i]) || files[i] instanceof FileList) {
           for (let j = 0; j < files[i].length; j++) {
-            form.append(i + "[]", files[i][j]);
+            form.append(i + '[]', files[i][j]);
           }
         } else {
           form.append(i, files[i]);
         }
       }
     } else {
-      form.append("file", files as File);
+      form.append('file', files as File);
     }
 
     if (data) {
       appendFormData(form, data);
     }
 
-    if (typeof url !== "string" && url.method.toLowerCase() !== "post") {
-      form.append("_method", url.method);
+    if (typeof url !== 'string' && url.method.toLowerCase() !== 'post') {
+      form.append('_method', url.method);
     }
     uploadProgress.value = 0;
     isUploading.value = true;
     return axiosInstance.value
       .request<T>({
-        url: typeof url === "string" ? url : url.url,
-        method: "POST",
+        url: typeof url === 'string' ? url : url.url,
+        method: 'POST',
         data: form,
         onUploadProgress(progressEvent) {
           if (!progressEvent.lengthComputable) return;
-          uploadProgress.value = !progressEvent.total
-            ? 0
-            : Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          uploadProgress.value = !progressEvent.total ? 0 : Math.round((progressEvent.loaded * 100) / progressEvent.total);
         },
         ...config,
       })
       .finally(() => (isUploading.value = false));
   }
 
-  function put<T = any>(
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
+  function put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return axiosInstance.value.put<T>(url, data, config);
   }
-  function patch<T = any>(
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
+  function patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return axiosInstance.value.patch<T>(url, data, config);
   }
 
-  function deleteRequest<T = any>(
-    url: string,
-    config?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
+  function deleteRequest<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return axiosInstance.value.delete<T>(url, config);
   }
 
@@ -212,42 +183,42 @@ export const useApiClient = defineStore("apiClient", () => {
         (error.response?.data as any)?.message ||
         ((error.response?.data as any)?.data as any)?.message ||
         error.message ||
-        t.value?.("Error Occurred") ||
-        "Error Occurred";
-      if (error.status === 403 && message === "This action is unauthorized.") {
+        t.value?.('Error Occurred') ||
+        'Error Occurred';
+      if (error.status === 403 && message === 'This action is unauthorized.') {
         message = t.value?.(message);
       }
-      if (error.status === 401 && message === "Unauthenticated.") {
+      if (error.status === 401 && message === 'Unauthenticated.') {
         message = t.value?.(message);
       }
       if (error.status === 413 && error?.response?.statusText) {
         message = t.value?.(error.response.statusText);
       }
       toast.value?.add({
-        group: "errors",
-        severity: "error",
+        group: 'errors',
+        severity: 'error',
         summary: message,
         life: 3000,
       });
     }
   }
 
-  function toastError(title: string = "", message = "", options: ToastMessageOptions = {}) {
+  function toastError(title: string = '', message = '', options: ToastMessageOptions = {}) {
     toast.value?.add({
-      group: "errors",
-      severity: "error",
-      summary: title || t.value?.("Error Occurred") || "Error Occurred",
+      group: 'errors',
+      severity: 'error',
+      summary: title || t.value?.('Error Occurred') || 'Error Occurred',
       detail: message,
       life: 3000,
       ...options,
     });
   }
 
-  function toastSuccess(title: string = "", message = "", options: ToastMessageOptions = {}) {
+  function toastSuccess(title: string = '', message = '', options: ToastMessageOptions = {}) {
     toast.value?.add({
-      group: "success",
-      severity: "success",
-      summary: title || t.value?.("Successful") || "Successful",
+      group: 'success',
+      severity: 'success',
+      summary: title || t.value?.('Successful') || 'Successful',
       detail: message,
       life: 2000,
       ...options,

@@ -1,38 +1,16 @@
-import { useEcho } from "@laravel/echo-vue";
-import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
-import {
-  debounce,
-  get,
-  keyBy,
-  map,
-  omit,
-  orderBy,
-  reduce,
-  set,
-  startCase,
-  uniq,
-  uniqueId,
-  unset,
-} from "lodash-es";
-import moment from "moment";
-import { useStorage } from "@vueuse/core";
-import type { Ref, WatchStopHandle } from "vue";
-import {
-  computed,
-  onActivated,
-  onDeactivated,
-  onMounted,
-  onUnmounted,
-  ref,
-  toValue,
-  watch,
-} from "vue";
-import { useI18n } from "vue-i18n";
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import { useEcho } from '@laravel/echo-vue';
+import { useStorage } from '@vueuse/core';
+import { debounce, get, keyBy, map, omit, orderBy, reduce, set, startCase, uniq, uniqueId, unset } from 'lodash-es';
+import moment from 'moment';
+import type { Ref, WatchStopHandle } from 'vue';
+import { computed, onActivated, onDeactivated, onMounted, onUnmounted, ref, toValue, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export function createListStore<TItem = any>(
-  url: string | { url: string; method: "get" | "post" | "put" | "delete" | "patch" },
+  url: string | { url: string; method: 'get' | 'post' | 'put' | 'delete' | 'patch' },
   options: {
-    storage?: "session" | "local";
+    storage?: 'session' | 'local';
 
     /**Storage duration in seconds*/
     storageDuration?: number;
@@ -41,7 +19,7 @@ export function createListStore<TItem = any>(
     refreshTime?: number;
     websocketChangeEvent?: string;
     sortBy?: string;
-    sortByDirection?: "asc" | "desc";
+    sortByDirection?: 'asc' | 'desc';
     listenForWebsocket?: boolean;
     hasActiveItems?: boolean;
     isActiveProperty?: string;
@@ -60,39 +38,31 @@ export function createListStore<TItem = any>(
       interval: 10,
       start: false,
     }) */
-  const idProperty = options.idProperty ?? "id";
-  const labelProperty = options.labelProperty ?? "name";
-  const isActiveProperty = options.isActiveProperty ?? "is_active";
-  const disabledProperty = options.disabledProperty ?? "disabled";
+  const idProperty = options.idProperty ?? 'id';
+  const labelProperty = options.labelProperty ?? 'name';
+  const isActiveProperty = options.isActiveProperty ?? 'is_active';
+  const disabledProperty = options.disabledProperty ?? 'disabled';
 
   const refreshable = options.refreshable ?? false;
   const withoutPagination = options.withoutPagination ?? true;
   const refreshTimeInMinutes = options.refreshTime ?? 5;
   // const userStore = useUserStore()
 
-  const listNameFromUrl = (typeof url === "string" ? url : url.url)
-    .toString()
-    .replace(/[^a-zA-Z0-9]/g, "_");
+  const listNameFromUrl = (typeof url === 'string' ? url : url.url).toString().replace(/[^a-zA-Z0-9]/g, '_');
 
   let localItems;
   let localItemsLastFetchedAt;
   if (options.storage) {
-    const storageTypeInstance =
-      options.storage === "session" ? window.sessionStorage : window.localStorage;
-    localItemsLastFetchedAt = useStorage(
-      "dynamic_lists_" + listNameFromUrl + "_last_fetched_at",
-      moment().toISOString(),
-      storageTypeInstance,
-    );
+    const storageTypeInstance = options.storage === 'session' ? window.sessionStorage : window.localStorage;
+    localItemsLastFetchedAt = useStorage('dynamic_lists_' + listNameFromUrl + '_last_fetched_at', moment().toISOString(), storageTypeInstance);
     if (
       (options.storageDuration ?? 0) > 0 &&
       localItemsLastFetchedAt.value &&
-      moment().diff(moment(localItemsLastFetchedAt.value), "seconds") >
-        (options.storageDuration ?? 0)
+      moment().diff(moment(localItemsLastFetchedAt.value), 'seconds') > (options.storageDuration ?? 0)
     ) {
-      storageTypeInstance.removeItem("dynamic_lists_" + listNameFromUrl);
+      storageTypeInstance.removeItem('dynamic_lists_' + listNameFromUrl);
     }
-    localItems = useStorage("dynamic_lists_" + listNameFromUrl, null, storageTypeInstance, {
+    localItems = useStorage('dynamic_lists_' + listNameFromUrl, null, storageTypeInstance, {
       serializer: {
         read: (v: any) => (v ? JSON.parse(v) : null) || null,
         write: (v: any) => JSON.stringify(v),
@@ -109,8 +79,8 @@ export function createListStore<TItem = any>(
     localItemsLastFetchedAt = ref<string | null>(null);
   }
 
-  const sortItemsBy = options.sortBy ?? "uses";
-  const sortItemsByDirection = options.sortByDirection ?? "asc";
+  const sortItemsBy = options.sortBy ?? 'uses';
+  const sortItemsByDirection = options.sortByDirection ?? 'asc';
 
   const apiClient = useApiClient();
 
@@ -173,16 +143,16 @@ export function createListStore<TItem = any>(
       if (options.hasActiveItems && inActiveIncluded.value !== true) {
         params.filters = {
           [isActiveProperty]: {
-            operator: "and",
-            constraints: [{ value: 1, matchMode: "equals" }],
+            operator: 'and',
+            constraints: [{ value: 1, matchMode: 'equals' }],
           },
         };
       }
-      let urlMethod = "get";
-      let urlText = "";
-      if (typeof url === "string") {
+      let urlMethod = 'get';
+      let urlText = '';
+      if (typeof url === 'string') {
         urlText = url;
-      } else if (typeof url === "object") {
+      } else if (typeof url === 'object') {
         urlText = url.url;
         urlMethod = url.method;
       }
@@ -233,7 +203,7 @@ export function createListStore<TItem = any>(
         (val) => {
           try {
             if (val !== null) {
-              if (typeof unwatch === "function") {
+              if (typeof unwatch === 'function') {
                 unwatch();
               }
               resolve();
@@ -259,23 +229,15 @@ export function createListStore<TItem = any>(
 
   if (options.withBroadcasting) {
     useEcho(
-      "App.Models",
-      [
-        `.${options.modelName}Created`,
-        `.${options.modelName}Updated`,
-        `.${options.modelName}Deleted`,
-        `.${options.modelName}Restored`,
-      ],
+      'App.Models',
+      [`.${options.modelName}Created`, `.${options.modelName}Updated`, `.${options.modelName}Deleted`, `.${options.modelName}Restored`],
       (_event: unknown) => {
         debouncedRefresh();
       },
     );
   }
 
-  if (
-    options.listenForWebsocket ||
-    (options.websocketChangeEvent && options.listenForWebsocket !== false)
-  ) {
+  if (options.listenForWebsocket || (options.websocketChangeEvent && options.listenForWebsocket !== false)) {
     //TODO
     /*privateChannel('ServerListsChannel').listen((options.websocketChangeEvent ?? url) as NamespacedEventName, () => {
             if (localItems.value !== null) {
@@ -285,7 +247,7 @@ export function createListStore<TItem = any>(
   }
 
   function getLabel(id: string | number | Record<string | number, any>): string {
-    if (typeof id !== "object") {
+    if (typeof id !== 'object') {
       return keyLabelPairItems.value[id];
     } else {
       return keyLabelPairItems.value[id[idProperty]];
@@ -296,7 +258,7 @@ export function createListStore<TItem = any>(
   const _onRefreshCallables = ref<Record<string, (items: TItem[]) => void>>({});
 
   function onFirstLoad(callback: () => void) {
-    const callbackId = uniqueId("serverListFirstLoadCallback_");
+    const callbackId = uniqueId('serverListFirstLoadCallback_');
     onMounted(() => {
       set(_onFirstLoadCallables.value, callbackId, callback);
     });
@@ -305,13 +267,9 @@ export function createListStore<TItem = any>(
     });
   }
 
-  function onRefresh(
-    callback: (items?: TItem[]) => void,
-    type: "mounted" | "activated" | "both" = "mounted",
-    immediate: boolean = false,
-  ) {
-    const callbackId = uniqueId("serverListRefreshCallback_");
-    if (type === "mounted" || type == "both") {
+  function onRefresh(callback: (items?: TItem[]) => void, type: 'mounted' | 'activated' | 'both' = 'mounted', immediate: boolean = false) {
+    const callbackId = uniqueId('serverListRefreshCallback_');
+    if (type === 'mounted' || type == 'both') {
       onMounted(() => {
         set(_onRefreshCallables.value, callbackId, callback);
       });
@@ -319,7 +277,7 @@ export function createListStore<TItem = any>(
         unset(_onRefreshCallables.value, callbackId);
       });
     }
-    if (type === "activated" || type == "both") {
+    if (type === 'activated' || type == 'both') {
       onActivated(() => {
         set(_onRefreshCallables.value, callbackId, callback);
       });
@@ -349,13 +307,13 @@ export function createListStore<TItem = any>(
     }
   });
 
-  const getNestedItem = function (id: string | number) {
+  const getNestedItem = (id: string | number) => {
     if (!id) {
       return undefined;
     }
     function _localLooper(_items: TItem[]) {
       for (const _item of _items) {
-        if (get(_item, options.idProperty ?? "id") === id) {
+        if (get(_item, options.idProperty ?? 'id') === id) {
           return _item;
         }
         const children = get(_item, options.childrenProperty);
@@ -371,15 +329,12 @@ export function createListStore<TItem = any>(
     return _localLooper(items.value);
   };
 
-  const getFlatChildrenOfItem = function (
-    id: TItem | string | number,
-    includeSelf: boolean = false,
-  ): TItem[] {
+  const getFlatChildrenOfItem = (id: TItem | string | number, includeSelf: boolean = false): TItem[] => {
     if (!id) {
       return [];
     }
     let _item: TItem;
-    if (typeof id === "string" || typeof id === "number") {
+    if (typeof id === 'string' || typeof id === 'number') {
       _item = getNestedItem(id);
     } else {
       _item = id;
@@ -411,10 +366,7 @@ export function createListStore<TItem = any>(
     }
   };
 
-  const getFlatIdsOfItem = function (
-    id: TItem | string | number,
-    includeSelf?: boolean,
-  ): (string | number)[] {
+  const getFlatIdsOfItem = (id: TItem | string | number, includeSelf?: boolean): (string | number)[] => {
     const _items = getFlatChildrenOfItem(id, includeSelf);
     return uniq(map(_items, idProperty));
   };
@@ -466,10 +418,9 @@ export type LocalListType<TId extends string | number = string, TItem = any> = {
   getById: (id: TId) => TItem | undefined;
 };
 
-export function createLocalList<
-  R extends string | number,
-  K extends { name: string; id: R } = { name: string; id: R },
->(list: K[]): LocalListType<R, K> {
+export function createLocalList<R extends string | number, K extends { name: string; id: R } = { name: string; id: R }>(
+  list: K[],
+): LocalListType<R, K> {
   return {
     list,
     object: list.reduce((carry: any, currentValue) => {
@@ -516,7 +467,7 @@ export function createLocalListAutoTitleLabel<R extends string | number>(
 } {
   const { t } = useI18n();
   const arrayList: { name: string; id: R }[] = list.map((e) => {
-    return { name: t(startCase(e + "")), id: e };
+    return { name: t(startCase(e + '')), id: e };
   });
   return {
     list: arrayList,

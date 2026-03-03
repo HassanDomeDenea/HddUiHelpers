@@ -1,37 +1,36 @@
 <script setup lang="ts">
-import {echo} from "@laravel/echo-vue";
-import {vInfiniteScroll} from "@vueuse/components";
-import TextAreaInput from "HddUiHelpers/components/inputs/TextAreaInput.vue";
-import ChatMessageSegment from "HddUiHelpers/components/Widgets/Chat/ChatMessageSegment.vue";
-import {useLoader} from "HddUiHelpers/composables/loader.ts";
-import {useApiClient} from "HddUiHelpers/stores/apiClient.ts";
-import {useBasicAuthStore} from "HddUiHelpers/stores/basicAuth.ts";
-import {useDimensionsStore} from "HddUiHelpers/stores/dimensions.ts";
-import {debounce, last, sumBy} from "lodash-es";
-import moment from "moment/moment";
-import {ButtonProps} from "primevue";
-import {ComponentExposed} from "vue-component-type-helpers";
-import notifMessageSound from "../../../assets/audios/notify-352705.mp3";
-import { useElementSize } from "@vueuse/core";
-import {computed, onMounted, onUnmounted, ref, toValue, useTemplateRef} from "vue";
-import { useI18n } from "vue-i18n";
-import {MessageData, MessagesRead, UserChatData} from "./chatTypes";
-import { ApiResponseData } from "HddUiHelpers/types/types";
+import type TextAreaInput from 'HddUiHelpers/components/inputs/TextAreaInput.vue';
+import ChatMessageSegment from 'HddUiHelpers/components/Widgets/Chat/ChatMessageSegment.vue';
+import { useLoader } from 'HddUiHelpers/composables/loader.ts';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
+import { useDimensionsStore } from 'HddUiHelpers/stores/dimensions.ts';
+import type { ApiResponseData } from 'HddUiHelpers/types/types';
+import { echo } from '@laravel/echo-vue';
+import { vInfiniteScroll } from '@vueuse/components';
+import { useElementSize } from '@vueuse/core';
+import { debounce, last, sumBy } from 'lodash-es';
+import moment from 'moment/moment';
+import type { ButtonProps } from 'primevue';
+import { computed, onMounted, onUnmounted, ref, toValue, useTemplateRef } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useI18n } from 'vue-i18n';
+import notifMessageSound from '../../../assets/audios/notify-352705.mp3';
+import type { MessageData, MessagesRead, UserChatData } from './chatTypes';
 
-const {t} = useI18n();
+const { t } = useI18n();
 const contactsLoader = useLoader();
 const messagesLoader = useLoader();
 const sendingMessageLoader = useLoader();
 const apiClient = useApiClient();
-const {severity = "success", size = "small"} = defineProps<{
-  size?: ButtonProps["size"];
-  severity?: ButtonProps["severity"];
+const { severity = 'success', size = 'small' } = defineProps<{
+  size?: ButtonProps['size'];
+  severity?: ButtonProps['severity'];
 }>();
-const newMessageTextRef =
-    useTemplateRef<ComponentExposed<typeof TextAreaInput>>("newMessageTextRef");
-const newMessageText = ref("");
-const messagesContainerRef = useTemplateRef<HTMLDivElement>("messagesContainerRef");
-const loadMoreDivRef = useTemplateRef<HTMLDivElement>("loadMoreDivRef");
+const newMessageTextRef = useTemplateRef<ComponentExposed<typeof TextAreaInput>>('newMessageTextRef');
+const newMessageText = ref('');
+const messagesContainerRef = useTemplateRef<HTMLDivElement>('messagesContainerRef');
+const loadMoreDivRef = useTemplateRef<HTMLDivElement>('loadMoreDivRef');
 const isVisible = ref(false);
 const dimensions = useDimensionsStore();
 const activeContact = ref<UserChatData>();
@@ -40,23 +39,23 @@ const authStore = useBasicAuthStore();
 
 const onlineUsers = computed(() => {
   return authStore.connectedUsers.reduce(
-      (acc, user) => {
-        acc[user.name] = true;
-        return acc;
-      },
-      {} as Record<string, boolean>,
+    (acc, user) => {
+      acc[user.name] = true;
+      return acc;
+    },
+    {} as Record<string, boolean>,
   );
 });
 
 function loadContacts() {
   contactsLoader.startLoading();
   apiClient
-      .request<ApiResponseData<UserChatData[]>>({url: '/api/messages/contacts', method: 'get'})
-      .then((response) => {
-        contacts.value = response.data.data;
-      })
-      .catch(apiClient.toastRequestError)
-      .finally(contactsLoader.endLoading);
+    .request<ApiResponseData<UserChatData[]>>({ url: '/api/messages/contacts', method: 'get' })
+    .then((response) => {
+      contacts.value = response.data.data;
+    })
+    .catch(apiClient.toastRequestError)
+    .finally(contactsLoader.endLoading);
 }
 
 const messages = ref<MessageData[]>([]);
@@ -70,9 +69,9 @@ function getLastMessageToLoadFromParameters() {
   return {
     sent_at: sentAt,
     excluded_ids: messages.value
-        .filter((e) => e.sent_at === sentAt)
-        .map((i) => i.id)
-        .join(","),
+      .filter((e) => e.sent_at === sentAt)
+      .map((i) => i.id)
+      .join(','),
   };
 }
 
@@ -93,29 +92,27 @@ async function loadMessages(fromLastMessage: boolean = false) {
   }
   messagesLoader.startLoading();
   return apiClient
-      .request<ApiResponseData<{ messages: MessageData[]; total_count: number }>>(
-          {
-            url: `/api/messages/${activeContact.value.id}`,
-            method: 'get',
-            params: {
-              from_last_message: fromLastMessage ? getLastMessageToLoadFromParameters() : null,
-            }
-          },
-      )
-      .then((response) => {
-        if (fromLastMessage) {
-          messages.value.push(...response.data.data.messages);
-        } else {
-          messages.value = response.data.data.messages;
-          totalMessagesCount.value = response.data.data.total_count;
-          setTimeout(() => {
-            gotToEnd();
-            newMessageTextRef.value?.focus();
-          }, 1);
-        }
-      })
-      .catch(apiClient.toastRequestError)
-      .finally(messagesLoader.endLoading);
+    .request<ApiResponseData<{ messages: MessageData[]; total_count: number }>>({
+      url: `/api/messages/${activeContact.value.id}`,
+      method: 'get',
+      params: {
+        from_last_message: fromLastMessage ? getLastMessageToLoadFromParameters() : null,
+      },
+    })
+    .then((response) => {
+      if (fromLastMessage) {
+        messages.value.push(...response.data.data.messages);
+      } else {
+        messages.value = response.data.data.messages;
+        totalMessagesCount.value = response.data.data.total_count;
+        setTimeout(() => {
+          gotToEnd();
+          newMessageTextRef.value?.focus();
+        }, 1);
+      }
+    })
+    .catch(apiClient.toastRequestError)
+    .finally(messagesLoader.endLoading);
 }
 
 function onContactClick(contact: UserChatData) {
@@ -137,12 +134,12 @@ function onShow() {
 }
 
 function onNewMessageKeyDown(event: KeyboardEvent) {
-  if (event.key === "Escape" && newMessageText.value) {
-    newMessageText.value = "";
+  if (event.key === 'Escape' && newMessageText.value) {
+    newMessageText.value = '';
     event.preventDefault();
     event.stopPropagation();
   }
-  if (event.key === "Enter") {
+  if (event.key === 'Enter') {
     if (!event.shiftKey && newMessageText.value) {
       sendMessage();
       event.preventDefault();
@@ -157,26 +154,26 @@ function sendMessage() {
   }
   sendingMessageLoader.startLoading();
   apiClient
-      .request<ApiResponseData<MessageData>>(
-          {
-            url: `/api/messages/${activeContact.value.id}`,
-            method: 'post'
-          },
-          {
-            text: newMessageText.value,
-          },
-      )
-      .then((response) => {
-        newMessageText.value = "";
-        messages.value.unshift(response.data.data);
-        totalMessagesCount.value++;
-        setTimeout(() => {
-          gotToEnd(false);
-          newMessageTextRef.value?.focus();
-        }, 1);
-      })
-      .catch(apiClient.toastRequestError)
-      .finally(sendingMessageLoader.endLoading);
+    .request<ApiResponseData<MessageData>>(
+      {
+        url: `/api/messages/${activeContact.value.id}`,
+        method: 'post',
+      },
+      {
+        text: newMessageText.value,
+      },
+    )
+    .then((response) => {
+      newMessageText.value = '';
+      messages.value.unshift(response.data.data);
+      totalMessagesCount.value++;
+      setTimeout(() => {
+        gotToEnd(false);
+        newMessageTextRef.value?.focus();
+      }, 1);
+    })
+    .catch(apiClient.toastRequestError)
+    .finally(sendingMessageLoader.endLoading);
 }
 
 const isLoadingMore = ref(false);
@@ -197,13 +194,13 @@ function gotToEnd(toFirstUnseen = true) {
   if (element) {
     if (firstUnseenMessage) {
       firstUnseenMessage.scrollIntoView({
-        behavior: "instant",
-        block: "start",
+        behavior: 'instant',
+        block: 'start',
       });
     } else {
       element.scrollTo({
         top: element.scrollHeight,
-        behavior: "instant",
+        behavior: 'instant',
       });
     }
   }
@@ -213,51 +210,46 @@ const playNotificationSound = () => {
   const audio = new Audio(notifMessageSound);
 
   audio.play().catch((error) => {
-    console.warn("Sound blocked by browser policy:", error);
+    console.warn('Sound blocked by browser policy:', error);
   });
 };
 
-const drawerMainRef = useTemplateRef("drawerMainRef");
-const drawerMainSize = useElementSize(drawerMainRef, undefined, {box: "border-box"});
+const drawerMainRef = useTemplateRef('drawerMainRef');
+const drawerMainSize = useElementSize(drawerMainRef, undefined, { box: 'border-box' });
 
 onMounted(() => {
   loadContacts();
   if (authStore.user) {
     echo()
-        .private("chat." + authStore.user.id)
-        .listen("MessageSent", function (event: { message: MessageData }) {
-          if (isVisible.value === true && activeContact.value?.id === event.message.sender_id) {
-            messages.value.unshift(event.message);
-            totalMessagesCount.value++;
-            setTimeout(gotToEnd, 1);
-          } else {
-            playNotificationSound();
-            const contactIndex = contacts.value.findIndex((e) => e.id === event.message.sender_id);
-            if (contactIndex > -1) {
-              contacts.value[contactIndex].unread_count =
-                  contacts.value[contactIndex].unread_count + 1;
+      .private('chat.' + authStore.user.id)
+      .listen('MessageSent', (event: { message: MessageData }) => {
+        if (isVisible.value === true && activeContact.value?.id === event.message.sender_id) {
+          messages.value.unshift(event.message);
+          totalMessagesCount.value++;
+          setTimeout(gotToEnd, 1);
+        } else {
+          playNotificationSound();
+          const contactIndex = contacts.value.findIndex((e) => e.id === event.message.sender_id);
+          if (contactIndex > -1) {
+            contacts.value[contactIndex].unread_count = contacts.value[contactIndex].unread_count + 1;
+          }
+        }
+      })
+      .listen('MessagesRead', (event: MessagesRead) => {
+        if (activeContact.value?.id === event.receiverId) {
+          messages.value = messages.value.map((message) => {
+            if (!message.read_at && message.receiver_id === event.receiverId && message.sent_at <= event.lastSeenSentAt) {
+              message.read_at = event.readAt;
             }
-          }
-        })
-        .listen("MessagesRead", function (event: MessagesRead) {
-          if (activeContact.value?.id === event.receiverId) {
-            messages.value = messages.value.map((message) => {
-              if (
-                  !message.read_at &&
-                  message.receiver_id === event.receiverId &&
-                  message.sent_at <= event.lastSeenSentAt
-              ) {
-                message.read_at = event.readAt;
-              }
-              return message;
-            });
-          }
-        });
+            return message;
+          });
+        }
+      });
   }
 });
 onUnmounted(() => {
   if (authStore.user) {
-    echo().leave("chat." + authStore.user?.id);
+    echo().leave('chat.' + authStore.user?.id);
   }
 });
 
@@ -267,36 +259,31 @@ const markMessagesAsSeen = debounce(() => {
     return;
   }
   apiClient
-      .request(
-          {
-            method: 'post',
-            url: `/api/messages/${activeContact.value?.id}/mark_as_read`
-          },
-          {
-            last_seen_sent_at: newestSeenMessage.value.sent_at,
-          },
-      )
-      .then(() => {
-        const now = moment().format("YYYY-MM-DD HH:mm:ss");
-        const seenAt = newestSeenMessage.value?.sent_at;
-        newestSeenMessage.value = undefined;
-        let newSeenCount = 0;
-        messages.value = messages.value.map((message) => {
-          if (
-              seenAt &&
-              !message.read_at &&
-              message.sender_id === activeContact.value?.id &&
-              message.sent_at <= seenAt
-          ) {
-            message.read_at = now;
-            newSeenCount++;
-          }
-          return message;
-        });
-        if (activeContact.value) {
-          activeContact.value.unread_count = activeContact.value?.unread_count - newSeenCount;
+    .request(
+      {
+        method: 'post',
+        url: `/api/messages/${activeContact.value?.id}/mark_as_read`,
+      },
+      {
+        last_seen_sent_at: newestSeenMessage.value.sent_at,
+      },
+    )
+    .then(() => {
+      const now = moment().format('YYYY-MM-DD HH:mm:ss');
+      const seenAt = newestSeenMessage.value?.sent_at;
+      newestSeenMessage.value = undefined;
+      let newSeenCount = 0;
+      messages.value = messages.value.map((message) => {
+        if (seenAt && !message.read_at && message.sender_id === activeContact.value?.id && message.sent_at <= seenAt) {
+          message.read_at = now;
+          newSeenCount++;
         }
+        return message;
       });
+      if (activeContact.value) {
+        activeContact.value.unread_count = activeContact.value?.unread_count - newSeenCount;
+      }
+    });
 }, 1_000);
 
 function onMessageSeen(message: MessageData) {
@@ -309,7 +296,7 @@ function onMessageSeen(message: MessageData) {
   }
 }
 
-const totalUnread = computed(() => sumBy(contacts.value, "unread_count"));
+const totalUnread = computed(() => sumBy(contacts.value, 'unread_count'));
 </script>
 
 <template>

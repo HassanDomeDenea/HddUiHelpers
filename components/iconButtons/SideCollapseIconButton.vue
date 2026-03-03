@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = withDefaults(
   defineProps<{
-    collapseDirection?: "start" | "end";
+    collapseDirection?: 'start' | 'end';
     disabled?: boolean;
     expandText?: string;
     collapsedClass?: any;
@@ -12,13 +12,13 @@ const props = withDefaults(
     collapseText?: string;
   }>(),
   {
-    collapseDirection: "start",
+    collapseDirection: 'start',
   },
 );
 defineSlots<{
   default: () => any;
 }>();
-const isCollapsed = defineModel<boolean>("isCollapsed", { required: true });
+const isCollapsed = defineModel<boolean>('isCollapsed', { required: true });
 const { t } = useI18n();
 const popoverRef = ref();
 const isShown = ref(false);

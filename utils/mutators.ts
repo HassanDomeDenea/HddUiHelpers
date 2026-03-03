@@ -1,5 +1,5 @@
-export const useBooleanToggler = function (booleanRef: Ref, inverted: boolean = false) {
-  return (isTrueOrFalse: boolean) => {
+export const useBooleanToggler =
+  (booleanRef: Ref, inverted: boolean = false) =>
+  (isTrueOrFalse: boolean) => {
     booleanRef.value = inverted ? !isTrueOrFalse : isTrueOrFalse;
   };
-};

@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers";
-import { useApiClient } from "HddUiHelpers/stores/apiClient";
-import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
-import type { BasicUserData } from "HddUiHelpers/types/types";
-import { computed, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
-import { Menu } from "primevue";
-import type { MenuItem } from "primevue/menuitem";
+import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient';
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
+import type { BasicUserData } from 'HddUiHelpers/types/types';
+import type { Menu } from 'primevue';
+import type { MenuItem } from 'primevue/menuitem';
+import { computed, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 const { user } = defineProps<{
   user: BasicUserData;
 }>();
 const { t } = useI18n();
-const menuRef = useTemplateRef<InstanceType<typeof Menu>>("menu");
+const menuRef = useTemplateRef<InstanceType<typeof Menu>>('menu');
 const hddUiHelpers = useHddUiHelpers();
 const basicAuthStore = useBasicAuthStore();
 const apiClient = useApiClient();
@@ -26,23 +26,23 @@ function onClick(evt: PointerEvent) {
 const items = computed<MenuItem[]>(() => {
   return [
     {
-      label: t("Refresh Page"),
-      icon: "i-mdi-refresh",
-      class: "text-sm",
+      label: t('Refresh Page'),
+      icon: 'i-mdi-refresh',
+      class: 'text-sm',
       command() {
         window.location.reload();
       },
     },
     {
-      label: t("Logout"),
-      icon: "i-mdi-logout",
-      class: "text-sm",
+      label: t('Logout'),
+      icon: 'i-mdi-logout',
+      class: 'text-sm',
       command() {
         apiClient
-          .request({url:'/api/logout', method: 'POST'})
+          .request({ url: '/api/logout', method: 'POST' })
           .then(() => {
             basicAuthStore.logout();
-            router.push("/login");
+            router.push('/login');
           })
           .catch((error) => {
             console.error(error);

@@ -1,6 +1,5 @@
 <script lang="ts">
-
-import {HddPermission} from "HddUiHelpers/types/types.ts";
+import type { HddPermission } from 'HddUiHelpers/types/types.ts';
 
 export interface HddPanelTabItem {
   name: string;

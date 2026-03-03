@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { take, uniq } from "lodash-es";
-import type { ButtonProps } from "primevue";
-import PrimeVuePopover from "primevue/popover";
-import { computed, onMounted, ref, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
-import {ComponentExposed} from "vue-component-type-helpers";
-import Popover from "primevue/popover";
-import {useStorage} from "@vueuse/core";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { useStorage } from '@vueuse/core';
+import { take, uniq } from 'lodash-es';
+import type { ButtonProps } from 'primevue';
+import type Popover from 'primevue/popover';
+import PrimeVuePopover from 'primevue/popover';
+import { computed, onMounted, ref, useTemplateRef } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -25,7 +25,7 @@ const props = withDefaults(
       withRecentColors?: boolean;
       recentColorsGroupName?: string;
       triggerButtonColorBoxClass?: any;
-      triggerButtonSeverity?: ButtonProps["severity"];
+      triggerButtonSeverity?: ButtonProps['severity'];
     } & BaseInputProps
   >(),
   {
@@ -34,7 +34,7 @@ const props = withDefaults(
     asPopover: true,
     appendInline: false,
     customSelector: true,
-    triggerButtonSeverity: "secondary",
+    triggerButtonSeverity: 'secondary',
     withRecentColors: true,
   },
 );
@@ -43,15 +43,13 @@ const emits = defineEmits<{
   change: [value: string | null];
 }>();
 
-const value = defineModel<any>("modelValue", { default: ref().value });
+const value = defineModel<any>('modelValue', { default: ref().value });
 const { t } = useI18n();
 const inputRef = ref();
-const customColorInputRef = useTemplateRef("customColorInputRef");
-const colorPalateContainerRef = useTemplateRef<ComponentExposed<typeof Popover>>(
-  "colorPalateContainerRef",
-);
-const colorsContainerDivRef = useTemplateRef<HTMLDivElement>("colorsContainerDivRef");
-const popoverShowContainerRef = useTemplateRef<HTMLDivElement>("popoverShowContainerRef");
+const customColorInputRef = useTemplateRef('customColorInputRef');
+const colorPalateContainerRef = useTemplateRef<ComponentExposed<typeof Popover>>('colorPalateContainerRef');
+const colorsContainerDivRef = useTemplateRef<HTMLDivElement>('colorsContainerDivRef');
+const popoverShowContainerRef = useTemplateRef<HTMLDivElement>('popoverShowContainerRef');
 
 // onClickOutside(colorsContainerDivRef, event => console.log(event));
 
@@ -62,60 +60,55 @@ function focus() {
 const colorPalate = computed(() => {
   return (
     props.colors ?? [
-      "#000000",
-      "#ffffff",
-      "#cccccc",
-      "#8d8d8d",
-      "#525252",
-      "#2d2d2d",
-      "#ffb0b0",
-      "#ff7171",
-      "#ff3636",
-      "#ff0000",
-      "#980000",
-      "#480000",
-      "#acacff",
-      "#5151ff",
-      "#0000ff",
-      "#0000a2",
-      "#00004b",
-      "#c7ffc7",
-      "#65ff65",
-      "#00ff00",
-      "#009300",
-      "#004b00",
-      "#f6b3ff",
-      "#ee5dff",
-      "#e600ff",
-      "#6b0077",
-      "#ffe2b3",
-      "#ffbb58",
-      "#ff9900",
-      "#774800",
-      "#eaff9a",
-      "#c8ff00",
-      "#708d00",
-      "#00ffff",
-      "#007575",
+      '#000000',
+      '#ffffff',
+      '#cccccc',
+      '#8d8d8d',
+      '#525252',
+      '#2d2d2d',
+      '#ffb0b0',
+      '#ff7171',
+      '#ff3636',
+      '#ff0000',
+      '#980000',
+      '#480000',
+      '#acacff',
+      '#5151ff',
+      '#0000ff',
+      '#0000a2',
+      '#00004b',
+      '#c7ffc7',
+      '#65ff65',
+      '#00ff00',
+      '#009300',
+      '#004b00',
+      '#f6b3ff',
+      '#ee5dff',
+      '#e600ff',
+      '#6b0077',
+      '#ffe2b3',
+      '#ffbb58',
+      '#ff9900',
+      '#774800',
+      '#eaff9a',
+      '#c8ff00',
+      '#708d00',
+      '#00ffff',
+      '#007575',
     ]
   );
 });
 
-const recentColors = useStorage(
-  () => "recent_colors_" + props.recentColorsGroupName,
-  null,
-  localStorage,
-  {
-    serializer: {
-      read: (v: any) => (v ? JSON.parse(v) : null) || null,
-      write: (v: any) => JSON.stringify(v),
-    },
+const recentColors = useStorage(() => 'recent_colors_' + props.recentColorsGroupName, null, localStorage, {
+  serializer: {
+    read: (v: any) => (v ? JSON.parse(v) : null) || null,
+    write: (v: any) => JSON.stringify(v),
   },
-);
+});
 
 function selectColor(color) {
   value.value = color;
-  emits("change", value.value);
+  emits('change', value.value);
   if (props.autoDismiss && props.asPopover) {
     colorPalateContainerRef.value?.hide();
   }
@@ -123,7 +116,7 @@ function selectColor(color) {
 
 function clearColor() {
   value.value = null;
-  emits("change", value.value);
+  emits('change', value.value);
   if (props.autoDismiss && props.asPopover) {
     colorPalateContainerRef.value?.hide();
   }
@@ -131,7 +124,7 @@ function clearColor() {
 
 function customColorSelected(event: Event) {
   value.value = (event.target as HTMLInputElement).value;
-  emits("change", value.value);
+  emits('change', value.value);
   if (props.withRecentColors) {
     const newRecentColors = uniq([value.value, ...(recentColors.value || [])]);
     recentColors.value = take(newRecentColors, 5);

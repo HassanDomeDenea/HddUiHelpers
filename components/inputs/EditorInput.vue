@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import Quill from "quill";
-import { computed, ref } from "vue";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import Quill from 'quill';
+import { computed, ref } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = defineProps<
   BaseInputProps & {
@@ -16,7 +16,7 @@ const emits = defineEmits<{
   change: [e: any];
 }>();
 
-const value = defineModel<any>("modelValue");
+const value = defineModel<any>('modelValue');
 
 const inputRef = ref();
 
@@ -24,29 +24,29 @@ function focus() {
   inputRef.value.$el.focus();
 }
 
-const FontAttributor = Quill.import("attributors/class/font") as any;
-FontAttributor.whitelist = ["tajawal", "mirza", "amiri", "aref"];
+const FontAttributor = Quill.import('attributors/class/font') as any;
+FontAttributor.whitelist = ['tajawal', 'mirza', 'amiri', 'aref'];
 Quill.register(FontAttributor, true);
 
-const FontSizeAttributor = Quill.import("attributors/class/size") as any;
+const FontSizeAttributor = Quill.import('attributors/class/size') as any;
 FontSizeAttributor.whitelist = [
   ...(FontSizeAttributor.whitelist || []),
-  "8px",
-  "10px",
-  "12px",
+  '8px',
+  '10px',
+  '12px',
   false,
-  "14px",
-  "16px",
-  "18px",
-  "20px",
-  "22px",
-  "24px",
-  "26px",
-  "28px",
-  "30px",
-  "36px",
-  "40px",
-  "48px",
+  '14px',
+  '16px',
+  '18px',
+  '20px',
+  '22px',
+  '24px',
+  '26px',
+  '28px',
+  '30px',
+  '36px',
+  '40px',
+  '48px',
 ];
 Quill.register(FontSizeAttributor, true);
 
@@ -76,8 +76,7 @@ const quillModules = computed(() => {
   };
 });
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>

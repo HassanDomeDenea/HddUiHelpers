@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, useSlots, useTemplateRef } from "vue";
+import { onMounted, ref, useSlots, useTemplateRef } from 'vue';
 
 const { duration = 0 } = defineProps<{
   /*
@@ -28,7 +28,7 @@ function focus() {
     } else if (comp.$el.focus && comp.$el.focus()) {
       //
     } else {
-      comp.$el.querySelector("input")?.focus();
+      comp.$el.querySelector('input')?.focus();
     }
   }
 }

@@ -1,10 +1,10 @@
-import type { ColumnSelectOptions } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
-import { i18n } from "HddUiHelpers/plugins/i18n.ts";
-import { isLocalListType } from "HddUiHelpers/utils/dynamicListsUtilities.ts";
-import { get } from "lodash-es";
-import moment from "moment";
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
+import type { ColumnSelectOptions } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
+import { i18n } from 'HddUiHelpers/plugins/i18n.ts';
+import { isLocalListType } from 'HddUiHelpers/utils/dynamicListsUtilities.ts';
+import { get } from 'lodash-es';
+import moment from 'moment';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export const useFormatters = () => {
   const { t } = useI18n();
@@ -14,18 +14,18 @@ export const useFormatters = () => {
 
   function formatPrice(amount: number, currency?: string | { currency?: string }) {
     if (!amount || isNaN(amount)) {
-      return "0";
+      return '0';
     }
 
-    const formatter = new Intl.NumberFormat("en-US", {
-      style: "decimal",
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'decimal',
       // These options are needed to round to whole numbers if that's what you want.
       //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
       //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
     });
-    currency = ((typeof currency === "object" ? currency.currency : currency) ?? "")?.toLowerCase();
-    const dollarSign = currency === "usd" ? "$" : "";
-    const iqdSign = currency === "iqd" ? " " + t("IQD") : "";
+    currency = ((typeof currency === 'object' ? currency.currency : currency) ?? '')?.toLowerCase();
+    const dollarSign = currency === 'usd' ? '$' : '';
+    const iqdSign = currency === 'iqd' ? ' ' + t('IQD') : '';
 
     let num = +amount || 0;
 
@@ -37,7 +37,7 @@ export const useFormatters = () => {
   }
 
   function formatPriceColumn(amount: number, row: any, attributeName: string) {
-    const currency = get(row, attributeName + "_currency");
+    const currency = get(row, attributeName + '_currency');
     return formatPrice(amount, currency);
   }
 
@@ -56,18 +56,18 @@ export function formatPrice(
   suppressDecimalsInIqd: boolean = true,
 ) {
   if (!amount) {
-    return "0";
+    return '0';
   }
 
-  const formatter = new Intl.NumberFormat("en-US", {
-    style: "decimal",
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'decimal',
     // These options are needed to round to whole numbers if that's what you want.
     //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
   });
-  currency = ((typeof currency === "object" ? currency.currency : currency) ?? "")?.toLowerCase();
-  const dollarSign = currency === "usd" ? "$" : "";
-  const iqdSign = currency === "iqd" ? " " + i18n.global.t("IQD") : "";
+  currency = ((typeof currency === 'object' ? currency.currency : currency) ?? '')?.toLowerCase();
+  const dollarSign = currency === 'usd' ? '$' : '';
+  const iqdSign = currency === 'iqd' ? ' ' + i18n.global.t('IQD') : '';
 
   let num = +amount || 0;
 
@@ -80,11 +80,11 @@ export function formatPrice(
 
 export function formatNumberGrouped(amount: number, suppressDecimals = true) {
   if (!amount) {
-    return "0";
+    return '0';
   }
 
-  const formatter = new Intl.NumberFormat("en-US", {
-    style: "decimal",
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'decimal',
     // These options are needed to round to whole numbers if that's what you want.
     //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
@@ -101,13 +101,7 @@ export function safeNumber(value: number, _default: number | null = 0) {
   return isNaN(value) ? _default : value;
 }
 
-export function formatListToSeverityTag({
-  value,
-  options,
-}: {
-  value: any;
-  options: ColumnSelectOptions;
-}): {
+export function formatListToSeverityTag({ value, options }: { value: any; options: ColumnSelectOptions }): {
   severity: any;
 } {
   if (isLocalListType(options)) {
@@ -122,10 +116,10 @@ export function formatListToSeverityTag({
 }
 
 export function formatReceiptNumberByFirstLetter(value: string): string {
-  const splitted = value.split("-");
-  return splitted[0][0] + "-" + splitted[1];
+  const splitted = value.split('-');
+  return splitted[0][0] + '-' + splitted[1];
 }
 
 export function currentTimestamp() {
-  return moment().format("YYYY-MM-DD HH:mm:ss");
+  return moment().format('YYYY-MM-DD HH:mm:ss');
 }

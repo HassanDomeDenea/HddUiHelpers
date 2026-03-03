@@ -1,20 +1,20 @@
 <script setup lang="ts" generic="TRecord extends RecordItem = RecordItem">
-import type { AxiosRequestConfig } from "axios";
-import CellContent from "HddUiHelpers/components/datatables/CellContent.vue";
-import ToolbarFilterWrapper from "HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue";
+import CellContent from 'HddUiHelpers/components/datatables/CellContent.vue';
+import ToolbarFilterWrapper from 'HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue';
 import {
   getColumnBodyClass,
   getColumnName as getColumnName2,
   getColumnSlotName,
   getColumnTitle,
   isToolbarFilterEmpty,
-} from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
-import type { RecordItem } from "HddUiHelpers/components/FormWrapper/types.ts";
-import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
-import { printDomWithStyles } from "HddUiHelpers/utils/printDom.ts";
-import {computed, nextTick, Ref, ref, toValue, useTemplateRef} from "vue";
-import { useI18n } from "vue-i18n";
-import type { PrintPaperForServerDataTableProps } from "./ServerDataTableTypes.ts";
+} from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
+import type { RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth.ts';
+import { printDomWithStyles } from 'HddUiHelpers/utils/printDom.ts';
+import type { AxiosRequestConfig } from 'axios';
+import { computed, nextTick, type Ref, ref, toValue, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { PrintPaperForServerDataTableProps } from './ServerDataTableTypes.ts';
 
 const getColumnName = getColumnName2;
 const {
@@ -31,14 +31,14 @@ const {
   footerImageUrl,
   showPageCounter,
   showCurrentPrintTime,
-  primaryKey = "id" as keyof TRecord,
+  primaryKey = 'id' as keyof TRecord,
 } = defineProps<PrintPaperForServerDataTableProps<TRecord>>();
 const recordsToPrint = ref<TRecord[]>([]) as Ref<TRecord[]>;
 const extraDataToPrint = ref();
 
 const renderPrintNode = ref(false);
-const printNodeRef = useTemplateRef<HTMLDivElement>("printNodeRef");
-const isPrinting = defineModel<boolean>("isPrinting", { default: false });
+const printNodeRef = useTemplateRef<HTMLDivElement>('printNodeRef');
+const isPrinting = defineModel<boolean>('isPrinting', { default: false });
 const authStore = useBasicAuthStore();
 async function print(printAllRows: boolean = false, requestConfig: AxiosRequestConfig = {}) {
   isPrinting.value = true;
@@ -83,7 +83,7 @@ const sortsIntoObject = computed(() => {
       carry[item.field] = item.direction;
       return carry;
     },
-    {} as Record<string, "asc" | "desc">,
+    {} as Record<string, 'asc' | 'desc'>,
   );
 });
 const printableColumns = computed(() => {

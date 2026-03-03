@@ -14,12 +14,12 @@ async function toggleLocales() {
 const { logout } = useUserStore()
 const { isLoggedIn } = storeToRefs(useUserStore())*/
 
-import ChatWidget from "../Widgets/Chat/ChatWidget.vue";
-import { useBasicAuthStore } from "../../stores/basicAuth";
-import { useDimensionsStore } from "../../stores/dimensions";
-import { ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import {useElementSize} from "@vueuse/core";
+import { useElementSize } from '@vueuse/core';
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useBasicAuthStore } from '../../stores/basicAuth';
+import { useDimensionsStore } from '../../stores/dimensions';
+import ChatWidget from '../Widgets/Chat/ChatWidget.vue';
 
 const authStore = useBasicAuthStore();
 
@@ -27,7 +27,7 @@ const footerRef = ref();
 const dimensionsStore = useDimensionsStore();
 
 const { height: footerHeight } = useElementSize(footerRef, undefined, {
-  box: "border-box",
+  box: 'border-box',
 });
 
 watch(

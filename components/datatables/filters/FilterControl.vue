@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import type { ServerDataTableColumn } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
-import { getColumnTitle } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
-import AutoFocusable from "HddUiHelpers/components/misc/AutoFocusable.vue";
-import MultiSelectColumnFilter from "HddUiHelpers/components/primeVueServerTable/MultiSelectColumnFilter.vue";
-import SelectColumnFilter from "HddUiHelpers/components/primeVueServerTable/SelectColumnFilter.vue";
-import YesNoCheckbox from "HddUiHelpers/components/YesNoCheckbox.vue";
-import { isBoolean, startCase } from "lodash-es";
-import moment from "moment/moment";
-import type { ColumnFilterModelType } from "primevue";
-import Button from "primevue/button";
-import { computed, watch } from "vue";
-import { useI18n } from "vue-i18n";
+import type { ServerDataTableColumn } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
+import { getColumnTitle } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
+import AutoFocusable from 'HddUiHelpers/components/misc/AutoFocusable.vue';
+import MultiSelectColumnFilter from 'HddUiHelpers/components/primeVueServerTable/MultiSelectColumnFilter.vue';
+import SelectColumnFilter from 'HddUiHelpers/components/primeVueServerTable/SelectColumnFilter.vue';
+import YesNoCheckbox from 'HddUiHelpers/components/YesNoCheckbox.vue';
+import { isBoolean, startCase } from 'lodash-es';
+import moment from 'moment/moment';
+import type { ColumnFilterModelType } from 'primevue';
+import Button from 'primevue/button';
+import { computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { filterCallback, column } = defineProps<{
   column: ServerDataTableColumn;
   filterCallback: () => void;
-  size?: string | "small" | "large";
+  size?: string | 'small' | 'large';
 }>();
-const filterModel = defineModel<ColumnFilterModelType>("filterModel");
+const filterModel = defineModel<ColumnFilterModelType>('filterModel');
 const { t } = useI18n();
 const isDateRange = computed(() => {
-  return ["dateBetween", "dateNotBetween"].includes(filterModel.value.matchMode);
+  return ['dateBetween', 'dateNotBetween'].includes(filterModel.value.matchMode);
 });
 watch(isDateRange, (newIsDateRange) => {
   if (newIsDateRange && !Array.isArray(filterModel.value.value)) {
@@ -35,15 +35,12 @@ function onDateRangeModelValueUpdated(event: null | [null | Date, null | Date]) 
     filterModel.value.value = null;
     filterCallback();
   } else if (event[0] && event[1]) {
-    filterModel.value.value = [
-      moment(event[0] as Date).format(),
-      moment(event[1] as Date).format(),
-    ];
+    filterModel.value.value = [moment(event[0] as Date).format(), moment(event[1] as Date).format()];
     filterCallback();
   }
 }
 
-const isNumericType = computed(() => ["numeric", "price"].includes(column.type));
+const isNumericType = computed(() => ['numeric', 'price'].includes(column.type));
 </script>
 
 <template>

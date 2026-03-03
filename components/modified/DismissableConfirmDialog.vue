@@ -84,13 +84,13 @@
 </template>
 
 <script>
-import Button from "primevue/button";
-import ConfirmationEventBus from "primevue/confirmationeventbus";
-import BaseConfirmDialog from "primevue/confirmdialog";
-import Dialog from "primevue/dialog";
+import Button from 'primevue/button';
+import ConfirmationEventBus from 'primevue/confirmationeventbus';
+import BaseConfirmDialog from 'primevue/confirmdialog';
+import Dialog from 'primevue/dialog';
 
 export default {
-  name: "DismissableConfirmDialog",
+  name: 'DismissableConfirmDialog',
   components: {
     Dialog,
     Button,
@@ -106,17 +106,13 @@ export default {
   },
   computed: {
     appendTo() {
-      return this.confirmation ? this.confirmation.appendTo : "body";
+      return this.confirmation ? this.confirmation.appendTo : 'body';
     },
     target() {
       return this.confirmation ? this.confirmation.target : null;
     },
     modal() {
-      return this.confirmation
-        ? this.confirmation.modal == null
-          ? true
-          : this.confirmation.modal
-        : true;
+      return this.confirmation ? (this.confirmation.modal == null ? true : this.confirmation.modal) : true;
     },
     header() {
       return this.confirmation ? this.confirmation.header : null;
@@ -134,11 +130,7 @@ export default {
       if (this.confirmation) {
         const confirmation = this.confirmation;
 
-        return (
-          confirmation.acceptLabel ||
-          confirmation.acceptProps?.label ||
-          this.$primevue.config.locale.accept
-        );
+        return confirmation.acceptLabel || confirmation.acceptProps?.label || this.$primevue.config.locale.accept;
       }
 
       return this.$primevue.config.locale.accept;
@@ -147,37 +139,22 @@ export default {
       if (this.confirmation) {
         const confirmation = this.confirmation;
 
-        return (
-          confirmation.rejectLabel ||
-          confirmation.rejectProps?.label ||
-          this.$primevue.config.locale.reject
-        );
+        return confirmation.rejectLabel || confirmation.rejectProps?.label || this.$primevue.config.locale.reject;
       }
 
       return this.$primevue.config.locale.reject;
     },
     acceptIcon() {
-      return this.confirmation
-        ? this.confirmation.acceptIcon
-        : this.confirmation?.acceptProps
-          ? this.confirmation.acceptProps.icon
-          : null;
+      return this.confirmation ? this.confirmation.acceptIcon : this.confirmation?.acceptProps ? this.confirmation.acceptProps.icon : null;
     },
     rejectIcon() {
-      return this.confirmation
-        ? this.confirmation.rejectIcon
-        : this.confirmation?.rejectProps
-          ? this.confirmation.rejectProps.icon
-          : null;
+      return this.confirmation ? this.confirmation.rejectIcon : this.confirmation?.rejectProps ? this.confirmation.rejectProps.icon : null;
     },
     autoFocusAccept() {
-      return this.confirmation.defaultFocus === undefined ||
-        this.confirmation.defaultFocus === "accept"
-        ? true
-        : false;
+      return this.confirmation.defaultFocus === undefined || this.confirmation.defaultFocus === 'accept' ? true : false;
     },
     autoFocusReject() {
-      return this.confirmation.defaultFocus === "reject" ? true : false;
+      return this.confirmation.defaultFocus === 'reject' ? true : false;
     },
     closeOnEscape() {
       return this.confirmation ? this.confirmation.closeOnEscape : true;
@@ -205,12 +182,12 @@ export default {
       this.confirmation = null;
     };
 
-    ConfirmationEventBus.on("confirm", this.confirmListener);
-    ConfirmationEventBus.on("close", this.closeListener);
+    ConfirmationEventBus.on('confirm', this.confirmListener);
+    ConfirmationEventBus.on('close', this.closeListener);
   },
   beforeUnmount() {
-    ConfirmationEventBus.off("confirm", this.confirmListener);
-    ConfirmationEventBus.off("close", this.closeListener);
+    ConfirmationEventBus.off('confirm', this.confirmListener);
+    ConfirmationEventBus.off('close', this.closeListener);
   },
   methods: {
     accept() {

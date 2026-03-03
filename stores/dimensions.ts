@@ -1,7 +1,7 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-export const useDimensionsStore = defineStore("dimensionsStore", () => {
+export const useDimensionsStore = defineStore('dimensionsStore', () => {
   const topNavbarHeight = ref(0);
   const botFooterHeight = ref(0);
 

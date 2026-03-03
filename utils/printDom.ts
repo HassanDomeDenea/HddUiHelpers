@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from 'moment';
 
 const MM_TO_PX = 3.78;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,23 +36,20 @@ interface PrintDomWithStylesOptions {
   footerImageUrl?: string;
 }
 
-export async function printDomWithStyles(
-  element: HTMLElement,
-  opts: PrintDomWithStylesOptions = {},
-) {
+export async function printDomWithStyles(element: HTMLElement, opts: PrintDomWithStylesOptions = {}) {
   const contents = element.outerHTML;
   const cssLinks: string[] = [];
   const cssStyles: string[] = [];
 
   if (!opts.inlineStyles) {
-    document.querySelectorAll<HTMLLinkElement>("link[rel=stylesheet]").forEach((e) => {
+    document.querySelectorAll<HTMLLinkElement>('link[rel=stylesheet]').forEach((e) => {
       cssLinks.push(e.href);
     });
-    document.querySelectorAll<HTMLLinkElement>("style").forEach((e) => {
+    document.querySelectorAll<HTMLLinkElement>('style').forEach((e) => {
       cssStyles.push(e.innerHTML);
     });
   }
-  const targetPaperSize = opts.paperSize?.toLowerCase() ?? "a4";
+  const targetPaperSize = opts.paperSize?.toLowerCase() ?? 'a4';
 
   // I don't remember what this segment does:
   /*  if (typeof opts.paperSize === 'number') {
@@ -70,11 +67,11 @@ export async function printDomWithStyles(
     }
   }*/
   if (!opts.headerMaxWidth) {
-    if (targetPaperSize.startsWith("a4")) {
+    if (targetPaperSize.startsWith('a4')) {
       opts.headerMaxWidth = 210;
-    } else if (targetPaperSize.startsWith("letter")) {
+    } else if (targetPaperSize.startsWith('letter')) {
       opts.headerMaxWidth = 216;
-    } else if (targetPaperSize.startsWith("a5")) {
+    } else if (targetPaperSize.startsWith('a5')) {
       opts.headerMaxWidth = 148;
     }
 
@@ -88,11 +85,11 @@ export async function printDomWithStyles(
     }
   }
   if (!opts.footerMaxWidth) {
-    if (targetPaperSize.startsWith("a4")) {
+    if (targetPaperSize.startsWith('a4')) {
       opts.footerMaxWidth = 210;
-    } else if (targetPaperSize.startsWith("letter")) {
+    } else if (targetPaperSize.startsWith('letter')) {
       opts.footerMaxWidth = 216;
-    } else if (targetPaperSize.startsWith("a5")) {
+    } else if (targetPaperSize.startsWith('a5')) {
       opts.footerMaxWidth = 148;
     }
 
@@ -116,11 +113,7 @@ export async function printDomWithStyles(
   const headerMaxWidth = opts.headerMaxWidth ?? 210;
 
   if (opts.headerImageUrl) {
-    const { dataUrl: url, newHeight } = await resizeImageToDataURL(
-      opts.headerImageUrl,
-      MM_TO_PX * headerMaxWidth,
-      MM_TO_PX * headerMaxHeight,
-    );
+    const { dataUrl: url, newHeight } = await resizeImageToDataURL(opts.headerImageUrl, MM_TO_PX * headerMaxWidth, MM_TO_PX * headerMaxHeight);
 
     const newHeightInMm = +(newHeight / MM_TO_PX).toFixed(2);
     if (newHeightInMm > (opts.topMargin ?? 0)) {
@@ -173,16 +166,12 @@ export async function printDomWithStyles(
             @top-center {
                 content: url('${url}');
             }
-            margin-top: ${typeof differentFirstPageTopMargin === "number" ? differentFirstPageTopMargin + "mm!important" : ""};
+            margin-top: ${typeof differentFirstPageTopMargin === 'number' ? differentFirstPageTopMargin + 'mm!important' : ''};
 
         `);
   }
   if (opts.footerImageUrl) {
-    const { dataUrl: url, newHeight } = await resizeImageToDataURL(
-      opts.footerImageUrl,
-      MM_TO_PX * footerMaxWidth,
-      MM_TO_PX * footerMaxHeight,
-    );
+    const { dataUrl: url, newHeight } = await resizeImageToDataURL(opts.footerImageUrl, MM_TO_PX * footerMaxWidth, MM_TO_PX * footerMaxHeight);
 
     const newHeightInMm = +(newHeight / MM_TO_PX).toFixed(2);
     if (newHeightInMm > (opts.bottomMargin ?? 0)) {
@@ -199,18 +188,16 @@ export async function printDomWithStyles(
 
   const dir = window.getComputedStyle(document.body).direction;
   const fontFamily = window.getComputedStyle(document.body).fontFamily;
-  cssStyles.push(
-    `body{background:white; font-family:${fontFamily}!important; direction: ${dir}; text-align:${dir === "ltr" ? "left" : "right"};}`,
-  );
+  cssStyles.push(`body{background:white; font-family:${fontFamily}!important; direction: ${dir}; text-align:${dir === 'ltr' ? 'left' : 'right'};}`);
   cssStyles.push(
     `
         @page {
             size: ${targetPaperSize} ;
-            margin: ${typeof opts.paperMargin === "number" ? opts.paperMargin + "mm" : opts.paperMargin || "8mm"};
-            margin-top: ${typeof opts.topMargin === "number" ? opts.topMargin + "mm" : ""};
-            margin-bottom: ${typeof opts.bottomMargin === "number" ? opts.bottomMargin + "mm" : ""};
-            margin-left: ${typeof opts.leftMargin === "number" ? opts.leftMargin + "mm" : ""};
-            margin-right: ${typeof opts.rightMargin === "number" ? opts.rightMargin + "mm" : ""};
+            margin: ${typeof opts.paperMargin === 'number' ? opts.paperMargin + 'mm' : opts.paperMargin || '8mm'};
+            margin-top: ${typeof opts.topMargin === 'number' ? opts.topMargin + 'mm' : ''};
+            margin-bottom: ${typeof opts.bottomMargin === 'number' ? opts.bottomMargin + 'mm' : ''};
+            margin-left: ${typeof opts.leftMargin === 'number' ? opts.leftMargin + 'mm' : ''};
+            margin-right: ${typeof opts.rightMargin === 'number' ? opts.rightMargin + 'mm' : ''};
             -webkit-print-color-adjust: exact !important;
             color-adjust: exact !important;
 
@@ -238,7 +225,7 @@ export async function printDomWithStyles(
                   ` +
       (opts.showPrintTime
         ? `
-                    content: '🖨️ ${moment().format("YYYY-MM-DD HH:mm")}';
+                    content: '🖨️ ${moment().format('YYYY-MM-DD HH:mm')}';
                     vertical-align: bottom;
                     padding-bottom: 10px;
                     font-size: 10px;
@@ -250,28 +237,24 @@ export async function printDomWithStyles(
   );
 
   if (opts.backgroundImage) {
-    cssStyles.push(
-      `body{ background-image: url('${opts.backgroundImage}')!important; background-size: cover; background-repeat: no-repeat;} `,
-    );
+    cssStyles.push(`body{ background-image: url('${opts.backgroundImage}')!important; background-size: cover; background-repeat: no-repeat;} `);
     if (opts.bodyTopMargin) {
-      cssStyles.push(
-        ` body{padding-top:${typeof opts.bodyTopMargin === "number" ? opts.paperMargin + "cm" : opts.paperMargin || "0"}`,
-      );
+      cssStyles.push(` body{padding-top:${typeof opts.bodyTopMargin === 'number' ? opts.paperMargin + 'cm' : opts.paperMargin || '0'}`);
     }
   }
 
-  let htmlRootClass = "";
+  let htmlRootClass = '';
   if (opts.themeClassName) {
     htmlRootClass = opts.themeClassName;
   } else {
-    htmlRootClass = "light";
+    htmlRootClass = 'light';
   }
 
   return new Promise<void>((mainPromiseResolve) => {
-    const printFrame = document.createElement("iframe");
-    printFrame.style.position = "absolute";
-    printFrame.style.left = "-1";
-    printFrame.style.visibility = "hidden";
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'absolute';
+    printFrame.style.left = '-1';
+    printFrame.style.visibility = 'hidden';
 
     document.body.appendChild(printFrame);
 
@@ -291,8 +274,8 @@ export async function printDomWithStyles(
                 if (image.complete) {
                   resolve();
                 } else {
-                  image.addEventListener("load", () => resolve());
-                  image.addEventListener("error", () => resolve());
+                  image.addEventListener('load', () => resolve());
+                  image.addEventListener('error', () => resolve());
                 }
               });
             } else {
@@ -307,12 +290,12 @@ export async function printDomWithStyles(
       await new Promise<void>((resolve) => {
         printFrame.focus();
         try {
-          printFrame.contentWindow?.document.execCommand("print", false, undefined);
+          printFrame.contentWindow?.document.execCommand('print', false, undefined);
           resolve();
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (_) {
           // console.log("Printing with timeout")
-          setTimeout(function () {
+          setTimeout(() => {
             printFrame.contentWindow?.print();
             resolve();
           }, 250);
@@ -330,8 +313,8 @@ export async function printDomWithStyles(
         .map((link) => {
           return '<link rel="stylesheet" href="' + link + '" />';
         })
-        .join("") +
-      cssStyles.map((cssStyle) => `<style>${cssStyle}</style>`).join("") +
+        .join('') +
+      cssStyles.map((cssStyle) => `<style>${cssStyle}</style>`).join('') +
       `</head><body>${contents}</body></html>`;
 
     // console.log(printFrame.srcdoc)
@@ -350,25 +333,25 @@ async function resizeImageToDataURL(
 }> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = "Anonymous"; // needed for cross-origin images
+    img.crossOrigin = 'Anonymous'; // needed for cross-origin images
 
-    img.onload = function () {
+    img.onload = () => {
       const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
 
       const newWidth = img.width * ratio;
       const newHeight = img.height * ratio;
 
-      const canvas = document.createElement("canvas");
+      const canvas = document.createElement('canvas');
       canvas.width = newWidth;
       canvas.height = newHeight;
 
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
+        ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, newWidth, newHeight);
       }
-      const dataUrl = canvas.toDataURL("image/png");
+      const dataUrl = canvas.toDataURL('image/png');
       resolve({ dataUrl, newWidth, newHeight });
     };
 
@@ -390,19 +373,19 @@ async function convertImageToDataURLWithDimensions(
 }> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = "Anonymous"; // needed for cross-origin images
+    img.crossOrigin = 'Anonymous'; // needed for cross-origin images
 
-    img.onload = function () {
+    img.onload = () => {
       const ratio = Math.min(maxWidth / img.width, maxHeight / img.height, 1);
 
       const newWidth = img.width * ratio;
       const newHeight = img.height * ratio;
 
-      const canvas = document.createElement("canvas");
+      const canvas = document.createElement('canvas');
       canvas.width = img.width;
       canvas.height = img.height;
-      canvas.getContext("2d")?.drawImage(img, 0, 0);
-      const dataUrl = canvas.toDataURL("image/png");
+      canvas.getContext('2d')?.drawImage(img, 0, 0);
+      const dataUrl = canvas.toDataURL('image/png');
       resolve({ dataUrl, newWidth, newHeight });
     };
 

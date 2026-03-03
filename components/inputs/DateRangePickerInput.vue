@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import moment from "moment";
-import { computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import moment from 'moment';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(defineProps<{} & BaseInputProps>(), {});
 const { t } = useI18n();
-const value = defineModel<[Date | string | null, Date | null | string] | null>("modelValue");
+const value = defineModel<[Date | string | null, Date | null | string] | null>('modelValue');
 const formattedValue = computed({
   get: () => {
     return value.value?.map((e) => (e ? moment(e).toDate() : null));
   },
   set: (evt) => {
-    value.value = evt?.map((e) => (e ? moment(e).format("YYYY-MM-DD") : null)) as [string|null, string|null];
+    value.value = evt?.map((e) => (e ? moment(e).format('YYYY-MM-DD') : null)) as [string | null, string | null];
   },
 });
 const inputRef = ref();
@@ -24,24 +24,23 @@ function focus() {
 }
 
 function onInputKeydown(evt: KeyboardEvent) {
-  if (evt.key === "Enter") {
+  if (evt.key === 'Enter') {
     const target = evt.target as HTMLInputElement;
     const inputVal = target.value;
-    if (inputVal.split("-").length === 3) {
+    if (inputVal.split('-').length === 3) {
       const m = moment(inputVal);
       if (m.isValid()) {
         if (!value.value) {
-          value.value = [m.format("YYYY-MM-DD"), null];
+          value.value = [m.format('YYYY-MM-DD'), null];
         } else {
-          value.value[0] = m.format("YYYY-MM-DD");
+          value.value[0] = m.format('YYYY-MM-DD');
         }
       }
     }
   }
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>

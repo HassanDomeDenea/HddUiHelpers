@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import {
-  cursorAtEndOfInput,
-  cursorAtStartOfInput,
-  useHddBaseInputUtils,
-} from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { computed, ref, watch } from "vue";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputSlots, TextInputProps } from "./types";
+import { cursorAtEndOfInput, cursorAtStartOfInput, useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { computed, ref, watch } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputSlots, TextInputProps } from './types';
 
 const props = withDefaults(defineProps<TextInputProps>(), {
-  type: "text",
-  autocomplete: "off",
+  type: 'text',
+  autocomplete: 'off',
 });
 const slots = defineSlots<BaseInputSlots>();
 
@@ -22,7 +18,7 @@ const emits = defineEmits<{
   focusNext: [];
 }>();
 
-const value = defineModel<any>("modelValue", { required: true });
+const value = defineModel<any>('modelValue', { required: true });
 const localValue = ref(null);
 
 if (props.lazy) {
@@ -63,11 +59,10 @@ function onInputChange() {
   }
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
-const onArrowUp = () => cursorAtStartOfInput(inputRef.value.$el) && emits("focusPrevious");
-const onArrowDown = () => cursorAtEndOfInput(inputRef.value.$el) && emits("focusNext");
+const onArrowUp = () => cursorAtStartOfInput(inputRef.value.$el) && emits('focusPrevious');
+const onArrowDown = () => cursorAtEndOfInput(inputRef.value.$el) && emits('focusNext');
 
 defineExpose({ select, focus, ...exposed });
 </script>

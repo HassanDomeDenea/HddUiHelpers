@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { ref, watch } from "vue";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { ref, watch } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -18,22 +18,21 @@ const emits = defineEmits<{
   keydown: [e: KeyboardEvent];
   complete: [e: string];
 }>();
-const value = defineModel<any>("modelValue");
+const value = defineModel<any>('modelValue');
 
 const inputRef = ref();
 
 function focus() {
-  inputRef.value.$el.querySelector("input").focus();
+  inputRef.value.$el.querySelector('input').focus();
 }
 
 watch(value, (val) => {
   if (val.length >= props.length) {
-    emits("complete", val);
+    emits('complete', val);
   }
 });
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>

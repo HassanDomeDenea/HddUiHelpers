@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import type { ServerDataTableToolbarFilterWrapper } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
-import {
-  type ServerDataTableColumn,
-  type ServerDataTableToolbarFilterValue,
-} from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
+import type {
+  ServerDataTableColumn,
+  ServerDataTableToolbarFilterValue,
+  ServerDataTableToolbarFilterWrapper,
+} from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
 import {
   getColumnCanShowFilterApplyButton,
   getColumnCanShowFilterMatchModes,
   getColumnCellFormatedText,
   getColumnTitle,
   getFilterMatchModesByTypeOptions,
-} from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
-import { hidePrimevuePopovers } from "HddUiHelpers/plugins/primevue.ts";
-import { useFormatters } from "HddUiHelpers/utils/useFormatters.ts";
-import { isBoolean, isNull, toLower } from "lodash-es";
-import moment from "moment";
-import type { ColumnFilterModelType } from "primevue";
-import type ContextMenu from "primevue/contextmenu";
-import Popover from "primevue/popover";
-import type { ComponentExposed } from "vue-component-type-helpers";
-import { computed, ref, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
+} from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
+import { hidePrimevuePopovers } from 'HddUiHelpers/plugins/primevue.ts';
+import { useFormatters } from 'HddUiHelpers/utils/useFormatters.ts';
+import { isBoolean, isNull, toLower } from 'lodash-es';
+import moment from 'moment';
+import type { ColumnFilterModelType } from 'primevue';
+import type ContextMenu from 'primevue/contextmenu';
+import type Popover from 'primevue/popover';
+import { computed, ref, useTemplateRef } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useI18n } from 'vue-i18n';
 
 const {
   columns,
@@ -28,7 +28,7 @@ const {
   canCreateGroup,
   isPrinting = false,
 } = defineProps<{
-  operator?: ServerDataTableToolbarFilterWrapper["operator"];
+  operator?: ServerDataTableToolbarFilterWrapper['operator'];
   columns: ServerDataTableColumn[];
   isPrinting?: boolean;
   canCreateGroup?: boolean;
@@ -37,11 +37,11 @@ const {
 const emits = defineEmits<{
   remove: [field: string];
   isolateIntoGroup: [];
-  operatorChanged: [operator: ServerDataTableToolbarFilterWrapper["operator"]];
+  operatorChanged: [operator: ServerDataTableToolbarFilterWrapper['operator']];
   filterCallback: [filter: ServerDataTableToolbarFilterValue];
 }>();
-const filter = defineModel<ServerDataTableToolbarFilterValue>("filter");
-const filterDivRef = useTemplateRef<HTMLElement>("filterDivRef");
+const filter = defineModel<ServerDataTableToolbarFilterValue>('filter');
+const filterDivRef = useTemplateRef<HTMLElement>('filterDivRef');
 const { t } = useI18n();
 const column = computed(() => {
   return columns.find((e) => (e.filterField ?? e.fullFieldName) === filter.value.field);
@@ -54,7 +54,7 @@ const label = computed(() => {
 const formattedValue = computed(() => {
   let originalValue = filter.value.value;
   const baseValue = getColumnCellFormatedText(originalValue, column.value, t);
-  if (column.value.type === "date" && column.value.dateFormat) {
+  if (column.value.type === 'date' && column.value.dateFormat) {
     if (Array.isArray(originalValue)) {
       originalValue = originalValue.map((e) => moment(e).format(column.value.dateFormat));
     } else {
@@ -62,40 +62,36 @@ const formattedValue = computed(() => {
     }
   }
   switch (column.value.type) {
-    case "date":
+    case 'date':
       if (Array.isArray(originalValue)) {
         return (
           `<span class="inline-block ltr">${originalValue[0]}</span>` +
-          ` <span class="mx-1 italic font-light"> ${t("and")} </span> ` +
+          ` <span class="mx-1 italic font-light"> ${t('and')} </span> ` +
           `<span class="inline-block ltr">${originalValue[1]}</span>`
         );
       }
       break;
-    case "price":
-    case "numeric":
-      const isPrice = column.value.type === "price";
+    case 'price':
+    case 'numeric': {
+      const isPrice = column.value.type === 'price';
 
-      const currency =
-        typeof column.value.currency === "string" ? column.value.currency : undefined;
+      const currency = typeof column.value.currency === 'string' ? column.value.currency : undefined;
       if (Array.isArray(originalValue)) {
         return (
           `<span class="inline-block ltr">${isPrice ? formatters.formatPrice(originalValue[0], currency) : originalValue[0]}</span>` +
-          ` <span class="mx-1 italic font-light"> ${t("and")} </span> ` +
+          ` <span class="mx-1 italic font-light"> ${t('and')} </span> ` +
           `<span class="inline-block ltr">${isPrice ? formatters.formatPrice(originalValue[1], currency) : originalValue[1]}</span>`
         );
       }
       return isNull(originalValue) ? null : formatters.formatPrice(+baseValue, currency);
-    case "select":
+    }
+    case 'select':
       return Array.isArray(baseValue)
         ? baseValue.length === 1
           ? baseValue[0]
-          : baseValue.join(
-              filter.value.matchMode === "whereIn"
-                ? `<span class="mx-1 italic font-light"> ${t("or")} </span>`
-                : t(",") + " ",
-            )
+          : baseValue.join(filter.value.matchMode === 'whereIn' ? `<span class="mx-1 italic font-light"> ${t('or')} </span>` : t(',') + ' ')
         : baseValue;
-    case "boolean":
+    case 'boolean':
       return isBoolean(originalValue) ? baseValue : null;
   }
 
@@ -104,28 +100,27 @@ const formattedValue = computed(() => {
 
 const matchModeSymbol = computed(() => {
   switch (filter.value.matchMode) {
-    case "whereIn":
-      return "=";
+    case 'whereIn':
+      return '=';
     // return filter.value.value?.length < 2 ? '=' : t('In');
-    default:
-      const targetMatchMode = matchModeOptions.value.find(
-        (e) => e.value === filter.value.matchMode,
-      );
+    default: {
+      const targetMatchMode = matchModeOptions.value.find((e) => e.value === filter.value.matchMode);
 
       if (!targetMatchMode) {
-        return t("?");
+        return t('?');
       }
       if (targetMatchMode.symbol) {
         return targetMatchMode.symbol;
       }
       return toLower(targetMatchMode.label);
+    }
   }
 });
 const localFilterModel = ref<ColumnFilterModelType>();
-const menuPopoverRef = useTemplateRef<ComponentExposed<typeof Popover>>("menuPopoverRef");
-const operatorChangerRef = useTemplateRef<ComponentExposed<typeof Popover>>("operatorChangerRef");
+const menuPopoverRef = useTemplateRef<ComponentExposed<typeof Popover>>('menuPopoverRef');
+const operatorChangerRef = useTemplateRef<ComponentExposed<typeof Popover>>('operatorChangerRef');
 const matchModeOptions = computed(() => {
-  return getFilterMatchModesByTypeOptions(t)[column.value.type ?? "text"];
+  return getFilterMatchModesByTypeOptions(t)[column.value.type ?? 'text'];
 });
 
 function onFilterDivClick(event: PointerEvent) {
@@ -141,7 +136,7 @@ function filterCallback() {
   filter.value.value = localFilterModel.value.value;
   filter.value.matchMode = localFilterModel.value.matchMode;
   menuPopoverRef.value?.hide();
-  emits("filterCallback", filter.value);
+  emits('filterCallback', filter.value);
 }
 
 function onPopoverHide() {}
@@ -155,15 +150,14 @@ function onOperatorSpanClick(evt: PointerEvent) {
   operatorChangerRef.value.toggle(evt);
 }
 
-function onOperatorChanges(newOperator: ServerDataTableToolbarFilterWrapper["operator"]) {
+function onOperatorChanges(newOperator: ServerDataTableToolbarFilterWrapper['operator']) {
   if (newOperator && newOperator !== operator) {
-    emits("operatorChanged", newOperator);
+    emits('operatorChanged', newOperator);
   }
   operatorChangerRef.value.hide();
 }
 
-const filterDivContextMenuRef =
-  useTemplateRef<ComponentExposed<typeof ContextMenu>>("filterDivContextMenuRef");
+const filterDivContextMenuRef = useTemplateRef<ComponentExposed<typeof ContextMenu>>('filterDivContextMenuRef');
 
 function onFilterDivContextMenu(event: PointerEvent) {
   if (isPrinting) return;
@@ -176,10 +170,10 @@ function onFilterDivContextMenu(event: PointerEvent) {
 const contextMenuItems = computed(() => {
   return [
     {
-      label: t("Isolate into Group"),
-      icon: "i-mdi:filter-multiple",
+      label: t('Isolate into Group'),
+      icon: 'i-mdi:filter-multiple',
       command: () => {
-        emits("isolateIntoGroup");
+        emits('isolateIntoGroup');
       },
     },
   ];

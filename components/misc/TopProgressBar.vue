@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useApiClient } from "HddUiHelpers/stores/apiClient";
+import { useApiClient } from 'HddUiHelpers/stores/apiClient';
 
 const apiClient = useApiClient();
 </script>

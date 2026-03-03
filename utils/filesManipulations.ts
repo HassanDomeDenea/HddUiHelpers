@@ -3,18 +3,18 @@ export async function rotateImageFile(file: File, rotationAngle: number = 0): Pr
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result;
-      if (typeof result !== "string") {
-        return reject(new Error("Failed to read the file as a data URL."));
+      if (typeof result !== 'string') {
+        return reject(new Error('Failed to read the file as a data URL.'));
       }
 
       const image = new Image();
       image.src = result;
       image.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
 
         if (!ctx) {
-          return reject(new Error("Failed to get canvas context."));
+          return reject(new Error('Failed to get canvas context.'));
         }
 
         // Adjust canvas size to fit the rotated image
@@ -48,28 +48,24 @@ export async function rotateImageFile(file: File, rotationAngle: number = 0): Pr
             const rotatedFile = new File([blob], file.name, { type: file.type });
             resolve(rotatedFile);
           } else {
-            reject(new Error("Failed to convert canvas to file."));
+            reject(new Error('Failed to convert canvas to file.'));
           }
         }, file.type);
       };
 
       image.onerror = () => {
-        reject(new Error("Failed to load image."));
+        reject(new Error('Failed to load image.'));
       };
     };
 
     reader.onerror = () => {
-      reject(new Error("Failed to read the file."));
+      reject(new Error('Failed to read the file.'));
     };
 
     reader.readAsDataURL(file);
   });
 }
-export function canvasToFile(
-  canvas: HTMLCanvasElement,
-  fileName: string = "image.png",
-  mimeType: string = "image/png",
-): Promise<File> {
+export function canvasToFile(canvas: HTMLCanvasElement, fileName: string = 'image.png', mimeType: string = 'image/png'): Promise<File> {
   return new Promise((resolve) => {
     canvas.toBlob((blob) => {
       if (blob) {

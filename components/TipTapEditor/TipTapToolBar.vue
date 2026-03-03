@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
-import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
-import TipTapColorsControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapColorsControls.vue";
-import TipTapPageControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapPageControls.vue";
-import TipTapTableControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTableControls.vue";
-import TipTapTextStyleControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTextStyleControls.vue";
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
+import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
+import TipTapColorsControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapColorsControls.vue';
+import TipTapFontControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapFontControls.vue';
+import TipTapListsControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapListsControls.vue';
+import TipTapPageControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapPageControls.vue';
+import TipTapTableControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTableControls.vue';
+import TipTapTextStyleControls from 'HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTextStyleControls.vue';
+import type { Editor } from '@tiptap/vue-3';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const { editor } = defineProps<{

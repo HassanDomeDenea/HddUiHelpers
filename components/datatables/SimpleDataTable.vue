@@ -1,16 +1,16 @@
 <script setup lang="ts" generic="TRow extends any">
-import { pick } from "lodash-es";
-import { ButtonProps } from "primevue";
-import { computed, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
-import {useTemplateRefsList} from "@vueuse/core";
+import { useTemplateRefsList } from '@vueuse/core';
+import { pick } from 'lodash-es';
+import type { ButtonProps } from 'primevue';
+import { computed, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const {
   rounded = true,
   only,
   values,
   title,
-  severity = "primary",
+  severity = 'primary',
 } = defineProps<{
   values: TRow[];
   only?: string[];
@@ -20,13 +20,13 @@ const {
   showEmptyMessage?: boolean;
   title?: string;
   showSequenceColumn?: boolean;
-  severity?: ButtonProps["severity"];
-  size?: ButtonProps["size"];
+  severity?: ButtonProps['severity'];
+  size?: ButtonProps['size'];
   onRowClick?: (row: TRow) => void;
 }>();
 const { t } = useI18n();
 const theadCellRefs = useTemplateRefsList();
-const theadRef = useTemplateRef<HTMLDivElement>("theadRef");
+const theadRef = useTemplateRef<HTMLDivElement>('theadRef');
 const mappedValues = computed(() => {
   if (only) {
     return values.map((i) => pick(i, only));

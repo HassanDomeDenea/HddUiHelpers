@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { useDropZone } from "@vueuse/core";
-import { onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
+import { useDropZone } from '@vueuse/core';
+import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const { accept = ["image/jpeg", "image/png", "image/webp", "image/gif"], multiple = true } =
-  defineProps<{
-    accept?: string[];
-    multiple?: boolean;
-  }>();
+const { accept = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'], multiple = true } = defineProps<{
+  accept?: string[];
+  multiple?: boolean;
+}>();
 const emits = defineEmits<{
   upload: [files: File[]];
 }>();
-const dropZoneRef = useTemplateRef<HTMLDivElement>("dropZoneRef");
+const dropZoneRef = useTemplateRef<HTMLDivElement>('dropZoneRef');
 const { t } = useI18n();
 const { isOverDropZone } = useDropZone(dropZoneRef, {
   onDrop,
@@ -22,7 +21,7 @@ const { isOverDropZone } = useDropZone(dropZoneRef, {
 });
 function onDrop(files: File[] | null) {
   if (files) {
-    emits("upload", files);
+    emits('upload', files);
   }
 }
 
@@ -31,7 +30,7 @@ const dragCounter = ref(0);
 
 function handleBodyDragEnter(e: DragEvent) {
   dragCounter.value++;
-  if (e.dataTransfer?.types.includes("Files")) {
+  if (e.dataTransfer?.types.includes('Files')) {
     isDragging.value = true;
   }
 }
@@ -49,15 +48,15 @@ function handleBodyDrop(e: DragEvent) {
 }
 
 onMounted(() => {
-  document.body.addEventListener("dragenter", handleBodyDragEnter);
-  document.body.addEventListener("dragleave", handleBodyDragLeave);
-  document.body.addEventListener("drop", handleBodyDrop);
+  document.body.addEventListener('dragenter', handleBodyDragEnter);
+  document.body.addEventListener('dragleave', handleBodyDragLeave);
+  document.body.addEventListener('drop', handleBodyDrop);
 });
 
 onBeforeUnmount(() => {
-  document.body.removeEventListener("dragenter", handleBodyDragEnter);
-  document.body.removeEventListener("dragleave", handleBodyDragLeave);
-  document.body.removeEventListener("drop", handleBodyDrop);
+  document.body.removeEventListener('dragenter', handleBodyDragEnter);
+  document.body.removeEventListener('dragleave', handleBodyDragLeave);
+  document.body.removeEventListener('drop', handleBodyDrop);
 });
 </script>
 

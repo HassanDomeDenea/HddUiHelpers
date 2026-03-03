@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { pick } from "lodash-es";
-import moment from "moment";
-import { computed, nextTick, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { pick } from 'lodash-es';
+import moment from 'moment';
+import { computed, nextTick, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -18,7 +18,7 @@ const props = withDefaults(
     } & BaseInputProps
   >(),
   {
-    outputDateFormat: "YYYY-MM-DD HH:mm:ss",
+    outputDateFormat: 'YYYY-MM-DD HH:mm:ss',
     manualInput: true,
     formatAsString: true,
   },
@@ -27,7 +27,7 @@ const emits = defineEmits<{
   changed: [newRange: [Date | string | null, Date | null | string] | null];
 }>();
 const { t } = useI18n();
-const value = defineModel<[Date | string | null, Date | null | string] | null>("modelValue");
+const value = defineModel<[Date | string | null, Date | null | string] | null>('modelValue');
 
 const fromDateValue = computed({
   get: () => {
@@ -38,7 +38,7 @@ const fromDateValue = computed({
     newRange[0] = evt && props.formatAsString ? moment(evt).format(props.outputDateFormat) : evt;
     value.value = newRange;
     nextTick(() => {
-      emits("changed", newRange);
+      emits('changed', newRange);
     });
   },
 });
@@ -52,7 +52,7 @@ const toDateValue = computed({
     newRange[1] = evt && props.formatAsString ? moment(evt).format(props.outputDateFormat) : evt;
     value.value = newRange;
     nextTick(() => {
-      emits("changed", newRange);
+      emits('changed', newRange);
     });
   },
 });
@@ -74,16 +74,8 @@ const { exposed, baseInputForwardedProps, fieldUniqueId } = useHddBaseInputUtils
 const dateInputBinds = computed(() => {
   return {
     labelSingleLine: true,
-    ...pick(props, [
-      "placeholder",
-      "size",
-      "disabled",
-      "readonly",
-      "error",
-      "manualInput",
-      "clearable",
-    ]),
-    placeholder: props.placeholder ?? t("Unspecified"),
+    ...pick(props, ['placeholder', 'size', 'disabled', 'readonly', 'error', 'manualInput', 'clearable']),
+    placeholder: props.placeholder ?? t('Unspecified'),
     withSuggestionsButtons: true,
     inline: true,
   };

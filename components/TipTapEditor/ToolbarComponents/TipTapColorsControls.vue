@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
-import type ColorPickerInput from "HddUiHelpers/components/inputs/ColorPickerInput.vue";
-import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
-import type { ComponentExposed } from "vue-component-type-helpers";
-import { ref, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
+import type ColorPickerInput from 'HddUiHelpers/components/inputs/ColorPickerInput.vue';
+import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
+import type { Editor } from '@tiptap/vue-3';
+import { ref, useTemplateRef } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useI18n } from 'vue-i18n';
 
 const { editor } = defineProps<{
   editor: Editor;
@@ -38,19 +38,17 @@ function setTextColor(color?: string) {
 }
 
 const highlightColorsList = ref([
-  "var(--tt-color-highlight-dark-yellow)",
-  "var(--tt-color-highlight-yellow)",
-  "var(--tt-color-highlight-green)",
-  "var(--tt-color-highlight-blue)",
-  "var(--tt-color-highlight-purple)",
-  "var(--tt-color-highlight-red)",
-  "var(--tt-color-highlight-gray)",
+  'var(--tt-color-highlight-dark-yellow)',
+  'var(--tt-color-highlight-yellow)',
+  'var(--tt-color-highlight-green)',
+  'var(--tt-color-highlight-blue)',
+  'var(--tt-color-highlight-purple)',
+  'var(--tt-color-highlight-red)',
+  'var(--tt-color-highlight-gray)',
 ]);
 
-const highlightColorRef =
-  useTemplateRef<ComponentExposed<typeof ColorPickerInput>>("highlightColorRef");
-const textColorPickerRef =
-  useTemplateRef<ComponentExposed<typeof ColorPickerInput>>("textColorPickerRef");
+const highlightColorRef = useTemplateRef<ComponentExposed<typeof ColorPickerInput>>('highlightColorRef');
+const textColorPickerRef = useTemplateRef<ComponentExposed<typeof ColorPickerInput>>('textColorPickerRef');
 </script>
 
 <template>

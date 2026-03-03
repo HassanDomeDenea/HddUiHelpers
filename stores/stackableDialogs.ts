@@ -1,15 +1,15 @@
-import { merge, uniqueId } from "lodash-es";
-import { defineStore } from "pinia";
-import { useDialog } from "primevue";
-import { DynamicDialogCloseOptions, DynamicDialogOptions } from "primevue/dynamicdialogoptions";
-import { computed, nextTick, Ref, ref, watch } from "vue";
-import { ComponentExposed } from "vue-component-type-helpers";
+import { merge, uniqueId } from 'lodash-es';
+import { defineStore } from 'pinia';
+import { useDialog } from 'primevue';
+import type { DynamicDialogCloseOptions, DynamicDialogOptions } from 'primevue/dynamicdialogoptions';
+import { computed, nextTick, type Ref, ref, watch } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
-export const useStackableDialogsStore = defineStore("stackableDialogs", () => {
+export const useStackableDialogsStore = defineStore('stackableDialogs', () => {
   const stackableDialogs = ref<any[]>([]);
 
   function add(dialog?: any): number {
-    stackableDialogs.value.push(dialog ?? uniqueId("stackableDialogs"));
+    stackableDialogs.value.push(dialog ?? uniqueId('stackableDialogs'));
     return stackableDialogs.value.length - 1;
   }
 
@@ -46,9 +46,7 @@ export const useStackableDialogsStore = defineStore("stackableDialogs", () => {
   };
 });
 
-export const useStackableDialog = function (
-  options: { dialogVisibilityRef?: Ref<boolean>; name?: string; dialogRef?: Ref } = {},
-) {
+export const useStackableDialog = (options: { dialogVisibilityRef?: Ref<boolean>; name?: string; dialogRef?: Ref } = {}) => {
   const store = useStackableDialogsStore();
   const dialogStackIndex = ref<number | null>(null);
   const dynamicalDialog = useDialog();
@@ -86,7 +84,7 @@ export const useStackableDialog = function (
 
   async function open<TComponent>(
     component: TComponent,
-    options?: Partial<Exclude<DynamicDialogOptions, "onClose">> & { emits?: any },
+    options?: Partial<Exclude<DynamicDialogOptions, 'onClose'>> & { emits?: any },
     extraOptions?: {
       onHidden?: () => void;
       onClose?: (closeOptions?: DynamicDialogCloseOptions) => void;

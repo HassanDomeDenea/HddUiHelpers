@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
-import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
-import { uniqueId } from "lodash-es";
-import { Menu } from "primevue";
-import type { MenuItem } from "primevue/menuitem";
-import Popover from "primevue/popover";
-import type { ComponentExposed } from "vue-component-type-helpers";
-import { computed, ref, useTemplateRef } from "vue";
-import { useI18n } from "vue-i18n";
+import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
+import type { Editor } from '@tiptap/vue-3';
+import { uniqueId } from 'lodash-es';
+import type { Menu } from 'primevue';
+import type { MenuItem } from 'primevue/menuitem';
+import type Popover from 'primevue/popover';
+import { computed, ref, useTemplateRef } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
+import { useI18n } from 'vue-i18n';
 
 const { editor } = defineProps<{
   editor: Editor;
@@ -20,12 +20,11 @@ const insertTableModel = ref({
   cols: 2,
   withHeader: true,
 
-  rowsId: uniqueId("insert-table-rows-input"),
-  colsId: uniqueId("insert-table-cols-input"),
-  withHeaderId: uniqueId("insert-table-with-headers-input"),
+  rowsId: uniqueId('insert-table-rows-input'),
+  colsId: uniqueId('insert-table-cols-input'),
+  withHeaderId: uniqueId('insert-table-with-headers-input'),
 });
-const insertTablePopoverRef =
-  useTemplateRef<ComponentExposed<typeof Popover>>("insertTablePopoverRef");
+const insertTablePopoverRef = useTemplateRef<ComponentExposed<typeof Popover>>('insertTablePopoverRef');
 function openInsertTablePopover(event: Event) {
   insertTableModel.value.rows = 2;
   insertTableModel.value.cols = 2;
@@ -45,14 +44,14 @@ function confirmInsertTable() {
   insertTablePopoverRef.value.hide();
 }
 
-const tableOptionsMenuRef = useTemplateRef<ComponentExposed<typeof Menu>>("tableOptionsMenuRef");
+const tableOptionsMenuRef = useTemplateRef<ComponentExposed<typeof Menu>>('tableOptionsMenuRef');
 const tableOptionsMenuItems = computed(() => {
-  const tableIsActive = editor.isActive("table");
+  const tableIsActive = editor.isActive('table');
   return [
     {
-      label: t("Insert Table"),
+      label: t('Insert Table'),
       disabled: !editor.can().chain().focus().insertTable().run(),
-      icon: "i-mdi:table-large-plus",
+      icon: 'i-mdi:table-large-plus',
       command: (event) => {
         openInsertTablePopover(event.originalEvent);
       },
@@ -60,33 +59,33 @@ const tableOptionsMenuItems = computed(() => {
     { separator: true },
 
     {
-      label: t("Add Column Before"),
+      label: t('Add Column Before'),
       disabled: !tableIsActive,
-      icon: "i-mdi:table-column-plus-before",
+      icon: 'i-mdi:table-column-plus-before',
       command: () => {
         editor.chain().focus().addColumnBefore().run();
       },
     },
     {
-      label: t("Add Column After"),
+      label: t('Add Column After'),
       disabled: !tableIsActive,
-      icon: "i-mdi:table-column-plus-after",
+      icon: 'i-mdi:table-column-plus-after',
       command: () => {
         editor.chain().focus().addColumnAfter().run();
       },
     },
     {
-      label: t("Add Row Before"),
+      label: t('Add Row Before'),
       disabled: !tableIsActive,
-      icon: "i-mdi:table-row-plus-before",
+      icon: 'i-mdi:table-row-plus-before',
       command: () => {
         editor.chain().focus().addRowBefore().run();
       },
     },
     {
-      label: t("Add Row After"),
+      label: t('Add Row After'),
       disabled: !tableIsActive,
-      icon: "i-mdi:table-row-plus-after",
+      icon: 'i-mdi:table-row-plus-after',
       command: () => {
         editor.chain().focus().addRowAfter().run();
       },
@@ -94,34 +93,34 @@ const tableOptionsMenuItems = computed(() => {
     { separator: true },
 
     {
-      label: t("Delete Column"),
+      label: t('Delete Column'),
       disabled: !tableIsActive,
-      icon: "i-mdi:table-column-remove",
+      icon: 'i-mdi:table-column-remove',
       command: () => {
         editor.chain().focus().deleteColumn().run();
       },
     },
     {
-      label: t("Delete Row"),
+      label: t('Delete Row'),
       disabled: !tableIsActive,
-      icon: "i-mdi:table-row-remove",
+      icon: 'i-mdi:table-row-remove',
       command: () => {
         editor.chain().focus().deleteRow().run();
       },
     },
     {
-      label: t("Delete Table"),
+      label: t('Delete Table'),
       disabled: !tableIsActive,
-      icon: "i-mdi:table-large-remove",
+      icon: 'i-mdi:table-large-remove',
       command: () => {
         editor.chain().focus().deleteTable().run();
       },
     },
     { separator: true },
     {
-      label: t("Split/Merge Cells"),
+      label: t('Split/Merge Cells'),
       disabled: !tableIsActive,
-      icon: "i-mdi:table-merge-cells",
+      icon: 'i-mdi:table-merge-cells',
       command: () => {
         editor.chain().focus().mergeOrSplit().run();
       },

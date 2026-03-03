@@ -1,23 +1,19 @@
-import type { AxiosRequestConfig, AxiosResponse } from "axios";
-import {
+import type {
   FormFieldType,
   HddFormField,
   RecordItem,
   ServerDataTableColumnSource,
   UrlObject,
   UrlWithParameterFunction,
-} from "HddUiHelpers/components/FormWrapper/types.ts";
-import type { LocalListType } from "HddUiHelpers/utils/dynamicListsUtilities.ts";
-import type { BadgeProps, ButtonProps, DialogEmits, DialogProps, MessageProps } from "primevue";
-import type { ColumnProps } from "primevue/column";
-import type {
-  DataTableFilterMeta,
-  DataTableFilterMetaData,
-  DataTableRowReorderEvent,
-} from "primevue/datatable";
-import type { MenuItem } from "primevue/menuitem";
-import { Component, MaybeRef, MaybeRefOrGetter, ComputedRef } from "vue";
-import { ApiResponseData } from "HddUiHelpers/types/types.ts";
+} from 'HddUiHelpers/components/FormWrapper/types.ts';
+import type { ApiResponseData } from 'HddUiHelpers/types/types.ts';
+import type { LocalListType } from 'HddUiHelpers/utils/dynamicListsUtilities.ts';
+import type { AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { BadgeProps, ButtonProps, DialogEmits, DialogProps, MessageProps } from 'primevue';
+import type { ColumnProps } from 'primevue/column';
+import type { DataTableFilterMeta, DataTableFilterMetaData, DataTableRowReorderEvent } from 'primevue/datatable';
+import type { MenuItem } from 'primevue/menuitem';
+import type { Component, ComputedRef, MaybeRef, MaybeRefOrGetter } from 'vue';
 
 /*type ObjectKeys<T> = {
     [K in keyof T]: T[K] extends object
@@ -25,29 +21,19 @@ import { ApiResponseData } from "HddUiHelpers/types/types.ts";
         : never;
 }[keyof T];*/
 
-export type FilterMatchModes = DataTableFilterMetaData["matchMode"];
+export type FilterMatchModes = DataTableFilterMetaData['matchMode'];
 
 export type ServerDataTableStandardSort = {
   field: string;
-  direction: "asc" | "desc";
+  direction: 'asc' | 'desc';
 };
-export type ServerDataTableColumnType =
-  | "text"
-  | "textarea"
-  | "boolean"
-  | "date"
-  | "numeric"
-  | "price"
-  | "color"
-  | "select"
-  | "image"
-  | "hidden";
+export type ServerDataTableColumnType = 'text' | 'textarea' | 'boolean' | 'date' | 'numeric' | 'price' | 'color' | 'select' | 'image' | 'hidden';
 
-export type MenuItemAndButton = Omit<MenuItem, "icon"> & {
+export type MenuItemAndButton = Omit<MenuItem, 'icon'> & {
   onlyIconButton?: boolean;
-  severity?: ButtonProps["severity"];
+  severity?: ButtonProps['severity'];
   badge?: string | ((row: unknown) => string | null);
-  badgeSeverity?: BadgeProps["severity"] | ((row: unknown) => BadgeProps["severity"] | null);
+  badgeSeverity?: BadgeProps['severity'] | ((row: unknown) => BadgeProps['severity'] | null);
   command?: (...args: any) => any;
   icon?: string | ((...args: any) => string);
 };
@@ -59,7 +45,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   printingTitle?: string;
   title?: string;
   hasToolsColumn?: boolean;
-  inlineEditMode?: "row" | "cell" | "none";
+  inlineEditMode?: 'row' | 'cell' | 'none';
   columnVisibilityButton?: boolean | undefined;
   withLoadingMask?: boolean;
   printable?: boolean;
@@ -90,11 +76,11 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   hasPagination?: boolean;
   hasSorts?: boolean;
   primaryKey?: keyof T;
-  scrollHeight?: "flex" | string;
+  scrollHeight?: 'flex' | string;
   scrollable?: boolean;
   scrollDirection?: any;
-  toolButtonsSize?: "large" | "small";
-  size?: "large" | "small";
+  toolButtonsSize?: 'large' | 'small';
+  size?: 'large' | 'small';
   hasRefreshButton?: boolean;
   editable?: boolean;
   creatable?: boolean;
@@ -116,7 +102,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   formProps?: Partial<ServerFormDialogProps>;
   extraContextMenuOptions?: MenuItemAndButton[];
   extraToolAndContextButtons?: MenuItemAndButton[];
-  toolbarButtonsSize?: "large" | "small";
+  toolbarButtonsSize?: 'large' | 'small';
   showGridLines?: boolean;
   singleDeleteUrl?: UrlWithParameterFunction;
   deleteUrl?: string | UrlObject;
@@ -139,20 +125,20 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   toolbarButtonsOnlyIcons?: boolean;
   withContextMenu?: boolean;
   hasGlobalFilter?: boolean;
-  defaultFiltersOperator?: "and" | "or";
+  defaultFiltersOperator?: 'and' | 'or';
   defaultShowFilterMatchModes?: boolean;
   defaultColumnMultipleFilters?: boolean;
-  selectionMode?: "single" | "multiple";
+  selectionMode?: 'single' | 'multiple';
   hasSelectionColumn?: boolean;
-  filterDisplayLayout?: "menu" | "row" | "none";
+  filterDisplayLayout?: 'menu' | 'row' | 'none';
   globalFilterFields?: string[];
   initialRecords?: any[];
   removableSort?: boolean;
   refreshOnMount?: boolean;
-  sortMode?: "single" | "multiple";
-  initialSortDirection?: "asc" | "desc";
+  sortMode?: 'single' | 'multiple';
+  initialSortDirection?: 'asc' | 'desc';
   initialSortField?: string;
-  initialSorts?: { field: string; direction: "asc" | "desc" }[];
+  initialSorts?: { field: string; direction: 'asc' | 'desc' }[];
   dataProvider?: ServerDataTableDataProvider;
   extraGetDataPayload?: { [key: string]: any };
   initialTotalRecords?: number;
@@ -173,10 +159,10 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   rounded?: boolean;
 
   /** General color variant of the table. */
-  tableSeverity?: "none" | MessageProps["severity"];
+  tableSeverity?: 'none' | MessageProps['severity'];
 
   /** Background color of the header. */
-  headerSeverity?: string | ButtonProps["severity"];
+  headerSeverity?: string | ButtonProps['severity'];
 
   /** Used to transform the incoming response from server*/
   transformResponseData?: (data: ResponseData) => ResponseData & any;
@@ -184,7 +170,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   /**Used to generate a href for open button or contextmenu */
   openButtonUrl?: (record: T) => string;
 
-  rowGroupMode?: string | "subheader" | "rowspan";
+  rowGroupMode?: string | 'subheader' | 'rowspan';
   groupRowsBy?: string;
   rowGroupHeaderFormatter?: true | ((value: any, row: T) => string);
   rowGroupHeaderClass?: any;
@@ -193,23 +179,20 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   onlyRequestedColumns?: boolean;
 }
 
-export type ServerDataTableColumnRenderType = "chip" | "chips" | "yesNoIconBadge" | "tag";
+export type ServerDataTableColumnRenderType = 'chip' | 'chips' | 'yesNoIconBadge' | 'tag';
 
 export type ColumnSelectOptions = LocalListType | { name?: string; id?: string | number }[];
 
 //| ({ name?: string; id?: string|number } & { [k: string]: string|number })[]
 
-export interface ServerDataTableColumn<
-  TType extends ServerDataTableColumnType = ServerDataTableColumnType,
-  TRow = RecordItem,
-> {
+export interface ServerDataTableColumn<TType extends ServerDataTableColumnType = ServerDataTableColumnType, TRow = RecordItem> {
   name?: string;
   field?: string;
   type?: TType;
   relation?: string;
   fullFieldName?: string;
   footer?: string | ((records: TRow[]) => string | null);
-  frozen?: "start" | "end";
+  frozen?: 'start' | 'end';
   source?: ServerDataTableColumnSource;
   filterSource?: ServerDataTableColumnSource;
   sortSource?: ServerDataTableColumnSource;
@@ -227,23 +210,15 @@ export interface ServerDataTableColumn<
   inlineEditable?: boolean;
   auditHistory?: boolean;
   filterable?: boolean;
-  dateFormat?:
-    | "YYYY-MM-DD"
-    | "YYYY-MM-DD hh:mmA"
-    | "YYYY-MM-DD HH:mm"
-    | "YYYY-MM-DD HH:mm:ss"
-    | "date"
-    | "datetime";
+  dateFormat?: 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mmA' | 'YYYY-MM-DD HH:mm' | 'YYYY-MM-DD HH:mm:ss' | 'date' | 'datetime';
   printable?: boolean;
   visible?: boolean;
   visibilityControl?: boolean;
   hiddenButCanBeVisible?: boolean;
   renderType?: ServerDataTableColumnRenderType;
-  renderTypeProps?: MaybeRefOrGetter<
-    ((event: { value: any; text: any; row: TRow; options: ColumnSelectOptions }) => object) | object
-  >;
-  currency?: TType extends "numeric" | "price" ? string | boolean : never;
-  filterCurrency?: TType extends "numeric" | "price" ? string : never;
+  renderTypeProps?: MaybeRefOrGetter<((event: { value: any; text: any; row: TRow; options: ColumnSelectOptions }) => object) | object>;
+  currency?: TType extends 'numeric' | 'price' ? string | boolean : never;
+  filterCurrency?: TType extends 'numeric' | 'price' ? string : never;
   filterInputProps?: object;
   initialFilterMatchMode?: FilterMatchModes;
   filterCheckboxLabel?: string;
@@ -285,8 +260,8 @@ export interface ServerDataTableColumn<
   emptyValuePlaceholder?: string;
   selectValueProperty?: string;
   selectLabelProperty?: string;
-  booleanCheckedValue?: TType extends "boolean" ? string : never;
-  booleanUncheckedValue?: TType extends "boolean" ? string : never;
+  booleanCheckedValue?: TType extends 'boolean' ? string : never;
+  booleanUncheckedValue?: TType extends 'boolean' ? string : never;
   morphableTo?: string;
 }
 
@@ -300,25 +275,19 @@ export interface ServerDataTableToolbarFilterValue {
 
 export interface ServerDataTableToolbarFilterWrapper {
   id?: string;
-  operator: "and" | "or";
+  operator: 'and' | 'or';
   isFixed?: boolean;
   fields: ServerDataTableToolbarFilter[];
 }
 
-export type ServerDataTableToolbarFilter =
-  | ServerDataTableToolbarFilterValue
-  | ServerDataTableToolbarFilterWrapper;
+export type ServerDataTableToolbarFilter = ServerDataTableToolbarFilterValue | ServerDataTableToolbarFilterWrapper;
 
-export function isToolbarFilterWrapper(
-  filter: ServerDataTableToolbarFilter,
-): filter is ServerDataTableToolbarFilterWrapper {
-  return "operator" in filter && "fields" in filter;
+export function isToolbarFilterWrapper(filter: ServerDataTableToolbarFilter): filter is ServerDataTableToolbarFilterWrapper {
+  return 'operator' in filter && 'fields' in filter;
 }
 
-export function isToolbarFilterValue(
-  filter: ServerDataTableToolbarFilter,
-): filter is ServerDataTableToolbarFilterValue {
-  return "field" in filter && "value" in filter;
+export function isToolbarFilterValue(filter: ServerDataTableToolbarFilter): filter is ServerDataTableToolbarFilterValue {
+  return 'field' in filter && 'value' in filter;
 }
 
 export interface ServerDataTableDataProviderEvent {
@@ -328,9 +297,7 @@ export interface ServerDataTableDataProviderEvent {
   filters: ServerDataTableToolbarFilter;
 }
 
-export type ServerDataTableDataProvider = (
-  event: ServerDataTableDataProviderEvent,
-) => Promise<ServerDataTablePaginationResponse>;
+export type ServerDataTableDataProvider = (event: ServerDataTableDataProviderEvent) => Promise<ServerDataTablePaginationResponse>;
 
 export interface ServerDataTablePaginationResponse {
   data: any[];
@@ -341,7 +308,7 @@ export interface ServerDataTablePaginationResponse {
 
 export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> {
   url?: UrlObject | UrlWithParameterFunction | string;
-  createUrlMethod?: "post" | "put" | "delete" | "get";
+  createUrlMethod?: 'post' | 'put' | 'delete' | 'get';
   singleEditUrl?: UrlWithParameterFunction;
   focusFieldOnShown?: string;
   editUrl?: string | UrlObject | UrlWithParameterFunction;
@@ -365,12 +332,12 @@ export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> 
   dialogName?: string;
   successMessageTitle?: string;
   successMessageText?: string;
-  submitSeverity?: ButtonProps["severity"];
+  submitSeverity?: ButtonProps['severity'];
   submitText?: string;
   submitIcon?: string;
   primaryKey?: string | number;
   inlineFields?: boolean;
-  size?: "small" | "large" | string;
+  size?: 'small' | 'large' | string;
   columns?: ServerDataTableColumn[];
   fields?: HddFormField[];
   keepFormOpenAfterCreate?: boolean;
@@ -379,16 +346,13 @@ export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> 
   onShown?: () => void;
   onHidden?: () => void;
   onVisible?: (isVisible: boolean) => void;
-  onSubmitted?: (
-    row: TRecord | TRecord[] | (string | number)[],
-    type: "create" | "update" | "delete",
-  ) => void;
+  onSubmitted?: (row: TRecord | TRecord[] | (string | number)[], type: 'create' | 'update' | 'delete') => void;
 
   submitAndOpenProps?: (event: { isEditing: boolean }) => Partial<ButtonProps>;
   submitAndOpenButton?: boolean | ((event: { isEditing: boolean }) => boolean);
   submitAndOpenText?: string | ((event: { isEditing: boolean }) => string);
   submitAndOpenIcon?: string | ((event: { isEditing: boolean }) => string);
-  submitAndOpenSeverity?: ButtonProps["severity"];
+  submitAndOpenSeverity?: ButtonProps['severity'];
   dismissableMask?: boolean;
   autoComplete?: string;
 }
@@ -421,7 +385,7 @@ export interface PrintPaperForServerDataTableProps<TRecord extends RecordItem = 
   hasSorts?: boolean;
   showCurrentPrintTime?: boolean;
   primaryKey?: keyof TRecord;
-  printDirection?: "ltr" | "rtl";
+  printDirection?: 'ltr' | 'rtl';
   records: MaybeRef<TRecord[]>;
   extraData: MaybeRef;
   toolbarFilters: ServerDataTableToolbarFilterWrapper;

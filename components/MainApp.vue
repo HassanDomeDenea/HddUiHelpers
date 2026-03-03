@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import DynamicServerFormDialog from "HddUiHelpers/components/datatables/DynamicServerFormDialog.vue";
-import DynamicComponentMounter from "HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue";
-import TopProgressBar from "HddUiHelpers/components/misc/TopProgressBar.vue";
-import DismissableConfirmDialog from "HddUiHelpers/components/modified/DismissableConfirmDialog.vue";
-import { setPageDirection } from "HddUiHelpers/plugins/i18n";
-import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
-import primeVueLocales from "HddUiHelpers/utils/primeVueLocales";
-import { usePrimeVue } from "primevue";
-import { defaultOptions as PrimeVueDefaultOptions } from "primevue/config";
-import { useToast } from "primevue/usetoast";
-import { useApiClient } from "HddUiHelpers/stores/apiClient";
-import ConfirmDialogWithInput from "HddUiHelpers/components/ConfirmDialogWithInput/ConfirmDialogWithInput.vue";
-import { watch } from "vue";
-import { useI18n } from "vue-i18n";
+import ConfirmDialogWithInput from 'HddUiHelpers/components/ConfirmDialogWithInput/ConfirmDialogWithInput.vue';
+import DynamicComponentMounter from 'HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue';
+import DynamicServerFormDialog from 'HddUiHelpers/components/datatables/DynamicServerFormDialog.vue';
+import TopProgressBar from 'HddUiHelpers/components/misc/TopProgressBar.vue';
+import DismissableConfirmDialog from 'HddUiHelpers/components/modified/DismissableConfirmDialog.vue';
+import { setPageDirection } from 'HddUiHelpers/plugins/i18n';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient';
+import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
+import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales';
+import { usePrimeVue } from 'primevue';
+import { defaultOptions as PrimeVueDefaultOptions } from 'primevue/config';
+import { useToast } from 'primevue/usetoast';
+import { watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { t, locale } = useI18n();
 const toast = useToast();
@@ -24,7 +24,7 @@ const primevue = usePrimeVue();
 watch(
   () => authStore.options.language,
   (language) => {
-    if(language){
+    if (language) {
       locale.value = language;
       setPageDirection();
     }

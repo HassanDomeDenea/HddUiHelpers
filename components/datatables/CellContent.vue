@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import type { ServerDataTableColumn } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
-import { get, isBoolean } from "lodash-es";
-import { computed, toValue } from "vue";
-import { useI18n } from "vue-i18n";
+import type { ServerDataTableColumn } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
+import { get, isBoolean } from 'lodash-es';
+import { computed, toValue } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { column } = defineProps<{
   column: ServerDataTableColumn;
   renderedData: any;
   row: any;
-  size?: "small" | "large" | string;
+  size?: 'small' | 'large' | string;
 }>();
 const { t } = useI18n();
 
 const resolveRenderTypeProps = computed(() => {
-  return typeof column.renderTypeProps === "function"
-    ? column.renderTypeProps
-    : toValue(column.renderTypeProps);
+  return typeof column.renderTypeProps === 'function' ? column.renderTypeProps : toValue(column.renderTypeProps);
 });
 </script>
 

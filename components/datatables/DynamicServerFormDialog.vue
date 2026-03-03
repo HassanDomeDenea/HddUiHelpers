@@ -1,32 +1,23 @@
 <script setup lang="ts" generic="TRecord extends RecordItem = RecordItem">
-import {
-  type DynamicServerFormDialogEventBus,
-  dynamicServerFormDialogKey,
-} from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
-import ServerFormDialog from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
-import type { RecordItem } from "HddUiHelpers/components/FormWrapper/types.ts";
-import { last, uniqueId } from "lodash-es";
-import type { ComponentExposed } from "vue-component-type-helpers";
-import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
-import {useEventBus, useTemplateRefsList} from "@vueuse/core";
+import { type DynamicServerFormDialogEventBus, dynamicServerFormDialogKey } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
+import type ServerFormDialog from 'HddUiHelpers/components/datatables/ServerFormDialog.vue';
+import type { RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
+import { useEventBus, useTemplateRefsList } from '@vueuse/core';
+import { last, uniqueId } from 'lodash-es';
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { ComponentExposed } from 'vue-component-type-helpers';
 
 const dynamicDialogRefs = useTemplateRefsList<ComponentExposed<typeof ServerFormDialog>>();
 const dialogs = ref([]);
 
 const bus = useEventBus(dynamicServerFormDialogKey);
 
-function busListener({
-  event,
-  options,
-  row,
-  specificId,
-  dialogRefGetter,
-}: DynamicServerFormDialogEventBus) {
-  if (event === "create") {
+function busListener({ event, options, row, specificId, dialogRefGetter }: DynamicServerFormDialogEventBus) {
+  if (event === 'create') {
     dialogs.value.push({
       localOptions: options,
       isVisible: true,
-      id: uniqueId("HddDynamicDialog-"),
+      id: uniqueId('HddDynamicDialog-'),
     });
     nextTick(() => {
       const newDialogRef = last(dynamicDialogRefs.value);
@@ -36,11 +27,11 @@ function busListener({
       };
     });
   }
-  if (event === "edit") {
+  if (event === 'edit') {
     dialogs.value.push({
       localOptions: options,
       isVisible: true,
-      id: uniqueId("HddDynamicDialog-"),
+      id: uniqueId('HddDynamicDialog-'),
     });
     nextTick(() => {
       const newDialogRef = last(dynamicDialogRefs.value);
@@ -50,11 +41,11 @@ function busListener({
       };
     });
   }
-  if (event === "delete") {
+  if (event === 'delete') {
     dialogs.value.push({
       localOptions: options,
       isVisible: true,
-      id: uniqueId("HddDynamicDialog-"),
+      id: uniqueId('HddDynamicDialog-'),
     });
     nextTick(() => {
       const newDialogRef = last(dynamicDialogRefs.value);

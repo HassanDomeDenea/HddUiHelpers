@@ -1,10 +1,10 @@
-import axios from "axios";
-import HddScannerLunchModal from "HddUiHelpers/components/HddScannerLunchModal.vue";
-import moment from "moment";
-import { useDialog } from "primevue";
-import { safeTry } from "../utils/safeTry.ts";
+import HddScannerLunchModal from 'HddUiHelpers/components/HddScannerLunchModal.vue';
+import axios from 'axios';
+import moment from 'moment';
+import { useDialog } from 'primevue';
+import { safeTry } from '../utils/safeTry.ts';
 
-export const useScanner = function () {
+export const useScanner = () => {
   const scannerPort = window._HDD_SCANNER_PORT ?? 40101;
   const dialog = useDialog();
   const scannerBaseUrl = `http://localhost:${scannerPort}/api/`;
@@ -12,16 +12,16 @@ export const useScanner = function () {
     baseURL: scannerBaseUrl,
     withCredentials: false,
   });
-  const scannerSchemeUrl = "hddscanner://";
+  const scannerSchemeUrl = 'hddscanner://';
   async function checkServer(retries: number = 0): Promise<boolean> {
     const [response, error] = await safeTry(() =>
-      scannerAxiosInstance.get("check", {
+      scannerAxiosInstance.get('check', {
         timeout: 100,
       }),
     );
     if (error) {
       if (retries < 1) {
-        window.location.href = scannerSchemeUrl + "start";
+        window.location.href = scannerSchemeUrl + 'start';
         await new Promise((resolve) => setTimeout(resolve, 5000));
         return await checkServer(1);
       }
@@ -33,9 +33,9 @@ export const useScanner = function () {
   function openHddScannerLunchModal() {
     dialog.open(HddScannerLunchModal, {
       props: {
-        header: "HDD Scanner",
+        header: 'HDD Scanner',
         style: {
-          minWidth: "50vw",
+          minWidth: '50vw',
         },
         modal: true,
         dismissableMask: true,
@@ -50,13 +50,13 @@ export const useScanner = function () {
       return;
     }
 
-    const [response] = await safeTry(() => scannerAxiosInstance.get("start-scanning"));
+    const [response] = await safeTry(() => scannerAxiosInstance.get('start-scanning'));
     if (response && response.data.success) {
       // images is a list of base64 encoded strings
       const base64List = response.data.images as string[];
 
       let cnt = 0;
-      const attemptDate = moment().format("YYYYMMDDHHMMSS");
+      const attemptDate = moment().format('YYYYMMDDHHMMSS');
       const blobs = base64List.map((base64) => {
         cnt++;
         return base64ToFile(base64, `ScannedImage_${attemptDate}_${cnt}.png`);
@@ -74,12 +74,9 @@ export const useScanner = function () {
   };
 };
 
-function base64ToFile(base64String: string, fileName: string, mimeType: string = "image/png") {
+function base64ToFile(base64String: string, fileName: string, mimeType: string = 'image/png') {
   // Add missing padding if necessary
-  const padded = base64String.padEnd(
-    base64String.length + ((4 - (base64String.length % 4)) % 4),
-    "=",
-  );
+  const padded = base64String.padEnd(base64String.length + ((4 - (base64String.length % 4)) % 4), '=');
 
   // Decode base64 to binary string
   const byteString = atob(padded);

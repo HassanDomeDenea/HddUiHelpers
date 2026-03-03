@@ -5,9 +5,7 @@
   "description-markup": "markdown",
   "framework-config": {
     "enable-when": {
-      "file-extensions": [
-        "vue"
-      ]
+      "file-extensions": ["vue"]
     }
   },
   "contributions": {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
-import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
-import { sortBy } from "lodash-es";
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
+import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
+import type { Editor } from '@tiptap/vue-3';
+import { sortBy } from 'lodash-es';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { editor } = defineProps<{
   editor: Editor;
@@ -13,36 +13,8 @@ const { t } = useI18n();
 
 const fontSizeOptions = computed(() => {
   return [
-    { value: "", label: "-" },
-    ...[
-      "8px",
-      "10px",
-      "12px",
-      "14px",
-      "16px",
-      "18px",
-      "20px",
-      "22px",
-      "24px",
-      "28px",
-      "32px",
-      "36px",
-      "40px",
-      "44px",
-      "48px",
-      "60px",
-      "72px",
-    ].map((e) => ({
-      label: e,
-      value: e,
-    })),
-  ];
-});
-
-const lineHeightOptions = computed(() => {
-  return [
-    { value: "", label: "-" },
-    ...["0.5", "0.75", "0.9", "1", "1.15", "1.25", "1.5", "1.75", "2", "2.5", "3", "4", "5"].map(
+    { value: '', label: '-' },
+    ...['8px', '10px', '12px', '14px', '16px', '18px', '20px', '22px', '24px', '28px', '32px', '36px', '40px', '44px', '48px', '60px', '72px'].map(
       (e) => ({
         label: e,
         value: e,
@@ -51,19 +23,29 @@ const lineHeightOptions = computed(() => {
   ];
 });
 
+const lineHeightOptions = computed(() => {
+  return [
+    { value: '', label: '-' },
+    ...['0.5', '0.75', '0.9', '1', '1.15', '1.25', '1.5', '1.75', '2', '2.5', '3', '4', '5'].map((e) => ({
+      label: e,
+      value: e,
+    })),
+  ];
+});
+
 const fontFamilyOptions = computed(() => {
   return [
-    { value: "", label: "-" },
+    { value: '', label: '-' },
     ...sortBy(
       [
-        { value: "tajawal", label: "Tajawal" },
-        { value: "amiri", label: "Amiri" },
-        { value: "mirza", label: "Mirza" },
-        { value: "times", label: "Times New Roman" },
-        { value: "aref", label: "Aref Ruqaa" },
-        { value: "arial", label: "Arial" },
+        { value: 'tajawal', label: 'Tajawal' },
+        { value: 'amiri', label: 'Amiri' },
+        { value: 'mirza', label: 'Mirza' },
+        { value: 'times', label: 'Times New Roman' },
+        { value: 'aref', label: 'Aref Ruqaa' },
+        { value: 'arial', label: 'Arial' },
       ],
-      "label",
+      'label',
     ),
   ];
 });

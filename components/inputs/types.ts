@@ -1,11 +1,8 @@
-import type { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
-import type { ButtonProps } from "primevue";
-import type { MaybeRef, MaybeRefOrGetter, StyleValue } from "vue";
+import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
+import type { ButtonProps } from 'primevue';
+import type { MaybeRef, MaybeRefOrGetter, StyleValue } from 'vue';
 
-export type ElementClassType =
-  | string
-  | { [name: string]: boolean }
-  | ({ [name: string]: boolean } | string)[];
+export type ElementClassType = string | { [name: string]: boolean } | ({ [name: string]: boolean } | string)[];
 
 export interface BaseInputSlots {
   beforeControl: () => any;
@@ -24,7 +21,7 @@ export interface BaseInputProps {
   modelValue?: any;
   label?: string;
   labelMinWidth?: MaybeRef<number>;
-  variant?: string | "outlined" | "filled";
+  variant?: string | 'outlined' | 'filled';
   iconAsAddon?: boolean;
   onLocalEnterKeyDown?: (event: KeyboardEvent) => any;
   floatingLabel?: boolean;
@@ -32,7 +29,7 @@ export interface BaseInputProps {
   /**
    * From Primevue FloatLabel variant, default is over
    */
-  floatingLabelVariant?: "in" | "on" | "over";
+  floatingLabelVariant?: 'in' | 'on' | 'over';
   /*
    * Ifta = Infield top aligned labels
    * */
@@ -60,7 +57,7 @@ export interface BaseInputProps {
   inputClass?: ElementClassType;
   wrapperClass?: any;
   controlWrapperClass?: any;
-  size?: "small" | "large" | string;
+  size?: 'small' | 'large' | string;
   buttonAddon?: MaybeRefOrGetter<
     ButtonProps & {
       tooltip?: string;
@@ -75,7 +72,7 @@ export type AutocompleteInputProps = {
   url?: string | UrlObject | (() => string | UrlObject);
   c?: { name: string; id: string }[];
   disabled?: boolean;
-  dropdownMode?: "current" | "blank";
+  dropdownMode?: 'current' | 'blank';
   dropdown?: boolean;
   options?: any[];
   searchOnFocus?: boolean;

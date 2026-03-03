@@ -1,19 +1,19 @@
-import type { AxiosInstance } from "axios";
-import type { ServerDataTableProps } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
-import { i18n } from "HddUiHelpers/plugins/i18n";
-import pinia from "HddUiHelpers/plugins/pinia";
-import primevue from "HddUiHelpers/plugins/primevue";
-import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
-import primeVueLocales from "HddUiHelpers/utils/primeVueLocales";
-import { merge } from "lodash-es";
-import "moment/locale/ar";
-import moment from "moment/moment";
-import type { App, InjectionKey } from "vue";
-import { shallowReactive } from "vue";
-import { inject } from "vue";
-import type { I18n } from "vue-i18n";
-import YAML from "yaml";
-moment.locale("en");
+import type { ServerDataTableProps } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
+import { i18n } from 'HddUiHelpers/plugins/i18n';
+import pinia from 'HddUiHelpers/plugins/pinia';
+import primevue from 'HddUiHelpers/plugins/primevue';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales';
+import type { AxiosInstance } from 'axios';
+import { merge } from 'lodash-es';
+import 'moment/locale/ar';
+import moment from 'moment/moment';
+import type { App, InjectionKey } from 'vue';
+import { inject, shallowReactive } from 'vue';
+import type { I18n } from 'vue-i18n';
+import YAML from 'yaml';
+
+moment.locale('en');
 export interface HddUiHelpers {
   axiosInstance: AxiosInstance;
   routeNameResolver: (name: string, parameter?: string | number) => string;
@@ -36,18 +36,14 @@ export interface HddUiHelpersComposable {
   defaultUserOptions: Record<string, any>;
 }
 
-export const HddUiHelpersSymbol: InjectionKey<Partial<HddUiHelpersComposable>> =
-  Symbol("HddUiHelpersSymbol");
+export const HddUiHelpersSymbol: InjectionKey<Partial<HddUiHelpersComposable>> = Symbol('HddUiHelpersSymbol');
 
 export type HddUiHelpersPluginOptions = Partial<HddUiHelpers>;
 
 export default {
   install(app: App, options: HddUiHelpersPluginOptions = {}) {
     const routeNameResolver =
-      options.routeNameResolver ??
-      function (name: string, parameter?: string | number) {
-        return `/${name}${parameter !== undefined ? `/${parameter}` : ""}`;
-      };
+      options.routeNameResolver ?? ((name: string, parameter?: string | number) => `/${name}${parameter !== undefined ? `/${parameter}` : ''}`);
     const initiallyProvidedValues = shallowReactive<Partial<HddUiHelpersComposable>>({
       route: routeNameResolver,
       commonServerDataTableProps: options.commonServerDataTableProps ?? {},
@@ -56,66 +52,53 @@ export default {
       defaultUserOptions: options.defaultUserOptions ?? {},
     });
     app.provide(HddUiHelpersSymbol, initiallyProvidedValues);
-    console.log("HddUiHelpersPluginOptions");
+    console.log('HddUiHelpersPluginOptions');
 
     if (options.dateArabicMonthNamesAsNumbers === true) {
-      primeVueLocales.ar.monthNames = [
-        "شهر 1",
-        "شهر 2",
-        "شهر 3",
-        "شهر 4",
-        "شهر 5",
-        "شهر 6",
-        "شهر 7",
-        "شهر 8",
-        "شهر 9",
-        "شهر 10",
-        "شهر 11",
-        "شهر 12",
-      ];
+      primeVueLocales.ar.monthNames = ['شهر 1', 'شهر 2', 'شهر 3', 'شهر 4', 'شهر 5', 'شهر 6', 'شهر 7', 'شهر 8', 'شهر 9', 'شهر 10', 'شهر 11', 'شهر 12'];
       primeVueLocales.ar.monthNamesShort = [
-        "شهر 1",
-        "شهر 2",
-        "شهر 3",
-        "شهر 4",
-        "شهر 5",
-        "شهر 6",
-        "شهر 7",
-        "شهر 8",
-        "شهر 9",
-        "شهر 10",
-        "شهر 11",
-        "شهر 12",
+        'شهر 1',
+        'شهر 2',
+        'شهر 3',
+        'شهر 4',
+        'شهر 5',
+        'شهر 6',
+        'شهر 7',
+        'شهر 8',
+        'شهر 9',
+        'شهر 10',
+        'شهر 11',
+        'شهر 12',
       ];
     }
     if (options.dateEnglishMonthNamesAsNumbers === true) {
       primeVueLocales.en.monthNames = [
-        "Month 1",
-        "Month 2",
-        "Month 3",
-        "Month 4",
-        "Month 5",
-        "Month 6",
-        "Month 7",
-        "Month 8",
-        "Month 9",
-        "Month 10",
-        "Month 11",
-        "Month 12",
+        'Month 1',
+        'Month 2',
+        'Month 3',
+        'Month 4',
+        'Month 5',
+        'Month 6',
+        'Month 7',
+        'Month 8',
+        'Month 9',
+        'Month 10',
+        'Month 11',
+        'Month 12',
       ];
       primeVueLocales.en.monthNamesShort = [
-        "Month 1",
-        "Month 2",
-        "Month 3",
-        "Month 4",
-        "Month 5",
-        "Month 6",
-        "Month 7",
-        "Month 8",
-        "Month 9",
-        "Month 10",
-        "Month 11",
-        "Month 12",
+        'Month 1',
+        'Month 2',
+        'Month 3',
+        'Month 4',
+        'Month 5',
+        'Month 6',
+        'Month 7',
+        'Month 8',
+        'Month 9',
+        'Month 10',
+        'Month 11',
+        'Month 12',
       ];
     }
 
@@ -130,18 +113,15 @@ export default {
     initiallyProvidedValues.axiosInstance = apiClient.axiosInstance;
 
     // Extend the locales
-    const locales = import.meta.glob("../locales/*.yaml", {
+    const locales = import.meta.glob('../locales/*.yaml', {
       eager: true,
-      query: "?raw",
-      import: "default",
+      query: '?raw',
+      import: 'default',
     });
     for (const [key, value] of Object.entries(locales)) {
-      const locale = key.split("/").pop()?.split(".")[0]; // Extract locale name (e.g., "en", "fr")
+      const locale = key.split('/').pop()?.split('.')[0]; // Extract locale name (e.g., "en", "fr")
       if (locale) {
-        i18n.global.setLocaleMessage(
-          locale,
-          merge(YAML.parse(value as string), i18n.global.getLocaleMessage(locale)),
-        );
+        i18n.global.setLocaleMessage(locale, merge(YAML.parse(value as string), i18n.global.getLocaleMessage(locale)));
       }
     }
   },
@@ -160,7 +140,7 @@ export function useHddUiHelpers(): HddUiHelpersComposable {
   return {
     axiosInstance: apiClient.axiosInstance,
     route(name: string, parameter?: string | number) {
-      return `/${name}${parameter !== undefined ? `/${parameter}` : ""}`;
+      return `/${name}${parameter !== undefined ? `/${parameter}` : ''}`;
     },
     commonServerDataTableProps: {},
     withBroadcasting: false,

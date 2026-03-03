@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { isBoolean } from "lodash-es";
-import type { SelectChangeEvent } from "primevue/select";
-import Select from "primevue/select";
-import { computed, ref } from "vue";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { isBoolean } from 'lodash-es';
+import type { SelectChangeEvent } from 'primevue/select';
+import Select from 'primevue/select';
+import { computed, ref } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -15,16 +15,16 @@ const props = withDefaults(
       optionDisabledProperty?: string | null;
       optionValueProperty?: string | null;
       valueFormatter?: (value: any) => string;
-      formatter?: (OptionOrValue: any, type: "option" | "value") => string;
+      formatter?: (OptionOrValue: any, type: 'option' | 'value') => string;
       clearable?: boolean;
       checkmark?: boolean;
       hasFilter?: boolean;
     } & BaseInputProps
   >(),
   {
-    optionLabelProperty: "name",
-    optionDisabledProperty: "disabled",
-    optionValueProperty: "id",
+    optionLabelProperty: 'name',
+    optionDisabledProperty: 'disabled',
+    optionValueProperty: 'id',
     clearable: false,
     checkmark: true,
     hasFilter: undefined,
@@ -33,7 +33,7 @@ const props = withDefaults(
 const emits = defineEmits<{
   change: [event: SelectChangeEvent];
 }>();
-const value = defineModel<any>("modelValue");
+const value = defineModel<any>('modelValue');
 
 const inputRef = ref();
 
@@ -57,8 +57,7 @@ const guessHasFilter = computed(() => {
 
 function onInputBlur() {}
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 defineExpose({ focus, ...exposed });
 </script>

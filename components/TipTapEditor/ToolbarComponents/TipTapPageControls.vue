@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
-import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
-import { printDomWithStyles } from "HddUiHelpers/utils/printDom.ts";
-import { useI18n } from "vue-i18n";
+import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
+import { printDomWithStyles } from 'HddUiHelpers/utils/printDom.ts';
+import type { Editor } from '@tiptap/vue-3';
+import { useI18n } from 'vue-i18n';
 
 const { editor } = defineProps<{
   editor: Editor;
@@ -11,8 +11,8 @@ const { editor } = defineProps<{
 const { t } = useI18n();
 
 function printEditor() {
-  const element = document.createElement("div");
-  element.classList.add("tiptap");
+  const element = document.createElement('div');
+  element.classList.add('tiptap');
   element.innerHTML = editor.view.dom.innerHTML;
   printDomWithStyles(element);
 }

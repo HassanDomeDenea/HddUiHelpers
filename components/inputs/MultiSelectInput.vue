@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { get } from "lodash-es";
-import type { SelectChangeEvent } from "primevue/select";
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps } from "./types";
-import {OptionInterface, ValueInterface} from "HddUiHelpers/types/types.ts";
-
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import type { OptionInterface, ValueInterface } from 'HddUiHelpers/types/types.ts';
+import { get } from 'lodash-es';
+import type { SelectChangeEvent } from 'primevue/select';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -16,30 +15,27 @@ const props = withDefaults(
       optionLabelProperty?: string | null;
       optionValueProperty?: string | null;
       resetFilterOnHide?: boolean;
-      display?: "comma" | "chip";
+      display?: 'comma' | 'chip';
       maxSelectedLabels?: number;
       selectionLimit?: number;
       showToggleAll?: boolean;
       optionLabelFormatter?: (item: OptionInterface | ValueInterface, index: number) => string;
-      valueLabelFormatter?: (
-        item: OptionInterface | ValueInterface,
-        placeholder?: string,
-      ) => string;
+      valueLabelFormatter?: (item: OptionInterface | ValueInterface, placeholder?: string) => string;
       optionAndValueLabelFormatter?: (item: OptionInterface | ValueInterface) => string;
     } & BaseInputProps
   >(),
   {
-    optionLabelProperty: "name",
-    optionValueProperty: "id",
+    optionLabelProperty: 'name',
+    optionValueProperty: 'id',
     maxSelectedLabels: 5,
-    display: "comma",
+    display: 'comma',
     showToggleAll: true,
   },
 );
 const emits = defineEmits<{
   change: [event: SelectChangeEvent];
 }>();
-const value = defineModel<any>("modelValue");
+const value = defineModel<any>('modelValue');
 
 const inputRef = ref();
 
@@ -50,44 +46,41 @@ function focus() {
 }
 
 function onInputBlur() {}
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 const { t } = useI18n();
 
 function getOptionText(option: OptionInterface, index: number) {
-  if (!option) return "&nbsp;";
+  if (!option) return '&nbsp;';
   if (props.optionLabelFormatter) {
     return props.optionLabelFormatter(option, index);
   } else if (props.optionAndValueLabelFormatter) {
     return props.optionAndValueLabelFormatter(option);
   } else {
-    return get(option, props.optionLabelProperty) ?? "&nbsp;";
+    return get(option, props.optionLabelProperty) ?? '&nbsp;';
   }
 }
 
 function getValueText(_value: any, _placeholder?: string) {
-  const placeholderText = _placeholder
-    ? `<span class="text-muted px-2">${_placeholder}</span>`
-    : undefined;
+  const placeholderText = _placeholder ? `<span class="text-muted px-2">${_placeholder}</span>` : undefined;
   if (!_value || _value.length === 0) {
     return placeholderText ?? `&nbsp;`;
   }
   if (_value.length > props.maxSelectedLabels) {
-    return `${_value.length} ${t("multiSelectItemsSelectedLabel")}`;
+    return `${_value.length} ${t('multiSelectItemsSelectedLabel')}`;
   }
 
   return _value.map((_id) => {
     const _item = props.options.find((e) => e[props.optionValueProperty] === _id);
     if (!_item) {
-      return "---";
+      return '---';
     }
     if (props.valueLabelFormatter) {
-      return props.valueLabelFormatter(_item, props.placeholder) ?? "---";
+      return props.valueLabelFormatter(_item, props.placeholder) ?? '---';
     } else if (props.optionAndValueLabelFormatter) {
-      return props.optionAndValueLabelFormatter(_item) ?? "---";
+      return props.optionAndValueLabelFormatter(_item) ?? '---';
     } else {
-      return get(_item, props.optionLabelProperty) ?? "---";
+      return get(_item, props.optionLabelProperty) ?? '---';
     }
   });
 }

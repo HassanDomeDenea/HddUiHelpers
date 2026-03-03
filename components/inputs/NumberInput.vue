@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import type { InputNumberInputEvent } from "primevue/inputnumber";
-import { computed, ref } from "vue";
-import BaseInput from "./BaseInput.vue";
-import type { BaseInputProps, ElementClassType } from "./types";
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import type { InputNumberInputEvent } from 'primevue/inputnumber';
+import { computed, ref } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { BaseInputProps, ElementClassType } from './types';
 
 const props = withDefaults(
   defineProps<
@@ -28,11 +28,11 @@ const props = withDefaults(
   },
 );
 const emits = defineEmits<{
-  (e: "keydown", event: KeyboardEvent);
-  (e: "input", event: InputNumberInputEvent);
-  (e: "updated", event: number | null);
+  (e: 'keydown', event: KeyboardEvent);
+  (e: 'input', event: InputNumberInputEvent);
+  (e: 'updated', event: number | null);
 }>();
-const value = defineModel<any>("modelValue");
+const value = defineModel<any>('modelValue');
 
 const inputRef = ref();
 
@@ -45,16 +45,15 @@ function select() {
 }
 
 function onInput(event: InputNumberInputEvent) {
-  emits("input", event);
+  emits('input', event);
   if (props.immediateUpdate) {
     value.value = event.value;
   }
 }
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 
 const textAddonValue = computed(() => {
-  return typeof props.textAddon === "function" ? props.textAddon(value.value) : props.textAddon;
+  return typeof props.textAddon === 'function' ? props.textAddon(value.value) : props.textAddon;
 });
 
 defineExpose({ focus, select, ...exposed });

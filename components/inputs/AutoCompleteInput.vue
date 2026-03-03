@@ -1,22 +1,22 @@
 <script setup lang="ts" generic="T extends any">
-import { vElementVisibility } from "@vueuse/components";
-import { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
-import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { useLoader } from "HddUiHelpers/composables/loader.ts";
-import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
-import type { AutoCompleteOptionSelectEvent } from "primevue/autocomplete";
-import { computed, nextTick, Ref, ref, watch } from "vue";
-import BaseInput from "./BaseInput.vue";
-import type { AutocompleteInputProps } from "./types";
+import type { UrlObject } from 'HddUiHelpers/components/FormWrapper/types.ts';
+import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
+import { useLoader } from 'HddUiHelpers/composables/loader.ts';
+import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
+import { vElementVisibility } from '@vueuse/components';
+import type { AutoCompleteOptionSelectEvent } from 'primevue/autocomplete';
+import { computed, nextTick, type Ref, ref, watch } from 'vue';
+import BaseInput from './BaseInput.vue';
+import type { AutocompleteInputProps } from './types';
 
 const props = withDefaults(defineProps<AutocompleteInputProps>(), {
-  optionLabelProperty: "name",
-  optionIdProperty: "id",
+  optionLabelProperty: 'name',
+  optionIdProperty: 'id',
   searchOnFocus: true,
   withoutObject: false,
   options: () => [],
-  inputClass: "w-full",
-  autoCompleteClass: "",
+  inputClass: 'w-full',
+  autoCompleteClass: '',
   noManualInput: false,
   useIdModel: false,
   hideListWhenEmpty: false,
@@ -24,17 +24,17 @@ const props = withDefaults(defineProps<AutocompleteInputProps>(), {
   clearable: false,
 });
 const emits = defineEmits<{
-  (e: "containerDblClick", event: MouseEvent);
-  (e: "keydown", event: KeyboardEvent);
-  (e: "blur", event: Event);
-  (e: "itemSelected", event: T);
-  (e: "cleared");
+  (e: 'containerDblClick', event: MouseEvent);
+  (e: 'keydown', event: KeyboardEvent);
+  (e: 'blur', event: Event);
+  (e: 'itemSelected', event: T);
+  (e: 'cleared');
 }>();
 
-const selectedItem = defineModel<OptionInterface | ValueInterface | null>("modelValue", {
+const selectedItem = defineModel<OptionInterface | ValueInterface | null>('modelValue', {
   default: ref().value,
 });
-const selectedItemId = defineModel<string | number | null>("id");
+const selectedItemId = defineModel<string | number | null>('id');
 
 const items: Ref<OptionInterface[]> = ref([]);
 const hasMore = ref(false);
@@ -54,14 +54,11 @@ const manualInput = ref<any>(null);
 
 const dynamicValue = computed({
   get() {
-    return props.withoutObject
-      ? selectedItem.value
-      : selectedItem.value?.[props.optionLabelProperty];
+    return props.withoutObject ? selectedItem.value : selectedItem.value?.[props.optionLabelProperty];
   },
   set(newValue: ValueInterface | OptionInterface) {
     if (props.withoutObject) {
-      selectedItem.value =
-        typeof newValue === "string" ? newValue : newValue[props.optionLabelProperty];
+      selectedItem.value = typeof newValue === 'string' ? newValue : newValue[props.optionLabelProperty];
     } else {
       selectedItem.value = newValue;
     }
@@ -76,22 +73,22 @@ async function search(event: { query: string; offset?: number; limit?: number; o
     limit: event.limit,
     only_id: event.onlyId ? 1 : 0,
   };
-  if (typeof props.ajaxParams === "object") {
+  if (typeof props.ajaxParams === 'object') {
     for (const key in props.ajaxParams) {
       params[key] = props.ajaxParams[key];
     }
-  } else if (typeof props.ajaxParams === "function") {
+  } else if (typeof props.ajaxParams === 'function') {
     props.ajaxParams(params);
   }
   let request: Promise<any>;
   if (props.url) {
     let url: string | UrlObject;
-    if (typeof props.url === "function") {
+    if (typeof props.url === 'function') {
       url = props.url();
     } else {
       url = props.url;
     }
-    if (typeof url === "string") {
+    if (typeof url === 'string') {
       request = apiClient.get(url, { params });
     } else {
       request = apiClient.request({ ...url, params });
@@ -145,7 +142,7 @@ function lastElementVisibilityChanged(isVisible: boolean) {
 }
 
 function onItemSelected(evt: AutoCompleteOptionSelectEvent) {
-  emits("itemSelected", evt.value);
+  emits('itemSelected', evt.value);
   if (props.useIdModel) {
     selectedItemId.value = evt.value[props.optionIdProperty];
   }
@@ -172,7 +169,7 @@ function deselectAndMoveCaretToEnd() {
 }
 
 function onInputContainerDblclick(evt: MouseEvent) {
-  emits("containerDblClick", evt);
+  emits('containerDblClick', evt);
   if (props.clearOnDblClick) {
     clear();
   }
@@ -200,19 +197,17 @@ function onAutocompleteInput(value: any) {
 }
 
 function onBlur(event: Event) {
-  emits("blur", event);
+  emits('blur', event);
   if (props.noManualInput && selectedItem.value) {
-    manualInput.value = props.withoutObject
-      ? selectedItem.value
-      : selectedItem.value?.[props.optionLabelProperty];
+    manualInput.value = props.withoutObject ? selectedItem.value : selectedItem.value?.[props.optionLabelProperty];
   }
 }
 
 function onKeyDown(event: KeyboardEvent) {
   if (!inputRef.value.overlayVisible) {
-    emits("keydown", event);
+    emits('keydown', event);
   }
-  if (event.code === "Enter" && props.noManualInput && manualInput.value === "") {
+  if (event.code === 'Enter' && props.noManualInput && manualInput.value === '') {
     selectedItem.value = null;
     if (props.useIdModel) {
       selectedItemId.value = null;
@@ -263,14 +258,13 @@ function clear() {
   nextTick(() => {
     setTimeout(focus, 50);
   });
-  emits("cleared");
+  emits('cleared');
 }
 
 function getOptionText(option: any) {
   return props.formatter ? props.formatter(option) : option[props.optionLabelProperty];
 }
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
-  useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
 defineExpose({
   focus,
   deselectAndMoveCaretToEnd,

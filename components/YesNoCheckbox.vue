@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { isBoolean, inRange } from "lodash-es";
-import { useId } from "vue";
-import { useI18n } from "vue-i18n";
+import { inRange, isBoolean } from 'lodash-es';
+import { useId } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const { labelPosition = "end", uncheckedValue = "null" } = defineProps<{
+const { labelPosition = 'end', uncheckedValue = 'null' } = defineProps<{
   withStatusLabel?: boolean;
   invalid?: boolean;
   name?: string;
   label?: string;
   labelClass?: string;
   statusLabelClass?: any;
-  labelPosition?: "start" | "end";
-  uncheckedValue?: "null" | "undefined";
+  labelPosition?: 'start' | 'end';
+  uncheckedValue?: 'null' | 'undefined';
   checkedLabel?: string;
   unCheckedLabel?: string;
 }>();
@@ -23,7 +23,7 @@ function onLocalValueChange() {
       value.value = false;
       break;
     case false:
-      value.value = uncheckedValue === "null" ? null : undefined;
+      value.value = uncheckedValue === 'null' ? null : undefined;
       break;
     case null:
     case undefined:

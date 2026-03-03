@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { MenuItem } from "primevue/menuitem";
-import {HddPermission} from "HddUiHelpers/types/types.ts";
+import type { HddPermission } from 'HddUiHelpers/types/types.ts';
+import type { MenuItem } from 'primevue/menuitem';
 
 export type SideTabularPanelItem = MenuItem & {
   name: string;
