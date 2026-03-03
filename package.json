@@ -10,6 +10,9 @@
     "fmt:check": "oxfmt --check",
     "build": "vite build"
   },
+  "exports": {
+    "./*": "./dist/*"
+  },
   "dependencies": {
     "@laravel/echo-vue": "^2.3.0",
     "@tiptap/extension-highlight": "^3.20.0",
