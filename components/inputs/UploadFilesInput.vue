@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
 import { reduce } from "lodash-es";
-import { rotateImageFile } from "../../utils/filesManipulations";
+import {computed, ref, useTemplateRef} from "vue";
+import { useI18n } from "vue-i18n";
+import { rotateImageFile } from "HddUiHelpers/utils/filesManipulations";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps } from "./types";
+import {ComponentExposed} from "vue-component-type-helpers";
+import Button from "primevue/button";
 
 const props = withDefaults(
   defineProps<
@@ -23,7 +27,7 @@ const props = withDefaults(
   },
 );
 
-const emits = defineEmits<{
+defineEmits<{
   fileSelected: [];
 }>();
 
@@ -51,13 +55,14 @@ const toBeModifiedFiles = defineModel<{ [p: string]: FileModifyType }>("toBeModi
   default: ref({}).value,
 });
 
-const fileInputRef = templateRef<HTMLInputElement>("fileInputRef");
-const buttonRef = templateRef<Component>("buttonRef");
+const fileInputRef = useTemplateRef<HTMLInputElement>("fileInputRef");
+const buttonRef = useTemplateRef<ComponentExposed<typeof Button>>("buttonRef");
 const newFilesImageRefs = ref({});
 const oldFilesImageRefs = ref({});
 const { t } = useI18n();
 
 function focus() {
+  //@ts-ignore
   buttonRef.value?.$el.focus();
 }
 
@@ -79,13 +84,14 @@ function fileToObjectUrl(file: File) {
   return URL.createObjectURL(file);
 }
 
+/*
 function getImageSrc(file: ModelValueFileType) {
   if (isMedialFileModelType(file)) {
     return file.path;
   } else {
     return URL.createObjectURL(file);
   }
-}
+}*/
 
 function removeFile(fileIndex: number) {
   newFiles.value.splice(fileIndex, 1);
@@ -95,7 +101,7 @@ const filesToAccept = computed(() => {
   return (props.accept ?? props.acceptImages) ? "image/png,image/jpeg" : undefined;
 });
 
-function markOldFileToBeRemoved(id, remove = true) {
+function markOldFileToBeRemoved(id: number|string, remove = true) {
   if (remove) {
     if (!toBeModifiedFiles.value) {
       toBeModifiedFiles.value = {};

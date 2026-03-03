@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { DynamicDialogRefInjectionType } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
+import { inject } from "vue";
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 const dialogRef = inject<DynamicDialogRefInjectionType | null>("dialogRef", null);

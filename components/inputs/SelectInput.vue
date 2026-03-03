@@ -3,7 +3,7 @@ import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils
 import { isBoolean } from "lodash-es";
 import type { SelectChangeEvent } from "primevue/select";
 import Select from "primevue/select";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps } from "./types";
 

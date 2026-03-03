@@ -1,18 +1,19 @@
-import { defineComponent as Z, useModel as k, ref as p, resolveComponent as _, openBlock as h, createBlock as ee, mergeProps as M, unref as s, createSlots as le, withCtx as d, createVNode as te, createElementVNode as y, createElementBlock as w, createCommentVNode as C, withDirectives as ae, renderSlot as b, mergeModels as $ } from "vue";
-import { vElementVisibility as oe } from "@vueuse/components";
-import { useHddBaseInputUtils as ne } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { useApiClient as ie } from "HddUiHelpers/stores/apiClient.ts";
-import { get as A } from "lodash-es";
-import { _ as re } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const ue = ["innerHTML"], se = {
+import { defineComponent as _, useModel as T, ref as p, useTemplateRef as ee, computed as le, watch as te, nextTick as k, resolveComponent as ae, openBlock as h, createBlock as oe, mergeProps as C, unref as d, createSlots as ne, withCtx as s, createVNode as ie, createElementVNode as y, createElementBlock as w, createCommentVNode as $, withDirectives as re, renderSlot as b, mergeModels as A } from "vue";
+import { vElementVisibility as ue } from "@vueuse/components";
+import { useHddBaseInputUtils as se } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { useApiClient as de } from "HddUiHelpers/stores/apiClient.ts";
+import { get as j } from "lodash-es";
+import { useI18n as fe } from "vue-i18n";
+import { _ as me } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const ce = ["innerHTML"], pe = {
   key: 0,
   class: "flex justify-center"
-}, de = ["innerHTML"], fe = ["aria-labelledby", "data-value"], ce = ["innerHTML"], me = ["aria-labelledby", "data-value"], pe = ["innerHTML"], ye = { class: "flex justify-center" }, be = {
+}, ye = ["innerHTML"], be = ["aria-labelledby", "data-value"], he = ["innerHTML"], ve = ["aria-labelledby", "data-value"], ge = ["innerHTML"], Le = { class: "flex justify-center" }, Be = {
   key: 0,
   class: "i-mdi-loading mx-auto my-1 animate-spin"
-}, Se = /* @__PURE__ */ Z({
+}, Te = /* @__PURE__ */ _({
   __name: "InfiniteMultiSelectInput",
-  props: /* @__PURE__ */ $({
+  props: /* @__PURE__ */ A({
     url: {},
     disabled: { type: Boolean },
     searchOnFocus: { type: Boolean, default: !0 },
@@ -82,11 +83,11 @@ const ue = ["innerHTML"], se = {
     modelValue: { default: null },
     modelModifiers: {}
   }),
-  emits: /* @__PURE__ */ $(["keydown", "blur", "hide", "cleared", "itemSelected"], ["update:item", "update:modelValue"]),
-  setup(n, { expose: j, emit: q }) {
-    const l = n, f = q, { t: F } = useI18n(), u = k(n, "item"), v = k(n, "modelValue"), H = ie(), r = p([]), x = p(0), P = p(), g = p(!1), S = p(!1), V = p(!1);
+  emits: /* @__PURE__ */ A(["keydown", "blur", "hide", "cleared", "itemSelected"], ["update:item", "update:modelValue"]),
+  setup(n, { expose: q, emit: H }) {
+    const l = n, f = H, { t: F } = fe(), u = T(n, "item"), v = T(n, "modelValue"), E = de(), r = p([]), P = p(0), x = p(), g = p(!1), S = p(!1), V = p(!1);
     async function L(e) {
-      P.value = e.query || "";
+      x.value = e.query || "";
       const o = {
         name: e.query || "",
         offset: e.offset || 0,
@@ -98,32 +99,32 @@ const ue = ["innerHTML"], se = {
         for (const i in l.ajaxParams)
           o[i] = l.ajaxParams[i];
       else typeof l.ajaxParams == "function" && l.ajaxParams(o);
-      return H.request({
+      return E.request({
         method: "get",
         ...typeof l.url == "string" ? { url: l.url } : l.url,
         params: o
       }).then((i) => {
-        e.offset ? r.value.push(...i.data.data.items) : r.value = i.data.data.items, x.value = i.data.data.total, g.value = !1, S.value = !1;
+        e.offset ? r.value.push(...i.data.data.items) : r.value = i.data.data.items, P.value = i.data.data.total, g.value = !1, S.value = !1;
       });
     }
-    function E(e) {
-      e && x.value > r.value.length && g.value === !1 && (g.value = !0, L({ query: P.value, offset: r.value.length - 1 }));
-    }
-    const c = useTemplateRef("inputRef");
-    function T(e = !1) {
-      l.disabled || (e ? c.value.show() : c.value.$refs.focusInput.focus());
-    }
     function I(e) {
-      (!c.value).overlayVisible && f("keydown", e);
+      e && P.value > r.value.length && g.value === !1 && (g.value = !0, L({ query: x.value, offset: r.value.length - 1 }));
+    }
+    const m = ee("inputRef");
+    function M(e = !1) {
+      l.disabled || (e ? m.value.show() : m.value.$refs.focusInput.focus());
     }
     function O(e) {
-      l.onKeydown && e.code === "Enter" && c.value?.hide(), f("keydown", e);
+      (!m.value).overlayVisible && f("keydown", e);
     }
     function D(e) {
+      l.onKeydown && e.code === "Enter" && m.value?.hide(), f("keydown", e);
+    }
+    function K(e) {
       f("blur", e);
     }
-    const K = computed(() => r.value.length > 0 ? Object.keys(r.value[0]) : l.filterFields ?? []);
-    watch(
+    const N = le(() => r.value.length > 0 ? Object.keys(r.value[0]) : l.filterFields ?? []);
+    te(
       () => v.value,
       (e) => {
         if (e === null) {
@@ -136,8 +137,8 @@ const ue = ["innerHTML"], se = {
           return;
         const o = new Array(e.length), i = [];
         e.forEach((t, a) => {
-          const m = r.value.find((Y) => Y[l.optionValueProperty] === t);
-          m ? o[a] = m : i.push({
+          const c = r.value.find((Z) => Z[l.optionValueProperty] === t);
+          c ? o[a] = c : i.push({
             id: t,
             index: a
           });
@@ -147,10 +148,10 @@ const ue = ["innerHTML"], se = {
           onlyId: !0,
           multipleIds: !0
         }).then(() => {
-          nextTick(() => {
+          k(() => {
             i.forEach((t) => {
               const a = r.value.find(
-                (m) => m[l.optionValueProperty] === t.id
+                (c) => c[l.optionValueProperty] === t.id
               );
               a && (o[t.index] = a);
             }), u.value = o;
@@ -162,51 +163,51 @@ const ue = ["innerHTML"], se = {
         immediate: !0
       }
     );
-    function N() {
-      l.useIdModel && (v.value = null), u.value = null, nextTick(() => {
-        setTimeout(T, 50);
+    function R() {
+      l.useIdModel && (v.value = null), u.value = null, k(() => {
+        setTimeout(M, 50);
       }), f("cleared");
     }
     function B(e, o) {
       return e ? l.optionLabelFormatter ? l.optionLabelFormatter(e, o) : l.optionAndValueLabelFormatter ? l.optionAndValueLabelFormatter(e) : e[l.optionLabelProperty] ?? "&nbsp;" : "&nbsp;";
     }
-    function R(e, o) {
+    function U(e, o) {
       const i = o ? `<span class="text-muted px-2">${o}</span>` : void 0;
       return !e || e.length < 1 ? i ?? "&nbsp;" : e.length > l.maxSelectedLabels ? `${e.length} ${F("multiSelectItemsSelectedLabel")}` : e.map((t) => {
-        const a = u.value?.find((m) => m[l.optionValueProperty] === t);
+        const a = u.value?.find((c) => c[l.optionValueProperty] === t);
         return a ? l.valueLabelFormatter ? l.valueLabelFormatter(a, o) ?? "---" : l.optionAndValueLabelFormatter ? l.optionAndValueLabelFormatter(a) ?? "---" : a?.[l.optionLabelProperty] ?? "---" : "---";
       });
     }
-    function U() {
+    function W() {
       S.value = !0, L({});
     }
-    function W(e) {
+    function z(e) {
       v.value = e.value, f("itemSelected", u.value);
     }
-    function z(e) {
+    function Q(e) {
       L({ query: e.value });
     }
-    const { exposed: Q, baseInputForwardedProps: G, fieldUniqueId: J, generalInputProps: X } = ne(l);
-    return j({ focus: T, clear: N, selectedItems: u, ...Q }), (e, o) => {
-      const i = _("MultiSelect");
-      return h(), ee(re, M(s(G), {
-        onLabelClicked: o[1] || (o[1] = (t) => s(c)?.show())
-      }), le({
-        labelText: d(() => [
+    const { exposed: G, baseInputForwardedProps: J, fieldUniqueId: X, generalInputProps: Y } = se(l);
+    return q({ focus: M, clear: R, selectedItems: u, ...G }), (e, o) => {
+      const i = ae("MultiSelect");
+      return h(), oe(me, C(d(J), {
+        onLabelClicked: o[1] || (o[1] = (t) => m.value?.show())
+      }), ne({
+        labelText: s(() => [
           b(e.$slots, "label-text")
         ]),
-        default: d(() => [
-          te(i, M(s(X), {
+        default: s(() => [
+          ie(i, C(d(Y), {
             ref_key: "inputRef",
-            ref: c,
-            "input-id": s(J),
+            ref: m,
+            "input-id": d(X),
             name: n.name,
             "model-value": v.value,
             "data-name": n.name,
             placeholder: n.placeholder,
             "auto-filter-focus": !0,
             variant: n.variant,
-            "filter-fields": s(K),
+            "filter-fields": N.value,
             "filter-placeholder": n.filterPlaceholder,
             display: n.display,
             "max-selected-labels": n.maxSelectedLabels,
@@ -219,75 +220,75 @@ const ue = ["innerHTML"], se = {
             highlightonselect: "",
             filter: "",
             options: r.value,
-            "selected-items-label": `{0} ${s(F)("multiSelectItemsSelectedLabel")}`,
+            "selected-items-label": `{0} ${d(F)("multiSelectItemsSelectedLabel")}`,
             "option-label": n.optionLabelProperty,
             "option-value": n.optionValueProperty,
             "show-clear": n.clearable,
-            class: "!w-full",
+            class: "w-full!",
             "scroll-height": "18rem",
             loading: V.value,
             pt: {
               pcFilter: {
                 root: {
                   class: "p-inputtext-sm",
-                  onkeydown: I,
-                  onblur: D
+                  onkeydown: O,
+                  onblur: K
                 }
               }
             },
-            onKeydown: O,
-            onBeforeShow: U,
+            onKeydown: D,
+            onBeforeShow: W,
             onHide: o[0] || (o[0] = (t) => f("hide")),
-            onChange: W,
-            onFilter: z
+            onChange: z,
+            onFilter: Q
           }), {
-            empty: d(() => [
-              S.value ? (h(), w("div", se, [...o[2] || (o[2] = [
+            empty: s(() => [
+              S.value ? (h(), w("div", pe, [...o[2] || (o[2] = [
                 y("i", { class: "i-mdi-loading mx-auto my-1 animate-spin" }, null, -1)
-              ])])) : C("", !0)
+              ])])) : $("", !0)
             ]),
-            value: d(({ value: t, placeholder: a }) => [
+            value: s(({ value: t, placeholder: a }) => [
               b(e.$slots, "value", {
                 value: t,
                 placeholder: a
               }, () => [
                 y("div", {
-                  innerHTML: R(t, a)
-                }, null, 8, de)
+                  innerHTML: U(t, a)
+                }, null, 8, ye)
               ])
             ]),
-            option: d(({ option: t, index: a }) => [
-              a + 1 === r.value.length ? ae((h(), w("span", {
+            option: s(({ option: t, index: a }) => [
+              a + 1 === r.value.length ? re((h(), w("span", {
                 key: 0,
                 "aria-labelledby": B(t, a),
-                "data-value": s(A)(t, n.optionValueProperty)
+                "data-value": d(j)(t, n.optionValueProperty)
               }, [
                 b(e.$slots, "option", {
                   option: { option: t, index: a }
                 }, () => [
                   y("div", {
                     innerHTML: B(t, a)
-                  }, null, 8, ce)
+                  }, null, 8, he)
                 ])
-              ], 8, fe)), [
-                [s(oe), E]
+              ], 8, be)), [
+                [d(ue), I]
               ]) : (h(), w("span", {
                 key: 1,
                 "aria-labelledby": B(t, a),
-                "data-value": s(A)(t, n.optionValueProperty)
+                "data-value": d(j)(t, n.optionValueProperty)
               }, [
                 b(e.$slots, "option", {
                   option: { option: t, index: a }
                 }, () => [
                   y("div", {
                     innerHTML: B(t, a)
-                  }, null, 8, pe)
+                  }, null, 8, ge)
                 ])
-              ], 8, me))
+              ], 8, ve))
             ]),
-            footer: d(() => [
-              y("div", ye, [
-                g.value ? (h(), w("i", be)) : C("", !0)
+            footer: s(() => [
+              y("div", Le, [
+                g.value ? (h(), w("i", Be)) : $("", !0)
               ])
             ]),
             _: 3
@@ -297,16 +298,16 @@ const ue = ["innerHTML"], se = {
       }, [
         e.$slots.addon ? {
           name: "addon",
-          fn: d(() => [
+          fn: s(() => [
             b(e.$slots, "addon")
           ]),
           key: "0"
         } : void 0,
         e.$slots.helper || n.helperText ? {
           name: "helper",
-          fn: d(() => [
+          fn: s(() => [
             b(e.$slots, "helper", {}, () => [
-              y("div", { innerHTML: n.helperText }, null, 8, ue)
+              y("div", { innerHTML: n.helperText }, null, 8, ce)
             ])
           ]),
           key: "1"
@@ -316,5 +317,5 @@ const ue = ["innerHTML"], se = {
   }
 });
 export {
-  Se as default
+  Te as default
 };

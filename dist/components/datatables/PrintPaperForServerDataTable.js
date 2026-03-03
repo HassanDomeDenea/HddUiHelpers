@@ -1,25 +1,26 @@
-import { defineComponent as V, ref as k, useModel as U, openBlock as r, createElementBlock as l, createElementVNode as o, unref as a, createCommentVNode as s, renderSlot as P, toDisplayString as c, createVNode as p, normalizeClass as I, Fragment as h, renderList as y, normalizeStyle as w, mergeModels as M } from "vue";
-import H from "HddUiHelpers/components/datatables/CellContent.vue";
-import $ from "HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue";
-import { isToolbarFilterEmpty as q, getColumnName as L, getColumnTitle as R, getColumnBodyClass as j, getColumnSlotName as E } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
-import { useBasicAuthStore as z } from "HddUiHelpers/stores/basicAuth.ts";
-import { printDomWithStyles as K } from "HddUiHelpers/utils/printDom.ts";
-const O = { class: "hidden" }, W = {
+import { defineComponent as M, ref as x, useTemplateRef as H, useModel as V, computed as P, openBlock as r, createElementBlock as l, toValue as u, createElementVNode as a, unref as o, createCommentVNode as s, renderSlot as F, toDisplayString as m, createVNode as D, normalizeClass as T, Fragment as y, renderList as v, normalizeStyle as $, mergeModels as q, nextTick as L } from "vue";
+import R from "HddUiHelpers/components/datatables/CellContent.vue";
+import j from "HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue";
+import { isToolbarFilterEmpty as E, getColumnName as z, getColumnTitle as K, getColumnBodyClass as O, getColumnSlotName as W } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import { useBasicAuthStore as A } from "HddUiHelpers/stores/basicAuth.ts";
+import { printDomWithStyles as G } from "HddUiHelpers/utils/printDom.ts";
+import { useI18n as J } from "vue-i18n";
+const Q = { class: "hidden" }, X = {
   key: 0,
   hidden: "",
   class: "flex items-center justify-center text-3xl font-bold"
-}, A = ["src", "alt"], G = { class: "my-2 text-center text-xl font-bold" }, J = { class: "flex justify-start ps-4" }, Q = {
+}, Y = ["src", "alt"], Z = { class: "my-2 text-center text-xl font-bold" }, _ = { class: "flex justify-start ps-4" }, ee = {
   key: 0,
   class: "mt-1"
-}, X = { class: "underline-offset-5 underline" }, Y = { key: 1 }, Z = { class: "mt-1" }, _ = { class: "underline-offset-5 underline" }, ee = ["dir"], te = { class: "printable-table mx-auto mt-3" }, re = { key: 0 }, le = { class: "flex items-center gap-1" }, oe = { class: "flex-grow-1" }, ae = { key: 0 }, ne = {
+}, te = { class: "underline-offset-5 underline" }, re = { key: 1 }, le = { class: "mt-1" }, ae = { class: "underline-offset-5 underline" }, ne = ["dir"], oe = { class: "printable-table mx-auto mt-3" }, se = { key: 0 }, ie = { class: "flex items-center gap-1" }, de = { class: "flex-grow-1" }, ue = { key: 0 }, ce = {
   key: 0,
   class: "i-mdi:sort-ascending scale-y-[-1]"
-}, se = {
+}, me = {
   key: 1,
   class: "i-mdi:sort-descending scale-y-[-1]"
-}, ie = { key: 0 }, de = { key: 0 }, ue = { key: 0 }, ce = ["innerHTML"], Ce = /* @__PURE__ */ V({
+}, fe = { key: 0 }, ge = { key: 0 }, he = { key: 0 }, ye = ["innerHTML"], pe = /* @__PURE__ */ M({
   __name: "PrintPaperForServerDataTable",
-  props: /* @__PURE__ */ M({
+  props: /* @__PURE__ */ q({
     checkColumnIsVisible: { type: Function },
     columns: {},
     sorts: {},
@@ -47,73 +48,73 @@ const O = { class: "hidden" }, W = {
     isPrintingModifiers: {}
   }),
   emits: ["update:isPrinting"],
-  setup(e, { expose: D }) {
-    const v = L, u = k([]), m = k(), C = k(!1), x = useTemplateRef("printNodeRef"), F = U(e, "isPrinting"), T = z();
-    async function B(n = !1, i = {}) {
-      F.value = !0;
+  setup(e, { expose: B }) {
+    const C = z, c = x([]), f = x(), b = x(!1), p = H("printNodeRef"), S = V(e, "isPrinting"), N = A();
+    async function U(n = !1, i = {}) {
+      S.value = !0;
       try {
         if (n) {
-          const g = (await e.getData(-1, null, i)).data.data;
-          u.value = g.data, m.value = g.extra;
+          const h = (await e.getData(-1, null, i)).data.data;
+          c.value = h.data, f.value = h.extra;
         } else
-          u.value = toValue(e.records), m.value = toValue(e.extraData);
-        C.value = !0, await nextTick();
-        const t = x.value;
-        t && await K(t, {
+          c.value = u(e.records), f.value = u(e.extraData);
+        b.value = !0, await L();
+        const t = p.value;
+        t && await G(t, {
           pageCounter: e.showPageCounter,
           leftMargin: 8,
           rightMargin: 8,
           topMargin: 8,
           bottomMargin: 8,
           showPrintTime: e.showCurrentPrintTime,
-          firstPageHeaderImageUrl: toValue(e.firstPageHeaderImageUrl),
-          headerImageUrl: toValue(e.headerImageUrl),
-          footerImageUrl: toValue(e.footerImageUrl)
+          firstPageHeaderImageUrl: u(e.firstPageHeaderImageUrl),
+          headerImageUrl: u(e.headerImageUrl),
+          footerImageUrl: u(e.footerImageUrl)
         });
       } catch (t) {
         console.error(t);
       }
-      C.value = !1, F.value = !1;
+      b.value = !1, S.value = !1;
     }
-    const { t: b } = useI18n();
-    D({ print: B });
-    const S = computed(() => e.sorts.reduce(
+    const { t: k } = J();
+    B({ print: U });
+    const I = P(() => e.sorts.reduce(
       (n, i) => (n[i.field] = i.direction, n),
       {}
-    )), f = computed(() => e.columns.filter((n) => n.printable !== !1 && e.checkColumnIsVisible(n))), N = computed(() => f.value.some((n) => n.footer));
-    return (n, i) => (r(), l("div", O, [
-      C.value ? (r(), l("div", {
+    )), g = P(() => e.columns.filter((n) => n.printable !== !1 && e.checkColumnIsVisible(n))), w = P(() => g.value.some((n) => n.footer));
+    return (n, i) => (r(), l("div", Q, [
+      b.value ? (r(), l("div", {
         key: 0,
         ref_key: "printNodeRef",
-        ref: x,
+        ref: p,
         class: "bg-white text-black"
       }, [
-        n.toValue(e.headerImageUrl) ? (r(), l("div", W, [
-          o("img", {
-            src: n.toValue(e.headerImageUrl),
+        u(e.headerImageUrl) ? (r(), l("div", X, [
+          a("img", {
+            src: u(e.headerImageUrl),
             style: { width: "100%" },
-            alt: a(T).user.global_options.city_name
-          }, null, 8, A)
+            alt: o(N).user.global_options.app_name
+          }, null, 8, Y)
         ])) : s("", !0),
-        P(n.$slots, "printPageHeader", {
-          records: u.value,
-          extra: m.value
+        F(n.$slots, "printPageHeader", {
+          records: c.value,
+          extra: f.value
         }, () => [
-          o("div", G, c(e.title), 1)
+          a("div", Z, m(e.title), 1)
         ]),
-        o("div", J, [
-          o("div", null, [
-            e.filters._global?.value ? (r(), l("div", Q, [
-              o("span", X, c(a(b)("Search")), 1),
-              i[0] || (i[0] = o("span", { class: "" }, ": ", -1)),
-              o("span", null, c(e.filters._global.value), 1)
+        a("div", _, [
+          a("div", null, [
+            e.filters._global?.value ? (r(), l("div", ee, [
+              a("span", te, m(o(k)("Search")), 1),
+              i[0] || (i[0] = a("span", { class: "" }, ": ", -1)),
+              a("span", null, m(e.filters._global.value), 1)
             ])) : s("", !0),
-            a(q)(e.toolbarFilters) ? s("", !0) : (r(), l("div", Y, [
-              o("div", Z, [
-                o("span", _, c(a(b)("Filtering Options")), 1),
-                i[1] || (i[1] = o("span", null, ": ", -1))
+            o(E)(e.toolbarFilters) ? s("", !0) : (r(), l("div", re, [
+              a("div", le, [
+                a("span", ae, m(o(k)("Filtering Options")), 1),
+                i[1] || (i[1] = a("span", null, ": ", -1))
               ]),
-              p($, {
+              D(j, {
                 "is-printing": "",
                 filters: e.toolbarFilters,
                 "hide-operator": !0,
@@ -123,41 +124,41 @@ const O = { class: "hidden" }, W = {
             ]))
           ])
         ]),
-        o("div", {
+        a("div", {
           dir: e.printDirection,
-          class: I({
+          class: T({
             "ltr text-left": e.printDirection === "ltr",
             "rtl text-right": e.printDirection === "rtl"
           })
         }, [
-          o("table", te, [
-            o("thead", null, [
-              o("tr", null, [
-                e.hasSequenceColumn ? (r(), l("th", re, "#")) : s("", !0),
-                (r(!0), l(h, null, y(a(f), (t) => (r(), l("th", {
-                  key: a(v)(t)
+          a("table", oe, [
+            a("thead", null, [
+              a("tr", null, [
+                e.hasSequenceColumn ? (r(), l("th", se, "#")) : s("", !0),
+                (r(!0), l(y, null, v(g.value, (t) => (r(), l("th", {
+                  key: o(C)(t)
                 }, [
-                  o("div", le, [
-                    o("span", oe, c(t.printLabel ?? a(R)(t, a(b))), 1),
-                    e.hasSorts && a(S)[t.sortField ?? t.fullFieldName] ? (r(), l("span", ae, [
-                      a(S)[t.sortField ?? t.fullFieldName] === "asc" ? (r(), l("i", ne)) : (r(), l("i", se))
+                  a("div", ie, [
+                    a("span", de, m(t.printLabel ?? o(K)(t, o(k))), 1),
+                    e.hasSorts && I.value[t.sortField ?? t.fullFieldName] ? (r(), l("span", ue, [
+                      I.value[t.sortField ?? t.fullFieldName] === "asc" ? (r(), l("i", ce)) : (r(), l("i", me))
                     ])) : s("", !0)
                   ])
                 ]))), 128))
               ])
             ]),
-            o("tbody", null, [
-              (r(!0), l(h, null, y(u.value, (t, g) => (r(), l("tr", {
+            a("tbody", null, [
+              (r(!0), l(y, null, v(c.value, (t, h) => (r(), l("tr", {
                 key: t[e.primaryKey]
               }, [
-                e.hasSequenceColumn ? (r(), l("td", ie, c(g + 1), 1)) : s("", !0),
-                (r(!0), l(h, null, y(a(f), (d) => (r(), l("td", {
-                  key: a(v)(d),
-                  style: w(d.bodyStyle),
-                  class: I(d.bodyClass ? a(j)(t, d) : null)
+                e.hasSequenceColumn ? (r(), l("td", fe, m(h + 1), 1)) : s("", !0),
+                (r(!0), l(y, null, v(g.value, (d) => (r(), l("td", {
+                  key: o(C)(d),
+                  style: $(d.bodyStyle),
+                  class: T(d.bodyClass ? o(O)(t, d) : null)
                 }, [
-                  P(n.$slots, `${a(E)(d)}ColumnPrintBody`, {}, () => [
-                    p(H, {
+                  F(n.$slots, `${o(W)(d)}ColumnPrintBody`, {}, () => [
+                    D(R, {
                       column: d,
                       "rendered-data": e.getColumnBody(t, d),
                       row: t
@@ -166,25 +167,25 @@ const O = { class: "hidden" }, W = {
                 ], 6))), 128))
               ]))), 128))
             ]),
-            a(N) ? (r(), l("tfoot", de, [
-              o("tr", null, [
-                e.hasSequenceColumn ? (r(), l("th", ue, "xx")) : s("", !0),
-                (r(!0), l(h, null, y(a(f), (t) => (r(), l("th", {
-                  key: a(v)(t)
+            w.value ? (r(), l("tfoot", ge, [
+              a("tr", null, [
+                e.hasSequenceColumn ? (r(), l("th", he, "xx")) : s("", !0),
+                (r(!0), l(y, null, v(g.value, (t) => (r(), l("th", {
+                  key: o(C)(t)
                 }, [
                   t.footer ? (r(), l("span", {
                     key: 0,
-                    innerHTML: typeof t.footer == "string" ? t.footer : t.footer(u.value)
-                  }, null, 8, ce)) : s("", !0)
+                    innerHTML: typeof t.footer == "string" ? t.footer : t.footer(c.value)
+                  }, null, 8, ye)) : s("", !0)
                 ]))), 128))
               ])
             ])) : s("", !0)
           ])
-        ], 10, ee),
-        o("div", null, [
-          P(n.$slots, "printPageFooter", {
-            records: u.value,
-            extra: m.value
+        ], 10, ne),
+        a("div", null, [
+          F(n.$slots, "printPageFooter", {
+            records: c.value,
+            extra: f.value
           })
         ])
       ], 512)) : s("", !0)
@@ -192,5 +193,5 @@ const O = { class: "hidden" }, W = {
   }
 });
 export {
-  Ce as default
+  pe as default
 };

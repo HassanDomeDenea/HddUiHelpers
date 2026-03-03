@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, useTemplateRef } from "vue";
 import type { ButtonProps } from "primevue";
 import ContextMenu from "primevue/contextmenu";
 import type { MenuItem } from "primevue/menuitem";
@@ -13,7 +14,7 @@ export interface SummaryDataPanelItem {
   wrapperClass?: any;
   hidden?: boolean;
   noPrint?: boolean;
-  appendButton?: ButtonProps & { href?: string; visible?: boolean };
+  appendButton?: ButtonProps & { href?: string; visible?: boolean, tooltip?: string };
   appendContextMenu?: MenuItem[];
 }
 

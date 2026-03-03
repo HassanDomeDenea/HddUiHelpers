@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useDimensionsStore = defineStore("dimensionsStore", () => {
   const topNavbarHeight = ref(0);

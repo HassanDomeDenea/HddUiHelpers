@@ -1,6 +1,6 @@
 import { defineComponent as y, useModel as B, ref as b, resolveComponent as g, openBlock as L, createBlock as C, mergeProps as r, unref as l, withCtx as w, createVNode as I, mergeModels as V } from "vue";
 import { useHddBaseInputUtils as h } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { _ as v } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
+import { _ as v } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
 const A = /* @__PURE__ */ y({
   __name: "ToggleSwitchInput",
   props: /* @__PURE__ */ V({

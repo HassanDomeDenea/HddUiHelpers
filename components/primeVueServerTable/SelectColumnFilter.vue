@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SelectInput from "../inputs/SelectInput.vue";
+import { useI18n } from "vue-i18n";
 
 withDefaults(
   defineProps<{

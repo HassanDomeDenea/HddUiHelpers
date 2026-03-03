@@ -1,11 +1,12 @@
-import { defineStore as t } from "pinia";
-const n = t("dimensionsStore", () => {
-  const e = ref(0), o = ref(0);
+import { defineStore as r } from "pinia";
+import { ref as o } from "vue";
+const s = r("dimensionsStore", () => {
+  const t = o(0), e = o(0);
   return {
-    topNavbarHeight: e,
-    botFooterHeight: o
+    topNavbarHeight: t,
+    botFooterHeight: e
   };
 });
 export {
-  n as useDimensionsStore
+  s as useDimensionsStore
 };

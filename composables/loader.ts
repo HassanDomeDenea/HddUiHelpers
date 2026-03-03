@@ -1,3 +1,5 @@
+import { ref } from "vue";
+
 export const useLoader = () => {
   const isLoading = ref(false);
   const isLoadedOnce = ref(false);

@@ -1,14 +1,15 @@
-const o = /* @__PURE__ */ Symbol(
+import { useEventBus as n } from "@vueuse/core";
+const i = /* @__PURE__ */ Symbol(
   "ConfirmDialogWithInputKey"
-), i = function() {
-  const t = useEventBus(o);
+), s = function() {
+  const o = n(i);
   return {
-    show(n) {
-      t.emit({ event: "show", options: n });
+    show(t) {
+      o.emit({ event: "show", options: t });
     }
   };
 };
 export {
-  o as ConfirmDialogWithInputKey,
-  i as useConfirmDialogWithInput
+  i as ConfirmDialogWithInputKey,
+  s as useConfirmDialogWithInput
 };

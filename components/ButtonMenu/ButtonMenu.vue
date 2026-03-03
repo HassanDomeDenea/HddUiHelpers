@@ -2,6 +2,7 @@
 import { uniqueId } from "lodash-es";
 import type { ButtonProps } from "primevue";
 import type { MenuItem } from "primevue/menuitem";
+import { computed, useTemplateRef } from "vue";
 
 defineProps<{
   severity?: ButtonProps["severity"];

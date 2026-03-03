@@ -1,10 +1,13 @@
-import { defineComponent as f, resolveComponent as o, openBlock as _, createBlock as g, withCtx as r, createVNode as s, createElementVNode as b, toDisplayString as h, unref as n, normalizeProps as x, guardReactiveProps as w } from "vue";
+import { defineComponent as p, ref as d, resolveComponent as r, openBlock as f, createBlock as _, withCtx as o, createVNode as s, createElementVNode as g, toDisplayString as b, unref as h, normalizeProps as x, guardReactiveProps as w } from "vue";
 import { useApiClient as y } from "HddUiHelpers/stores/apiClient.ts";
-import { useBasicAuthStore as C } from "HddUiHelpers/stores/basicAuth";
-const v = { class: "w-full text-center text-lg font-bold" }, z = /* @__PURE__ */ f({
+import { useBasicAuthStore as v } from "HddUiHelpers/stores/basicAuth";
+import { useI18n as C } from "vue-i18n";
+import { useRouter as P, useRoute as S } from "vue-router";
+import B from "HddUiHelpers/components/FormWrapper/HddForm.vue";
+const L = { class: "w-full text-center text-lg font-bold" }, M = /* @__PURE__ */ p({
   __name: "LoginForm",
-  setup(P) {
-    const { t: e } = useI18n(), i = C(), l = useRouter(), a = y(), u = useRoute(), c = ref({
+  setup(k) {
+    const { t: e } = C(), n = v(), i = P(), l = y(), a = S(), m = d({
       url: {
         url: "/api/login",
         method: "post"
@@ -32,28 +35,28 @@ const v = { class: "w-full text-center text-lg font-bold" }, z = /* @__PURE__ */
       ],
       onSuccess: (t) => {
         if (!t.user) {
-          a.toastError(e("Error Occurred"));
+          l.toastError(e("Error Occurred"));
           return;
         }
-        l.push((u.query?.redirect_url ?? "/") || "/"), i.login(t.user, t.token);
+        i.push((a.query?.redirect_url ?? "/") || "/"), n.login(t.user, t.token);
       }
     });
-    return (t, S) => {
-      const m = o("Message"), p = o("HddForm"), d = o("Panel");
-      return _(), g(d, { class: "font-tajawal w-400px light:bg-primary-1 light:border-blue-200 max-w-full" }, {
-        default: r(() => [
-          s(m, {
+    return (t, z) => {
+      const u = r("Message"), c = r("Panel");
+      return f(), _(c, { class: "font-tajawal w-400px light:bg-primary-1 light:border-blue-200 max-w-full" }, {
+        default: o(() => [
+          s(u, {
             severity: "success",
             size: "large",
             class: "mb-4",
             variant: "simple"
           }, {
-            container: r(() => [
-              b("div", v, h(n(e)("Welcome, Please Log In")) + ":", 1)
+            container: o(() => [
+              g("div", L, b(h(e)("Welcome, Please Log In")) + ":", 1)
             ]),
             _: 1
           }),
-          s(p, x(w(n(c))), null, 16)
+          s(B, x(w(m.value)), null, 16)
         ]),
         _: 1
       });
@@ -61,5 +64,5 @@ const v = { class: "w-full text-center text-lg font-bold" }, z = /* @__PURE__ */
   }
 });
 export {
-  z as default
+  M as default
 };

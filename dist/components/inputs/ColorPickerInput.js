@@ -1,17 +1,19 @@
-import { defineComponent as E, useModel as j, ref as S, resolveComponent as F, openBlock as r, createBlock as b, mergeProps as G, unref as n, withCtx as g, createElementVNode as u, createElementBlock as d, createCommentVNode as f, resolveDynamicComponent as J, withModifiers as U, normalizeClass as c, Fragment as x, renderList as P, normalizeStyle as C, createVNode as I, withDirectives as W, vModelText as H, renderSlot as K, createSlots as Q, mergeModels as D } from "vue";
-import { useHddBaseInputUtils as X } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { uniq as Y, take as Z } from "lodash-es";
-import _ from "primevue/popover";
-import { _ as ee } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const oe = { ref: "relative" }, le = { class: "m-1 flex flex-wrap gap-1" }, te = ["disabled", "onClick"], ae = {
+import { defineComponent as j, useModel as F, ref as R, useTemplateRef as c, computed as G, onMounted as J, resolveComponent as U, openBlock as i, createBlock as g, mergeProps as W, unref as d, withCtx as C, createElementVNode as s, createElementBlock as u, createCommentVNode as f, resolveDynamicComponent as H, withModifiers as K, normalizeClass as v, Fragment as P, renderList as I, normalizeStyle as B, createVNode as D, withDirectives as Q, vModelText as X, renderSlot as Y, createSlots as Z, mergeModels as z } from "vue";
+import { useHddBaseInputUtils as _ } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { uniq as ee, take as oe } from "lodash-es";
+import le from "primevue/popover";
+import { useI18n as te } from "vue-i18n";
+import { _ as ae } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+import { useStorage as ne } from "@vueuse/core";
+const ie = { ref: "relative" }, re = { class: "m-1 flex flex-wrap gap-1" }, se = ["disabled", "onClick"], ue = {
   key: 0,
   class: "m-1 mt-3 flex flex-wrap gap-1"
-}, ne = ["disabled", "onClick"], ie = { class: "flex justify-center" }, re = {
+}, de = ["disabled", "onClick"], fe = { class: "flex justify-center" }, ce = {
   key: 0,
   class: "mt-2 flex items-center justify-center gap-1"
-}, se = ["disabled"], me = /* @__PURE__ */ E({
+}, ve = ["disabled"], he = /* @__PURE__ */ j({
   __name: "ColorPickerInput",
-  props: /* @__PURE__ */ D({
+  props: /* @__PURE__ */ z({
     colors: {},
     autoOpen: { type: Boolean, default: !1 },
     autoDismiss: { type: Boolean },
@@ -64,18 +66,18 @@ const oe = { ref: "relative" }, le = { class: "m-1 flex flex-wrap gap-1" }, te =
     buttonAddon: {},
     controlComponent: {}
   }, {
-    modelValue: { default: S().value },
+    modelValue: { default: R().value },
     modelModifiers: {}
   }),
-  emits: /* @__PURE__ */ D(["change"], ["update:modelValue"]),
-  setup(e, { expose: z, emit: L }) {
-    const a = e, p = L, o = j(e, "modelValue"), { t: m } = useI18n(), B = S(), h = useTemplateRef("customColorInputRef"), s = useTemplateRef(
+  emits: /* @__PURE__ */ z(["change"], ["update:modelValue"]),
+  setup(e, { expose: L, emit: V }) {
+    const a = e, m = V, o = F(e, "modelValue"), { t: p } = te(), h = R(), k = c("customColorInputRef"), r = c(
       "colorPalateContainerRef"
-    ), T = useTemplateRef("colorsContainerDivRef"), k = useTemplateRef("popoverShowContainerRef");
-    function w() {
-      B.value.$el.click();
+    ), M = c("colorsContainerDivRef"), w = c("popoverShowContainerRef");
+    function S() {
+      h.value.$el.click();
     }
-    const V = computed(() => a.colors ?? [
+    const N = G(() => a.colors ?? [
       "#000000",
       "#ffffff",
       "#cccccc",
@@ -111,7 +113,7 @@ const oe = { ref: "relative" }, le = { class: "m-1 flex flex-wrap gap-1" }, te =
       "#708d00",
       "#00ffff",
       "#007575"
-    ]), v = useStorage(
+    ]), y = ne(
       () => "recent_colors_" + a.recentColorsGroupName,
       null,
       localStorage,
@@ -122,111 +124,111 @@ const oe = { ref: "relative" }, le = { class: "m-1 flex flex-wrap gap-1" }, te =
         }
       }
     );
-    function R(t) {
-      o.value = t, p("change", o.value), a.autoDismiss && a.asPopover && s.value?.hide();
+    function x(t) {
+      o.value = t, m("change", o.value), a.autoDismiss && a.asPopover && r.value?.hide();
     }
-    function M() {
-      o.value = null, p("change", o.value), a.autoDismiss && a.asPopover && s.value?.hide();
+    function T() {
+      o.value = null, m("change", o.value), a.autoDismiss && a.asPopover && r.value?.hide();
     }
-    function N(t) {
-      if (o.value = t.target.value, p("change", o.value), a.withRecentColors) {
-        const i = Y([o.value, ...v.value || []]);
-        v.value = Z(i, 5);
+    function A(t) {
+      if (o.value = t.target.value, m("change", o.value), a.withRecentColors) {
+        const n = ee([o.value, ...y.value || []]);
+        y.value = oe(n, 5);
       }
-      a.autoDismiss && a.asPopover && s.value?.hide();
+      a.autoDismiss && a.asPopover && r.value?.hide();
     }
-    onMounted(() => {
+    J(() => {
       a.autoOpen && setTimeout(() => {
-        w(), setTimeout(() => {
-          console.log(s.value), s.value.alignOverlay();
+        S(), setTimeout(() => {
+          console.log(r.value), r.value.alignOverlay();
         }, 10);
       }, 10);
     });
-    const { exposed: A, baseInputForwardedProps: O } = X(a);
-    function q(t) {
-      s.value?.toggle?.(t);
+    const { exposed: O, baseInputForwardedProps: q } = _(a);
+    function $(t) {
+      r.value?.toggle?.(t);
     }
-    return z({ focus: w, toggle: q, ...A }), (t, i) => {
-      const y = F("Button");
-      return r(), b(ee, G(n(O), {
+    return L({ focus: S, toggle: $, ...O }), (t, n) => {
+      const b = U("Button");
+      return i(), g(ae, W(d(q), {
         "floating-label": !1,
         "infield-top-aligned-label": !1
       }), {
-        default: g(() => [
-          u("div", oe, [
-            e.appendInline ? (r(), d("div", {
+        default: C(() => [
+          s("div", ie, [
+            e.appendInline ? (i(), u("div", {
               key: 0,
               ref_key: "popoverShowContainerRef",
-              ref: k,
+              ref: w,
               class: "fixed left-0 top-0 h-screen w-screen"
             }, null, 512)) : f("", !0),
-            (r(), b(J(e.asPopover ? n(_) : "div"), {
+            (i(), g(H(e.asPopover ? d(le) : "div"), {
               ref_key: "colorPalateContainerRef",
-              ref: s,
-              "append-to": e.appendInline ? n(k) : void 0,
-              class: c([
+              ref: r,
+              "append-to": e.appendInline ? w.value : void 0,
+              class: v([
                 {
                   "border-1 max-w-[480px] rounded border-dotted p-1": !e.asPopover,
                   "max-w-[360px]": e.asPopover
                 }
               ]),
-              onClick: i[2] || (i[2] = U(() => {
+              onClick: n[2] || (n[2] = K(() => {
               }, ["stop", "prevent"]))
             }, {
-              default: g(() => [
-                u("div", {
+              default: C(() => [
+                s("div", {
                   ref_key: "colorsContainerDivRef",
-                  ref: T
+                  ref: M
                 }, [
-                  u("div", le, [
-                    (r(!0), d(x, null, P(n(V), (l) => (r(), d("button", {
+                  s("div", re, [
+                    (i(!0), u(P, null, I(N.value, (l) => (i(), u("button", {
                       key: l,
-                      class: c(["hdd-color-box", { active: l === o.value, disabled: e.disabled }]),
+                      class: v(["hdd-color-box", { active: l === o.value, disabled: e.disabled }]),
                       disabled: e.disabled,
-                      style: C({ backgroundColor: l }),
-                      onClick: ($) => R(l)
-                    }, null, 14, te))), 128))
+                      style: B({ backgroundColor: l }),
+                      onClick: (E) => x(l)
+                    }, null, 14, se))), 128))
                   ]),
-                  e.withRecentColors ? (r(), d("div", ae, [
-                    (r(!0), d(x, null, P(n(v), (l) => (r(), d("button", {
+                  e.withRecentColors ? (i(), u("div", ue, [
+                    (i(!0), u(P, null, I(d(y), (l) => (i(), u("button", {
                       key: l,
-                      class: c(["hdd-color-box", { active: l === o.value, disabled: e.disabled }]),
+                      class: v(["hdd-color-box", { active: l === o.value, disabled: e.disabled }]),
                       disabled: e.disabled,
-                      style: C({ backgroundColor: l }),
-                      onClick: ($) => R(l)
-                    }, null, 14, ne))), 128))
+                      style: B({ backgroundColor: l }),
+                      onClick: (E) => x(l)
+                    }, null, 14, de))), 128))
                   ])) : f("", !0),
-                  u("div", ie, [
-                    e.customSelector ? (r(), d("div", re, [
-                      I(y, {
+                  s("div", fe, [
+                    e.customSelector ? (i(), u("div", ce, [
+                      D(b, {
                         icon: "i-ic:outline-color-lens",
                         size: "small",
-                        label: n(m)("Select a Color"),
+                        label: d(p)("Select a Color"),
                         severity: "info",
-                        onClick: i[0] || (i[0] = () => n(h).click())
+                        onClick: n[0] || (n[0] = () => k.value.click())
                       }, null, 8, ["label"]),
-                      W(u("input", {
+                      Q(s("input", {
                         ref_key: "customColorInputRef",
-                        ref: h,
-                        "onUpdate:modelValue": i[1] || (i[1] = (l) => o.value = l),
+                        ref: k,
+                        "onUpdate:modelValue": n[1] || (n[1] = (l) => o.value = l),
                         style: { height: "0", width: "0" },
                         type: "color",
                         disabled: e.disabled,
-                        onChange: N
-                      }, null, 40, se), [
-                        [H, o.value]
+                        onChange: A
+                      }, null, 40, ve), [
+                        [X, o.value]
                       ])
                     ])) : f("", !0),
-                    u("div", null, [
-                      e.clearable && o.value ? (r(), b(y, {
+                    s("div", null, [
+                      e.clearable && o.value ? (i(), g(b, {
                         key: 0,
                         size: "small",
-                        title: n(m)("Clear Selection"),
+                        title: d(p)("Clear Selection"),
                         severity: "danger",
                         outlined: "",
                         icon: "i-iconamoon:sign-times",
                         class: "mt-2",
-                        onClick: M
+                        onClick: T
                       }, null, 8, ["title"])) : f("", !0)
                     ])
                   ])
@@ -234,25 +236,25 @@ const oe = { ref: "relative" }, le = { class: "m-1 flex flex-wrap gap-1" }, te =
               ]),
               _: 1
             }, 8, ["append-to", "class"])),
-            e.asPopover && e.withTrigger ? K(t.$slots, "trigger", {
+            e.asPopover && e.withTrigger ? Y(t.$slots, "trigger", {
               key: 1,
-              toggle: n(s)?.toggle,
+              toggle: r.value?.toggle,
               value: o.value
             }, () => [
-              I(y, {
+              D(b, {
                 ref_key: "inputRef",
-                ref: B,
+                ref: h,
                 size: e.size,
-                label: o.value ? " " : n(m)("Select Color"),
+                label: o.value ? " " : d(p)("Select Color"),
                 severity: e.triggerButtonSeverity,
-                onClick: i[3] || (i[3] = (l) => n(s).toggle(l))
-              }, Q({ _: 2 }, [
+                onClick: n[3] || (n[3] = (l) => r.value.toggle(l))
+              }, Z({ _: 2 }, [
                 o.value ? {
                   name: "icon",
-                  fn: g(() => [
-                    u("span", {
-                      class: c(["hdd-color-box inline-block", [{ "!size-4": e.size === "small" }, e.triggerButtonColorBoxClass]]),
-                      style: C({ backgroundColor: o.value })
+                  fn: C(() => [
+                    s("span", {
+                      class: v(["hdd-color-box inline-block", [{ "!size-4": e.size === "small" }, e.triggerButtonColorBoxClass]]),
+                      style: B({ backgroundColor: o.value })
                     }, null, 6)
                   ]),
                   key: "0"
@@ -267,5 +269,5 @@ const oe = { ref: "relative" }, le = { class: "m-1 flex flex-wrap gap-1" }, te =
   }
 });
 export {
-  me as default
+  he as default
 };

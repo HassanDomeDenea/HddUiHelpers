@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { NodeViewProps } from "@tiptap/vue-3";
 import { NodeViewWrapper } from "@tiptap/vue-3";
+import { useI18n } from "vue-i18n";
+
 defineProps<NodeViewProps>();
 const { t } = useI18n();
 </script>

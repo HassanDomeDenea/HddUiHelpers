@@ -3,6 +3,8 @@ import type { Editor } from "@tiptap/vue-3";
 import type ColorPickerInput from "HddUiHelpers/components/inputs/ColorPickerInput.vue";
 import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
 import type { ComponentExposed } from "vue-component-type-helpers";
+import { ref, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 
 const { editor } = defineProps<{
   editor: Editor;
@@ -114,7 +116,7 @@ const textColorPickerRef =
       </Button>
       <Button
         size="small"
-        :disabled="!editor.can().chain().focus().setColor().run()"
+        :disabled="!editor.can().chain().focus().setColor('').run()"
         :title="t('Text Color')"
         icon="i-material-symbols:format-ink-highlighter"
         severity="info"

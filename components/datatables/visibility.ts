@@ -1,8 +1,10 @@
-import type { ServerDataTableColumn } from "HddUiHelpers/components/datatables/ServerDataTable.vue";
 import { getColumnName } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
 import { isBoolean } from "lodash-es";
 import type Popover from "primevue/popover";
-import { ref } from "vue";
+import { computed, onMounted, ref, toRef, useTemplateRef } from "vue";
+import type { MaybeRef } from "vue";
+import { useStorage } from "@vueuse/core";
+import { ServerDataTableColumn } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
 
 export const useServerDataTableColumnVisibility = function (
   tableName: MaybeRef<string>,

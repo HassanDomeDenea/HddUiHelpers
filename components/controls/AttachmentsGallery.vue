@@ -5,6 +5,9 @@ import { useStackableDialog } from "HddUiHelpers/stores/stackableDialogs.ts";
 import { debounce, get } from "lodash-es";
 import moment from "moment";
 import { useConfirm } from "primevue/useconfirm";
+import { useI18n } from "vue-i18n";
+import {computed, ref, useTemplateRef, watch} from "vue";
+import {useWindowSize} from "@vueuse/core";
 
 type AttachmentModelType = any;
 

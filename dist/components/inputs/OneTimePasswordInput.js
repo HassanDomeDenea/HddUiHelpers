@@ -1,7 +1,7 @@
-import { defineComponent as h, useModel as w, ref as I, resolveComponent as C, openBlock as L, createBlock as V, mergeProps as u, unref as a, withCtx as k, createVNode as q, mergeModels as d } from "vue";
-import { useHddBaseInputUtils as x } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { _ as A } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const O = /* @__PURE__ */ h({
+import { defineComponent as h, useModel as w, ref as I, watch as C, resolveComponent as L, openBlock as V, createBlock as k, mergeProps as u, unref as a, withCtx as q, createVNode as x, mergeModels as d } from "vue";
+import { useHddBaseInputUtils as A } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { _ as S } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const P = /* @__PURE__ */ h({
   __name: "OneTimePasswordInput",
   props: /* @__PURE__ */ d({
     length: { default: 4 },
@@ -54,15 +54,15 @@ const O = /* @__PURE__ */ h({
     function s() {
       i.value.$el.querySelector("input").focus();
     }
-    watch(l, (n) => {
+    C(l, (n) => {
       n.length >= r.length && p("complete", n);
     });
-    const { exposed: f, baseInputForwardedProps: y, fieldUniqueId: B, generalInputProps: b } = x(r);
+    const { exposed: f, baseInputForwardedProps: y, fieldUniqueId: B, generalInputProps: b } = A(r);
     return m({ focus: s, ...f }), (n, o) => {
-      const g = C("InputOtp");
-      return L(), V(A, u(a(y), { onClick: s }), {
-        default: k(() => [
-          q(g, u(a(b), {
+      const g = L("InputOtp");
+      return V(), k(S, u(a(y), { onClick: s }), {
+        default: q(() => [
+          x(g, u(a(b), {
             ref_key: "inputRef",
             ref: i,
             modelValue: l.value,
@@ -91,5 +91,5 @@ const O = /* @__PURE__ */ h({
   }
 });
 export {
-  O as default
+  P as default
 };

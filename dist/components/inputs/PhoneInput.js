@@ -1,14 +1,15 @@
-import { defineComponent as U, useModel as b, ref as R, resolveComponent as v, openBlock as d, createBlock as m, mergeProps as w, unref as o, withCtx as s, createVNode as T, normalizeClass as f, createElementVNode as a, toDisplayString as g, createElementBlock as $, createCommentVNode as B, resolveDynamicComponent as j, withKeys as k, mergeModels as h } from "vue";
-import { useHddBaseInputUtils as K, cursorAtStartOfInput as O, cursorAtEndOfInput as G } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { InputMask as W } from "primevue";
-import F from "primevue/inputtext";
-import { _ as H } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const Q = {
+import { defineComponent as R, useModel as x, ref as T, computed as b, onMounted as $, resolveComponent as w, openBlock as d, createBlock as m, mergeProps as g, unref as a, withCtx as s, createVNode as j, normalizeClass as f, createElementVNode as n, toDisplayString as B, createElementBlock as K, createCommentVNode as k, resolveDynamicComponent as O, withKeys as h, mergeModels as I } from "vue";
+import { useHddBaseInputUtils as G, cursorAtStartOfInput as W, cursorAtEndOfInput as F } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { InputMask as H } from "primevue";
+import Q from "primevue/inputtext";
+import { useI18n as J } from "vue-i18n";
+import { _ as X } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const Y = {
   key: 0,
   class: "flex h-full items-center gap-1 text-sm"
-}, J = { class: "text-xs font-bold" }, X = { class: "flex items-center gap-1 text-sm" }, le = /* @__PURE__ */ U({
+}, Z = { class: "text-xs font-bold" }, _ = { class: "flex items-center gap-1 text-sm" }, ue = /* @__PURE__ */ R({
   __name: "PhoneInput",
-  props: /* @__PURE__ */ h({
+  props: /* @__PURE__ */ I({
     mask: {},
     withCountryCode: { type: Boolean, default: !0 },
     defaultCountryCode: { default: "964" },
@@ -57,13 +58,13 @@ const Q = {
     countryCode: {},
     countryCodeModifiers: {}
   }),
-  emits: /* @__PURE__ */ h(["keydown", "focusPrevious", "focusNext"], ["update:modelValue", "update:countryCode"]),
-  setup(e, { expose: I, emit: V }) {
-    const i = e, p = V, y = b(e, "modelValue"), u = b(e, "countryCode"), { t: A } = useI18n(), r = R();
+  emits: /* @__PURE__ */ I(["keydown", "focusPrevious", "focusNext"], ["update:modelValue", "update:countryCode"]),
+  setup(e, { expose: V, emit: A }) {
+    const i = e, p = A, y = x(e, "modelValue"), u = x(e, "countryCode"), { t: L } = J(), r = T();
     function c() {
       r.value.$el.focus();
     }
-    const C = computed(() => [
+    const C = b(() => [
       {
         value: "964",
         label: "+964",
@@ -82,26 +83,26 @@ const Q = {
         mask: ""
         // ?
       }
-    ]), n = computed(
-      () => C.value.find((x) => x.value === u.value)
+    ]), t = b(
+      () => C.value.find((v) => v.value === u.value)
     );
-    onMounted(() => {
+    $(() => {
       i.defaultCountryCode && !u.value && (u.value = i.defaultCountryCode);
     });
-    function L() {
+    function S() {
       setTimeout(c, 5);
     }
-    const S = () => O(r.value.$el) && p("focusPrevious"), M = () => G(r.value.$el) && p("focusNext"), { exposed: q, baseInputForwardedProps: D, fieldUniqueId: N, generalInputProps: z } = K(i);
-    return I({ focus: c, ...q }), (x, l) => {
-      const E = v("Select"), P = v("InputGroup");
-      return d(), m(H, w(o(D), { onClick: c }), {
+    const M = () => W(r.value.$el) && p("focusPrevious"), q = () => F(r.value.$el) && p("focusNext"), { exposed: D, baseInputForwardedProps: N, fieldUniqueId: z, generalInputProps: E } = G(i);
+    return V({ focus: c, ...D }), (v, o) => {
+      const P = w("Select"), U = w("InputGroup");
+      return d(), m(X, g(a(N), { onClick: c }), {
         default: s(() => [
-          T(P, { class: "dir-ltr" }, {
+          j(U, { class: "dir-ltr" }, {
             default: s(() => [
-              e.withCountryCode ? (d(), m(E, {
+              e.withCountryCode ? (d(), m(P, {
                 key: 0,
                 modelValue: u.value,
-                "onUpdate:modelValue": l[0] || (l[0] = (t) => u.value = t),
+                "onUpdate:modelValue": o[0] || (o[0] = (l) => u.value = l),
                 class: f([{
                   "!rounded-0": e.buttonAddon
                 }, "!max-w-[70px]"]),
@@ -109,42 +110,42 @@ const Q = {
                 size: e.size,
                 "option-label": "label",
                 disabled: e.disabled || e.readonly,
-                options: o(C),
+                options: C.value,
                 "show-clear": !1,
                 pt: {
                   dropdown: {
                     style: { width: "0px" }
                   }
                 },
-                onChange: L
+                onChange: S
               }, {
-                dropdownicon: s(() => [...l[3] || (l[3] = [
-                  a("span", null, null, -1)
+                dropdownicon: s(() => [...o[3] || (o[3] = [
+                  n("span", null, null, -1)
                 ])]),
                 value: s(() => [
-                  o(n) ? (d(), $("div", Q, [
-                    a("i", {
-                      class: f([o(n).flag, "!w-[30px]"])
+                  t.value ? (d(), K("div", Y, [
+                    n("i", {
+                      class: f([t.value.flag, "!w-[30px]"])
                     }, null, 2),
-                    a("span", J, g(o(n).label), 1)
-                  ])) : B("", !0)
+                    n("span", Z, B(t.value.label), 1)
+                  ])) : k("", !0)
                 ]),
-                option: s((t) => [
-                  a("div", X, [
-                    a("i", {
-                      class: f(t.option.flag)
+                option: s((l) => [
+                  n("div", _, [
+                    n("i", {
+                      class: f(l.option.flag)
                     }, null, 2),
-                    a("span", null, g(t.option.label), 1)
+                    n("span", null, B(l.option.label), 1)
                   ])
                 ]),
                 _: 1
-              }, 8, ["modelValue", "class", "size", "disabled", "options"])) : B("", !0),
-              (d(), m(j(e.mask ?? o(n)?.mask ? o(W) : o(F)), w(o(z), {
-                id: o(N),
+              }, 8, ["modelValue", "class", "size", "disabled", "options"])) : k("", !0),
+              (d(), m(O(e.mask ?? t.value?.mask ? a(H) : a(Q)), g(a(E), {
+                id: a(z),
                 ref_key: "inputRef",
                 ref: r,
                 modelValue: y.value,
-                "onUpdate:modelValue": l[1] || (l[1] = (t) => y.value = t),
+                "onUpdate:modelValue": o[1] || (o[1] = (l) => y.value = l),
                 "auto-clear": !1,
                 autocomplete: e.autocomplete,
                 pt: {
@@ -152,13 +153,13 @@ const Q = {
                     autocomplete: e.autocomplete
                   }
                 },
-                class: ["dir-ltr", o(A)("dir") === "rtl" ? "text-right" : "text-left"],
-                placeholder: e.placeholder ?? o(n)?.placeholder,
-                mask: e.mask ?? o(n)?.mask,
+                class: ["dir-ltr", a(L)("dir") === "rtl" ? "text-right" : "text-left"],
+                placeholder: e.placeholder ?? t.value?.placeholder,
+                mask: e.mask ?? t.value?.mask,
                 onKeydown: [
-                  k(S, ["up"]),
-                  k(M, ["down"]),
-                  l[2] || (l[2] = (t) => p("keydown", t))
+                  h(M, ["up"]),
+                  h(q, ["down"]),
+                  o[2] || (o[2] = (l) => p("keydown", l))
                 ]
               }), null, 16, ["id", "modelValue", "autocomplete", "pt", "class", "placeholder", "mask"]))
             ]),
@@ -171,5 +172,5 @@ const Q = {
   }
 });
 export {
-  le as default
+  ue as default
 };

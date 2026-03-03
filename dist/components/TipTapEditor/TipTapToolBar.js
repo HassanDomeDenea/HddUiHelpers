@@ -1,22 +1,23 @@
-import { defineComponent as l, resolveComponent as e, openBlock as d, createElementBlock as f, createElementVNode as a, renderSlot as i, createVNode as t } from "vue";
-import s from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapColorsControls.vue";
-import g from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapPageControls.vue";
+import { defineComponent as d, computed as i, resolveComponent as e, openBlock as f, createElementBlock as a, createElementVNode as s, renderSlot as r, createVNode as t } from "vue";
+import g from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapColorsControls.vue";
+import m from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapPageControls.vue";
 import T from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTableControls.vue";
-import m from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTextStyleControls.vue";
-const u = { class: "control-group text-center" }, C = { class: "button-group" }, E = /* @__PURE__ */ l({
+import u from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTextStyleControls.vue";
+import { useI18n as C } from "vue-i18n";
+const p = { class: "control-group text-center" }, h = { class: "button-group" }, N = /* @__PURE__ */ d({
   __name: "TipTapToolBar",
   props: {
     editor: {},
     config: {}
   },
   setup(o) {
-    const { t: p } = useI18n();
-    return computed(() => o.editor.can().chain().focus()), computed(() => o.editor.chain().focus()), (n, h) => {
-      const c = e("TipTapFontControls"), r = e("TipTapListsControls");
-      return d(), f("div", u, [
-        a("div", C, [
-          i(n.$slots, "start"),
-          t(m, {
+    const { t: v } = C();
+    return i(() => o.editor.can().chain().focus()), i(() => o.editor.chain().focus()), (n, B) => {
+      const c = e("TipTapFontControls"), l = e("TipTapListsControls");
+      return f(), a("div", p, [
+        s("div", h, [
+          r(n.$slots, "start"),
+          t(u, {
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
@@ -24,11 +25,11 @@ const u = { class: "control-group text-center" }, C = { class: "button-group" },
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
-          t(s, {
+          t(g, {
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
-          t(r, {
+          t(l, {
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
@@ -36,16 +37,16 @@ const u = { class: "control-group text-center" }, C = { class: "button-group" },
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
-          t(g, {
+          t(m, {
             editor: o.editor,
             config: o.config
           }, null, 8, ["editor", "config"]),
-          i(n.$slots, "end")
+          r(n.$slots, "end")
         ])
       ]);
     };
   }
 });
 export {
-  E as default
+  N as default
 };

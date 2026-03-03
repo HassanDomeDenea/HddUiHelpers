@@ -3,7 +3,8 @@ import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils
 import { formatNumberGrouped } from "HddUiHelpers/utils/useFormatters.ts";
 import { evaluate } from "mathjs";
 import type { InputNumberInputEvent } from "primevue/inputnumber";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps, ElementClassType } from "./types";
 const props = withDefaults(

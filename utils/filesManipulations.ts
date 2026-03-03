@@ -1,4 +1,4 @@
-export async function rotateImageFile(file: File, rotationAngle: 0): Promise<File> {
+export async function rotateImageFile(file: File, rotationAngle: number = 0): Promise<File> {
   return new Promise<File>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {

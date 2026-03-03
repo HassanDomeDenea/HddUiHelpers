@@ -1,8 +1,9 @@
-import { uniqueId as g, merge as m } from "lodash-es";
-import { defineStore as b } from "pinia";
-import { useDialog as k } from "primevue";
-const D = b("stackableDialogs", () => {
-  const e = ref([]);
+import { uniqueId as g, merge as b } from "lodash-es";
+import { defineStore as k } from "pinia";
+import { useDialog as p } from "primevue";
+import { ref as d, computed as D, watch as y, nextTick as S } from "vue";
+const h = k("stackableDialogs", () => {
+  const e = d([]);
   function n(l) {
     return e.value.push(l ?? g("stackableDialogs")), e.value.length - 1;
   }
@@ -26,27 +27,27 @@ const D = b("stackableDialogs", () => {
     remove: a,
     add: n
   };
-}), h = function(e = {}) {
-  const n = D(), a = ref(null), s = k();
+}), R = function(e = {}) {
+  const n = h(), a = d(null), s = p();
   function t() {
     a.value === null && (a.value = n.add(e.name ?? void 0));
   }
   function u() {
     a.value !== null && (n.remove(a.value), a.value = null);
   }
-  const l = computed(() => n.stackableDialogs.length - 1 === a.value);
+  const l = D(() => n.stackableDialogs.length - 1 === a.value);
   function o(i) {
     i ? t() : u();
   }
-  e.dialogVisibilityRef && watch(e.dialogVisibilityRef, (i) => {
+  e.dialogVisibilityRef && y(e.dialogVisibilityRef, (i) => {
     o(i);
   });
-  async function d(i, v, c) {
+  async function m(i, v, c) {
     o(!0);
-    const r = ref();
+    const r = d();
     return s.open(
       i,
-      m(
+      b(
         {
           props: {
             dismissableMask: !0,
@@ -66,12 +67,12 @@ const D = b("stackableDialogs", () => {
         },
         v
       )
-    ), await nextTick(() => {
+    ), await S(() => {
       r.value && c?.onShow?.(r.value);
     }), r.value;
   }
   return {
-    open: d,
+    open: m,
     updateDialogVisibility: o,
     store: n,
     addDialogToStack: t,
@@ -81,6 +82,6 @@ const D = b("stackableDialogs", () => {
   };
 };
 export {
-  h as useStackableDialog,
-  D as useStackableDialogsStore
+  R as useStackableDialog,
+  h as useStackableDialogsStore
 };

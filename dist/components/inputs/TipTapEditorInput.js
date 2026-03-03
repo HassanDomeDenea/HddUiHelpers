@@ -1,9 +1,9 @@
-import { defineComponent as y, useModel as B, ref as b, resolveComponent as g, openBlock as C, createBlock as _, mergeProps as L, unref as o, withCtx as I, createVNode as T, mergeModels as V } from "vue";
-import { useHddBaseInputUtils as h } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { _ as v } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const k = /* @__PURE__ */ y({
+import { defineComponent as y, useModel as B, ref as b, computed as g, resolveComponent as C, openBlock as _, createBlock as L, mergeProps as I, unref as i, withCtx as T, createVNode as V, mergeModels as h } from "vue";
+import { useHddBaseInputUtils as v } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { _ as w } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const q = /* @__PURE__ */ y({
   __name: "TipTapEditorInput",
-  props: /* @__PURE__ */ V({
+  props: /* @__PURE__ */ h({
     autocomplete: {},
     icon: {},
     uniqueId: {},
@@ -49,31 +49,31 @@ const k = /* @__PURE__ */ y({
     modelModifiers: {}
   }),
   emits: ["update:modelValue"],
-  setup(l, { expose: p }) {
-    const e = l, n = B(l, "modelValue"), a = b();
-    function t() {
+  setup(o, { expose: p }) {
+    const e = o, l = B(o, "modelValue"), n = b();
+    function a() {
     }
-    const { exposed: d, baseInputForwardedProps: s, fieldUniqueId: u, generalInputProps: r } = h(e), c = computed(() => ({
-      readonly: r.value.readonly,
-      disabled: r.value.disabled,
+    const { exposed: d, baseInputForwardedProps: s, fieldUniqueId: u, generalInputProps: t } = v(e), c = g(() => ({
+      readonly: t.value.readonly,
+      disabled: t.value.disabled,
       placeholder: e.placeholder,
       ...e.config
     }));
-    return p({ focus: t, ...d, inputRef: a }), (w, i) => {
-      const f = g("TipTapEditor");
-      return C(), _(v, L(o(s), {
+    return p({ focus: a, ...d, inputRef: n }), (x, r) => {
+      const f = C("TipTapEditor");
+      return _(), L(w, I(i(s), {
         class: "HDD_Quill_Editor",
-        onClick: t
+        onClick: a
       }), {
-        default: I(() => [
-          T(f, {
-            id: o(u),
+        default: T(() => [
+          V(f, {
+            id: i(u),
             ref_key: "inputRef",
-            ref: a,
-            modelValue: n.value,
-            "onUpdate:modelValue": i[0] || (i[0] = (m) => n.value = m),
+            ref: n,
+            modelValue: l.value,
+            "onUpdate:modelValue": r[0] || (r[0] = (m) => l.value = m),
             class: "w-full",
-            config: o(c)
+            config: c.value
           }, null, 8, ["id", "modelValue", "config"])
         ]),
         _: 1
@@ -82,5 +82,5 @@ const k = /* @__PURE__ */ y({
   }
 });
 export {
-  k as default
+  q as default
 };

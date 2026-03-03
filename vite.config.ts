@@ -50,6 +50,27 @@ export default defineConfig({
       },
     },
     vue(),
+    /* AutoImport({
+      imports: [
+        "vue",
+        "vue-i18n",
+        "@vueuse/core",
+        VueRouterAutoImports,
+        unheadVueComposablesImports,
+      ],
+      dts: "types/auto-imports.d.ts",
+      //dts: false, // Disable DTS generation in dev mode for faster work
+      dirs: ["composables", "stores"], // Disable directory scanning in dev mode
+      vueTemplate: true,
+      include: [/\.[tj]sx?$/, /\.vue$/, /\.vue\?vue/],
+    }),
+    Components({
+      resolvers: [PrimeVueResolver()],
+      dirs: ["components"],
+      extensions: ["vue", "md"],
+      include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
+      dts: "types/auto-components.d.ts",
+    }),*/
   ],
   resolve: {
     dedupe: ["vue", "primevue"],

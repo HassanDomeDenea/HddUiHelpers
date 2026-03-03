@@ -1,4 +1,3 @@
-import type { ApiResponseData, ResponseData } from "@/types/laravel_generated";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
   FormFieldType,
@@ -17,6 +16,8 @@ import type {
   DataTableRowReorderEvent,
 } from "primevue/datatable";
 import type { MenuItem } from "primevue/menuitem";
+import { Component, MaybeRef, MaybeRefOrGetter, ComputedRef } from "vue";
+import { ApiResponseData } from "HddUiHelpers/types/types.ts";
 
 /*type ObjectKeys<T> = {
     [K in keyof T]: T[K] extends object
@@ -39,6 +40,7 @@ export type ServerDataTableColumnType =
   | "price"
   | "color"
   | "select"
+  | "image"
   | "hidden";
 
 export type MenuItemAndButton = Omit<MenuItem, "icon"> & {
@@ -425,4 +427,22 @@ export interface PrintPaperForServerDataTableProps<TRecord extends RecordItem = 
   toolbarFilters: ServerDataTableToolbarFilterWrapper;
   filters: DataTableFilterMeta & { _global: DataTableFilterMetaData };
   title?: string;
+}
+
+export interface ReorderRequestData {
+  from_order: number;
+  to_order: number;
+  scoped_values: Array<any> | null;
+}
+
+export interface ResponseData<TData = any> {
+  data: TData[];
+  current_page: number;
+  from: number;
+  to: number;
+  per_page: number;
+  last_page: number;
+  total: number;
+  total_without_filters: number;
+  extra: Array<any>;
 }

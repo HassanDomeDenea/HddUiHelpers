@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import {
-  ApiResponseData,
-  MessageData,
-  MessagesRead,
-  UserChatData,
-} from "@/types/laravel_generated";
 import {echo} from "@laravel/echo-vue";
 import {vInfiniteScroll} from "@vueuse/components";
 import TextAreaInput from "HddUiHelpers/components/inputs/TextAreaInput.vue";
@@ -18,6 +12,11 @@ import moment from "moment/moment";
 import {ButtonProps} from "primevue";
 import {ComponentExposed} from "vue-component-type-helpers";
 import notifMessageSound from "../../../assets/audios/notify-352705.mp3";
+import { useElementSize } from "@vueuse/core";
+import {computed, onMounted, onUnmounted, ref, toValue, useTemplateRef} from "vue";
+import { useI18n } from "vue-i18n";
+import {MessageData, MessagesRead, UserChatData} from "./chatTypes";
+import { ApiResponseData } from "HddUiHelpers/types/types";
 
 const {t} = useI18n();
 const contactsLoader = useLoader();
@@ -192,10 +191,6 @@ const canLoadMoreMessagesCallable = () => {
   return messages.value.length < totalMessagesCount.value;
 };
 
-const loadMoreDivRefIsVisible = useElementVisibility(loadMoreDivRef, {
-  threshold: 0.9,
-});
-
 function gotToEnd(toFirstUnseen = true) {
   const element = messagesContainerRef.value;
   const firstUnseenMessage = toFirstUnseen ? element?.querySelector("[data-unread='true']") : null;
@@ -224,7 +219,6 @@ const playNotificationSound = () => {
 
 const drawerMainRef = useTemplateRef("drawerMainRef");
 const drawerMainSize = useElementSize(drawerMainRef, undefined, {box: "border-box"});
-const reversedMessages = computed(() => messages.value.toReversed());
 
 onMounted(() => {
   loadContacts();
@@ -360,7 +354,7 @@ const totalUnread = computed(() => sumBy(contacts.value, "unread_count"));
           <i class="i-raphael:arrowdown text-zinc-400 dark:text-zinc-600"/>
         </div>
         <Card
-            class="!bg-minimal-gray border-1 relative m-1 h-full rounded-es-lg rounded-ss-lg border-zinc-400 dark:border-zinc-600"
+            class="bg-minimal-gray! border relative m-1 h-full rounded-es-lg rounded-ss-lg border-zinc-400 dark:border-zinc-600"
             :pt="{
             body: {
               class: '!px-1 flex-1 overflow-hidden',
@@ -394,7 +388,7 @@ const totalUnread = computed(() => sumBy(contacts.value, "unread_count"));
                 <span class="underline-offset-5 underline">{{ t("Users") }}:</span>
                 <ProgressSpinner
                     v-if="toValue(contactsLoader.isLoading) && !toValue(contactsLoader.isLoadedOnce)"
-                    class="!mt-4 !size-8"
+                    class="mt-4! size-8!"
                 />
                 <div v-else class="w-full px-1 pt-1">
                   <template v-for="contact in contacts" :key="contact.id">
@@ -445,7 +439,7 @@ const totalUnread = computed(() => sumBy(contacts.value, "unread_count"));
               </div>
               <div class="col-span-3 h-full p-1">
                 <div
-                    class="border-1 h-full rounded-md border-dashed border-zinc-400 bg-zinc-300/50 text-center dark:border-zinc-500 dark:bg-zinc-900/50"
+                    class="border h-full rounded-md border-dashed border-zinc-400 bg-zinc-300/50 text-center dark:border-zinc-500 dark:bg-zinc-900/50"
                     :class="{
                     'border-b-0':
                       activeContact &&
@@ -461,7 +455,7 @@ const totalUnread = computed(() => sumBy(contacts.value, "unread_count"));
                         v-if="
                         toValue(messagesLoader.isLoading) && !toValue(messagesLoader.isLoadedOnce)
                       "
-                        class="!mt-4 !size-8"
+                        class="mt-4! size-8!"
                     />
                     <div
                         v-else

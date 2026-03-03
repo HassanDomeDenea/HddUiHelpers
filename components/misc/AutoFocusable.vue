@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { onMounted, ref, useSlots, useTemplateRef } from "vue";
+
 const { duration = 0 } = defineProps<{
   /*
    * Duration after which autofocus is fired
    */
   duration?: number;
 }>();
-const slotRef = useTemplateRef("slotRef");
 const slots = useSlots();
 
 onMounted(() => {

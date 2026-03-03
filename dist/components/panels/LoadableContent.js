@@ -1,26 +1,27 @@
-import { defineComponent as c, resolveComponent as t, openBlock as e, createElementBlock as o, createVNode as l, createBlock as d, withCtx as p, createTextVNode as m, toDisplayString as _, unref as u, renderSlot as g } from "vue";
-const f = {
+import { defineComponent as c, resolveComponent as n, openBlock as e, createElementBlock as o, createVNode as l, createBlock as d, withCtx as m, createTextVNode as p, toDisplayString as _, unref as u, renderSlot as f } from "vue";
+import { useI18n as g } from "vue-i18n";
+const k = {
   key: 0,
   class: "text-center"
-}, v = /* @__PURE__ */ c({
+}, B = /* @__PURE__ */ c({
   __name: "LoadableContent",
   props: {
     isLoading: { type: Boolean },
     item: {}
   },
-  setup(n) {
-    const { t: s } = useI18n();
-    return (r, k) => {
-      const a = t("ProgressSpinner"), i = t("InlineMessage");
+  setup(t) {
+    const { t: r } = g();
+    return (s, y) => {
+      const a = n("ProgressSpinner"), i = n("InlineMessage");
       return e(), o("div", null, [
-        n.isLoading ? (e(), o("div", f, [
+        t.isLoading ? (e(), o("div", k, [
           l(a, { class: "!size-12" })
-        ])) : n.item ? g(r.$slots, "default", { key: 2 }) : (e(), d(i, {
+        ])) : t.item ? f(s.$slots, "default", { key: 2 }) : (e(), d(i, {
           key: 1,
           severity: "danger"
         }, {
-          default: p(() => [
-            m(_(u(s)("Error")), 1)
+          default: m(() => [
+            p(_(u(r)("Error")), 1)
           ]),
           _: 1
         }))
@@ -29,5 +30,5 @@ const f = {
   }
 });
 export {
-  v as default
+  B as default
 };

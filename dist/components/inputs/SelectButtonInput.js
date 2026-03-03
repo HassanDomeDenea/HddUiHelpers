@@ -1,10 +1,10 @@
-import { defineComponent as L, useModel as P, ref as V, resolveComponent as I, openBlock as i, createBlock as v, normalizeProps as S, guardReactiveProps as w, unref as l, withCtx as p, createVNode as x, mergeProps as h, renderSlot as A, createElementVNode as s, normalizeClass as u, createElementBlock as k, createCommentVNode as q, toDisplayString as z, mergeModels as D } from "vue";
-import { useHddBaseInputUtils as M } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { defineComponent as L, useModel as P, ref as V, computed as I, resolveComponent as v, openBlock as i, createBlock as S, normalizeProps as w, guardReactiveProps as x, unref as l, withCtx as p, createVNode as h, mergeProps as A, renderSlot as k, createElementVNode as s, normalizeClass as u, createElementBlock as q, createCommentVNode as z, toDisplayString as D, mergeModels as M } from "vue";
+import { useHddBaseInputUtils as E } from "HddUiHelpers/components/inputs/inputsUtils.ts";
 import { get as n } from "lodash-es";
-import { _ as E } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const T = /* @__PURE__ */ L({
+import { _ as N } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const W = /* @__PURE__ */ L({
   __name: "SelectButtonInput",
-  props: /* @__PURE__ */ D({
+  props: /* @__PURE__ */ M({
     options: {},
     optionDisabledProperty: { default: "disabled" },
     optionIconProperty: { default: "icon" },
@@ -57,16 +57,16 @@ const T = /* @__PURE__ */ L({
   }),
   emits: ["update:modelValue"],
   setup(e, { expose: d }) {
-    const t = e, a = P(e, "modelValue"), c = V(), m = computed(() => t.size === "small" ? "text-sm" : t.size === "large" ? "text-lg" : "");
+    const t = e, a = P(e, "modelValue"), c = V(), m = I(() => t.size === "small" ? "text-sm" : t.size === "large" ? "text-lg" : "");
     function y() {
       c.value.$el.focus();
     }
-    const { exposed: f, baseInputForwardedProps: b, fieldUniqueId: N, generalInputProps: B } = M(t);
+    const { exposed: f, baseInputForwardedProps: b, fieldUniqueId: R, generalInputProps: B } = E(t);
     return d({ focus: y, ...f }), (g, r) => {
-      const C = I("SelectButton");
-      return i(), v(E, S(w(l(b))), {
+      const C = v("SelectButton");
+      return i(), S(N, w(x(l(b))), {
         default: p(() => [
-          x(C, h(l(B), {
+          h(C, A(l(B), {
             modelValue: a.value,
             "onUpdate:modelValue": r[0] || (r[0] = (o) => a.value = o),
             options: e.options,
@@ -75,15 +75,15 @@ const T = /* @__PURE__ */ L({
             "option-value": e.optionValueProperty
           }), {
             option: p(({ option: o }) => [
-              A(g.$slots, "option", { option: o }, () => [
+              k(g.$slots, "option", { option: o }, () => [
                 s("div", {
-                  class: u(["flex justify-center gap-1", [l(m), e.optionClass]])
+                  class: u(["flex justify-center gap-1", [m.value, e.optionClass]])
                 }, [
-                  l(n)(o, e.optionIconProperty) ? (i(), k("i", {
+                  l(n)(o, e.optionIconProperty) ? (i(), q("i", {
                     key: 0,
                     class: u([l(n)(o, e.optionIconProperty), "me-1"])
-                  }, null, 2)) : q("", !0),
-                  s("span", null, z(l(n)(o, e.optionLabelProperty)), 1)
+                  }, null, 2)) : z("", !0),
+                  s("span", null, D(l(n)(o, e.optionLabelProperty)), 1)
                 ], 2)
               ])
             ]),
@@ -96,5 +96,5 @@ const T = /* @__PURE__ */ L({
   }
 });
 export {
-  T as default
+  W as default
 };

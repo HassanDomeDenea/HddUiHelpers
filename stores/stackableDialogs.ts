@@ -2,6 +2,7 @@ import { merge, uniqueId } from "lodash-es";
 import { defineStore } from "pinia";
 import { useDialog } from "primevue";
 import { DynamicDialogCloseOptions, DynamicDialogOptions } from "primevue/dynamicdialogoptions";
+import { computed, nextTick, Ref, ref, watch } from "vue";
 import { ComponentExposed } from "vue-component-type-helpers";
 
 export const useStackableDialogsStore = defineStore("stackableDialogs", () => {

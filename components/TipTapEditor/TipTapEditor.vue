@@ -16,6 +16,8 @@ import TipTapPageBreakerNodeExtension from "HddUiHelpers/components/TipTapEditor
 import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
 import TipTapToolBar from "HddUiHelpers/components/TipTapEditor/TipTapToolBar.vue";
 import Button from "primevue/button";
+import { ref, watch } from "vue";
+
 const { config } = defineProps<{
   config?: TipTapEditorConfig;
 }>();

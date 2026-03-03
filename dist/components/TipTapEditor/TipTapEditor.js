@@ -1,114 +1,114 @@
-import { defineComponent as S, useModel as k, resolveComponent as w, unref as o, openBlock as i, createElementBlock as u, normalizeClass as N, createBlock as c, withCtx as d, renderSlot as s, Fragment as g, renderList as b, resolveDynamicComponent as T, mergeProps as y, createCommentVNode as a, createElementVNode as V, createVNode as h, mergeModels as A } from "vue";
-import M from "@tiptap/extension-highlight";
-import { ListItem as x } from "@tiptap/extension-list";
-import F from "@tiptap/extension-subscript";
-import L from "@tiptap/extension-superscript";
-import { TableKit as P } from "@tiptap/extension-table";
-import z from "@tiptap/extension-text-align";
-import { LineHeight as H, Color as K, TextStyle as m, FontSize as R, FontFamily as U } from "@tiptap/extension-text-style";
-import { Placeholder as $ } from "@tiptap/extensions";
-import D from "@tiptap/starter-kit";
-import { useEditor as I, EditorContent as j } from "@tiptap/vue-3";
-import { BubbleMenu as q } from "@tiptap/vue-3/menus";
-import { CustomParagraph as G } from "HddUiHelpers/components/TipTapEditor/Extensions/CustomParagraphExtension.ts";
-import J from "HddUiHelpers/components/TipTapEditor/Extensions/PageBreaker/TipTapPageBreakerNodeExtension.ts";
-import O from "HddUiHelpers/components/TipTapEditor/TipTapToolBar.vue";
-import p from "primevue/button";
-const Q = {
+import { defineComponent as k, useModel as N, ref as V, watch as s, resolveComponent as w, unref as o, openBlock as i, createElementBlock as u, normalizeClass as A, createBlock as c, withCtx as d, renderSlot as g, Fragment as b, renderList as T, resolveDynamicComponent as y, mergeProps as h, createCommentVNode as a, createElementVNode as M, createVNode as x, mergeModels as F } from "vue";
+import L from "@tiptap/extension-highlight";
+import { ListItem as p } from "@tiptap/extension-list";
+import P from "@tiptap/extension-subscript";
+import z from "@tiptap/extension-superscript";
+import { TableKit as H } from "@tiptap/extension-table";
+import K from "@tiptap/extension-text-align";
+import { LineHeight as R, Color as U, TextStyle as m, FontSize as $, FontFamily as D } from "@tiptap/extension-text-style";
+import { Placeholder as I } from "@tiptap/extensions";
+import j from "@tiptap/starter-kit";
+import { useEditor as q, EditorContent as G } from "@tiptap/vue-3";
+import { BubbleMenu as J } from "@tiptap/vue-3/menus";
+import { CustomParagraph as O } from "HddUiHelpers/components/TipTapEditor/Extensions/CustomParagraphExtension.ts";
+import Q from "HddUiHelpers/components/TipTapEditor/Extensions/PageBreaker/TipTapPageBreakerNodeExtension.ts";
+import W from "HddUiHelpers/components/TipTapEditor/TipTapToolBar.vue";
+import E from "primevue/button";
+const X = {
   class: "tiptap-bubble-menu",
   dir: "ltr"
-}, de = /* @__PURE__ */ S({
+}, se = /* @__PURE__ */ k({
   __name: "TipTapEditor",
-  props: /* @__PURE__ */ A({
+  props: /* @__PURE__ */ F({
     config: {}
   }, {
     modelValue: {},
     modelModifiers: {}
   }),
   emits: ["update:modelValue"],
-  setup(e, { expose: E }) {
-    const l = k(e, "modelValue"), t = I({
+  setup(e, { expose: B }) {
+    const l = N(e, "modelValue"), t = q({
       content: l.value,
       editable: !(e.config?.disabled || e.config?.readonly),
       extensions: [
-        z.configure({
+        K.configure({
           types: ["heading", "paragraph"],
           defaultAlignment: e.config?.defaultAlignment
         }),
-        K.configure({ types: [m.name, x.name] }),
+        U.configure({ types: [m.name, p.name] }),
         m.configure({}),
-        R.configure({
-          types: [m.name, x.name]
+        $.configure({
+          types: [m.name, p.name]
         }),
-        U.configure({}),
-        L,
-        F,
-        M.configure({
+        D.configure({}),
+        z,
+        P,
+        L.configure({
           multicolor: !0
         }),
-        P.configure({
+        H.configure({
           table: { resizable: !0 }
         }),
-        D.configure({
+        j.configure({
           paragraph: !1
         }),
-        H,
-        G,
-        J,
-        $.configure({
+        R,
+        O,
+        Q,
+        I.configure({
           placeholder: e.config?.placeholder ?? "…"
         }),
         ...e.config?.extraExtensions ?? []
       ],
-      onUpdate: B
-    }), f = ref(l.value);
-    function B() {
+      onUpdate: v
+    }), f = V(l.value);
+    function v() {
       f.value = t.value.getHTML(), l.value = f.value;
     }
-    return watch(l, (n) => {
+    return s(l, (n) => {
       n !== f.value && t.value.chain().focus().setContent(n).run();
-    }), watch(
+    }), s(
       () => !(e.config?.disabled || e.config?.readonly),
       (n) => {
         t.value.setEditable(n);
       }
-    ), E({ editor: t }), (n, v) => {
-      const C = w("TipTapTextStyleControls");
+    ), B({ editor: t }), (n, C) => {
+      const S = w("TipTapTextStyleControls");
       return o(t) ? (i(), u("div", {
         key: 0,
-        class: N(e.config.containerClass)
+        class: A(e.config.containerClass)
       }, [
-        o(t).isEditable ? (i(), c(O, {
+        o(t).isEditable ? (i(), c(W, {
           key: 0,
           editor: o(t),
           config: e.config
         }, {
           start: d(() => [
-            s(n.$slots, "toolbarStart", {
+            g(n.$slots, "toolbarStart", {
               editor: o(t),
               config: e.config
             }, () => [
-              e.config?.extraToolbarStartButtons ? (i(!0), u(g, { key: 0 }, b(e.config.extraToolbarStartButtons instanceof Array ? e.config.extraToolbarStartButtons : e.config.extraToolbarStartButtons({ editor: o(t), config: e.config }), (r) => (i(), c(T(r.component ?? o(p)), y({ key: r }, { ref_for: !0 }, r.binds), null, 16))), 128)) : a("", !0)
+              e.config?.extraToolbarStartButtons ? (i(!0), u(b, { key: 0 }, T(e.config.extraToolbarStartButtons instanceof Array ? e.config.extraToolbarStartButtons : e.config.extraToolbarStartButtons({ editor: o(t), config: e.config }), (r) => (i(), c(y(r.component ?? o(E)), h({ key: r }, { ref_for: !0 }, r.binds), null, 16))), 128)) : a("", !0)
             ])
           ]),
           end: d(() => [
-            s(n.$slots, "toolbarEnd", {
+            g(n.$slots, "toolbarEnd", {
               editor: o(t),
               config: e.config
             }, () => [
-              e.config?.extraToolbarEndButtons ? (i(!0), u(g, { key: 0 }, b(e.config.extraToolbarEndButtons instanceof Array ? e.config.extraToolbarEndButtons : e.config.extraToolbarEndButtons({ editor: o(t), config: e.config }), (r) => (i(), c(T(r.component ?? o(p)), y({ key: r }, { ref_for: !0 }, r.binds), null, 16))), 128)) : a("", !0)
+              e.config?.extraToolbarEndButtons ? (i(!0), u(b, { key: 0 }, T(e.config.extraToolbarEndButtons instanceof Array ? e.config.extraToolbarEndButtons : e.config.extraToolbarEndButtons({ editor: o(t), config: e.config }), (r) => (i(), c(y(r.component ?? o(E)), h({ key: r }, { ref_for: !0 }, r.binds), null, 16))), 128)) : a("", !0)
             ])
           ]),
           _: 3
         }, 8, ["editor", "config"])) : a("", !0),
-        o(t).isEditable ? (i(), c(o(q), {
+        o(t).isEditable ? (i(), c(o(J), {
           key: 1,
           editor: o(t),
           options: { placement: "bottom", offset: 8 }
         }, {
           default: d(() => [
-            V("div", Q, [
-              h(C, {
+            M("div", X, [
+              x(S, {
                 editor: o(t),
                 config: e.config,
                 "with-alignments": !1,
@@ -118,12 +118,12 @@ const Q = {
           ]),
           _: 1
         }, 8, ["editor"])) : a("", !0),
-        h(o(j), { editor: o(t) }, null, 8, ["editor"]),
+        x(o(G), { editor: o(t) }, null, 8, ["editor"]),
         a("", !0)
       ], 2)) : a("", !0);
     };
   }
 });
 export {
-  de as default
+  se as default
 };

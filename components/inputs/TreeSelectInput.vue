@@ -6,7 +6,8 @@ import {
 import TextWithTitleAttribute from "HddUiHelpers/components/misc/TextWithTitleAttribute.vue";
 import { isEmpty, reduce } from "lodash-es";
 import type { TreeNode } from "primevue/treenode";
-import { ref } from "vue";
+import {computed, MaybeRefOrGetter, onMounted, ref, toValue} from "vue";
+import { useI18n } from "vue-i18n";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps } from "./types";
 
@@ -293,7 +294,7 @@ defineExpose({ focus, ...exposed, setVisibleElementValue, getFullPathLabel });
         <i
           class="text-[2em]"
           :class="[
-            slotProps.class,
+            (slotProps as any).class,
             {
               'i-ic:round-keyboard-arrow-up': slotProps.expanded,
               'rtl:i-ic:round-keyboard-arrow-left ltr:i-ic:round-keyboard-arrow-right':

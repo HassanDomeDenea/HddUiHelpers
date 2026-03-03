@@ -1,11 +1,12 @@
-import { defineComponent as O, useModel as R, ref as P, resolveComponent as U, openBlock as u, createBlock as C, mergeProps as T, unref as p, withCtx as d, createVNode as j, isRef as z, createSlots as W, createElementVNode as G, normalizeClass as J, renderSlot as f, normalizeProps as v, guardReactiveProps as h, createElementBlock as y, Fragment as Q, createTextVNode as X, toDisplayString as Y, createCommentVNode as g, mergeModels as x } from "vue";
-import { useHddBaseInputUtils as Z, getTreeAncestorsById as _ } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import ee from "HddUiHelpers/components/misc/TextWithTitleAttribute.vue";
-import { isEmpty as le, reduce as I } from "lodash-es";
-import { _ as te } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const oe = ["innerHTML"], ae = { key: 1 }, ne = ["innerHTML"], ce = /* @__PURE__ */ O({
+import { defineComponent as R, useModel as U, computed as P, ref as C, onMounted as j, resolveComponent as z, openBlock as u, createBlock as T, mergeProps as x, unref as m, withCtx as d, createVNode as W, createSlots as G, createElementVNode as J, normalizeClass as Q, renderSlot as f, normalizeProps as b, guardReactiveProps as v, createElementBlock as c, Fragment as X, createTextVNode as Y, toDisplayString as Z, createCommentVNode as h, mergeModels as I, toValue as _ } from "vue";
+import { useHddBaseInputUtils as ee, getTreeAncestorsById as le } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import te from "HddUiHelpers/components/misc/TextWithTitleAttribute.vue";
+import { isEmpty as oe, reduce as M } from "lodash-es";
+import { useI18n as ae } from "vue-i18n";
+import { _ as ne } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const re = ["innerHTML"], ie = { key: 1 }, ue = ["innerHTML"], be = /* @__PURE__ */ R({
   __name: "TreeSelectInput",
-  props: /* @__PURE__ */ x({
+  props: /* @__PURE__ */ I({
     options: {},
     optionLabelProperty: { default: "name" },
     optionDisabledProperty: { type: [String, null, Function], default: "disabled" },
@@ -63,11 +64,11 @@ const oe = ["innerHTML"], ae = { key: 1 }, ne = ["innerHTML"], ce = /* @__PURE__
     modelValue: {},
     modelModifiers: {}
   }),
-  emits: /* @__PURE__ */ x(["change"], ["update:modelValue"]),
-  setup(n, { expose: M, emit: S }) {
-    const o = n, w = S, { t: re } = useI18n(), r = R(n, "modelValue"), m = computed({
+  emits: /* @__PURE__ */ I(["change"], ["update:modelValue"]),
+  setup(n, { expose: S, emit: w }) {
+    const o = n, N = w, { t: de } = ae(), r = U(n, "modelValue"), g = P({
       get() {
-        return r.value ? Array.isArray(r.value) ? I(
+        return r.value ? Array.isArray(r.value) ? M(
           r.value,
           (e, t) => (e[t] = !0, e),
           {}
@@ -77,8 +78,8 @@ const oe = ["innerHTML"], ae = { key: 1 }, ne = ["innerHTML"], ce = /* @__PURE__
       },
       set(e) {
         if (e) {
-          const t = Object.keys(e).map(N).map((a) => a[o.optionValueProperty]);
-          if (le(t) && !o.clearable) {
+          const t = Object.keys(e).map(D).map((a) => a[o.optionValueProperty]);
+          if (oe(t) && !o.clearable) {
             k(r.value);
             return;
           }
@@ -92,7 +93,7 @@ const oe = ["innerHTML"], ae = { key: 1 }, ne = ["innerHTML"], ce = /* @__PURE__
         return e;
       {
         let t = typeof o.optionDisabledProperty == "function" ? o.optionDisabledProperty({ option: e, value: r.value }) : e[o.optionDisabledProperty] ?? !1;
-        const a = toValue(o.disabledValues);
+        const a = _(o.disabledValues);
         return !t && a?.length && a.includes(e[o.optionValueProperty]) && (t = !0), {
           [o.optionValueProperty]: e[o.optionValueProperty],
           key: e[o.optionValueProperty].toString(),
@@ -103,14 +104,14 @@ const oe = ["innerHTML"], ae = { key: 1 }, ne = ["innerHTML"], ce = /* @__PURE__
         };
       }
     }
-    function N(e) {
+    function D(e) {
       let t = null;
       function a(l) {
         if (l.key === e)
           return t = l, !0;
         if (l.children) {
-          for (const b of l.children)
-            if (a(b))
+          for (const y of l.children)
+            if (a(y))
               break;
         }
         return !1;
@@ -118,82 +119,82 @@ const oe = ["innerHTML"], ae = { key: 1 }, ne = ["innerHTML"], ce = /* @__PURE__
       return a({
         [o.optionValueProperty]: null,
         key: null,
-        children: c.value
+        children: p.value
       }), t;
     }
-    const c = computed(() => o.options.map(V)), i = P();
+    const p = P(() => o.options.map(V)), i = C();
     function B() {
       o.disabled || setTimeout(() => {
         const e = i.value.$refs.focusInput;
         i.value.onClick({ target: e });
       }, 500);
     }
-    function D() {
+    function F() {
     }
     function k(e) {
       e ? o.selectionMode === "single" ? i.value.d_value = {
         [Array.isArray(e) ? e[0] : e]: !0
-      } : i.value.d_value = I(
+      } : i.value.d_value = M(
         Array.isArray(e) ? e : [e],
         (t, a) => (t[a] = !0, t),
         {}
       ) : i.value.d_value = {};
     }
-    const s = P({});
+    const s = C({});
     function L(e, t = !0) {
       if (e.children && e.children.length && (s.value[e.key] = !0, t))
         for (const a of e.children)
           L(a);
     }
-    function F() {
-      for (const e of c.value)
+    function $() {
+      for (const e of p.value)
         L(e);
       s.value = { ...s.value };
     }
-    onMounted(() => {
-      o.expanded && F();
+    j(() => {
+      o.expanded && $();
     });
     function A(e) {
-      const t = _(
+      const t = le(
         e[o.optionValueProperty],
-        c.value,
+        p.value,
         o.optionValueProperty
       );
       return !t || !t.length ? "" : t.slice().reverse().map((a) => a.label).join(" > ");
     }
-    const { exposed: $, baseInputForwardedProps: E, fieldUniqueId: q, generalInputProps: H } = Z(o);
-    return M({ focus: B, ...$, setVisibleElementValue: k, getFullPathLabel: A }), (e, t) => {
-      const a = U("TreeSelect");
-      return u(), C(te, T(p(E), { onClick: B }), {
+    const { exposed: E, baseInputForwardedProps: q, fieldUniqueId: H, generalInputProps: K } = ee(o);
+    return S({ focus: B, ...E, setVisibleElementValue: k, getFullPathLabel: A }), (e, t) => {
+      const a = z("TreeSelect");
+      return u(), T(ne, x(m(q), { onClick: B }), {
         default: d(() => [
-          j(a, T(p(H), {
+          W(a, x(m(K), {
             ref_key: "inputRef",
             ref: i,
-            modelValue: p(m),
-            "onUpdate:modelValue": t[0] || (t[0] = (l) => z(m) ? m.value = l : null),
+            modelValue: g.value,
+            "onUpdate:modelValue": t[0] || (t[0] = (l) => g.value = l),
             "expanded-keys": s.value,
             "onUpdate:expandedKeys": t[1] || (t[1] = (l) => s.value = l),
-            "input-id": p(q),
+            "input-id": m(H),
             placeholder: n.placeholder,
             filter: n.hasFilter,
-            options: p(c),
+            options: p.value,
             "show-clear": n.clearable,
             class: "!w-full",
             "selection-mode": n.selectionMode,
             "scroll-height": "18rem",
             display: n.display,
-            onBlur: D,
-            onChange: t[2] || (t[2] = (l) => w("change", l))
-          }), W({
+            onBlur: F,
+            onChange: t[2] || (t[2] = (l) => N("change", l))
+          }), G({
             footer: d((l) => [
-              f(e.$slots, "footer", v(h(l)))
+              f(e.$slots, "footer", b(v(l)))
             ]),
             header: d((l) => [
-              f(e.$slots, "header", v(h(l)))
+              f(e.$slots, "header", b(v(l)))
             ]),
             itemtogglericon: d((l) => [
-              G("i", {
-                class: J(["text-[2em]", [
+              J("i", {
+                class: Q(["text-[2em]", [
                   l.class,
                   {
                     "i-ic:round-keyboard-arrow-up": l.expanded,
@@ -207,36 +208,36 @@ const oe = ["innerHTML"], ae = { key: 1 }, ne = ["innerHTML"], ce = /* @__PURE__
             e.$slots.value || n.fullPathValueLabel ? {
               name: "value",
               fn: d((l) => [
-                f(e.$slots, "value", v(h(l)), () => [
-                  n.formatter ? (u(), y("div", {
+                f(e.$slots, "value", b(v(l)), () => [
+                  n.formatter ? (u(), c("div", {
                     key: 0,
                     innerHTML: n.formatter(l.value, "value")
-                  }, null, 8, oe)) : r.value ? (u(), y("div", ae, [
-                    n.fullPathValueLabel ? (u(), C(ee, {
+                  }, null, 8, re)) : r.value ? (u(), c("div", ie, [
+                    n.fullPathValueLabel ? (u(), T(te, {
                       key: 0,
                       text: A(
                         Array.isArray(l.value) ? l.value[0] : l.value
                       )
-                    }, null, 8, ["text"])) : r.value ? (u(), y(Q, { key: 1 }, [
-                      X(Y(Array.isArray(l.value) ? l.value[0].label : l.value.label), 1)
-                    ], 64)) : g("", !0)
-                  ])) : g("", !0)
+                    }, null, 8, ["text"])) : r.value ? (u(), c(X, { key: 1 }, [
+                      Y(Z(Array.isArray(l.value) ? l.value[0].label : l.value.label), 1)
+                    ], 64)) : h("", !0)
+                  ])) : h("", !0)
                 ])
               ]),
               key: "0"
             } : void 0,
             e.$slots.option ? {
               name: "option",
-              fn: d(({ node: l, selected: b, expanded: K }) => [
+              fn: d(({ node: l, selected: y, expanded: O }) => [
                 f(e.$slots, "option", {
                   node: l,
-                  selected: b,
-                  expanded: K
+                  selected: y,
+                  expanded: O
                 }, () => [
-                  n.formatter ? (u(), y("div", {
+                  n.formatter ? (u(), c("div", {
                     key: 0,
                     innerHTML: n.formatter(l, "option")
-                  }, null, 8, ne)) : g("", !0)
+                  }, null, 8, ue)) : h("", !0)
                 ])
               ]),
               key: "1"
@@ -249,5 +250,5 @@ const oe = ["innerHTML"], ae = { key: 1 }, ne = ["innerHTML"], ce = /* @__PURE__
   }
 });
 export {
-  ce as default
+  be as default
 };

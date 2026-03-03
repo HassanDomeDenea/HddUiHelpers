@@ -1,4 +1,4 @@
-import { defineComponent as M, resolveComponent as f, resolveDirective as E, openBlock as i, createElementBlock as p, normalizeClass as d, createElementVNode as R, unref as t, Fragment as G, toDisplayString as z, createCommentVNode as k, renderSlot as N, createBlock as c, isRef as m, mergeProps as q, createVNode as P, withDirectives as j } from "vue";
+import { defineComponent as M, useTemplateRef as b, computed as d, toValue as k, resolveComponent as w, resolveDirective as E, openBlock as a, createElementBlock as m, normalizeClass as f, createElementVNode as x, Fragment as G, toDisplayString as B, createCommentVNode as I, renderSlot as N, createBlock as s, unref as c, mergeProps as q, createVNode as P, withDirectives as j } from "vue";
 import H from "HddUiHelpers/components/inputs/TreeSelectInput.vue";
 import { useApiClient as $ } from "HddUiHelpers/stores/apiClient";
 import { useBasicAuthStore as J } from "HddUiHelpers/stores/basicAuth";
@@ -6,10 +6,13 @@ import { uniqueId as K, map as Q } from "lodash-es";
 import { FileUpload as W } from "primevue";
 import X from "primevue/select";
 import { useConfirm as Y } from "primevue/useconfirm";
-const Z = ["for"], _ = { key: 0 }, ee = {
+import { useI18n as Z } from "vue-i18n";
+import _ from "HddUiHelpers/components/inputs/SelectButtonInput.vue";
+import ee from "HddUiHelpers/components/inputs/TextInput.vue";
+const le = ["for"], te = { key: 0 }, oe = {
   key: 1,
   class: "self-center"
-}, ce = /* @__PURE__ */ M({
+}, ve = /* @__PURE__ */ M({
   __name: "UserOption",
   props: {
     isGlobal: { default: !1 },
@@ -29,53 +32,53 @@ const Z = ["for"], _ = { key: 0 }, ee = {
     type: { default: "switch" }
   },
   setup(e) {
-    const b = J(), w = $(), y = useTemplateRef("selectInputRef"), g = useTemplateRef("treeSelectInputRef"), { t: a } = useI18n(), I = useTemplateRef("labelRef"), S = useTemplateRef("fileUploadRef"), x = computed(() => e.isGlobal !== !1), l = computed({
+    const p = J(), S = $(), v = b("selectInputRef"), y = b("treeSelectInputRef"), { t: i } = Z(), z = b("labelRef"), C = b("fileUploadRef"), R = d(() => e.isGlobal !== !1), l = d({
       get() {
-        return x.value === !0 ? b.globalOptions?.[e.option] : b.options[e.option];
+        return R.value === !0 ? p.globalOptions?.[e.option] : p.options[e.option];
       },
-      set(n) {
-        let o;
-        toValue(x) === !0 ? o = b.changeGlobalOption(e.option, n) : o = b.changeOption(e.option, n), o.then(() => {
-          e.showSuccess && (e.type === "checkbox" || e.type === "switch" ? w.toastSuccess(
-            e.label || I.value?.innerHTML,
-            a(n ? "Enabled" : "Disabled"),
+      set(o) {
+        let t;
+        k(R) === !0 ? t = p.changeGlobalOption(e.option, o) : t = p.changeOption(e.option, o), t.then(() => {
+          e.showSuccess && (e.type === "checkbox" || e.type === "switch" ? S.toastSuccess(
+            e.label || z.value?.innerHTML,
+            i(o ? "Enabled" : "Disabled"),
             {
               life: 2e3,
               contentStyleClass: "[&_.p-toast-detail]:!font-bold",
-              severity: n ? "success" : "warn"
+              severity: o ? "success" : "warn"
             }
-          ) : w.toastSuccess(e.successToastMessage ?? a("Option Changed Successfully"), "", {
+          ) : S.toastSuccess(e.successToastMessage ?? i("Option Changed Successfully"), "", {
             life: 1e3
           }));
         }).catch((V) => {
-          console.error(V), y.value && (y.value.d_value = toValue(l)), g.value && g.value.setVisibleElementValue(toValue(l));
+          console.error(V), v.value && (v.value.d_value = k(l)), y.value && y.value.setVisibleElementValue(k(l));
         });
       }
-    }), r = computed(() => K("user-option")), s = computed(() => typeof e.options == "object" && !Array.isArray(e.options) ? Q(e.options, (n, o) => ({
-      value: o,
-      label: n
-    })) : e.options ?? []), v = computed(
-      () => s.value.length > 0 && typeof s.value[0] == "string" ? void 0 : e.optionLabel
-    ), h = computed(
-      () => s.value.length > 0 && typeof s.value[0] == "string" ? void 0 : e.optionValue
+    }), r = d(() => K("user-option")), u = d(() => typeof e.options == "object" && !Array.isArray(e.options) ? Q(e.options, (o, t) => ({
+      value: t,
+      label: o
+    })) : e.options ?? []), g = d(
+      () => u.value.length > 0 && typeof u.value[0] == "string" ? void 0 : e.optionLabel
+    ), h = d(
+      () => u.value.length > 0 && typeof u.value[0] == "string" ? void 0 : e.optionValue
     );
-    function C(n) {
-      n.files[0] && (l.value = n.files[0]);
+    function U(o) {
+      o.files[0] && (l.value = o.files[0]);
     }
-    const B = Y();
-    function T(n) {
-      B.require({
-        target: n.currentTarget,
+    const F = Y();
+    function T(o) {
+      F.require({
+        target: o.currentTarget,
         group: "popup",
-        message: a("Are you sure to delete this image?"),
+        message: i("Are you sure to delete this image?"),
         icon: "pi pi-info-circle",
         rejectProps: {
-          label: a("Cancel"),
+          label: i("Cancel"),
           severity: "secondary",
           outlined: !0
         },
         acceptProps: {
-          label: a("Delete"),
+          label: i("Delete"),
           severity: "danger"
         },
         accept: () => {
@@ -83,99 +86,99 @@ const Z = ["for"], _ = { key: 0 }, ee = {
         }
       });
     }
-    function U() {
-      e.type === "image" ? S.value?.choose() : e.type === "select" && y.value.show(!0);
+    function D() {
+      e.type === "image" ? C.value?.choose() : e.type === "select" && v.value.show(!0);
     }
-    return (n, o) => {
-      const V = f("ToggleSwitch"), F = f("SelectButtonInput"), D = f("TextInput"), O = f("Image"), A = f("Button"), L = E("tooltip");
-      return i(), p("div", {
-        class: d(["items-center gap-2", { flex: e.fluid, "inline-flex": !e.fluid }])
+    return (o, t) => {
+      const V = w("ToggleSwitch"), O = w("Image"), A = w("Button"), L = E("tooltip");
+      return a(), m("div", {
+        class: f(["items-center gap-2", { flex: e.fluid, "inline-flex": !e.fluid }])
       }, [
-        R("label", {
+        x("label", {
           ref_key: "labelRef",
-          ref: I,
-          for: t(r),
-          class: d([[{ "flex-grow": !e.controlFluid }], "light:hover:bg-yellow-300/25 cursor-pointer rounded-lg dark:hover:bg-zinc-100/10"]),
-          onClick: U
+          ref: z,
+          for: r.value,
+          class: f([[{ grow: !e.controlFluid }], "light:hover:bg-yellow-300/25 cursor-pointer rounded-lg dark:hover:bg-zinc-100/10"]),
+          onClick: D
         }, [
-          e.label ? (i(), p(G, { key: 0 }, [
-            R("span", null, z(e.label), 1),
-            e.showAfterLabelDots ? (i(), p("span", _, ": ")) : k("", !0)
-          ], 64)) : N(n.$slots, "default", { key: 1 })
-        ], 10, Z),
-        e.type === "switch" ? (i(), c(V, {
+          e.label ? (a(), m(G, { key: 0 }, [
+            x("span", null, B(e.label), 1),
+            e.showAfterLabelDots ? (a(), m("span", te, ": ")) : I("", !0)
+          ], 64)) : N(o.$slots, "default", { key: 1 })
+        ], 10, le),
+        e.type === "switch" ? (a(), s(V, {
           key: 0,
-          modelValue: t(l),
-          "onUpdate:modelValue": o[0] || (o[0] = (u) => m(l) ? l.value = u : null),
-          "input-id": t(r)
-        }, null, 8, ["modelValue", "input-id"])) : e.type === "select_button" ? (i(), c(F, {
+          modelValue: l.value,
+          "onUpdate:modelValue": t[0] || (t[0] = (n) => l.value = n),
+          "input-id": r.value
+        }, null, 8, ["modelValue", "input-id"])) : e.type === "select_button" ? (a(), s(_, {
           key: 1,
-          modelValue: t(l),
-          "onUpdate:modelValue": o[1] || (o[1] = (u) => m(l) ? l.value = u : null),
-          "input-id": t(r),
-          class: d({ "flex-grow": e.controlFluid }),
-          "option-label": t(v),
-          "option-value": t(h),
+          modelValue: l.value,
+          "onUpdate:modelValue": t[1] || (t[1] = (n) => l.value = n),
+          "input-id": r.value,
+          class: f({ grow: e.controlFluid }),
+          "option-label": g.value,
+          "option-value": h.value,
           size: e.size,
-          options: t(s)
-        }, null, 8, ["modelValue", "input-id", "class", "option-label", "option-value", "size", "options"])) : e.type === "select" ? (i(), c(t(X), {
+          options: u.value
+        }, null, 8, ["modelValue", "input-id", "class", "option-label", "option-value", "size", "options"])) : e.type === "select" ? (a(), s(c(X), {
           key: 2,
           ref_key: "selectInputRef",
-          ref: y,
-          modelValue: t(l),
-          "onUpdate:modelValue": o[2] || (o[2] = (u) => m(l) ? l.value = u : null),
-          class: d({ "flex-grow": e.controlFluid }),
-          "option-label": t(v),
-          "option-value": t(h),
-          options: t(s),
-          "input-id": t(r),
+          ref: v,
+          modelValue: l.value,
+          "onUpdate:modelValue": t[2] || (t[2] = (n) => l.value = n),
+          class: f({ grow: e.controlFluid }),
+          "option-label": g.value,
+          "option-value": h.value,
+          options: u.value,
+          "input-id": r.value,
           size: e.size
-        }, null, 8, ["modelValue", "class", "option-label", "option-value", "options", "input-id", "size"])) : e.type === "tree_select" ? (i(), c(H, q({
+        }, null, 8, ["modelValue", "class", "option-label", "option-value", "options", "input-id", "size"])) : e.type === "tree_select" ? (a(), s(H, q({
           key: 3,
           ref_key: "treeSelectInputRef",
-          ref: g,
-          modelValue: t(l),
-          "onUpdate:modelValue": o[3] || (o[3] = (u) => m(l) ? l.value = u : null),
-          class: { "flex-grow": e.controlFluid },
+          ref: y,
+          modelValue: l.value,
+          "onUpdate:modelValue": t[3] || (t[3] = (n) => l.value = n),
+          class: { grow: e.controlFluid },
           clearable: e.clearable,
-          "option-label": t(v),
-          "option-value": t(h),
-          options: t(s),
-          "input-id": t(r),
+          "option-label": g.value,
+          "option-value": h.value,
+          options: u.value,
+          "input-id": r.value,
           size: e.size
-        }, e.binds ?? {}), null, 16, ["modelValue", "class", "clearable", "option-label", "option-value", "options", "input-id", "size"])) : e.type === "text" ? (i(), c(D, {
+        }, e.binds ?? {}), null, 16, ["modelValue", "class", "clearable", "option-label", "option-value", "options", "input-id", "size"])) : e.type === "text" ? (a(), s(ee, {
           key: 4,
-          modelValue: t(l),
-          "onUpdate:modelValue": o[4] || (o[4] = (u) => m(l) ? l.value = u : null),
+          modelValue: l.value,
+          "onUpdate:modelValue": t[4] || (t[4] = (n) => l.value = n),
           modelModifiers: { lazy: !0 },
-          "input-id": t(r),
+          "input-id": r.value,
           lazy: "",
-          class: d({ "flex-grow": e.controlFluid })
-        }, null, 8, ["modelValue", "input-id", "class"])) : e.type === "image" ? (i(), p("div", {
+          class: f({ grow: e.controlFluid })
+        }, null, 8, ["modelValue", "input-id", "class"])) : e.type === "image" ? (a(), m("div", {
           key: 5,
-          class: d(["flex items-center gap-2", { "flex-grow": e.controlFluid }])
+          class: f(["flex items-center gap-2", { grow: e.controlFluid }])
         }, [
-          t(l) ? (i(), c(O, {
+          l.value ? (a(), s(O, {
             key: 0,
-            src: t(l),
-            alt: t(a)("Missing Image"),
+            src: l.value,
+            alt: c(i)("Missing Image"),
             style: { "max-height": "200px", "max-width": "200px" },
             preview: ""
-          }, null, 8, ["src", "alt"])) : (i(), p("div", ee, z(t(a)("No Image Selected")), 1)),
-          P(t(W), {
+          }, null, 8, ["src", "alt"])) : (a(), m("div", oe, B(c(i)("No Image Selected")), 1)),
+          P(c(W), {
             ref_key: "fileUploadRef",
-            ref: S,
+            ref: C,
             mode: "basic",
             accept: "image/*",
             bs: "",
             auto: "",
             "custom-upload": "",
-            "choose-label": t(l) ? t(a)("Change Image") : t(a)("Upload Image"),
+            "choose-label": l.value ? c(i)("Change Image") : c(i)("Upload Image"),
             "choose-button-props": { size: "small", severity: "info" },
             "choose-icon": "i-mdi-upload",
-            onUploader: C
+            onUploader: U
           }, null, 8, ["choose-label"]),
-          t(l) ? j((i(), c(A, {
+          l.value ? j((a(), s(A, {
             key: 2,
             type: "button",
             icon: "pi pi-trash",
@@ -184,16 +187,16 @@ const Z = ["for"], _ = { key: 0 }, ee = {
           }, null, 512)), [
             [
               L,
-              t(a)("Delete"),
+              c(i)("Delete"),
               void 0,
               { top: !0 }
             ]
-          ]) : k("", !0)
-        ], 2)) : k("", !0)
+          ]) : I("", !0)
+        ], 2)) : I("", !0)
       ], 2);
     };
   }
 });
 export {
-  ce as default
+  ve as default
 };

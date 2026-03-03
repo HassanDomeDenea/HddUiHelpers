@@ -2,7 +2,7 @@
 import { useElementSize } from "@vueuse/core";
 import { omit } from "lodash-es";
 import { FloatLabel, IftaLabel } from "primevue";
-import { useTemplateRef } from "vue";
+import {computed, ref, toValue, useTemplateRef} from "vue";
 import { useI18n } from "vue-i18n";
 import type { BaseInputProps, BaseInputSlots } from "./types";
 
@@ -26,6 +26,7 @@ const labelRef = useTemplateRef("labelRef");
 const { width: labelWidth } = useElementSize(labelRef as any, undefined, {
   box: "border-box",
 });
+//@ts-ignore
 const defaultSlotRef = useTemplateRef("defaultSlotRef");
 defineExpose({ labelWidth, disabled, defaultSlotRef });
 </script>
@@ -138,7 +139,7 @@ defineExpose({ labelWidth, disabled, defaultSlotRef });
               </label>
             </component>
           </template>
-          <slot name="afterControl" />
+          <slot name="afterControl" :value="modelValue" />
 
           <InputGroupAddon
             v-if="

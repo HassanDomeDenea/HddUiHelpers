@@ -25,13 +25,29 @@ import {
   unset,
 } from "lodash-es";
 import Button from "primevue/button";
-import { toValue } from "vue";
+import { computed, nextTick, onMounted, ref, toValue, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { ComponentExposed } from "vue-component-type-helpers";
 import type { UseHddFormOptions } from "../../utils/useHddForm";
 import { useHddForm } from "../../utils/useHddForm";
 import type { FieldError, HddFormField, HddFormProps, HddFormValues } from "./types";
 import { isAxiosValidationError } from "./types";
-
+import {syncRef} from "@vueuse/core";
+import type {MaybeRefOrGetter} from 'vue'
+import ImageInput from "HddUiHelpers/components/inputs/ImageInput.vue";
+import InfiniteSelectInput from "HddUiHelpers/components/inputs/InfiniteSelectInput.vue";
+import TipTapEditorInput from "HddUiHelpers/components/inputs/TipTapEditorInput.vue";
+import InfiniteMultiSelectInput from "HddUiHelpers/components/inputs/InfiniteMultiSelectInput.vue";
+import AutoCompleteInput from "HddUiHelpers/components/inputs/AutoCompleteInput.vue";
+import DatePickerInput from "HddUiHelpers/components/inputs/DatePickerInput.vue";
+import TextAreaInput from "HddUiHelpers/components/inputs/TextAreaInput.vue";
+import MathInput from "HddUiHelpers/components/inputs/MathInput.vue";
+import NumberInput from "HddUiHelpers/components/inputs/NumberInput.vue";
+import TreeSelectInput from "HddUiHelpers/components/inputs/TreeSelectInput.vue";
+import PhoneInput from "HddUiHelpers/components/inputs/PhoneInput.vue";
+import PasswordInput from "HddUiHelpers/components/inputs/PasswordInput.vue";
+import ToggleSwitchInput from "HddUiHelpers/components/inputs/ToggleSwitchInput.vue";
+import ColorPickerInput from "HddUiHelpers/components/inputs/ColorPickerInput.vue";
 const {
   defaultValidationMode = "onSubmit",
   summarizeErrorsAtTop = true,
@@ -107,7 +123,7 @@ const hddFormOptions = computed(() => {
 
 const containerRef = useTemplateRef("containerRef");
 const fieldsContainerRef = useTemplateRef("fieldsContainerRef");
-const submitButtonRef = useTemplateRef<ComponentExposed>("submitButtonRef");
+const submitButtonRef = useTemplateRef<ComponentExposed<typeof Button>>("submitButtonRef");
 const form = useHddForm<T>(hddFormOptions.value as UseHddFormOptions<T>);
 
 const isSubmitting = ref(false);

@@ -15,10 +15,11 @@ export type ToMap<T extends string> = { [K in T]: true };
 export interface RolesMap extends Record<string, any> {}
 export interface PermissionsMap {}
 export interface GlobalOptionsMap {
-  _?: any;
+  app_name?: any;
 }
 export interface UserOptionsMap {
   language?: string;
+  dark_mode?: "light" | "dark" | "auto";
 }
 
 export type HddRole = keyof RolesMap & string;
@@ -47,3 +48,20 @@ declare module '@hassandomedenea/hdduihelpers/types/types' {
   interface PermissionsMap extends ToMap<Permission>
 }
 */
+
+export interface ApiResponseData<TData = any> {
+  success: boolean;
+  data: TData;
+}
+
+export interface InfiniteScrollResponseData {
+  items: any | Array<any>;
+  total: number;
+}
+
+export interface OptionInterface {
+  name: string;
+  id: number | string;
+}
+
+export interface ValueInterface {}

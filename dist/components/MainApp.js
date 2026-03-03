@@ -1,42 +1,43 @@
-import { defineComponent as C, resolveComponent as e, openBlock as m, createElementBlock as h, createVNode as o, unref as n, withCtx as v, createBlock as l, KeepAlive as b, resolveDynamicComponent as w } from "vue";
-import y from "HddUiHelpers/components/datatables/DynamicServerFormDialog.vue";
-import B from "HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue";
-import P from "HddUiHelpers/components/misc/TopProgressBar.vue";
-import T from "HddUiHelpers/components/modified/DismissableConfirmDialog.vue";
-import { setPageDirection as x } from "HddUiHelpers/plugins/i18n";
-import { useBasicAuthStore as A } from "HddUiHelpers/stores/basicAuth";
-import k from "HddUiHelpers/utils/primeVueLocales";
-import { usePrimeVue as I } from "primevue";
-import { defaultOptions as S } from "primevue/config";
-import { useToast as V } from "primevue/usetoast";
-import { useApiClient as M } from "HddUiHelpers/stores/apiClient";
-import E from "HddUiHelpers/components/ConfirmDialogWithInput/ConfirmDialogWithInput.vue";
-const F = { class: "flex-1 overflow-auto" }, Y = /* @__PURE__ */ C({
+import { defineComponent as h, watch as l, resolveComponent as e, openBlock as m, createElementBlock as v, createVNode as o, unref as n, withCtx as b, createBlock as a, KeepAlive as w, resolveDynamicComponent as y } from "vue";
+import B from "HddUiHelpers/components/datatables/DynamicServerFormDialog.vue";
+import P from "HddUiHelpers/components/DynamicComponentMounter/DynamicComponentMounter.vue";
+import T from "HddUiHelpers/components/misc/TopProgressBar.vue";
+import x from "HddUiHelpers/components/modified/DismissableConfirmDialog.vue";
+import { setPageDirection as A } from "HddUiHelpers/plugins/i18n";
+import { useBasicAuthStore as k } from "HddUiHelpers/stores/basicAuth";
+import I from "HddUiHelpers/utils/primeVueLocales";
+import { usePrimeVue as S } from "primevue";
+import { defaultOptions as V } from "primevue/config";
+import { useToast as M } from "primevue/usetoast";
+import { useApiClient as E } from "HddUiHelpers/stores/apiClient";
+import F from "HddUiHelpers/components/ConfirmDialogWithInput/ConfirmDialogWithInput.vue";
+import { useI18n as K } from "vue-i18n";
+const L = { class: "flex-1 overflow-auto" }, oo = /* @__PURE__ */ h({
   __name: "MainApp",
-  setup(K) {
-    const { t, locale: p } = useI18n(), a = V(), c = A(), s = M();
-    s.setI18n(t), s.setToast(a);
-    const u = I();
-    return watch(
-      () => c.options.language,
+  setup(N) {
+    const { t, locale: p } = K(), c = M(), u = k(), s = E();
+    s.setI18n(t), s.setToast(c);
+    const f = S();
+    return l(
+      () => u.options.language,
       (i) => {
-        i && (p.value = i, x());
+        i && (p.value = i, A());
       },
       {
         immediate: !0
       }
-    ), watch(
+    ), l(
       p,
       (i) => {
-        u.config.locale = k[i] ?? S.locale;
+        f.config.locale = I[i] ?? V.locale;
       },
       {
         immediate: !0
       }
-    ), (i, L) => {
-      const r = e("Toast"), f = e("ConfirmDialog"), _ = e("DynamicDialog"), g = e("ConfirmPopup"), D = e("router-view");
-      return m(), h("main", F, [
-        o(P),
+    ), (i, O) => {
+      const r = e("Toast"), _ = e("ConfirmDialog"), g = e("DynamicDialog"), D = e("ConfirmPopup"), d = e("router-view");
+      return m(), v("main", L, [
+        o(T),
         o(r, {
           group: "errors",
           position: n(t)("dir") === "ltr" ? "bottom-right" : "bottom-left"
@@ -52,17 +53,17 @@ const F = { class: "flex-1 overflow-auto" }, Y = /* @__PURE__ */ C({
         o(r, {
           position: n(t)("dir") === "ltr" ? "top-right" : "top-left"
         }, null, 8, ["position"]),
-        o(f),
-        o(T, { group: "dismissable" }),
-        o(y),
         o(_),
-        o(E),
-        o(g, { group: "popup" }),
+        o(x, { group: "dismissable" }),
         o(B),
-        o(D, null, {
-          default: v(({ Component: d }) => [
-            (m(), l(b, null, [
-              (m(), l(w(d)))
+        o(g),
+        o(F),
+        o(D, { group: "popup" }),
+        o(P),
+        o(d, null, {
+          default: b(({ Component: C }) => [
+            (m(), a(w, null, [
+              (m(), a(y(C)))
             ], 1024))
           ]),
           _: 1
@@ -72,5 +73,5 @@ const F = { class: "flex-1 overflow-auto" }, Y = /* @__PURE__ */ C({
   }
 });
 export {
-  Y as default
+  oo as default
 };

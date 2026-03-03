@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "framework": "vue",
+  "js-types-syntax": "typescript",
+  "description-markup": "markdown",
+  "framework-config": {
+    "enable-when": {
+      "file-extensions": [
+        "vue"
+      ]
+    }
+  },
+  "contributions": {
+    "html": {
+      "vue-directives": [
+        {
+          "name": "tooltip",
+          "attribute-value": {
+            "type": "boolean",
+            "required": false
+          },
+          "source": {
+            "module": "PrimeVue",
+            "symbol": "Tooltip"
+          },
+          "description": "Tooltip directive provides advisory information for a component.",
+          "doc-url": "https://primevue.org/tooltip",
+          "value": {
+            "kind": "expression",
+            "type": "function"
+          },
+          "required": false,
+          "modifiers": [
+            {
+              "name": "right",
+              "doc-url": "https://primevue.org/tooltip",
+              "description": "Positions the tooltip on the right of the trigger element (default)"
+            },
+            {
+              "name": "top",
+              "doc-url": "https://primevue.org/tooltip",
+              "description": "Positions the tooltip on the top of the trigger element"
+            },
+            {
+              "name": "bottom",
+              "doc-url": "https://primevue.org/tooltip",
+              "description": "Positions the tooltip on the bottom of the trigger element"
+            },
+            {
+              "name": "left",
+              "doc-url": "https://primevue.org/tooltip",
+              "description": "Positions the tooltip on the left of the trigger element"
+            },
+            {
+              "name": "focus",
+              "doc-url": "https://primevue.org/tooltip",
+              "description": "Focus on the trigger element"
+            },
+            {
+              "name": "blur",
+              "doc-url": "https://primevue.org/tooltip",
+              "description": "Blur the trigger element"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

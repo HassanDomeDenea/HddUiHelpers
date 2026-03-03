@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useGlobalDragging = defineStore("globalDragging", () => {
   const isDragging = ref(false);

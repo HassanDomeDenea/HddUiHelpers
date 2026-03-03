@@ -1,108 +1,109 @@
-import { defineComponent as R, resolveComponent as r, openBlock as C, createElementBlock as x, createVNode as s, unref as e, withCtx as w, createElementVNode as a, toDisplayString as u } from "vue";
+import { defineComponent as R, ref as x, useTemplateRef as v, computed as A, resolveComponent as r, openBlock as V, createElementBlock as H, createVNode as a, unref as s, withCtx as w, createElementVNode as n, toDisplayString as u } from "vue";
 import { uniqueId as m } from "lodash-es";
-import { Menu as A } from "primevue";
-import V from "primevue/popover";
-const H = { class: "inline-flex flex-wrap" }, k = { class: "space-y-2 p-1" }, M = { class: "text-lg font-bold" }, B = { class: "flex items-center gap-1" }, y = ["for"], O = { class: "flex items-center gap-1" }, _ = ["for"], z = { class: "flex items-center gap-1" }, P = ["for"], D = { class: "flex justify-end" }, j = /* @__PURE__ */ R({
+import { Menu as k } from "primevue";
+import M from "primevue/popover";
+import { useI18n as B } from "vue-i18n";
+const y = { class: "inline-flex flex-wrap" }, O = { class: "space-y-2 p-1" }, _ = { class: "text-lg font-bold" }, z = { class: "flex items-center gap-1" }, P = ["for"], D = { class: "flex items-center gap-1" }, N = ["for"], E = { class: "flex items-center gap-1" }, S = ["for"], U = { class: "flex justify-end" }, J = /* @__PURE__ */ R({
   __name: "TipTapTableControls",
   props: {
     editor: {},
     config: {}
   },
-  setup(l) {
-    const { t } = useI18n(), o = ref({
+  setup(o) {
+    const { t: l } = B(), e = x({
       rows: 2,
       cols: 2,
       withHeader: !0,
       rowsId: m("insert-table-rows-input"),
       colsId: m("insert-table-cols-input"),
       withHeaderId: m("insert-table-with-headers-input")
-    }), c = useTemplateRef("insertTablePopoverRef");
-    function h(i) {
-      o.value.rows = 2, o.value.cols = 2, o.value.withHeader = !0, c.value.toggle(i);
+    }), c = v("insertTablePopoverRef");
+    function h(t) {
+      e.value.rows = 2, e.value.cols = 2, e.value.withHeader = !0, c.value.toggle(t);
     }
-    function v() {
-      l.editor.chain().focus().insertTable({
-        rows: o.value.rows,
-        cols: o.value.cols,
-        withHeaderRow: o.value.withHeader
+    function g() {
+      o.editor.chain().focus().insertTable({
+        rows: e.value.rows,
+        cols: e.value.cols,
+        withHeaderRow: e.value.withHeader
       }).run(), c.value.hide();
     }
-    const f = useTemplateRef("tableOptionsMenuRef"), g = computed(() => {
-      const i = l.editor.isActive("table");
+    const f = v("tableOptionsMenuRef"), I = A(() => {
+      const t = o.editor.isActive("table");
       return [
         {
-          label: t("Insert Table"),
-          disabled: !l.editor.can().chain().focus().insertTable().run(),
+          label: l("Insert Table"),
+          disabled: !o.editor.can().chain().focus().insertTable().run(),
           icon: "i-mdi:table-large-plus",
-          command: (n) => {
-            h(n.originalEvent);
+          command: (i) => {
+            h(i.originalEvent);
           }
         },
         { separator: !0 },
         {
-          label: t("Add Column Before"),
-          disabled: !i,
+          label: l("Add Column Before"),
+          disabled: !t,
           icon: "i-mdi:table-column-plus-before",
           command: () => {
-            l.editor.chain().focus().addColumnBefore().run();
+            o.editor.chain().focus().addColumnBefore().run();
           }
         },
         {
-          label: t("Add Column After"),
-          disabled: !i,
+          label: l("Add Column After"),
+          disabled: !t,
           icon: "i-mdi:table-column-plus-after",
           command: () => {
-            l.editor.chain().focus().addColumnAfter().run();
+            o.editor.chain().focus().addColumnAfter().run();
           }
         },
         {
-          label: t("Add Row Before"),
-          disabled: !i,
+          label: l("Add Row Before"),
+          disabled: !t,
           icon: "i-mdi:table-row-plus-before",
           command: () => {
-            l.editor.chain().focus().addRowBefore().run();
+            o.editor.chain().focus().addRowBefore().run();
           }
         },
         {
-          label: t("Add Row After"),
-          disabled: !i,
+          label: l("Add Row After"),
+          disabled: !t,
           icon: "i-mdi:table-row-plus-after",
           command: () => {
-            l.editor.chain().focus().addRowAfter().run();
+            o.editor.chain().focus().addRowAfter().run();
           }
         },
         { separator: !0 },
         {
-          label: t("Delete Column"),
-          disabled: !i,
+          label: l("Delete Column"),
+          disabled: !t,
           icon: "i-mdi:table-column-remove",
           command: () => {
-            l.editor.chain().focus().deleteColumn().run();
+            o.editor.chain().focus().deleteColumn().run();
           }
         },
         {
-          label: t("Delete Row"),
-          disabled: !i,
+          label: l("Delete Row"),
+          disabled: !t,
           icon: "i-mdi:table-row-remove",
           command: () => {
-            l.editor.chain().focus().deleteRow().run();
+            o.editor.chain().focus().deleteRow().run();
           }
         },
         {
-          label: t("Delete Table"),
-          disabled: !i,
+          label: l("Delete Table"),
+          disabled: !t,
           icon: "i-mdi:table-large-remove",
           command: () => {
-            l.editor.chain().focus().deleteTable().run();
+            o.editor.chain().focus().deleteTable().run();
           }
         },
         { separator: !0 },
         {
-          label: t("Split/Merge Cells"),
-          disabled: !i,
+          label: l("Split/Merge Cells"),
+          disabled: !t,
           icon: "i-mdi:table-merge-cells",
           command: () => {
-            l.editor.chain().focus().mergeOrSplit().run();
+            o.editor.chain().focus().mergeOrSplit().run();
           }
         }
         /*{
@@ -117,45 +118,45 @@ const H = { class: "inline-flex flex-wrap" }, k = { class: "space-y-2 p-1" }, M 
         },*/
       ];
     });
-    return (i, n) => {
-      const b = r("Button"), I = r("Message"), p = r("InputNumber"), T = r("Checkbox");
-      return C(), x("div", H, [
-        s(b, {
+    return (t, i) => {
+      const b = r("Button"), T = r("Message"), p = r("InputNumber"), C = r("Checkbox");
+      return V(), H("div", y, [
+        a(b, {
           size: "small",
-          disabled: !l.editor.can().chain().focus().insertTable().run(),
-          title: e(t)("Table Options"),
+          disabled: !o.editor.can().chain().focus().insertTable().run(),
+          title: s(l)("Table Options"),
           severity: "info",
-          outlined: !l.editor.isActive("table"),
+          outlined: !o.editor.isActive("table"),
           icon: "i-flowbite:insert-table-outline",
-          onClick: n[0] || (n[0] = (d) => e(f).toggle(d))
+          onClick: i[0] || (i[0] = (d) => f.value.toggle(d))
         }, null, 8, ["disabled", "title", "outlined"]),
-        s(e(A), {
+        a(s(k), {
           ref_key: "tableOptionsMenuRef",
           ref: f,
-          model: e(g),
+          model: I.value,
           popup: ""
         }, null, 8, ["model"]),
-        s(e(V), {
+        a(s(M), {
           ref_key: "insertTablePopoverRef",
           ref: c
         }, {
           default: w(() => [
-            a("div", k, [
-              s(I, { variant: "simple" }, {
+            n("div", O, [
+              a(T, { variant: "simple" }, {
                 default: w(() => [
-                  a("span", M, u(e(t)("Insert Table")) + ":", 1)
+                  n("span", _, u(s(l)("Insert Table")) + ":", 1)
                 ]),
                 _: 1
               }),
-              a("div", B, [
-                a("label", {
-                  for: e(o).rowsId,
+              n("div", z, [
+                n("label", {
+                  for: e.value.rowsId,
                   class: "w-24"
-                }, u(e(t)("Columns")) + ": ", 9, y),
-                s(p, {
-                  modelValue: e(o).cols,
-                  "onUpdate:modelValue": n[1] || (n[1] = (d) => e(o).cols = d),
-                  "input-id": e(o).colsId,
+                }, u(s(l)("Columns")) + ": ", 9, P),
+                a(p, {
+                  modelValue: e.value.cols,
+                  "onUpdate:modelValue": i[1] || (i[1] = (d) => e.value.cols = d),
+                  "input-id": e.value.colsId,
                   size: "small",
                   fluid: "",
                   "show-buttons": "",
@@ -165,15 +166,15 @@ const H = { class: "inline-flex flex-wrap" }, k = { class: "space-y-2 p-1" }, M 
                   step: 1
                 }, null, 8, ["modelValue", "input-id"])
               ]),
-              a("div", O, [
-                a("label", {
-                  for: e(o).colsId,
+              n("div", D, [
+                n("label", {
+                  for: e.value.colsId,
                   class: "w-24"
-                }, u(e(t)("Rows")) + ": ", 9, _),
-                s(p, {
-                  modelValue: e(o).rows,
-                  "onUpdate:modelValue": n[2] || (n[2] = (d) => e(o).rows = d),
-                  "input-id": e(o).rowsId,
+                }, u(s(l)("Rows")) + ": ", 9, N),
+                a(p, {
+                  modelValue: e.value.rows,
+                  "onUpdate:modelValue": i[2] || (i[2] = (d) => e.value.rows = d),
+                  "input-id": e.value.rowsId,
                   size: "small",
                   fluid: "",
                   "show-buttons": "",
@@ -183,25 +184,25 @@ const H = { class: "inline-flex flex-wrap" }, k = { class: "space-y-2 p-1" }, M 
                   step: 1
                 }, null, 8, ["modelValue", "input-id"])
               ]),
-              a("div", z, [
-                a("label", {
-                  for: e(o).withHeaderId
-                }, u(e(t)("With Header Row")) + ": ", 9, P),
-                s(T, {
-                  modelValue: e(o).withHeader,
-                  "onUpdate:modelValue": n[3] || (n[3] = (d) => e(o).withHeader = d),
+              n("div", E, [
+                n("label", {
+                  for: e.value.withHeaderId
+                }, u(s(l)("With Header Row")) + ": ", 9, S),
+                a(C, {
+                  modelValue: e.value.withHeader,
+                  "onUpdate:modelValue": i[3] || (i[3] = (d) => e.value.withHeader = d),
                   size: "small",
-                  "input-id": e(o).withHeaderId,
+                  "input-id": e.value.withHeaderId,
                   binary: ""
                 }, null, 8, ["modelValue", "input-id"])
               ]),
-              a("div", D, [
-                s(b, {
-                  label: e(t)("Insert"),
+              n("div", U, [
+                a(b, {
+                  label: s(l)("Insert"),
                   icon: "i-mdi-check",
                   size: "small",
                   autofocus: "",
-                  onClick: v
+                  onClick: g
                 }, null, 8, ["label"])
               ])
             ])
@@ -213,5 +214,5 @@ const H = { class: "inline-flex flex-wrap" }, k = { class: "space-y-2 p-1" }, M 
   }
 });
 export {
-  j as default
+  J as default
 };

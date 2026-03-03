@@ -1,132 +1,138 @@
-import { defineComponent as ae, resolveComponent as v, openBlock as n, createBlock as i, unref as o, isRef as te, createSlots as P, withCtx as b, createElementBlock as k, Fragment as g, renderSlot as _, resolveDynamicComponent as M, normalizeClass as T, createCommentVNode as $, createElementVNode as j, toDisplayString as ne, renderList as ue, mergeProps as m, withKeys as w, withModifiers as C, createVNode as F } from "vue";
-import { usePrimeVue as ce } from "primevue";
-import { ConfirmDialogWithInputKey as se } from "./confirmDialogWithInputUtilities.js";
-const re = { class: "mt-3 space-y-3" }, pe = ["innerHTML"], ve = /* @__PURE__ */ ae({
+import { defineComponent as I, ref as P, useTemplateRef as ee, onMounted as le, onBeforeUnmount as ae, computed as o, resolveComponent as F, openBlock as t, createBlock as v, createSlots as $, withCtx as k, createElementBlock as y, Fragment as V, renderSlot as g, resolveDynamicComponent as M, normalizeClass as T, createCommentVNode as U, createElementVNode as j, toDisplayString as oe, renderList as ue, mergeProps as d, withKeys as w, withModifiers as C, createVNode as S } from "vue";
+import { usePrimeVue as te } from "primevue";
+import { ConfirmDialogWithInputKey as ne } from "./confirmDialogWithInputUtilities.js";
+import { useEventBus as re } from "@vueuse/core";
+import se from "HddUiHelpers/components/inputs/NumberInput.vue";
+import ce from "HddUiHelpers/components/inputs/MathInput.vue";
+import ve from "HddUiHelpers/components/inputs/TextAreaInput.vue";
+import ie from "HddUiHelpers/components/inputs/DatePickerInput.vue";
+import pe from "HddUiHelpers/components/inputs/TextInput.vue";
+const fe = { class: "mt-3 space-y-3" }, de = ["innerHTML"], Pe = /* @__PURE__ */ I({
   __name: "ConfirmDialogWithInput",
   props: {
     draggable: { type: Boolean },
     breakpoints: {}
   },
-  setup(U) {
-    const h = useEventBus(se), r = ref(!1), t = ref([]), V = ce(), f = useTemplateRef("inputRef"), e = ref(null);
-    function K({ event: a, options: u }) {
-      a === "show" ? (window.document.addEventListener("keydown", E, { capture: !0 }), e.value = u, t.value = Array.isArray(u.initialValue) ? u.initialValue : [u.initialValue], r.value = !0, setTimeout(() => {
-        f.value?.[0]?.focus?.(), u.autoSelectText && f.value?.[0]?.select?.();
-      }, 250)) : a === "hide" && (r.value = !1);
+  setup(_) {
+    const K = re(ne), i = P(!1), u = P([]), b = te(), p = ee("inputRef"), e = P(null);
+    function h({ event: a, options: n }) {
+      a === "show" ? (window.document.addEventListener("keydown", B, { capture: !0 }), e.value = n, u.value = Array.isArray(n.initialValue) ? n.initialValue : [n.initialValue], i.value = !0, setTimeout(() => {
+        p.value?.[0]?.focus?.(), n.autoSelectText && p.value?.[0]?.select?.();
+      }, 250)) : a === "hide" && (i.value = !1);
     }
-    onMounted(() => {
-      h.on(K);
-    }), onBeforeUnmount(() => {
-      h.off(K);
+    le(() => {
+      K.on(h);
+    }), ae(() => {
+      K.off(h);
     });
-    const S = computed(() => e.value ? e.value.appendTo : "body"), H = computed(
+    const H = o(() => e.value ? e.value.appendTo : "body"), N = o(
       () => e.value ? e.value.modal == null ? !0 : e.value.modal : !0
-    ), N = computed(() => e.value ? e.value.header : null), O = computed(() => e.value ? e.value.message : null), W = computed(() => e.value ? e.value.blockScroll : !0), z = computed(() => e.value ? e.value.position : null), q = computed(
-      () => e.value && (e.value.acceptLabel || e.value.acceptProps?.label) || V.config.locale.accept
-    ), G = computed(
-      () => e.value && (e.value.rejectLabel || e.value.rejectProps?.label) || V.config.locale.reject
-    ), L = computed(
+    ), O = o(() => e.value ? e.value.header : null), W = o(() => e.value ? e.value.message : null), z = o(() => e.value ? e.value.blockScroll : !0), q = o(() => e.value ? e.value.position : null), G = o(
+      () => e.value && (e.value.acceptLabel || e.value.acceptProps?.label) || b.config.locale.accept
+    ), J = o(
+      () => e.value && (e.value.rejectLabel || e.value.rejectProps?.label) || b.config.locale.reject
+    ), L = o(
       () => e.value ? e.value.acceptIcon : e.value?.acceptProps ? e.value.acceptProps.icon : null
-    ), R = computed(
+    ), E = o(
       () => e.value ? e.value.rejectIcon : e.value?.rejectProps ? e.value.rejectProps.icon : null
-    ), J = computed(
+    ), Q = o(
       () => e.value?.defaultFocus === void 0 || e.value?.defaultFocus === "accept"
-    ), Q = computed(() => e.value?.defaultFocus === "reject"), A = computed(() => e.value?.closeOnEscape ?? !0);
-    function y() {
+    ), X = o(() => e.value?.defaultFocus === "reject"), R = o(() => e.value?.closeOnEscape ?? !0);
+    function m() {
       e.value.accept && e.value.accept(
-        Y.value ? t.value : t.value[0]
-      ), r.value = !1;
+        Z.value ? u.value : u.value[0]
+      ), i.value = !1;
     }
-    function D() {
-      e.value.reject && e.value.reject(), r.value = !1;
+    function A() {
+      e.value.reject && e.value.reject(), i.value = !1;
     }
-    function X() {
-      window.document.removeEventListener("keydown", E, { capture: !0 }), e.value.onHide && e.value.onHide();
+    function Y() {
+      window.document.removeEventListener("keydown", B, { capture: !0 }), e.value.onHide && e.value.onHide();
     }
-    function E(a) {
-      a.code === "Escape" && (a.stopImmediatePropagation(), a.preventDefault(), A.value && (r.value = !1));
+    function B(a) {
+      a.code === "Escape" && (a.stopImmediatePropagation(), a.preventDefault(), R.value && (i.value = !1));
     }
-    const Y = computed(() => e.value?.inputsCount > 1), p = computed(() => Array.isArray(e.value.inputProps) ? e.value.inputProps : [e.value.inputProps]), d = computed(() => Array.isArray(e.value.inputType) ? e.value.inputType : [e.value.inputType]);
-    return (a, u) => {
-      const Z = v("TextInput"), x = v("NumberInput"), I = v("MathInput"), ee = v("TextAreaInput"), oe = v("DatePickerInput"), B = v("Button"), le = v("Dialog");
-      return n(), i(le, {
-        visible: o(r),
-        "onUpdate:visible": u[2] || (u[2] = (c) => te(r) ? r.value = c : null),
-        modal: o(H),
-        header: o(N),
-        "block-scroll": o(W),
-        "append-to": o(S),
-        position: o(z),
-        breakpoints: U.breakpoints,
-        "close-on-escape": o(A),
-        draggable: U.draggable,
+    const Z = o(() => e.value?.inputsCount > 1), c = o(() => Array.isArray(e.value.inputProps) ? e.value.inputProps : [e.value.inputProps]), f = o(() => Array.isArray(e.value.inputType) ? e.value.inputType : [e.value.inputType]);
+    return (a, n) => {
+      const D = F("Button"), x = F("Dialog");
+      return t(), v(x, {
+        visible: i.value,
+        "onUpdate:visible": n[2] || (n[2] = (r) => i.value = r),
+        modal: N.value,
+        header: O.value,
+        "block-scroll": z.value,
+        "append-to": H.value,
+        position: q.value,
+        breakpoints: _.breakpoints,
+        "close-on-escape": R.value,
+        draggable: _.draggable,
         "dismissable-mask": "",
-        onHide: X
-      }, P({
-        default: b(() => [
-          a.$slots.container ? $("", !0) : (n(), k(g, { key: 0 }, [
-            a.$slots.message ? (n(), i(M(a.$slots.message), {
+        onHide: Y
+      }, $({
+        default: k(() => [
+          a.$slots.container ? U("", !0) : (t(), y(V, { key: 0 }, [
+            a.$slots.message ? (t(), v(M(a.$slots.message), {
               key: 1,
-              message: o(e)
-            }, null, 8, ["message"])) : (n(), k(g, { key: 0 }, [
-              _(a.$slots, "icon", {}, () => [
-                a.$slots.icon ? (n(), i(M(a.$slots.icon), { key: 0 })) : o(e).icon ? (n(), k("span", {
+              message: e.value
+            }, null, 8, ["message"])) : (t(), y(V, { key: 0 }, [
+              g(a.$slots, "icon", {}, () => [
+                a.$slots.icon ? (t(), v(M(a.$slots.icon), { key: 0 })) : e.value.icon ? (t(), y("span", {
                   key: 1,
-                  class: T([o(e).icon])
-                }, null, 2)) : $("", !0)
+                  class: T([e.value.icon])
+                }, null, 2)) : U("", !0)
               ]),
-              j("span", null, ne(o(O)), 1)
+              j("span", null, oe(W.value), 1)
             ], 64))
           ], 64)),
-          j("div", re, [
-            (n(!0), k(g, null, ue(o(e).inputsCount ?? 1, (c, l) => (n(), k(g, { key: l }, [
-              !o(d)[l] || o(d)[l] === "text" ? (n(), i(Z, m({
+          j("div", fe, [
+            (t(!0), y(V, null, ue(e.value.inputsCount ?? 1, (r, l) => (t(), y(V, { key: l }, [
+              !f.value[l] || f.value[l] === "text" ? (t(), v(pe, d({
                 key: 0,
                 ref_for: !0,
                 ref_key: "inputRef",
-                ref: f,
-                modelValue: o(t)[l],
-                "onUpdate:modelValue": (s) => o(t)[l] = s
-              }, { ref_for: !0 }, o(p)[l], {
-                onKeydown: w(C(y, ["prevent"]), ["enter"])
-              }), null, 16, ["modelValue", "onUpdate:modelValue", "onKeydown"])) : o(d)[l] === "number" ? (n(), i(x, m({
+                ref: p,
+                modelValue: u.value[l],
+                "onUpdate:modelValue": (s) => u.value[l] = s
+              }, { ref_for: !0 }, c.value[l], {
+                onKeydown: w(C(m, ["prevent"]), ["enter"])
+              }), null, 16, ["modelValue", "onUpdate:modelValue", "onKeydown"])) : f.value[l] === "number" ? (t(), v(se, d({
                 key: 1,
                 ref_for: !0,
                 ref_key: "inputRef",
-                ref: f,
-                modelValue: o(t)[l],
-                "onUpdate:modelValue": (s) => o(t)[l] = s
-              }, { ref_for: !0 }, o(p)[l], {
-                onKeydown: w(C(y, ["prevent"]), ["enter"])
-              }), null, 16, ["modelValue", "onUpdate:modelValue", "onKeydown"])) : o(d)[l] === "math" ? (n(), i(I, m({
+                ref: p,
+                modelValue: u.value[l],
+                "onUpdate:modelValue": (s) => u.value[l] = s
+              }, { ref_for: !0 }, c.value[l], {
+                onKeydown: w(C(m, ["prevent"]), ["enter"])
+              }), null, 16, ["modelValue", "onUpdate:modelValue", "onKeydown"])) : f.value[l] === "math" ? (t(), v(ce, d({
                 key: 2,
                 ref_for: !0,
                 ref_key: "inputRef",
-                ref: f,
-                modelValue: o(t)[l],
-                "onUpdate:modelValue": (s) => o(t)[l] = s
-              }, { ref_for: !0 }, o(p)[l], {
-                onKeydown: w(C(y, ["prevent"]), ["enter"])
-              }), null, 16, ["modelValue", "onUpdate:modelValue", "onKeydown"])) : o(d)[l] === "textarea" ? (n(), i(ee, m({
+                ref: p,
+                modelValue: u.value[l],
+                "onUpdate:modelValue": (s) => u.value[l] = s
+              }, { ref_for: !0 }, c.value[l], {
+                onKeydown: w(C(m, ["prevent"]), ["enter"])
+              }), null, 16, ["modelValue", "onUpdate:modelValue", "onKeydown"])) : f.value[l] === "textarea" ? (t(), v(ve, d({
                 key: 3,
                 ref_for: !0,
                 ref_key: "inputRef",
-                ref: f,
-                modelValue: o(t)[l],
-                "onUpdate:modelValue": (s) => o(t)[l] = s
-              }, { ref_for: !0 }, o(p)[l], {
-                onKeydown: w(C(y, ["ctrl", "prevent"]), ["enter"])
-              }), null, 16, ["modelValue", "onUpdate:modelValue", "onKeydown"])) : o(d)[l] === "date" ? (n(), i(oe, m({
+                ref: p,
+                modelValue: u.value[l],
+                "onUpdate:modelValue": (s) => u.value[l] = s
+              }, { ref_for: !0 }, c.value[l], {
+                onKeydown: w(C(m, ["ctrl", "prevent"]), ["enter"])
+              }), null, 16, ["modelValue", "onUpdate:modelValue", "onKeydown"])) : f.value[l] === "date" ? (t(), v(ie, d({
                 key: 4,
                 ref_for: !0,
                 ref_key: "inputRef",
-                ref: f,
-                modelValue: o(t)[l],
-                "onUpdate:modelValue": (s) => o(t)[l] = s
-              }, { ref_for: !0 }, o(p)[l]), null, 16, ["modelValue", "onUpdate:modelValue"])) : o(d)[l] === "text_only" ? (n(), k("div", {
+                ref: p,
+                modelValue: u.value[l],
+                "onUpdate:modelValue": (s) => u.value[l] = s
+              }, { ref_for: !0 }, c.value[l]), null, 16, ["modelValue", "onUpdate:modelValue"])) : f.value[l] === "text_only" ? (t(), y("div", {
                 key: 5,
-                innerHTML: typeof o(p)[l]?.formatter == "function" ? o(p)[l]?.formatter(o(t)) : o(p)[l]?.value ?? null
-              }, null, 8, pe)) : $("", !0)
+                innerHTML: typeof c.value[l]?.formatter == "function" ? c.value[l]?.formatter(u.value) : c.value[l]?.value ?? null
+              }, null, 8, de)) : U("", !0)
             ], 64))), 128))
           ])
         ]),
@@ -134,53 +140,53 @@ const re = { class: "mt-3 space-y-3" }, pe = ["innerHTML"], ve = /* @__PURE__ */
       }, [
         a.$slots.container ? {
           name: "container",
-          fn: b((c) => [
-            _(a.$slots, "container", {
-              message: o(e),
-              closeCallback: c.closeCallback,
-              acceptCallback: y,
-              rejectCallback: D
+          fn: k((r) => [
+            g(a.$slots, "container", {
+              message: e.value,
+              closeCallback: r.closeCallback,
+              acceptCallback: m,
+              rejectCallback: A
             })
           ]),
           key: "0"
         } : void 0,
         a.$slots.container ? void 0 : {
           name: "footer",
-          fn: b(() => [
-            F(B, m({
-              class: [o(e).rejectClass],
-              autofocus: o(Q),
-              text: o(e).rejectProps?.text || !1,
+          fn: k(() => [
+            S(D, d({
+              class: [e.value.rejectClass],
+              autofocus: X.value,
+              text: e.value.rejectProps?.text || !1,
               severity: "secondary"
-            }, o(e).rejectProps, {
-              label: o(G),
-              onClick: u[0] || (u[0] = (c) => D())
-            }), P({ _: 2 }, [
-              o(R) || a.$slots.rejecticon ? {
+            }, e.value.rejectProps, {
+              label: J.value,
+              onClick: n[0] || (n[0] = (r) => A())
+            }), $({ _: 2 }, [
+              E.value || a.$slots.rejecticon ? {
                 name: "icon",
-                fn: b((c) => [
-                  _(a.$slots, "rejecticon", {}, () => [
+                fn: k((r) => [
+                  g(a.$slots, "rejecticon", {}, () => [
                     j("span", {
-                      class: T([o(R), c.class])
+                      class: T([E.value, r.class])
                     }, null, 2)
                   ])
                 ]),
                 key: "0"
               } : void 0
             ]), 1040, ["class", "autofocus", "text", "label"]),
-            F(B, m({
-              label: o(q),
-              class: [o(e).acceptClass],
-              autofocus: o(J)
-            }, o(e).acceptProps, {
-              onClick: u[1] || (u[1] = (c) => y())
-            }), P({ _: 2 }, [
-              o(L) || a.$slots.accepticon ? {
+            S(D, d({
+              label: G.value,
+              class: [e.value.acceptClass],
+              autofocus: Q.value
+            }, e.value.acceptProps, {
+              onClick: n[1] || (n[1] = (r) => m())
+            }), $({ _: 2 }, [
+              L.value || a.$slots.accepticon ? {
                 name: "icon",
-                fn: b((c) => [
-                  _(a.$slots, "accepticon", {}, () => [
+                fn: k((r) => [
+                  g(a.$slots, "accepticon", {}, () => [
                     j("span", {
-                      class: T([o(L), c.class]),
+                      class: T([L.value, r.class]),
                       "data-pc-section": "acceptbuttonicon"
                     }, null, 2)
                   ])
@@ -196,5 +202,5 @@ const re = { class: "mt-3 space-y-3" }, pe = ["innerHTML"], ve = /* @__PURE__ */
   }
 });
 export {
-  ve as default
+  Pe as default
 };

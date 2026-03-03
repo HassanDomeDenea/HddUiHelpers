@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { MessageData, UserChatData } from "@/types/laravel_generated";
+import { useElementVisibility, useNow, watchOnce } from "@vueuse/core";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
 import moment from "moment/moment";
+import { computed, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+import {MessageData, UserChatData} from "HddUiHelpers/components/Widgets/Chat/chatTypes.ts";
+
 const authStore = useBasicAuthStore();
 const { message, activeContact } = defineProps<{
   message: MessageData;

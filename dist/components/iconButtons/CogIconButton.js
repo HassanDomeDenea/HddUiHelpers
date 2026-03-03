@@ -1,33 +1,33 @@
-import { defineComponent as a, resolveComponent as s, openBlock as i, createElementBlock as f, createElementVNode as p, createVNode as u, withCtx as d, renderSlot as _ } from "vue";
-const m = { class: "inline-flex items-center" }, g = /* @__PURE__ */ a({
+import { defineComponent as s, ref as n, resolveComponent as i, openBlock as f, createElementBlock as p, createElementVNode as u, createVNode as d, withCtx as _, renderSlot as m } from "vue";
+const v = { class: "inline-flex items-center" }, k = /* @__PURE__ */ s({
   __name: "CogIconButton",
-  setup(v) {
-    const t = ref(), o = ref(!1);
-    function n(e) {
+  setup(h) {
+    const t = n(), o = n(!1);
+    function r(e) {
       t.value.toggle(e);
     }
-    function r() {
+    function l() {
       o.value = !0;
     }
-    function l() {
+    function c() {
       o.value = !1;
     }
-    return (e, h) => {
-      const c = s("Popover");
-      return i(), f("div", m, [
-        p("i", {
+    return (e, x) => {
+      const a = i("Popover");
+      return f(), p("div", v, [
+        u("i", {
           tabindex: "0",
           class: "i-mdi-cog dark:(text-teal-300 hover:text-teal-200) light:(text-teal-500 hover:text-teal-700) cursor-pointer",
-          onClick: n
+          onClick: r
         }),
-        u(c, {
+        d(a, {
           ref_key: "popoverRef",
           ref: t,
-          onShow: r,
-          onHide: l
+          onShow: l,
+          onHide: c
         }, {
-          default: d(() => [
-            _(e.$slots, "default")
+          default: _(() => [
+            m(e.$slots, "default")
           ]),
           _: 3
         }, 512)
@@ -36,5 +36,5 @@ const m = { class: "inline-flex items-center" }, g = /* @__PURE__ */ a({
   }
 });
 export {
-  g as default
+  k as default
 };

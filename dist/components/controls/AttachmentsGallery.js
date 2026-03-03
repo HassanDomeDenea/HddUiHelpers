@@ -1,33 +1,35 @@
-import { defineComponent as we, useModel as Ce, resolveComponent as P, resolveDirective as Pe, openBlock as l, createElementBlock as s, createElementVNode as d, Fragment as ze, renderList as Se, normalizeStyle as z, withDirectives as De, createVNode as f, unref as n, createCommentVNode as u, isRef as X, createSlots as Me, withCtx as B, renderSlot as Be, createTextVNode as Ie, createBlock as I, toDisplayString as A, mergeModels as j } from "vue";
-import Te from "downloadjs";
-import { useApiClient as Ee } from "HddUiHelpers/stores/apiClient.ts";
-import { useStackableDialog as Ve } from "HddUiHelpers/stores/stackableDialogs.ts";
-import { debounce as Ye, get as N } from "lodash-es";
-import G from "moment";
-import { useConfirm as Ae } from "primevue/useconfirm";
-const $e = {
+import { defineComponent as Pe, useTemplateRef as ze, useModel as Se, ref as h, computed as x, watch as N, resolveComponent as S, resolveDirective as De, openBlock as n, createElementBlock as r, createElementVNode as s, Fragment as Me, renderList as Be, normalizeStyle as D, withDirectives as Ie, createVNode as f, unref as g, createCommentVNode as d, createSlots as Te, withCtx as T, renderSlot as Ee, createTextVNode as Ve, createBlock as E, toDisplayString as W, mergeModels as G } from "vue";
+import Ye from "downloadjs";
+import { useApiClient as Ae } from "HddUiHelpers/stores/apiClient.ts";
+import { useStackableDialog as $e } from "HddUiHelpers/stores/stackableDialogs.ts";
+import { debounce as We, get as F } from "lodash-es";
+import O from "moment";
+import { useConfirm as qe } from "primevue/useconfirm";
+import { useI18n as Re } from "vue-i18n";
+import { useWindowSize as Ue } from "@vueuse/core";
+const Le = {
   ref: "sortableWrapper",
   class: "flex flex-wrap items-stretch gap-4 p-4"
-}, We = {
+}, Ze = {
   key: 0,
   class: "z-2 absolute top-0 ltr:right-0 rtl:left-0"
-}, Re = ["onClick"], qe = {
+}, Xe = ["onClick"], je = {
   key: 1,
   class: "z-100 absolute bottom-0 left-0 right-0 top-0"
-}, Ue = ["src", "alt"], Le = { key: 0 }, Ze = { key: 1 }, Xe = { class: "h-full w-full space-y-1" }, je = {
+}, Ne = ["src", "alt"], Ge = { key: 0 }, Fe = { key: 1 }, Oe = { class: "h-full w-full space-y-1" }, He = {
   key: 0,
   class: "rounded-4xl z-1 border-1 absolute right-1 top-1 inline-block space-y-1 border-gray-700 bg-gray-100/50 px-3 py-1 backdrop-blur-sm dark:border-gray-300 dark:bg-gray-900/50"
-}, Ne = { class: "flex items-center gap-2" }, Ge = {
+}, Je = { class: "flex items-center gap-2" }, Ke = {
   key: 0,
   class: "flex justify-center"
-}, Fe = ["src", "height", "width"], Oe = {
+}, Qe = ["src", "height", "width"], _e = {
   key: 1,
   width: "100%",
   height: "100%",
   controls: ""
-}, He = ["src", "type"], Je = ["src", "alt"], Ke = { class: "relative" }, Qe = ["src", "alt"], _e = { class: "cols-2 grid gap-4" }, et = ["title"], tt = { class: "text-end" }, at = ["title"], ot = ["onClick"], it = ["title"], mt = /* @__PURE__ */ we({
+}, et = ["src", "type"], tt = ["src", "alt"], at = { class: "relative" }, it = ["src", "alt"], ot = { class: "cols-2 grid gap-4" }, nt = ["title"], lt = { class: "text-end" }, rt = ["title"], st = ["onClick"], dt = ["title"], bt = /* @__PURE__ */ Pe({
   __name: "AttachmentsGallery",
-  props: /* @__PURE__ */ j({
+  props: /* @__PURE__ */ G({
     attachments: {},
     nameProperty: { default: "file_name" },
     sizeProperty: { default: "size" },
@@ -65,9 +67,9 @@ const $e = {
     loading: { type: Boolean, default: !1 },
     loadingModifiers: {}
   }),
-  emits: /* @__PURE__ */ j(["sorted", "toggled", "dateChanged", "descriptionChanged", "transformationApplied", "deleted", "delete", "shown", "hidden", "confirming", "confirmed", "changed"], ["update:loading"]),
-  setup(t, { expose: F, emit: O }) {
-    const o = t, r = O, { t: w } = useI18n(), $ = useTemplateRef("mainWrapper"), m = Ce(t, "loading"), p = ref(!1), c = ref(0), T = ref(!1), W = useWindowSize(), H = ref([
+  emits: /* @__PURE__ */ G(["sorted", "toggled", "dateChanged", "descriptionChanged", "transformationApplied", "deleted", "delete", "shown", "hidden", "confirming", "confirmed", "changed"], ["update:loading"]),
+  setup(t, { expose: H, emit: J }) {
+    const i = t, l = J, { t: P } = Re(), q = ze("mainWrapper"), u = Se(t, "loading"), b = h(!1), c = h(0), V = h(!1), R = Ue(), K = h([
       {
         breakpoint: "1500px",
         numVisible: 20
@@ -84,120 +86,120 @@ const $e = {
         breakpoint: "560px",
         numVisible: 5
       }
-    ]), J = computed(() => o.attachments[c.value]);
-    watch(
-      () => p.value,
+    ]), Q = x(() => i.attachments[c.value]);
+    N(
+      () => b.value,
       (e) => {
-        e ? (window.addEventListener("click", R), window.addEventListener("keydown", q), r("shown"), b(!0)) : (window.removeEventListener("click", R), window.removeEventListener("keydown", q), r("hidden"), b(!1)), r("toggled", e);
+        e ? (window.addEventListener("click", U), window.addEventListener("keydown", L), l("shown"), k(!0)) : (window.removeEventListener("click", U), window.removeEventListener("keydown", L), l("hidden"), k(!1)), l("toggled", e);
       }
     );
-    const { updateDialogVisibility: b } = Ve();
-    watch(c, () => {
-      V(), y.value = 1;
+    const { updateDialogVisibility: k } = $e();
+    N(c, () => {
+      A(), p.value = 1;
     });
-    function R(e) {
-      e.target?.classList.contains("galleriaMaskDismissClass") && (p.value = !1);
+    function U(e) {
+      e.target?.classList.contains("galleriaMaskDismissClass") && (b.value = !1);
     }
-    function q(e) {
+    function L(e) {
       if (e.code === "Escape") {
-        p.value = !1;
+        b.value = !1;
         return;
       }
-      const v = getComputedStyle($.value).direction === "rtl";
-      e.code === "ArrowRight" ? v ? L() : U() : e.code === "ArrowLeft" && (v ? U() : L());
+      const v = getComputedStyle(q.value).direction === "rtl";
+      e.code === "ArrowRight" ? v ? X() : Z() : e.code === "ArrowLeft" && (v ? Z() : X());
     }
-    function U() {
-      E(Math.min(c.value + 1, o.attachments.length - 1));
+    function Z() {
+      Y(Math.min(c.value + 1, i.attachments.length - 1));
     }
-    function L() {
-      E(Math.max(c.value - 1, 0));
+    function X() {
+      Y(Math.max(c.value - 1, 0));
     }
-    function K(e) {
-      Te(e[o.downloadProperty] ?? e[o.srcProperty]);
+    function _(e) {
+      Ye(e[i.downloadProperty] ?? e[i.srcProperty]);
     }
-    function E(e) {
-      c.value = e, p.value = !0;
+    function Y(e) {
+      c.value = e, b.value = !0;
     }
-    const Q = computed(() => W.height.value), _ = computed(() => W.width.value), x = ref(0), S = ref(0), D = ref(0), y = ref(1), h = ref({
+    const ee = x(() => R.height.value), te = x(() => R.width.value), w = h(0), M = h(0), B = h(0), p = h(1), m = h({
       isPanning: !1,
       startX: 0,
       startY: 0
     });
-    function V() {
-      k.value = !1, x.value = 0, S.value = 0, D.value = 0, h.value = {
+    function A() {
+      C.value = !1, w.value = 0, M.value = 0, B.value = 0, m.value = {
         isPanning: !1,
         startX: 0,
         startY: 0
       };
     }
-    const ee = computed(() => ({
-      transition: h.value.isPanning ? "none" : "transform 0.15s",
-      transform: "rotate(" + x.value + "deg) scale(" + y.value + ") translate(" + S.value + "px, " + D.value + "px)"
-    })), te = computed(() => x.value % 360 !== 0), ae = computed(() => y.value <= o.minZoom), oe = computed(() => y.value >= o.maxZoom), k = ref(!1);
-    function ie() {
-      x.value += 90, k.value = !0;
-    }
-    function ne() {
-      x.value -= 90, k.value = !0;
-    }
+    const ae = x(() => ({
+      transition: m.value.isPanning ? "none" : "transform 0.15s",
+      transform: "rotate(" + w.value + "deg) scale(" + p.value + ") translate(" + M.value + "px, " + B.value + "px)"
+    })), ie = x(() => w.value % 360 !== 0), oe = x(() => p.value <= i.minZoom), ne = x(() => p.value >= i.maxZoom), C = h(!1);
     function le() {
-      y.value -= o.zoomStep, k.value = !0;
+      w.value += 90, C.value = !0;
     }
     function re() {
-      y.value += o.zoomStep, k.value = !0;
+      w.value -= 90, C.value = !0;
     }
     function se() {
-      p.value = !1;
+      p.value -= i.zoomStep, C.value = !0;
     }
-    const g = Ee();
-    function de(e, i) {
-      o.canEditDate && (o.autoSubmitChanges && e[o.idProperty] ? (m.value = !0, g.request({
+    function de() {
+      p.value += i.zoomStep, C.value = !0;
+    }
+    function ue() {
+      b.value = !1;
+    }
+    const y = Ae();
+    function ce(e, o) {
+      i.canEditDate && (i.autoSubmitChanges && e[i.idProperty] ? (u.value = !0, y.request({
         method: "patch",
-        url: `/api/medias/${e[o.idProperty]}/update-date`,
+        url: `/api/medias/${e[i.idProperty]}/update-date`,
         data: {
-          date: i
+          date: o
         }
       }).then(() => {
-        r("dateChanged", e, i), r("changed");
-      }).catch(g.toastRequestError).finally(() => {
-        m.value = !1;
-      })) : r("dateChanged", e, i));
+        l("dateChanged", e, o), l("changed");
+      }).catch(y.toastRequestError).finally(() => {
+        u.value = !1;
+      })) : l("dateChanged", e, o));
     }
-    const ue = Ye(function(e, i) {
-      o.canEditDescription && (o.autoSubmitChanges && e[o.idProperty] ? (m.value = !0, g.request({
+    const me = We(function(e, o) {
+      i.canEditDescription && (i.autoSubmitChanges && e[i.idProperty] ? (u.value = !0, y.request({
         method: "patch",
-        url: `/api/medias/${e[o.idProperty]}/update-description`,
+        url: `/api/medias/${e[i.idProperty]}/update-description`,
         data: {
-          description: i
+          description: o
         }
       }).then(() => {
-        r("descriptionChanged", e, i), r("changed");
-      }).catch(g.toastRequestError).finally(() => {
-        m.value = !1;
-      })) : r("descriptionChanged", e, i));
+        l("descriptionChanged", e, o), l("changed");
+      }).catch(y.toastRequestError).finally(() => {
+        u.value = !1;
+      })) : l("descriptionChanged", e, o));
     }, 500);
-    function ce(e) {
-      if (o.savableTransformation) {
-        const i = {
-          rotation: x.value % 360
+    function ve(e) {
+      if (i.savableTransformation) {
+        const o = {
+          rotation: w.value % 360
         };
-        o.autoSubmitChanges && e[o.idProperty] ? (m.value = !0, g.request({
+        i.autoSubmitChanges && e[i.idProperty] ? (u.value = !0, y.request({
           method: "patch",
-          url: `/api/medias/${e[o.idProperty]}/manipulate`,
-          data: i
+          url: `/api/medias/${e[i.idProperty]}/manipulate`,
+          data: o
         }).then(() => {
-          V(), r("transformationApplied", e, i), r("changed");
-        }).catch(g.toastRequestError).finally(() => {
-          m.value = !1;
-        })) : r("transformationApplied", e, i);
+          A(), l("transformationApplied", e, o), l("changed");
+        }).catch(y.toastRequestError).finally(() => {
+          u.value = !1;
+        })) : l("transformationApplied", e, o);
       }
     }
-    const me = Ae();
-    function he(e) {
-      r("confirming"), b(!0), me.require({
+    const he = qe();
+    function fe(e) {
+      l("confirming"), k(!0), he.require({
         group: "dismissable",
-        header: w("Delete Confirmation"),
-        message: w("Are you sure you want to delete this file?"),
+        header: P("Delete Confirmation"),
+        message: P("Are you sure you want to delete this file?"),
         icon: "i-material-symbols:warning-outline-rounded",
         acceptProps: {
           severity: "danger",
@@ -209,118 +211,118 @@ const $e = {
           // icon: 'i-line-md:cancel',
         },
         accept() {
-          o.autoSubmitChanges && e[o.idProperty] ? (m.value = !0, g.request({
+          i.autoSubmitChanges && e[i.idProperty] ? (u.value = !0, y.request({
             method: "delete",
-            url: `/api/medias/${e[o.idProperty]}`
+            url: `/api/medias/${e[i.idProperty]}`
           }).then(() => {
-            r("changed"), r("deleted", e);
-          }).catch(g.toastRequestError).finally(() => {
-            m.value = !1;
-          })) : r("delete", e), r("confirmed"), b(!1);
+            l("changed"), l("deleted", e);
+          }).catch(y.toastRequestError).finally(() => {
+            u.value = !1;
+          })) : l("delete", e), l("confirmed"), k(!1);
         },
         reject() {
-          b(!1), r("confirmed");
+          k(!1), l("confirmed");
         },
         onHide() {
-          b(!1);
+          k(!1);
         }
       });
     }
-    const ve = (e) => {
+    const pe = (e) => {
       e.preventDefault();
-      const i = e.deltaY > 0 ? -o.zoomStep : o.zoomStep;
-      y.value = Math.min(o.maxZoom, Math.max(o.minZoom, y.value + i));
-    }, fe = (e) => {
-      e.preventDefault(), h.value.isPanning = !0, h.value.startX = e.clientX - S.value, h.value.startY = e.clientY - D.value;
-    }, pe = (e) => {
-      h.value.isPanning && (S.value = e.clientX - h.value.startX, D.value = e.clientY - h.value.startY);
-    }, Z = () => h.value.isPanning = !1, ye = () => {
-      h.value.isPanning || (T.value = !T.value);
+      const o = e.deltaY > 0 ? -i.zoomStep : i.zoomStep;
+      p.value = Math.min(i.maxZoom, Math.max(i.minZoom, p.value + o));
+    }, ye = (e) => {
+      e.preventDefault(), m.value.isPanning = !0, m.value.startX = e.clientX - M.value, m.value.startY = e.clientY - B.value;
+    }, ge = (e) => {
+      m.value.isPanning && (M.value = e.clientX - m.value.startX, B.value = e.clientY - m.value.startY);
+    }, j = () => m.value.isPanning = !1, be = () => {
+      m.value.isPanning || (V.value = !V.value);
     };
-    return F({ resetTransformation: V }), (e, i) => {
-      const v = P("Button"), M = P("Skeleton"), ge = P("TextAreaInput"), be = P("DatePickerInput"), xe = P("Galleria"), ke = Pe("tooltip");
-      return l(), s("div", {
+    return H({ resetTransformation: A }), (e, o) => {
+      const v = S("Button"), I = S("Skeleton"), xe = S("TextAreaInput"), ke = S("DatePickerInput"), we = S("Galleria"), Ce = De("tooltip");
+      return n(), r("div", {
         ref_key: "mainWrapper",
-        ref: $
+        ref: q
       }, [
-        d("div", $e, [
-          (l(!0), s(ze, null, Se(t.attachments, (a, Y) => (l(), s("div", {
-            key: Y,
-            style: z({ width: (t.thumbnailSize || 60) + "px" }),
+        s("div", Le, [
+          (n(!0), r(Me, null, Be(t.attachments, (a, $) => (n(), r("div", {
+            key: $,
+            style: D({ width: (t.thumbnailSize || 60) + "px" }),
             class: "space-y-2"
           }, [
-            d("div", {
+            s("div", {
               class: "border-inset light:border-teal-800 group relative flex items-center justify-center rounded-lg border-2 border-solid p-1 dark:border-teal-200",
-              style: z({ width: (t.thumbnailSize || 60) + "px", height: (t.thumbnailSize || 60) + "px" })
+              style: D({ width: (t.thumbnailSize || 60) + "px", height: (t.thumbnailSize || 60) + "px" })
             }, [
-              t.deletable ? (l(), s("div", We, [
-                De(f(v, {
+              t.deletable ? (n(), r("div", Ze, [
+                Ie(f(v, {
                   icon: "i-mdi-trash",
                   severity: "danger",
                   text: "",
                   size: "small",
                   raised: "",
-                  onClick: (C) => he(a)
+                  onClick: (z) => fe(a)
                 }, null, 8, ["onClick"]), [
-                  [ke, n(w)("Delete")]
+                  [Ce, g(P)("Delete")]
                 ])
-              ])) : u("", !0),
-              d("div", {
+              ])) : d("", !0),
+              s("div", {
                 class: "light:bg-gray-100/45 z-1 absolute inset-0 hidden cursor-pointer items-center justify-center hover:visible group-hover:flex dark:bg-gray-900/45",
-                onClick: (C) => E(Y)
+                onClick: (z) => Y($)
               }, [
-                d("i", {
+                s("i", {
                   class: "i-mdi:eye light:text-teal-700 dark:text-teal-200",
-                  style: z({ fontSize: Math.max((t.thumbnailSize || 60) / 5, 12) + "px" })
+                  style: D({ fontSize: Math.max((t.thumbnailSize || 60) / 5, 12) + "px" })
                 }, null, 4)
-              ], 8, Re),
-              m.value ? (l(), s("div", qe, [
-                f(M, { class: "!h-full !w-full" })
-              ])) : u("", !0),
-              d("img", {
+              ], 8, Xe),
+              u.value ? (n(), r("div", je, [
+                f(I, { class: "!h-full !w-full" })
+              ])) : d("", !0),
+              s("img", {
                 src: a[t.hasThumbnails ? t.thumbProperty : t.srcProperty],
                 alt: a.alt,
                 style: { cursor: "pointer" },
                 class: "max-w-100% max-h-100% mx-auto my-auto"
-              }, null, 8, Ue)
+              }, null, 8, Ne)
             ], 4),
-            t.withDescription ? (l(), s("div", Le, [
-              f(ge, {
-                "model-value": n(N)(a, t.descriptionProperty),
-                placeholder: t.descriptionInputPlaceholder ?? n(w)("Description"),
+            t.withDescription ? (n(), r("div", Ge, [
+              f(xe, {
+                "model-value": g(F)(a, t.descriptionProperty),
+                placeholder: t.descriptionInputPlaceholder ?? g(P)("Description"),
                 "initial-rows": 1,
-                "onUpdate:modelValue": (C) => n(ue)(a, C)
+                "onUpdate:modelValue": (z) => g(me)(a, z)
               }, null, 8, ["model-value", "placeholder", "onUpdate:modelValue"])
-            ])) : u("", !0),
-            t.withDateInput ? (l(), s("div", Ze, [
-              f(be, {
+            ])) : d("", !0),
+            t.withDateInput ? (n(), r("div", Fe, [
+              f(ke, {
                 size: "small",
                 clearable: !1,
-                "model-value": n(N)(a, t.dateProperty),
+                "model-value": g(F)(a, t.dateProperty),
                 disabled: !t.canEditDate,
-                "onUpdate:modelValue": (C) => de(a, C)
+                "onUpdate:modelValue": (z) => ce(a, z)
               }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"])
-            ])) : u("", !0)
+            ])) : d("", !0)
           ], 4))), 128)),
-          m.value ? (l(), s("div", {
+          u.value ? (n(), r("div", {
             key: 0,
             class: "border-inset light:border-teal-800/50 group relative flex items-center justify-center rounded-lg border-2 border-dashed p-1 dark:border-teal-200/50",
-            style: z({ width: (t.thumbnailSize || 60) + "px", height: (t.thumbnailSize || 60) + "px" })
+            style: D({ width: (t.thumbnailSize || 60) + "px", height: (t.thumbnailSize || 60) + "px" })
           }, [
-            d("div", Xe, [
-              f(M, { style: { height: "65%" } }),
-              f(M, { style: { height: "15%" } }),
-              f(M, { style: { height: "15%" } })
+            s("div", Oe, [
+              f(I, { style: { height: "65%" } }),
+              f(I, { style: { height: "15%" } }),
+              f(I, { style: { height: "15%" } })
             ])
-          ], 4)) : u("", !0)
+          ], 4)) : d("", !0)
         ], 512),
-        f(xe, {
-          visible: n(p),
-          "onUpdate:visible": i[1] || (i[1] = (a) => X(p) ? p.value = a : null),
-          "active-index": n(c),
-          "onUpdate:activeIndex": i[2] || (i[2] = (a) => X(c) ? c.value = a : null),
+        f(we, {
+          visible: b.value,
+          "onUpdate:visible": o[1] || (o[1] = (a) => b.value = a),
+          "active-index": c.value,
+          "onUpdate:activeIndex": o[2] || (o[2] = (a) => c.value = a),
           value: t.attachments,
-          "responsive-options": n(H),
+          "responsive-options": K.value,
           "num-visible": Math.min(t.attachments.length, 9),
           "container-style": "width: 90%",
           circular: !0,
@@ -337,139 +339,139 @@ const $e = {
             // nextItemButton: '!fixed rtl:(left-0 right-unset)',
             // nextButton: '!fixed rtl:(left-0 right-unset)',
           }
-        }, Me({
-          header: B(() => [
-            t.toolbarButtons ? (l(), s("div", je, [
-              d("div", Ne, [
+        }, Te({
+          header: T(() => [
+            t.toolbarButtons ? (n(), r("div", He, [
+              s("div", Je, [
                 f(v, {
                   rounded: "",
                   severity: "contrast",
                   variant: "text",
                   icon: "i-fa7-solid:times  ",
-                  onClick: se
+                  onClick: ue
                 }),
-                t.scalable ? (l(), I(v, {
+                t.scalable ? (n(), E(v, {
                   key: 0,
                   rounded: "",
                   severity: "contrast",
                   variant: "text",
                   icon: "i-fa7-solid:rotate-right",
-                  onClick: ie
-                })) : u("", !0),
-                t.scalable ? (l(), I(v, {
+                  onClick: le
+                })) : d("", !0),
+                t.scalable ? (n(), E(v, {
                   key: 1,
                   rounded: "",
                   severity: "contrast",
                   variant: "text",
                   icon: "i-fa7-solid:rotate-left",
-                  onClick: ne
-                })) : u("", !0),
-                t.zoomable ? (l(), I(v, {
+                  onClick: re
+                })) : d("", !0),
+                t.zoomable ? (n(), E(v, {
                   key: 2,
                   rounded: "",
                   severity: "contrast",
                   variant: "text",
-                  disabled: n(ae),
+                  disabled: oe.value,
                   icon: "i-fa:search-minus",
-                  onClick: le
-                }, null, 8, ["disabled"])) : u("", !0),
-                t.zoomable ? (l(), I(v, {
+                  onClick: se
+                }, null, 8, ["disabled"])) : d("", !0),
+                t.zoomable ? (n(), E(v, {
                   key: 3,
                   rounded: "",
                   severity: "contrast",
                   variant: "text",
-                  disabled: n(oe),
+                  disabled: ne.value,
                   icon: "i-fa:search-plus",
-                  onClick: re
-                }, null, 8, ["disabled"])) : u("", !0)
+                  onClick: de
+                }, null, 8, ["disabled"])) : d("", !0)
               ]),
-              t.savableTransformation && n(k) && n(te) ? (l(), s("div", Ge, [
+              t.savableTransformation && C.value && ie.value ? (n(), r("div", Ke, [
                 f(v, {
                   icon: "i-material-symbols:save-rounded",
                   variant: "outlined",
                   rounded: "",
-                  label: n(w)("Save Changes"),
+                  label: g(P)("Save Changes"),
                   size: "small",
-                  onClick: i[0] || (i[0] = (a) => ce(n(J)))
+                  onClick: o[0] || (o[0] = (a) => ve(Q.value))
                 }, null, 8, ["label"])
-              ])) : u("", !0)
-            ])) : u("", !0)
+              ])) : d("", !0)
+            ])) : d("", !0)
           ]),
-          item: B((a) => [
-            d("div", {
+          item: T((a) => [
+            s("div", {
               class: "light:bg-gray-50/95 relative touch-none dark:bg-slate-900/95",
-              style: z(n(ee))
+              style: D(ae.value)
             }, [
-              Be(e.$slots, "viewerImageIcons", {
+              Ee(e.$slots, "viewerImageIcons", {
                 item: a.item,
-                activeIndex: n(c)
+                activeIndex: c.value
               }),
-              a.item.mime_type === "application/pdf" ? (l(), s("embed", {
+              a.item.mime_type === "application/pdf" ? (n(), r("embed", {
                 key: 0,
                 src: `${a.item[t.srcProperty]}#toolbar=1&navpanes=0&scrollbar=1`,
                 type: "application/pdf",
                 frameBorder: "0",
                 scrolling: "auto",
-                height: `${n(Q) - 300}px`,
-                width: `${n(_) - 150}px`
-              }, null, 8, Fe)) : a.item.mime_type.startsWith("video/") ? (l(), s("video", Oe, [
-                d("source", {
+                height: `${ee.value - 300}px`,
+                width: `${te.value - 150}px`
+              }, null, 8, Qe)) : a.item.mime_type.startsWith("video/") ? (n(), r("video", _e, [
+                s("source", {
                   src: a.item[t.srcProperty],
                   type: a.item.mime_type
-                }, null, 8, He),
-                i[3] || (i[3] = Ie(" Your browser does not support the video tag. ", -1))
-              ])) : (l(), s("img", {
+                }, null, 8, et),
+                o[3] || (o[3] = Ve(" Your browser does not support the video tag. ", -1))
+              ])) : (n(), r("img", {
                 key: 2,
                 class: "select-none",
                 src: a.item[t.srcProperty],
                 alt: a.item.name,
                 style: { "max-width": "100%", "max-height": "calc(100vh - 130px)", display: "block" },
-                onWheel: ve,
-                onMousedown: fe,
-                onMousemove: pe,
-                onMouseup: Z,
-                onMouseleave: Z,
-                onClick: ye
-              }, null, 40, Je))
+                onWheel: pe,
+                onMousedown: ye,
+                onMousemove: ge,
+                onMouseup: j,
+                onMouseleave: j,
+                onClick: be
+              }, null, 40, tt))
             ], 4)
           ]),
-          thumbnail: B((a) => [
-            d("div", Ke, [
-              d("img", {
+          thumbnail: T((a) => [
+            s("div", at, [
+              s("img", {
                 src: a.item[t.hasThumbnails ? t.thumbProperty : t.srcProperty],
                 alt: a.item.name,
                 class: "max-w-50px max-h-50px border-1 border-inset light:border-gray-700 cursor-pointer rounded-md p-1 text-xs dark:border-gray-200",
                 style: { display: "block" }
-              }, null, 8, Qe)
+              }, null, 8, it)
             ])
           ]),
           _: 2
         }, [
-          t.attachments[n(c)] && !t.attachments[n(c)].mime_type.startsWith("video/") && n(T) ? {
+          t.attachments[c.value] && !t.attachments[c.value].mime_type.startsWith("video/") && V.value ? {
             name: "caption",
-            fn: B((a) => [
-              d("div", _e, [
-                a.item[t.captionProperty] ? u("", !0) : (l(), s("div", {
+            fn: T((a) => [
+              s("div", ot, [
+                a.item[t.captionProperty] ? d("", !0) : (n(), r("div", {
                   key: 0,
                   class: "ms-2 overflow-x-clip text-ellipsis text-xs",
                   title: a.item[t.nameProperty]
-                }, A(a.item[t.nameProperty]), 9, et)),
-                d("div", tt, [
-                  d("span", {
+                }, W(a.item[t.nameProperty]), 9, nt)),
+                s("div", lt, [
+                  s("span", {
                     class: "text-xs",
-                    title: n(G)(a.item[t.dateProperty]).fromNow()
-                  }, A(n(G)(a.item[t.dateProperty]).format("YYYY-MM-DD hh:mm A")), 9, at),
-                  d("i", {
+                    title: g(O)(a.item[t.dateProperty]).fromNow()
+                  }, W(g(O)(a.item[t.dateProperty]).format("YYYY-MM-DD hh:mm A")), 9, rt),
+                  s("i", {
                     class: "i-mdi-download hover:light:text-blue-400 ms-2 cursor-pointer hover:dark:text-blue-300",
-                    onClick: (Y) => K(a.item)
-                  }, null, 8, ot)
+                    onClick: ($) => _(a.item)
+                  }, null, 8, st)
                 ])
               ]),
-              a.item[t.captionProperty] ? (l(), s("div", {
+              a.item[t.captionProperty] ? (n(), r("div", {
                 key: 0,
                 class: "mb-2 font-bold",
                 title: a.item[t.nameProperty]
-              }, A(a.item[t.captionProperty]), 9, it)) : u("", !0)
+              }, W(a.item[t.captionProperty]), 9, dt)) : d("", !0)
             ]),
             key: "0"
           } : void 0
@@ -479,5 +481,5 @@ const $e = {
   }
 });
 export {
-  mt as default
+  bt as default
 };

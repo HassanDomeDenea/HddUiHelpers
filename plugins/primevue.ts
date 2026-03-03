@@ -4,7 +4,7 @@ import type { App } from "vue";
 // import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales';
 
 import "../css/primevueFixes.css";
-import { ConfirmationService, DialogService, FocusTrap, ToastService } from "primevue";
+import { ConfirmationService, DialogService, FocusTrap, ToastService, Tooltip } from "primevue";
 import PrimeVue from "primevue/config";
 export default {
   install(app: App) {

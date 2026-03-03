@@ -3,13 +3,11 @@ import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils
 import { get } from "lodash-es";
 import type { SelectChangeEvent } from "primevue/select";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps } from "./types";
+import {OptionInterface, ValueInterface} from "HddUiHelpers/types/types.ts";
 
-interface OptionInterface {
-  name: string;
-  id: number;
-}
 
 const props = withDefaults(
   defineProps<
@@ -85,7 +83,7 @@ function getValueText(_value: any, _placeholder?: string) {
       return "---";
     }
     if (props.valueLabelFormatter) {
-      return props.valueLabelFormatter(_item, placeholder) ?? "---";
+      return props.valueLabelFormatter(_item, props.placeholder) ?? "---";
     } else if (props.optionAndValueLabelFormatter) {
       return props.optionAndValueLabelFormatter(_item) ?? "---";
     } else {
@@ -131,7 +129,7 @@ defineExpose({ focus, ...exposed });
       :selected-items-label="`{0} ${t('multiSelectItemsSelectedLabel')}`"
       :option-label="optionLabelProperty"
       :option-value="optionValueProperty"
-      class="!w-full"
+      class="w-full!"
       scroll-height="18rem"
       @blur="onInputBlur"
       @change="emits('change', $event)"

@@ -209,6 +209,21 @@ There are new messages: توجد رسائل جديدة
 Is Loading: جاري التحميل
 Refresh Page: اعادة تحديث الصفحة
 Login: تسجيل الدخول
+Welcome, Please Log In: مرحباً، الرجاء تسجيل الدخول
+Users: Users
+Please select a chat: Please select a chat
+New Files: New Files
+No File Selected: No File Selected
+Rotate Image: Rotate Image
+Remove Selection: Remove Selection
+Use Scanner: Use Scanner
+Choose Image: Choose Image
+Choose another image: Choose another image
+Current Files: Current Files
+Will be deleted: Will be deleted
+Remove File: Remove File
+Restore File: Restore File
+Text Color: Text Color
 `, n = `lang_code: en
 Are you sure to delete n records?: Are you sure to delete {n} record? | Are you sure to delete {n} records?
 (n Records selected): ({n} Record selected) | ({n} Records selected)
@@ -371,6 +386,21 @@ Update Item: Update Item
 Image not found: Image not found
 Choose File: Choose File
 Login: Login
+Welcome, Please Log In: Welcome, Please Log In
+Users: Users
+Please select a chat: Please select a chat
+New Files: New Files
+No File Selected: No File Selected
+Rotate Image: Rotate Image
+Remove Selection: Remove Selection
+Use Scanner: Use Scanner
+Choose Image: Choose Image
+Choose another image: Choose another image
+Current Files: Current Files
+Will be deleted: Will be deleted
+Remove File: Remove File
+Restore File: Restore File
+Text Color: Text Color
 `;
 export {
   n as _,

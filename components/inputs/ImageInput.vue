@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { ref } from "vue";
+import {computedAsync, useDropZone} from "@vueuse/core";
+import { ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps } from "./types";
 

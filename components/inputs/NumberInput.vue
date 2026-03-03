@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
 import type { InputNumberInputEvent } from "primevue/inputnumber";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps, ElementClassType } from "./types";
 

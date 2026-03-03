@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends any">
-import type { ApiResponseData, InfiniteScrollResponseData } from "@/types/laravel_generated";
+
 import { vElementVisibility } from "@vueuse/components";
 import type { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
 import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
@@ -7,11 +7,12 @@ import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
 import { get } from "lodash-es";
 import type Select from "primevue/select";
 import type { SelectChangeEvent, SelectFilterEvent } from "primevue/select";
-import type { Ref } from "vue";
-import { ref } from "vue";
+import { computed, nextTick, type Ref, ref, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import type { ComponentExposed } from "vue-component-type-helpers";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps, ElementClassType } from "./types";
+import {ApiResponseData, InfiniteScrollResponseData, OptionInterface} from "HddUiHelpers/types/types.ts";
 const props = withDefaults(
   defineProps<
     {
@@ -87,7 +88,7 @@ const isInitiallyLoading = ref(false);
 type ValueInterface = string;
 
 async function search(event: {
-  query?: string;
+  query?: string | number |  (string | number)[] ;
   offset?: number;
   limit?: number;
   onlyId?: boolean;
@@ -137,6 +138,7 @@ function focus(_show: boolean = false) {
     if (_show) {
       inputRef.value.show();
     } else {
+      //@ts-ignore
       inputRef.value.$refs.focusInput.focus();
     }
   }
@@ -338,7 +340,7 @@ defineExpose({ focus, clear, selectedItems, ...exposed });
       :option-label="optionLabelProperty"
       :option-value="optionValueProperty"
       :show-clear="clearable"
-      class="!w-full"
+      class="w-full!"
       scroll-height="18rem"
       :loading="isInitiallyLoading"
       :pt="{

@@ -1,10 +1,10 @@
 <script lang="ts">
-import type { AppPermission } from "@/types/laravel_generated";
 import type { MenuItem } from "primevue/menuitem";
+import {HddPermission} from "HddUiHelpers/types/types.ts";
 
 export type SideTabularPanelItem = MenuItem & {
   name: string;
-  permission?: AppPermission | AppPermission[];
+  permission?: HddPermission | HddPermission[];
   visible?: boolean;
 };
 </script>
@@ -12,6 +12,9 @@ export type SideTabularPanelItem = MenuItem & {
 <script setup lang="ts">
 import { isBoolean, isString } from "lodash-es";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
+import { computed, onActivated, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 
 const { t } = useI18n();
 const route = useRoute();

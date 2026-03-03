@@ -1,8 +1,10 @@
-import { defineComponent as w, resolveComponent as d, openBlock as t, createBlock as o, unref as a, isRef as D, withCtx as i, createVNode as N, createElementBlock as y, Fragment as v, renderList as R, createElementVNode as b, normalizeClass as x, createCommentVNode as q, toDisplayString as z, KeepAlive as E, resolveDynamicComponent as A, mergeProps as h, renderSlot as B } from "vue";
-import F from "primevue/tabs";
-import { useBasicAuthStore as I } from "HddUiHelpers/stores/basicAuth.ts";
-import { isBoolean as U, isString as $, startCase as H } from "lodash-es";
-const K = { class: "flex items-center gap-1" }, W = /* @__PURE__ */ w({
+import { defineComponent as E, computed as f, ref as b, onActivated as w, watch as v, resolveComponent as c, openBlock as a, createBlock as l, unref as q, withCtx as o, createVNode as A, createElementBlock as d, Fragment as T, renderList as B, createElementVNode as P, normalizeClass as F, createCommentVNode as p, toDisplayString as I, KeepAlive as U, resolveDynamicComponent as C, mergeProps as g, renderSlot as h } from "vue";
+import $ from "primevue/tabs";
+import { useBasicAuthStore as H } from "HddUiHelpers/stores/basicAuth.ts";
+import { isBoolean as K, isString as j, startCase as G } from "lodash-es";
+import { useI18n as J } from "vue-i18n";
+import { useRoute as M, useRouter as W } from "vue-router";
+const X = { class: "flex items-center gap-1" }, re = /* @__PURE__ */ E({
   __name: "TabularPanel",
   props: {
     basedOnRouteQuery: { type: Boolean, default: !0 },
@@ -12,56 +14,56 @@ const K = { class: "flex items-center gap-1" }, W = /* @__PURE__ */ w({
     keepAlive: { type: Boolean, default: !0 },
     tabs: {}
   },
-  setup(u, { expose: P }) {
-    const { t: C } = useI18n(), l = useRoute(), s = useRouter(), m = computed(() => u.tabs.filter((n) => U(n.visible) ? n.visible : $(n.permission) ? T.can(n.permission) : n.permission instanceof Array ? n.permission.every((c) => T.can(c)) : !0)), f = computed(
-      () => u.basedOnRouteQuery ? l.query[u.queryName] : void 0
-    ), T = I(), g = computed(() => m.value.map((n) => n.name)), r = ref(
-      (u.basedOnRouteQuery ? l.query[u.queryName] : void 0) ?? u.initialTab ?? m.value[0]?.name
+  setup(n, { expose: O }) {
+    const { t: Q } = J(), t = M(), i = W(), s = f(() => n.tabs.filter((u) => K(u.visible) ? u.visible : j(u.permission) ? k.can(u.permission) : u.permission instanceof Array ? u.permission.every((m) => k.can(m)) : !0)), y = f(
+      () => n.basedOnRouteQuery ? t.query[n.queryName] : void 0
+    ), k = H(), L = f(() => s.value.map((u) => u.name)), r = b(
+      (n.basedOnRouteQuery ? t.query[n.queryName] : void 0) ?? n.initialTab ?? s.value[0]?.name
     );
-    function O(n) {
-      n !== r.value && g.value.includes(n) && (r.value = n);
+    function S(u) {
+      u !== r.value && L.value.includes(u) && (r.value = u);
     }
-    function p() {
-      u.basedOnRouteQuery && (typeof l.query[u.queryName] == "string" ? O(l.query[u.queryName]) : r.value ? s.replace({ query: { ...l.query, [u.queryName]: r.value } }) : r.value !== f.value && s.replace({ query: { ...l.query, [u.queryName]: r.value } }));
+    function N() {
+      n.basedOnRouteQuery && (typeof t.query[n.queryName] == "string" ? S(t.query[n.queryName]) : r.value ? i.replace({ query: { ...t.query, [n.queryName]: r.value } }) : r.value !== y.value && i.replace({ query: { ...t.query, [n.queryName]: r.value } }));
     }
-    onActivated(() => {
-      p();
-    }), watch(r, (n) => {
-      u.basedOnRouteQuery && (f.value ? s.push({ query: { ...l.query, [u.queryName]: n } }) : s.replace({ query: { ...l.query, [u.queryName]: n } }));
-    }), watch(f, () => {
-      u.basedOnRouteQuery && p();
+    w(() => {
+      N();
+    }), v(r, (u) => {
+      n.basedOnRouteQuery && (y.value ? i.push({ query: { ...t.query, [n.queryName]: u } }) : i.replace({ query: { ...t.query, [n.queryName]: u } }));
+    }), v(y, () => {
+      n.basedOnRouteQuery && N();
     });
-    const k = ref([]);
-    return watch(
+    const R = b([]);
+    return v(
       r,
-      (n) => {
-        k.value.includes(n) || k.value.push(n);
+      (u) => {
+        R.value.includes(u) || R.value.push(u);
       },
       {
         immediate: !0
       }
-    ), P({ currentTab: r }), (n, c) => {
-      const Q = d("Tab"), L = d("TabList"), S = d("TabPanel"), V = d("TabPanels");
-      return t(), o(a(F), {
-        value: a(r),
-        "onUpdate:value": c[0] || (c[0] = (e) => D(r) ? r.value = e : null),
+    ), O({ currentTab: r }), (u, m) => {
+      const V = c("Tab"), D = c("TabList"), x = c("TabPanel"), z = c("TabPanels");
+      return a(), l(q($), {
+        value: r.value,
+        "onUpdate:value": m[0] || (m[0] = (e) => r.value = e),
         class: "HDD-TABULAR-PANEL"
       }, {
-        default: i(() => [
-          N(L, null, {
-            default: i(() => [
-              (t(!0), y(v, null, R(a(m), (e) => (t(), o(Q, {
+        default: o(() => [
+          A(D, null, {
+            default: o(() => [
+              (a(!0), d(T, null, B(s.value, (e) => (a(), l(V, {
                 key: e.name,
                 disabled: e.disabled,
                 value: e.name
               }, {
-                default: i(() => [
-                  b("div", K, [
-                    e.icon ? (t(), y("i", {
+                default: o(() => [
+                  P("div", X, [
+                    e.icon ? (a(), d("i", {
                       key: 0,
-                      class: x(e.icon)
-                    }, null, 2)) : q("", !0),
-                    b("span", null, z(e.label ?? a(C)(a(H)(e.name))), 1)
+                      class: F(e.icon)
+                    }, null, 2)) : p("", !0),
+                    P("span", null, I(e.label ?? q(Q)(q(G)(e.name))), 1)
                   ])
                 ]),
                 _: 2
@@ -69,24 +71,24 @@ const K = { class: "flex items-center gap-1" }, W = /* @__PURE__ */ w({
             ]),
             _: 1
           }),
-          N(V, null, {
-            default: i(() => [
-              (t(!0), y(v, null, R(a(m), (e) => (t(), o(S, {
+          A(z, null, {
+            default: o(() => [
+              (a(!0), d(T, null, B(s.value, (e) => (a(), l(x, {
                 key: e.name,
                 value: e.name
               }, {
-                default: i(() => [
-                  u.keepAlive ? (t(), o(E, { key: 0 }, [
-                    e.component && e.name === a(r) ? (t(), o(A(e.component), h({
+                default: o(() => [
+                  n.keepAlive ? (a(), l(U, { key: 0 }, [
+                    e.component && e.name === r.value ? (a(), l(C(e.component), g({
                       key: 0,
                       ref_for: !0
-                    }, e.binds), null, 16)) : e.name === a(r) ? B(n.$slots, e.name, { key: 1 }) : q("", !0)
-                  ], 1024)) : !u.lazy || e.name === a(r) ? (t(), y(v, { key: 1 }, [
-                    e.component ? (t(), o(A(e.component), h({
+                    }, e.binds), null, 16)) : e.name === r.value ? h(u.$slots, e.name, { key: 1 }) : p("", !0)
+                  ], 1024)) : !n.lazy || e.name === r.value ? (a(), d(T, { key: 1 }, [
+                    e.component ? (a(), l(C(e.component), g({
                       key: 0,
                       ref_for: !0
-                    }, e.binds), null, 16)) : B(n.$slots, e.name, { key: 1 })
-                  ], 64)) : q("", !0)
+                    }, e.binds), null, 16)) : h(u.$slots, e.name, { key: 1 })
+                  ], 64)) : p("", !0)
                 ]),
                 _: 2
               }, 1032, ["value"]))), 128))
@@ -100,5 +102,5 @@ const K = { class: "flex items-center gap-1" }, W = /* @__PURE__ */ w({
   }
 });
 export {
-  W as default
+  re as default
 };

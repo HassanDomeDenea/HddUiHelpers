@@ -3,12 +3,12 @@ import axios from "axios";
 import type { App } from "vue";
 import type { I18n } from "vue-i18n";
 import YAML from "yaml";
-import AutoCompleteInput from "../components/inputs/AutoCompleteInput.vue";
-import SelectInput from "../components/inputs/SelectInput.vue";
-import TextInput from "../components/inputs/TextInput.vue";
-import TriCheckboxInput from "../components/inputs/TriCheckboxInput.vue";
-import PrimeVueServerTable from "../components/primeVueServerTable/PrimeVueServerTable.vue";
-import type { RecordsServiceType } from "../components/primeVueServerTable/types";
+import AutoCompleteInput from "HddUiHelpers/components/inputs/AutoCompleteInput.vue";
+import SelectInput from "HddUiHelpers/components/inputs/SelectInput.vue";
+import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
+import TriCheckboxInput from "HddUiHelpers/components/inputs/TriCheckboxInput.vue";
+import PrimeVueServerTable from "HddUiHelpers/components/primeVueServerTable/PrimeVueServerTable.vue";
+import type { RecordsServiceType } from "HddUiHelpers/components/primeVueServerTable/types";
 import {
   primeVueServerUiDataTableRecordsService,
   primeVueServerUiDefaultAxiosSymbol,

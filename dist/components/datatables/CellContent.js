@@ -1,9 +1,10 @@
-import { defineComponent as h, resolveComponent as r, openBlock as t, createBlock as l, normalizeClass as c, withCtx as o, createTextVNode as y, toDisplayString as g, createElementBlock as n, Fragment as x, renderList as v, mergeProps as T, unref as a, createElementVNode as C, createCommentVNode as i, normalizeStyle as w } from "vue";
-import { get as z, isBoolean as B } from "lodash-es";
-const N = {
+import { defineComponent as h, computed as v, toValue as x, resolveComponent as r, openBlock as t, createBlock as a, normalizeClass as l, withCtx as o, createTextVNode as y, toDisplayString as g, createElementBlock as n, Fragment as T, renderList as C, mergeProps as w, unref as c, createElementVNode as z, createCommentVNode as i, normalizeStyle as B } from "vue";
+import { get as N, isBoolean as b } from "lodash-es";
+import { useI18n as I } from "vue-i18n";
+const P = {
   key: 1,
   class: "flex flex-wrap items-center gap-1"
-}, b = { key: 3 }, I = { key: 4 }, P = { key: 5 }, V = ["innerHTML"], M = /* @__PURE__ */ h({
+}, V = { key: 3 }, F = { key: 4 }, H = { key: 5 }, L = ["innerHTML"], W = /* @__PURE__ */ h({
   __name: "CellContent",
   props: {
     column: {},
@@ -12,61 +13,61 @@ const N = {
     size: {}
   },
   setup(e) {
-    const { t: m } = useI18n(), d = computed(() => typeof e.column.renderTypeProps == "function" ? e.column.renderTypeProps : toValue(e.column.renderTypeProps));
-    return (F, H) => {
-      const s = r("Chip"), k = r("Tag"), f = r("Badge"), D = r("Image");
-      return e.column.renderType === "chip" ? (t(), l(s, {
+    const { t: m } = I(), d = v(() => typeof e.column.renderTypeProps == "function" ? e.column.renderTypeProps : x(e.column.renderTypeProps));
+    return (E, M) => {
+      const u = r("Chip"), f = r("Tag"), k = r("Badge"), D = r("Image");
+      return e.column.renderType === "chip" ? (t(), a(u, {
         key: 0,
-        class: c({ "text-sm": e.size === "small" })
+        class: l({ "text-sm": e.size === "small" })
       }, {
         default: o(() => [
           y(g(e.renderedData), 1)
         ]),
         _: 1
-      }, 8, ["class"])) : e.column.renderType === "chips" ? (t(), n("div", N, [
-        (t(!0), n(x, null, v(e.renderedData, (u) => (t(), l(s, {
-          key: u,
-          class: c({ "text-sm": e.size === "small" })
+      }, 8, ["class"])) : e.column.renderType === "chips" ? (t(), n("div", P, [
+        (t(!0), n(T, null, C(e.renderedData, (s) => (t(), a(u, {
+          key: s,
+          class: l({ "text-sm": e.size === "small" })
         }, {
           default: o(() => [
-            y(g(u), 1)
+            y(g(s), 1)
           ]),
           _: 2
         }, 1032, ["class"]))), 128))
-      ])) : e.column.renderType === "tag" ? (t(), l(k, T(
+      ])) : e.column.renderType === "tag" ? (t(), a(f, w(
         { key: 2 },
-        typeof a(d) == "function" ? a(d)({
-          value: a(z)(e.row, e.column.fullFieldName),
+        typeof d.value == "function" ? d.value({
+          value: c(N)(e.row, e.column.fullFieldName),
           text: e.renderedData,
           row: e.row,
           options: e.column.selectOptions
-        }) : a(d),
+        }) : d.value,
         { value: e.renderedData }
-      ), null, 16, ["value"])) : e.column.renderType === "yesNoIconBadge" ? (t(), n("div", b, [
-        a(B)(e.renderedData) ? (t(), l(f, {
+      ), null, 16, ["value"])) : e.column.renderType === "yesNoIconBadge" ? (t(), n("div", V, [
+        c(b)(e.renderedData) ? (t(), a(k, {
           key: 0,
           size: e.size,
           severity: e.renderedData ? "success" : "danger",
-          title: a(m)(e.renderedData ? "Yes" : "No")
+          title: c(m)(e.renderedData ? "Yes" : "No")
         }, {
           default: o(() => [
-            C("i", {
-              class: c(["scale-120", { "i-mdi-check": e.renderedData, "i-mdi-times": !e.renderedData }])
+            z("i", {
+              class: l(["scale-120", { "i-mdi-check": e.renderedData, "i-mdi-times": !e.renderedData }])
             }, null, 2)
           ]),
           _: 1
         }, 8, ["size", "severity", "title"])) : i("", !0)
-      ])) : e.column.type === "color" ? (t(), n("div", I, [
+      ])) : e.column.type === "color" ? (t(), n("div", F, [
         e.renderedData ? (t(), n("span", {
           key: 0,
-          class: c(["hdd-color-box !cursor-initial inline-block", [{ "!size-6": e.size === "small" }]]),
-          style: w({ backgroundColor: e.renderedData })
+          class: l(["hdd-color-box !cursor-initial inline-block", [{ "!size-6": e.size === "small" }]]),
+          style: B({ backgroundColor: e.renderedData })
         }, null, 6)) : i("", !0)
-      ])) : e.column.type === "image" ? (t(), n("div", P, [
-        e.renderedData ? (t(), l(D, {
+      ])) : e.column.type === "image" ? (t(), n("div", H, [
+        e.renderedData ? (t(), a(D, {
           key: 0,
           src: e.renderedData,
-          alt: a(m)("Image not found"),
+          alt: c(m)("Image not found"),
           "image-style": {
             maxWidth: "50px",
             maxHeight: "50px"
@@ -75,15 +76,15 @@ const N = {
         }, null, 8, ["src", "alt"])) : i("", !0)
       ])) : (t(), n("div", {
         key: 6,
-        class: c(["inline-block", [
+        class: l(["inline-block", [
           { "whitespace-pre-wrap": e.column.type === "textarea" },
           e.column.bodyClassFunction?.(e.renderedData, e.row, e.column)
         ]]),
         innerHTML: e.renderedData
-      }, null, 10, V));
+      }, null, 10, L));
     };
   }
 });
 export {
-  M as default
+  W as default
 };

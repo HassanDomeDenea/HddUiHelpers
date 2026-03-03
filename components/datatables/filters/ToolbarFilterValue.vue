@@ -19,6 +19,8 @@ import type { ColumnFilterModelType } from "primevue";
 import type ContextMenu from "primevue/contextmenu";
 import Popover from "primevue/popover";
 import type { ComponentExposed } from "vue-component-type-helpers";
+import { computed, ref, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 
 const {
   columns,
@@ -82,7 +84,7 @@ const formattedValue = computed(() => {
           `<span class="inline-block ltr">${isPrice ? formatters.formatPrice(originalValue[1], currency) : originalValue[1]}</span>`
         );
       }
-      return isNull(originalValue) ? null : formatters.formatPrice(baseValue, currency);
+      return isNull(originalValue) ? null : formatters.formatPrice(+baseValue, currency);
     case "select":
       return Array.isArray(baseValue)
         ? baseValue.length === 1
@@ -221,9 +223,9 @@ defineExpose({ focus });
       <span class="mx-2"> {{ matchModeSymbol }} </span>
       <template v-if="column.type === 'color' && !isNull(formattedValue)">
         <span
-          class="hdd-color-box inline-block !cursor-initial"
-          :class="['!size-5']"
-          :style="{ backgroundColor: formattedValue }"
+          class="hdd-color-box inline-block cursor-initial!"
+          :class="['size-5!']"
+          :style="{ backgroundColor: formattedValue as string }"
         />
       </template>
       <template v-else>

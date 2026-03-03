@@ -3,9 +3,13 @@ import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils
 import { take, uniq } from "lodash-es";
 import type { ButtonProps } from "primevue";
 import PrimeVuePopover from "primevue/popover";
-import { ref } from "vue";
+import { computed, onMounted, ref, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps } from "./types";
+import {ComponentExposed} from "vue-component-type-helpers";
+import Popover from "primevue/popover";
+import {useStorage} from "@vueuse/core";
 
 const props = withDefaults(
   defineProps<
@@ -43,7 +47,7 @@ const value = defineModel<any>("modelValue", { default: ref().value });
 const { t } = useI18n();
 const inputRef = ref();
 const customColorInputRef = useTemplateRef("customColorInputRef");
-const colorPalateContainerRef = useTemplateRef<HTMLDivElement | ComponentExposed<typeof Popover>>(
+const colorPalateContainerRef = useTemplateRef<ComponentExposed<typeof Popover>>(
   "colorPalateContainerRef",
 );
 const colorsContainerDivRef = useTemplateRef<HTMLDivElement>("colorsContainerDivRef");

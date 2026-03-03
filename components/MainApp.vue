@@ -11,6 +11,8 @@ import { defaultOptions as PrimeVueDefaultOptions } from "primevue/config";
 import { useToast } from "primevue/usetoast";
 import { useApiClient } from "HddUiHelpers/stores/apiClient";
 import ConfirmDialogWithInput from "HddUiHelpers/components/ConfirmDialogWithInput/ConfirmDialogWithInput.vue";
+import { watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 const { t, locale } = useI18n();
 const toast = useToast();

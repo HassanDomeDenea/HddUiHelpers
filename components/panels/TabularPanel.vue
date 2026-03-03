@@ -1,5 +1,6 @@
 <script lang="ts">
-import type { AppPermission } from "@/types/laravel_generated";
+
+import {HddPermission} from "HddUiHelpers/types/types.ts";
 
 export interface HddPanelTabItem {
   name: string;
@@ -7,7 +8,7 @@ export interface HddPanelTabItem {
   icon?: string;
   disabled?: boolean;
   visible?: boolean;
-  permission?: AppPermission | AppPermission[];
+  permission?: HddPermission | HddPermission[];
   component?: any;
   binds?: any;
 }
@@ -17,6 +18,9 @@ import PrimeVueTabs from "primevue/tabs";
 
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
 import { isBoolean, isString, startCase } from "lodash-es";
+import { computed, onActivated, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 
 const {
   basedOnRouteQuery = true,

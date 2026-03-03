@@ -9,6 +9,7 @@ import type {
 } from "yup";
 import type { HddFormComposer, UseHddFormOptions } from "../../utils/useHddForm";
 import type { AutocompleteInputProps, BaseInputProps, TextInputProps } from "../inputs/types";
+import { MaybeRef, MaybeRefOrGetter, Component } from "vue";
 
 export type HddFormValues<T extends string> = Record<T, any>;
 

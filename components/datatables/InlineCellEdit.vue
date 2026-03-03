@@ -9,6 +9,8 @@ import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
 import { useLoader } from "HddUiHelpers/composables/loader.ts";
 import { set } from "lodash-es";
 import get from "lodash-es/get";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 const { type, row, field, column, fieldName, submitCallback, cancelCallback } = defineProps<{
   row: { [k: string]: unknown };

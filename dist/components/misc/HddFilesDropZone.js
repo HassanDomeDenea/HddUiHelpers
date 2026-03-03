@@ -1,47 +1,49 @@
-import { defineComponent as v, unref as t, openBlock as y, createElementBlock as b, normalizeClass as D, createElementVNode as u, toDisplayString as E, createCommentVNode as h } from "vue";
-const L = /* @__PURE__ */ v({
+import { defineComponent as y, useTemplateRef as b, ref as s, onMounted as D, onBeforeUnmount as E, openBlock as h, createElementBlock as B, normalizeClass as L, unref as u, createElementVNode as m, toDisplayString as k, createCommentVNode as Z } from "vue";
+import { useDropZone as x } from "@vueuse/core";
+import { useI18n as C } from "vue-i18n";
+const T = /* @__PURE__ */ y({
   __name: "HddFilesDropZone",
   props: {
     accept: { default: () => ["image/jpeg", "image/png", "image/webp", "image/gif"] },
     multiple: { type: Boolean, default: !0 }
   },
   emits: ["upload"],
-  setup(r, { emit: m }) {
-    const p = m, a = useTemplateRef("dropZoneRef"), { t: c } = useI18n(), { isOverDropZone: f } = useDropZone(a, {
-      onDrop: g,
-      dataTypes: r.accept,
-      multiple: r.multiple,
+  setup(n, { emit: p }) {
+    const f = p, r = b("dropZoneRef"), { t: c } = C(), { isOverDropZone: g } = x(r, {
+      onDrop: v,
+      dataTypes: n.accept,
+      multiple: n.multiple,
       // whether to prevent default behavior for unhandled events
       preventDefaultForUnhandled: !1
     });
-    function g(e) {
-      e && p("upload", e);
+    function v(e) {
+      e && f("upload", e);
     }
-    const n = ref(!1), o = ref(0);
-    function d(e) {
-      o.value++, e.dataTransfer?.types.includes("Files") && (n.value = !0);
+    const o = s(!1), t = s(0);
+    function a(e) {
+      t.value++, e.dataTransfer?.types.includes("Files") && (o.value = !0);
     }
-    function l() {
-      o.value--, o.value === 0 && (n.value = !1);
+    function d() {
+      t.value--, t.value === 0 && (o.value = !1);
     }
-    function s(e) {
-      o.value = 0, n.value = !1;
+    function l(e) {
+      t.value = 0, o.value = !1;
     }
-    return onMounted(() => {
-      document.body.addEventListener("dragenter", d), document.body.addEventListener("dragleave", l), document.body.addEventListener("drop", s);
-    }), onBeforeUnmount(() => {
-      document.body.removeEventListener("dragenter", d), document.body.removeEventListener("dragleave", l), document.body.removeEventListener("drop", s);
-    }), (e, i) => t(n) ? (y(), b("div", {
+    return D(() => {
+      document.body.addEventListener("dragenter", a), document.body.addEventListener("dragleave", d), document.body.addEventListener("drop", l);
+    }), E(() => {
+      document.body.removeEventListener("dragenter", a), document.body.removeEventListener("dragleave", d), document.body.removeEventListener("drop", l);
+    }), (e, i) => o.value ? (h(), B("div", {
       key: 0,
       ref_key: "dropZoneRef",
-      ref: a,
-      class: D(["light:border-amber-700 border-1 m-1 flex min-h-24 items-center justify-center gap-1 rounded-lg border-dashed p-1 text-lg dark:border-amber-300", { "light:bg-yellow-100/25 dark:bg-yellow-900/25": t(f) }])
+      ref: r,
+      class: L(["light:border-amber-700 border-1 m-1 flex min-h-24 items-center justify-center gap-1 rounded-lg border-dashed p-1 text-lg dark:border-amber-300", { "light:bg-yellow-100/25 dark:bg-yellow-900/25": u(g) }])
     }, [
-      i[0] || (i[0] = u("i", { class: "i-material-symbols:upload-sharp" }, null, -1)),
-      u("span", null, E(t(c)("Drop Files Here to Upload")), 1)
-    ], 2)) : h("", !0);
+      i[0] || (i[0] = m("i", { class: "i-material-symbols:upload-sharp" }, null, -1)),
+      m("span", null, k(u(c)("Drop Files Here to Upload")), 1)
+    ], 2)) : Z("", !0);
   }
 });
 export {
-  L as default
+  T as default
 };

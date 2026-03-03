@@ -1,20 +1,21 @@
-import { defineComponent as B, resolveComponent as c, openBlock as l, createElementBlock as v, createVNode as r, withCtx as d, unref as a, createBlock as s, createCommentVNode as m } from "vue";
-import { printDomWithStyles as g } from "HddUiHelpers/utils/printDom.ts";
-const p = { class: "inline-flex flex-wrap" }, z = /* @__PURE__ */ B({
+import { defineComponent as B, resolveComponent as c, openBlock as l, createElementBlock as p, createVNode as r, withCtx as d, unref as a, createBlock as s, createCommentVNode as m } from "vue";
+import { printDomWithStyles as v } from "HddUiHelpers/utils/printDom.ts";
+import { useI18n as g } from "vue-i18n";
+const C = { class: "inline-flex flex-wrap" }, b = /* @__PURE__ */ B({
   __name: "TipTapPageControls",
   props: {
     editor: {},
     config: {}
   },
   setup(e) {
-    const { t: i } = useI18n();
+    const { t: i } = g();
     function f() {
       const t = document.createElement("div");
-      t.classList.add("tiptap"), t.innerHTML = e.editor.view.dom.innerHTML, g(t);
+      t.classList.add("tiptap"), t.innerHTML = e.editor.view.dom.innerHTML, v(t);
     }
     return (t, n) => {
       const o = c("Button"), u = c("ButtonGroup");
-      return l(), v("div", p, [
+      return l(), p("div", C, [
         r(u, null, {
           default: d(() => [
             r(o, {
@@ -56,5 +57,5 @@ const p = { class: "inline-flex flex-wrap" }, z = /* @__PURE__ */ B({
   }
 });
 export {
-  z as default
+  b as default
 };

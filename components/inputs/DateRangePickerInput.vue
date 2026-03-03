@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
 import moment from "moment";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps } from "./types";
 
@@ -13,7 +14,7 @@ const formattedValue = computed({
     return value.value?.map((e) => (e ? moment(e).toDate() : null));
   },
   set: (evt) => {
-    value.value = evt?.map((e) => (e ? moment(e).format("YYYY-MM-DD") : null));
+    value.value = evt?.map((e) => (e ? moment(e).format("YYYY-MM-DD") : null)) as [string|null, string|null];
   },
 });
 const inputRef = ref();
@@ -72,7 +73,6 @@ defineExpose({ focus, ...exposed });
         },
       }"
     >
-      <template #ww />
     </DatePicker>
   </BaseInput>
 </template>

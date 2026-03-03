@@ -8,6 +8,7 @@
     },
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
+    "noEmit": true,
     "types": ["vite/client"]
   }
 }

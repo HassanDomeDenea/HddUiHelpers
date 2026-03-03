@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useDropZone } from "@vueuse/core";
+import { onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+
 const { accept = ["image/jpeg", "image/png", "image/webp", "image/gif"], multiple = true } =
   defineProps<{
     accept?: string[];

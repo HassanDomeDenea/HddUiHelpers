@@ -1,6 +1,7 @@
 import type { EventBusKey } from "@vueuse/core";
 import { useEventBus } from "@vueuse/core";
 import type { ShallowRef } from "vue";
+import { nextTick, ref, shallowRef } from "vue";
 import { ComponentExposed } from "vue-component-type-helpers";
 
 export type DynamicComponentMounterEventBus<TComponent = any> = {

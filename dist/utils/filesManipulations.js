@@ -1,4 +1,4 @@
-async function F(r, i) {
+async function F(r, i = 0) {
   return new Promise((s, a) => {
     const n = new FileReader();
     n.onload = () => {

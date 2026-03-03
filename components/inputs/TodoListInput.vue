@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import type { RouteDefinition, RouteQueryOptions } from "@/wayfinder/wayfinder";
 import { useSortable } from "@vueuse/integrations/useSortable";
 import { useConfirmDialogWithInput } from "HddUiHelpers/components/ConfirmDialogWithInput/confirmDialogWithInputUtilities.ts";
 import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
 import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
 import { debounce, get } from "lodash-es";
 import { useConfirm } from "primevue/useconfirm";
-import { ref } from "vue";
+import { computed, onActivated, onMounted, ref, toValue, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps } from "./types";
+import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
 
 type LocalItemType = {
   id: string | number;
@@ -18,11 +19,11 @@ type LocalItemType = {
 };
 
 type ServerUrls = {
-  list: (options?: RouteQueryOptions) => RouteDefinition<"get">;
-  store: (options?: RouteQueryOptions) => RouteDefinition<"post">;
-  update: (args: string | number, options?: RouteQueryOptions) => RouteDefinition<"put">;
-  destroy: (args: string | number, options?: RouteQueryOptions) => RouteDefinition<"delete">;
-  reorder: (options?: RouteQueryOptions) => RouteDefinition<"put">;
+  list: (options?: {query?:any, mergeQuery?: any}) => {url: string, method: "get"};
+  store: (options?: {query?:any, mergeQuery?: any}) => {url: string, method: "post"};
+  update: (args: string | number, options?: {query?:any, mergeQuery?: any}) => {url: string, method: "put"};
+  destroy: (args: string | number, options?: {query?:any, mergeQuery?: any}) => {url: string, method: "delete"};
+  reorder: (options?: {query?:any, mergeQuery?: any}) => {url: string, method: "put"};
 };
 
 const props = withDefaults(

@@ -1,7 +1,7 @@
-import { defineComponent as V, useModel as v, ref as A, resolveComponent as $, openBlock as h, createBlock as k, mergeProps as f, unref as a, createSlots as S, withCtx as s, createVNode as M, renderSlot as r, createElementVNode as U, normalizeClass as E, mergeModels as y } from "vue";
-import { useHddBaseInputUtils as N } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { _ as q } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const T = ["innerHTML"], P = /* @__PURE__ */ V({
+import { defineComponent as L, useModel as V, ref as A, computed as $, resolveComponent as h, openBlock as k, createBlock as S, mergeProps as f, unref as d, createSlots as M, withCtx as i, createVNode as U, renderSlot as r, createElementVNode as E, normalizeClass as N, mergeModels as y } from "vue";
+import { useHddBaseInputUtils as q } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { _ as T } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const z = ["innerHTML"], R = /* @__PURE__ */ L({
   __name: "NumberInput",
   props: /* @__PURE__ */ y({
     inputClass: {},
@@ -59,37 +59,37 @@ const T = ["innerHTML"], P = /* @__PURE__ */ V({
   }),
   emits: /* @__PURE__ */ y(["keydown", "input", "updated"], ["update:modelValue"]),
   setup(e, { expose: c, emit: B }) {
-    const t = e, u = B, i = v(e, "modelValue"), d = A();
+    const t = e, s = B, a = V(e, "modelValue"), u = A();
     function p() {
-      d.value.$refs.input.$el.focus();
+      u.value.$refs.input.$el.focus();
     }
     function b() {
-      d.value.$refs.input.$el.select();
+      u.value.$refs.input.$el.select();
     }
     function g(o) {
-      u("input", o), t.immediateUpdate && (i.value = o.value);
+      s("input", o), t.immediateUpdate && (a.value = o.value);
     }
-    const { exposed: x, baseInputForwardedProps: w, fieldUniqueId: C, generalInputProps: I } = N(t), m = computed(() => typeof t.textAddon == "function" ? t.textAddon(i.value) : t.textAddon);
+    const { exposed: x, baseInputForwardedProps: w, fieldUniqueId: v, generalInputProps: C } = q(t), m = $(() => typeof t.textAddon == "function" ? t.textAddon(a.value) : t.textAddon);
     return c({ focus: p, select: b, ...x }), (o, n) => {
-      const L = $("InputNumber");
-      return h(), k(q, f(a(w), { onClick: p }), S({
-        labelText: s(() => [
+      const I = h("InputNumber");
+      return k(), S(T, f(d(w), { onClick: p }), M({
+        labelText: i(() => [
           r(o.$slots, "label-text")
         ]),
-        default: s(() => [
-          M(L, f({
+        default: i(() => [
+          U(I, f({
             ref_key: "inputRef",
-            ref: d,
-            modelValue: i.value,
-            "onUpdate:modelValue": n[0] || (n[0] = (l) => i.value = l),
-            "input-id": a(C),
+            ref: u,
+            modelValue: a.value,
+            "onUpdate:modelValue": n[0] || (n[0] = (l) => a.value = l),
+            "input-id": d(v),
             "use-grouping": e.useGrouping,
             class: ["w-full", e.inputClass],
             "max-fraction-digits": e.precision,
             locale: "en-US",
             type: "number"
           }, {
-            ...a(I),
+            ...d(C),
             showButtons: e.showButtons,
             min: e.min,
             suffix: e.suffix,
@@ -97,28 +97,28 @@ const T = ["innerHTML"], P = /* @__PURE__ */ V({
             step: e.step,
             allowEmpty: e.allowEmpty
           }, {
-            onKeydown: n[1] || (n[1] = (l) => u("keydown", l)),
+            onKeydown: n[1] || (n[1] = (l) => s("keydown", l)),
             onInput: g,
-            "onUpdate:modelValue": n[2] || (n[2] = (l) => u("updated", l))
+            "onUpdate:modelValue": n[2] || (n[2] = (l) => s("updated", l))
           }), null, 16, ["modelValue", "input-id", "use-grouping", "max-fraction-digits", "class"])
         ]),
         _: 2
       }, [
-        o.$slots.addon || a(m) ? {
+        o.$slots.addon || m.value ? {
           name: "addon",
-          fn: s(() => [
+          fn: i(() => [
             r(o.$slots, "addon", {}, () => [
-              U("span", {
-                class: E({ "text-xs": e.size === "small", "text-lg": e.size === "large" }),
-                innerHTML: a(m)
-              }, null, 10, T)
+              E("span", {
+                class: N({ "text-xs": e.size === "small", "text-lg": e.size === "large" }),
+                innerHTML: m.value
+              }, null, 10, z)
             ])
           ]),
           key: "0"
         } : void 0,
         o.$slots.helper ? {
           name: "helper",
-          fn: s(() => [
+          fn: i(() => [
             r(o.$slots, "helper")
           ]),
           key: "1"
@@ -128,5 +128,5 @@ const T = ["innerHTML"], P = /* @__PURE__ */ V({
   }
 });
 export {
-  P as default
+  R as default
 };

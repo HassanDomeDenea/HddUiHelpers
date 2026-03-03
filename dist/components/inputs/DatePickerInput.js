@@ -1,14 +1,15 @@
-import { defineComponent as x, useModel as M, resolveComponent as E, openBlock as c, createBlock as O, mergeProps as b, unref as e, withCtx as v, createElementVNode as w, createVNode as d, isRef as A, createElementBlock as B, createCommentVNode as g, normalizeClass as P, withModifiers as T, mergeModels as z } from "vue";
-import { useHddBaseInputUtils as F } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import s from "moment";
-import R from "primevue/datepicker";
-import { _ as $ } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const q = { class: "relative !w-full" }, H = {
+import { defineComponent as M, useModel as E, useTemplateRef as O, computed as c, resolveComponent as A, openBlock as y, createBlock as P, mergeProps as b, unref as o, withCtx as w, createElementVNode as B, createVNode as d, createElementBlock as g, createCommentVNode as k, normalizeClass as T, withModifiers as z, mergeModels as F } from "vue";
+import { useHddBaseInputUtils as $ } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import r from "moment";
+import q from "primevue/datepicker";
+import { useI18n as R } from "vue-i18n";
+import { _ as H } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const K = { class: "relative !w-full" }, N = {
   key: 0,
   class: "border-t-1 border-t-dashed border-t-gray/25 mt-1 pt-1"
-}, G = /* @__PURE__ */ x({
+}, X = /* @__PURE__ */ M({
   __name: "DatePickerInput",
-  props: /* @__PURE__ */ z({
+  props: /* @__PURE__ */ F({
     manualInput: { type: Boolean, default: !1 },
     isYearOnly: { type: Boolean, default: !1 },
     withSuggestionsButtons: { type: Boolean, default: !1 },
@@ -63,107 +64,107 @@ const q = { class: "relative !w-full" }, H = {
     modelModifiers: {}
   }),
   emits: ["update:modelValue"],
-  setup(t, { expose: k }) {
-    const l = t, u = M(t, "modelValue"), { t: m } = useI18n(), a = useTemplateRef("inputRef");
-    function y() {
-      a.value.input?.focus();
+  setup(l, { expose: h }) {
+    const t = l, s = E(l, "modelValue"), { t: m } = R(), n = O("inputRef");
+    function v() {
+      n.value.input?.focus();
     }
-    const i = computed({
-      get: () => l.isYearOnly ? u.value ? s(u.value).format("YYYY") : null : u.value,
-      set: (n) => {
-        l.isYearOnly ? u.value = n ? s(n).format("YYYY") : null : n && l.formatAsString ? u.value = s(n).format(l.stringFormat ?? "YYYY-MM-DD HH:mm:ss") : u.value = n;
+    const u = c({
+      get: () => t.isYearOnly ? s.value ? r(s.value).format("YYYY") : null : s.value,
+      set: (a) => {
+        t.isYearOnly ? s.value = a ? r(a).format("YYYY") : null : a && t.formatAsString ? s.value = r(a).format(t.stringFormat ?? "YYYY-MM-DD HH:mm:ss") : s.value = a;
       }
     });
-    function h(n) {
-      a.value.overlayVisible && (a.value.overlayVisible = !1, n.stopPropagation());
+    function V(a) {
+      n.value.overlayVisible && (n.value.overlayVisible = !1, a.stopPropagation());
     }
-    const { exposed: V, baseInputForwardedProps: C, fieldUniqueId: Y, generalInputProps: D } = F(l), I = computed(
-      () => l.isYearOnly ? "yy" : l.dateFormat ?? "yy-mm-dd"
-    ), L = computed(() => l.isYearOnly ? "year" : l.view), f = function(n) {
-      i.value = n, a.value.overlayVisible && (a.value.overlayVisible = !1);
+    const { exposed: C, baseInputForwardedProps: Y, fieldUniqueId: D, generalInputProps: I } = $(t), L = c(
+      () => t.isYearOnly ? "yy" : t.dateFormat ?? "yy-mm-dd"
+    ), S = c(() => t.isYearOnly ? "year" : t.view), f = function(a) {
+      u.value = a, n.value.overlayVisible && (n.value.overlayVisible = !1);
     };
-    function S() {
-      l.startingView === "year" ? a.value.switchToYearView(new Event("year")) : l.startingView === "month" && a.value.switchToMonthView(new Event("month"));
+    function x() {
+      t.startingView === "year" ? n.value.switchToYearView(new Event("year")) : t.startingView === "month" && n.value.switchToMonthView(new Event("month"));
     }
-    return k({ focus: y, inputRef: a, ...V }), (n, o) => {
-      const p = E("Button");
-      return c(), O($, b(e(C), {
-        "on-local-enter-key-down": t.onLocalEnterKeyDown ?? h,
-        onClick: y
+    return h({ focus: v, inputRef: n, ...C }), (a, e) => {
+      const p = A("Button");
+      return y(), P(H, b(o(Y), {
+        "on-local-enter-key-down": l.onLocalEnterKeyDown ?? V,
+        onClick: v
       }), {
-        default: v(() => [
-          w("div", q, [
-            d(e(R), b(e(D), {
+        default: w(() => [
+          B("div", K, [
+            d(o(q), b(o(I), {
               ref_key: "inputRef",
-              ref: a,
-              modelValue: e(i),
-              "onUpdate:modelValue": o[4] || (o[4] = (r) => A(i) ? i.value = r : null),
+              ref: n,
+              modelValue: u.value,
+              "onUpdate:modelValue": e[4] || (e[4] = (i) => u.value = i),
               "panel-class": "HddDatePickerPanel",
-              "input-id": e(Y),
-              placeholder: t.placeholder,
-              "date-format": e(I),
+              "input-id": o(D),
+              placeholder: l.placeholder,
+              "date-format": L.value,
               "hide-on-date-time-select": "",
-              "show-time": t.showTime,
+              "show-time": l.showTime,
               "hour-format": "12",
               class: "!w-full",
               "show-icon": "",
-              view: e(L),
-              "manual-input": t.manualInput,
-              "show-button-bar": t.clearable,
+              view: S.value,
+              "manual-input": l.manualInput,
+              "show-button-bar": l.clearable,
               pt: {
                 pcInputText: {
                   root: {
-                    onKeydown: (r) => {
+                    onKeydown: (i) => {
                     }
                   }
                 }
               },
-              onClearClick: o[5] || (o[5] = () => t.clearable && (i.value = null)),
-              onShow: S
+              onClearClick: e[5] || (e[5] = () => l.clearable && (u.value = null)),
+              onShow: x
             }), {
-              footer: v(() => [
-                t.withSuggestionsButtons ? (c(), B("div", H, [
+              footer: w(() => [
+                l.withSuggestionsButtons ? (y(), g("div", N, [
                   d(p, {
                     size: "small",
                     text: "",
                     severity: "secondary",
-                    label: e(m)("Start of Month"),
-                    onClick: o[0] || (o[0] = (r) => f(e(s)().startOf("month")))
+                    label: o(m)("Start of Month"),
+                    onClick: e[0] || (e[0] = (i) => f(o(r)().startOf("month")))
                   }, null, 8, ["label"]),
                   d(p, {
                     size: "small",
                     text: "",
                     severity: "secondary",
-                    label: e(m)("End of Month"),
-                    onClick: o[1] || (o[1] = (r) => f(e(s)().endOf("month")))
+                    label: o(m)("End of Month"),
+                    onClick: e[1] || (e[1] = (i) => f(o(r)().endOf("month")))
                   }, null, 8, ["label"]),
                   d(p, {
                     size: "small",
                     text: "",
                     severity: "secondary",
-                    label: e(m)("Start of Week"),
-                    onClick: o[2] || (o[2] = (r) => f(e(s)().startOf("week")))
+                    label: o(m)("Start of Week"),
+                    onClick: e[2] || (e[2] = (i) => f(o(r)().startOf("week")))
                   }, null, 8, ["label"]),
                   d(p, {
                     size: "small",
                     text: "",
                     severity: "secondary",
-                    label: e(m)("End of Week"),
-                    onClick: o[3] || (o[3] = (r) => f(e(s)().endOf("week")))
+                    label: o(m)("End of Week"),
+                    onClick: e[3] || (e[3] = (i) => f(o(r)().endOf("week")))
                   }, null, 8, ["label"])
-                ])) : g("", !0)
+                ])) : k("", !0)
               ]),
               _: 1
             }, 16, ["modelValue", "input-id", "placeholder", "date-format", "show-time", "view", "manual-input", "show-button-bar"]),
-            t.clearable && e(i) ? (c(), B("div", {
+            l.clearable && u.value ? (y(), g("div", {
               key: 0,
-              class: P(["clear-icon-container", [t.size]])
+              class: T(["clear-icon-container", [l.size]])
             }, [
-              w("i", {
+              B("i", {
                 class: "i-mdi:times clear-icon",
-                onClick: o[6] || (o[6] = T((r) => i.value = null, ["stop"]))
+                onClick: e[6] || (e[6] = z((i) => u.value = null, ["stop"]))
               })
-            ], 2)) : g("", !0)
+            ], 2)) : k("", !0)
           ])
         ]),
         _: 1
@@ -172,5 +173,5 @@ const q = { class: "relative !w-full" }, H = {
   }
 });
 export {
-  G as default
+  X as default
 };

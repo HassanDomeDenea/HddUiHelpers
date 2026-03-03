@@ -2,6 +2,8 @@
 import type { Editor } from "@tiptap/vue-3";
 import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
 import { printDomWithStyles } from "HddUiHelpers/utils/printDom.ts";
+import { useI18n } from "vue-i18n";
+
 const { editor } = defineProps<{
   editor: Editor;
   config?: TipTapEditorConfig;

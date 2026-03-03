@@ -17,6 +17,9 @@ const { isLoggedIn } = storeToRefs(useUserStore())*/
 import ChatWidget from "../Widgets/Chat/ChatWidget.vue";
 import { useBasicAuthStore } from "../../stores/basicAuth";
 import { useDimensionsStore } from "../../stores/dimensions";
+import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import {useElementSize} from "@vueuse/core";
 
 const authStore = useBasicAuthStore();
 

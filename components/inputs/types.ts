@@ -1,6 +1,6 @@
 import type { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
 import type { ButtonProps } from "primevue";
-import type { StyleValue } from "vue";
+import type { MaybeRef, MaybeRefOrGetter, StyleValue } from "vue";
 
 export type ElementClassType =
   | string

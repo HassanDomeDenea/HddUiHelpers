@@ -5,6 +5,9 @@ import TipTapColorsControls from "HddUiHelpers/components/TipTapEditor/ToolbarCo
 import TipTapPageControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapPageControls.vue";
 import TipTapTableControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTableControls.vue";
 import TipTapTextStyleControls from "HddUiHelpers/components/TipTapEditor/ToolbarComponents/TipTapTextStyleControls.vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
 const { t } = useI18n();
 const { editor } = defineProps<{
   editor: Editor;

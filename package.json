@@ -2,6 +2,7 @@
   "name": "@hassandomedenea/hdduihelpers",
   "version": "0.1.0",
   "type": "module",
+  "web-types": "./web-types.json",
   "scripts": {
     "dev": "vite",
     "lint": "oxlint",

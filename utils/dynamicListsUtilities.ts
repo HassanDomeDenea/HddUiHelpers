@@ -15,7 +15,19 @@ import {
   unset,
 } from "lodash-es";
 import moment from "moment";
+import { useStorage } from "@vueuse/core";
 import type { Ref, WatchStopHandle } from "vue";
+import {
+  computed,
+  onActivated,
+  onDeactivated,
+  onMounted,
+  onUnmounted,
+  ref,
+  toValue,
+  watch,
+} from "vue";
+import { useI18n } from "vue-i18n";
 
 export function createListStore<TItem = any>(
   url: string | { url: string; method: "get" | "post" | "put" | "delete" | "patch" },
@@ -324,11 +336,11 @@ export function createListStore<TItem = any>(
     if (options.childrenProperty) {
       const accumulator: TItem[] = [];
 
-      function _localMapper(_item: TItem, _accumulator: TItem[] = []) {
+      const _localMapper = (_item: TItem, _accumulator: TItem[] = []) => {
         _accumulator.push(omit(_item as any, options.childrenProperty) as TItem);
         _item[options.childrenProperty]?.map((e: TItem) => _localMapper(e, _accumulator));
         return _accumulator;
-      }
+      };
 
       items.value.map((e) => _localMapper(e, accumulator));
       return accumulator;
@@ -379,11 +391,11 @@ export function createListStore<TItem = any>(
     if (options.childrenProperty) {
       const accumulator: TItem[] = [];
 
-      function _localMapper(_item: TItem, _accumulator: TItem[] = []) {
+      const _localMapper = (_item: TItem, _accumulator: TItem[] = []) => {
         _accumulator.push(omit(_item as any, options.childrenProperty) as TItem);
         _item[options.childrenProperty]?.map((e: TItem) => _localMapper(e, _accumulator));
         return _accumulator;
-      }
+      };
 
       if (includeSelf) {
         [_item].map((e) => _localMapper(e, accumulator));

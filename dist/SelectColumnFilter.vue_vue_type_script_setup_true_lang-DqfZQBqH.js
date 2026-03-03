@@ -1,6 +1,7 @@
 import { defineComponent as r, useModel as n, openBlock as p, createBlock as i, unref as u, mergeModels as s } from "vue";
-import { _ as d } from "./SelectInput.vue_vue_type_script_setup_true_lang-oqssJ2qZ.js";
-const b = /* @__PURE__ */ r({
+import { _ as d } from "./SelectInput.vue_vue_type_script_setup_true_lang-C04mN7pi.js";
+import { useI18n as c } from "vue-i18n";
+const P = /* @__PURE__ */ r({
   __name: "SelectColumnFilter",
   props: /* @__PURE__ */ s({
     options: {},
@@ -13,11 +14,11 @@ const b = /* @__PURE__ */ r({
   }),
   emits: ["update:slotProps"],
   setup(e) {
-    const o = n(e, "slotProps"), { t } = useI18n();
+    const o = n(e, "slotProps"), { t } = c();
     function a(l) {
       o.value.filterModel.value = l, o.value.filterModel.matchMode = "equals", o.value.filterCallback();
     }
-    return (l, c) => (p(), i(d, {
+    return (l, m) => (p(), i(d, {
       "model-value": o.value.filterModel.value,
       clearable: "",
       "option-label-property": e.optionLabelProperty,
@@ -31,5 +32,5 @@ const b = /* @__PURE__ */ r({
   }
 });
 export {
-  b as _
+  P as _
 };

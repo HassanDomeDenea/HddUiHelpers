@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import type { AppPermission } from "@/types/laravel_generated";
 import DarkModeButton from "HddUiHelpers/components/misc/DarkModeButton.vue";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
 import { useDimensionsStore } from "HddUiHelpers/stores/dimensions.ts";
 import { Menubar } from "primevue";
+import { computed, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import {HddPermission} from "HddUiHelpers/types/types.ts";
+import {useElementSize} from "@vueuse/core";
 
 const authStore = useBasicAuthStore();
 
@@ -18,7 +21,7 @@ export interface NavbarMenuItemInterface {
   shortcut?: string;
   command?: () => any;
   auth?: boolean;
-  permission?: AppPermission | AppPermission[];
+  permission?: HddPermission | HddPermission[];
 }
 
 const {

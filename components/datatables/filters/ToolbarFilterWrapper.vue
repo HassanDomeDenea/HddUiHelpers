@@ -16,6 +16,8 @@ import {
   type ServerDataTableColumn,
   type ServerDataTableToolbarFilterWrapper,
 } from "../ServerDataTableTypes.ts";
+import { nextTick, onMounted, ref, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 
 const emits = defineEmits<{
   filterCallback: [filter: ServerDataTableToolbarFilterValue];

@@ -1,101 +1,102 @@
-import { echoIsConfigured as z, echo as P } from "@laravel/echo-vue";
-import B, { isAxiosError as D } from "axios";
-import { useHddUiHelpers as H } from "HddUiHelpers/plugins/HddUiHelpers";
-import { useBasicAuthStore as $ } from "HddUiHelpers/stores/basicAuth";
-import { defineStore as _ } from "pinia";
-function S(i, r, n = "") {
-  if (r && typeof r == "object" && !(r instanceof File)) {
-    const c = r;
-    Object.keys(c).forEach((f) => {
-      let u = c[f];
-      const d = n ? `${n}[${f}]` : f;
-      typeof u == "boolean" ? u = u ? 1 : 0 : u === null && (u = ""), S(i, u, d);
+import { echoIsConfigured as P, echo as B } from "@laravel/echo-vue";
+import D, { isAxiosError as H } from "axios";
+import { useHddUiHelpers as $ } from "HddUiHelpers/plugins/HddUiHelpers";
+import { useBasicAuthStore as _ } from "HddUiHelpers/stores/basicAuth";
+import { defineStore as M } from "pinia";
+import { ref as r, computed as N } from "vue";
+function b(l, a, u = "") {
+  if (a && typeof a == "object" && !(a instanceof File)) {
+    const f = a;
+    Object.keys(f).forEach((p) => {
+      let i = f[p];
+      const m = u ? `${u}[${p}]` : p;
+      typeof i == "boolean" ? i = i ? 1 : 0 : i === null && (i = ""), b(l, i, m);
     });
   } else
-    i.append(n, r);
+    l.append(u, a);
 }
-const Q = _("apiClient", () => {
-  const i = $(), r = ref(null), n = ref(null), c = ref(), f = H();
-  function u(e) {
-    c.value = e;
+const Y = M("apiClient", () => {
+  const l = _(), a = r(null), u = r(null), f = r(), p = $();
+  function i(e) {
+    f.value = e;
   }
-  function d(e) {
-    r.value = e;
+  function m(e) {
+    a.value = e;
   }
-  function b(e) {
-    n.value = e;
+  function q(e) {
+    u.value = e;
   }
-  const p = ref(0), q = computed(() => p.value > 0), v = ref(0), h = ref(!1), m = B.create({
+  const d = r(0), E = N(() => d.value > 0), v = r(0), h = r(!1), g = D.create({
     baseURL: "/",
     withCredentials: !1,
     headers: {
       accept: "application/json"
     }
   });
-  m.interceptors.request.use((e) => (p.value++, i.authorizationToken && (e.headers.Authorization = `Bearer ${i.authorizationToken}`), f.withBroadcasting && z() && (e.headers["X-Socket-ID"] = P().socketId()), e)), m.interceptors.response.use(
-    (e) => (p.value--, e),
-    (e) => (E(0.2), p.value--, e.status === 401 && i.isLoggedIn && (i.logout(), console.log(e), c.value?.push({ path: "/login", query: { redirect_url: window.location.pathname } }).then()), Promise.reject(e))
+  g.interceptors.request.use((e) => (d.value++, l.authorizationToken && (e.headers.Authorization = `Bearer ${l.authorizationToken}`), p.withBroadcasting && P() && (e.headers["X-Socket-ID"] = B().socketId()), e)), g.interceptors.response.use(
+    (e) => (d.value--, e),
+    (e) => (j(0.2), d.value--, e.status === 401 && l.isLoggedIn && (l.logout(), console.log(e), f.value?.push({ path: "/login", query: { redirect_url: window.location.pathname } }).then()), Promise.reject(e))
   );
-  const g = ref(!1), T = ref();
-  function E(e) {
-    g.value = !0, clearTimeout(T.value), T.value = setTimeout(() => {
-      g.value = !1;
+  const y = r(!1), A = r();
+  function j(e) {
+    y.value = !0, clearTimeout(A.value), A.value = setTimeout(() => {
+      y.value = !1;
     }, e * 1e3);
   }
-  const a = ref(m);
-  function j(e, t = null, s = !1) {
-    return a.value.request({
+  const n = r(g);
+  function w(e, t = null, s = !1) {
+    return n.value.request({
       ...e,
       ...t ? { data: t } : {},
       ...s ? {} : { baseURL: "/" }
     });
   }
-  function w(e) {
-    a.value = e;
+  function x(e) {
+    n.value = e;
   }
-  function x(e, t) {
-    return a.value.get(e, t);
+  function F(e, t) {
+    return n.value.get(e, t);
   }
-  function F(e, t, s) {
-    return a.value.post(e, t, s);
+  function I(e, t, s) {
+    return n.value.post(e, t, s);
   }
-  function I(e, t, s, k) {
-    const l = new FormData();
+  function L(e, t, s, z) {
+    const c = new FormData();
     if (Array.isArray(t) || t instanceof FileList)
       for (let o = 0; o < t.length; o++)
-        l.append("files[]", t[o]);
+        c.append("files[]", t[o]);
     else if (Object.keys(t).length > 0 && !(t instanceof File))
       for (const o in t)
         if (Array.isArray(t[o]) || t[o] instanceof FileList)
-          for (let y = 0; y < t[o].length; y++)
-            l.append(o + "[]", t[o][y]);
+          for (let T = 0; T < t[o].length; T++)
+            c.append(o + "[]", t[o][T]);
         else
-          l.append(o, t[o]);
+          c.append(o, t[o]);
     else
-      l.append("file", t);
-    return s && S(l, s), typeof e != "string" && e.method.toLowerCase() !== "post" && l.append("_method", e.method), v.value = 0, h.value = !0, a.value.request({
+      c.append("file", t);
+    return s && b(c, s), typeof e != "string" && e.method.toLowerCase() !== "post" && c.append("_method", e.method), v.value = 0, h.value = !0, n.value.request({
       url: typeof e == "string" ? e : e.url,
       method: "POST",
-      data: l,
+      data: c,
       onUploadProgress(o) {
         o.lengthComputable && (v.value = o.total ? Math.round(o.loaded * 100 / o.total) : 0);
       },
-      ...k
+      ...z
     }).finally(() => h.value = !1);
   }
-  function L(e, t, s) {
-    return a.value.put(e, t, s);
-  }
   function O(e, t, s) {
-    return a.value.patch(e, t, s);
+    return n.value.put(e, t, s);
   }
-  function A(e, t) {
-    return a.value.delete(e, t);
+  function U(e, t, s) {
+    return n.value.patch(e, t, s);
   }
-  function U(e) {
-    if (D(e)) {
-      let t = e.response?.data?.message || e.response?.data?.data?.message || e.message || r.value?.("Error Occurred") || "Error Occurred";
-      e.status === 403 && t === "This action is unauthorized." && (t = r.value?.(t)), e.status === 401 && t === "Unauthenticated." && (t = r.value?.(t)), e.status === 413 && e?.response?.statusText && (t = r.value?.(e.response.statusText)), n.value?.add({
+  function S(e, t) {
+    return n.value.delete(e, t);
+  }
+  function C(e) {
+    if (H(e)) {
+      let t = e.response?.data?.message || e.response?.data?.data?.message || e.message || a.value?.("Error Occurred") || "Error Occurred";
+      e.status === 403 && t === "This action is unauthorized." && (t = a.value?.(t)), e.status === 401 && t === "Unauthenticated." && (t = a.value?.(t)), e.status === 413 && e?.response?.statusText && (t = a.value?.(e.response.statusText)), u.value?.add({
         group: "errors",
         severity: "error",
         summary: t,
@@ -103,21 +104,21 @@ const Q = _("apiClient", () => {
       });
     }
   }
-  function C(e = "", t = "", s = {}) {
-    n.value?.add({
+  function R(e = "", t = "", s = {}) {
+    u.value?.add({
       group: "errors",
       severity: "error",
-      summary: e || r.value?.("Error Occurred") || "Error Occurred",
+      summary: e || a.value?.("Error Occurred") || "Error Occurred",
       detail: t,
       life: 3e3,
       ...s
     });
   }
-  function R(e = "", t = "", s = {}) {
-    n.value?.add({
+  function k(e = "", t = "", s = {}) {
+    u.value?.add({
       group: "success",
       severity: "success",
-      summary: e || r.value?.("Successful") || "Successful",
+      summary: e || a.value?.("Successful") || "Successful",
       detail: t,
       life: 2e3,
       ...s
@@ -126,26 +127,26 @@ const Q = _("apiClient", () => {
   return {
     uploadProgress: v,
     isUploading: h,
-    isLoading: q,
-    setToast: b,
-    setI18n: d,
-    hasError: g,
-    toastRequestError: U,
-    upload: I,
-    toastError: C,
-    toastSuccess: R,
-    request: j,
-    axiosInstance: a,
-    setAxiosInstance: w,
-    setRouter: u,
-    get: x,
-    post: F,
-    put: L,
-    patch: O,
-    delete: A,
-    deleteRequest: A
+    isLoading: E,
+    setToast: q,
+    setI18n: m,
+    hasError: y,
+    toastRequestError: C,
+    upload: L,
+    toastError: R,
+    toastSuccess: k,
+    request: w,
+    axiosInstance: n,
+    setAxiosInstance: x,
+    setRouter: i,
+    get: F,
+    post: I,
+    put: O,
+    patch: U,
+    delete: S,
+    deleteRequest: S
   };
 });
 export {
-  Q as useApiClient
+  Y as useApiClient
 };

@@ -1,13 +1,12 @@
-import { defineComponent as n, renderSlot as l } from "vue";
-const a = /* @__PURE__ */ n({
+import { defineComponent as f, useSlots as c, onMounted as l, ref as r, renderSlot as a } from "vue";
+const p = /* @__PURE__ */ f({
   __name: "AutoFocusable",
   props: {
     duration: { default: 0 }
   },
   setup(t) {
-    useTemplateRef("slotRef");
-    const s = useSlots();
-    onMounted(() => {
+    const s = c();
+    l(() => {
       s.default && setTimeout(() => {
         u();
       }, t.duration);
@@ -16,13 +15,13 @@ const a = /* @__PURE__ */ n({
       const e = o.value;
       e && (e.focus && e.focus() || e.$el.focus && e.$el.focus() || e.$el.querySelector("input")?.focus());
     }
-    const o = ref();
-    function f(e) {
+    const o = r();
+    function n(e) {
       o.value = e;
     }
-    return (e, c) => l(e.$slots, "default", { setRef: f });
+    return (e, i) => a(e.$slots, "default", { setRef: n });
   }
 });
 export {
-  a as default
+  p as default
 };

@@ -14,6 +14,7 @@ import { defineStore } from "pinia";
 import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers";
 import { safeRequest } from "../utils/safeTry";
 import { useStorage } from "@vueuse/core";
+import { computed, Ref, ref, watch } from "vue";
 
 export const useBasicAuthStore = defineStore("basicAuth", () => {
   const user = ref<BasicUserData | null>(null);
@@ -30,8 +31,8 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
   const options = ref<UserOptionsMap>(cloneDeep(hddUiHelpers.defaultUserOptions));
   const globalOptions: Ref<GlobalOptionsMap> = ref<GlobalOptionsMap>(cloneDeep({}));
 
-  function resetOptions(data: GlobalOptionsMap | null = null) {
-    const newOptions = cloneDeep(hddUiHelpers.defaultUserOptions) as GlobalOptionsMap;
+  function resetOptions(data: UserOptionsMap | null = null) {
+    const newOptions = cloneDeep(hddUiHelpers.defaultUserOptions) as UserOptionsMap;
     if (data) {
       each(data, (_value, _key) => {
         newOptions[_key] = _value;
@@ -60,7 +61,7 @@ export const useBasicAuthStore = defineStore("basicAuth", () => {
   async function changeOption(option: HddUserOption, value: UserOptionsMap[HddUserOption]) {
     try {
       await apiClient.request({ method: "post", url: "/api/change-option" }, { option, value });
-      options.value[option] = value;
+      options.value[option] = value as any;
     } catch (error: any) {
       apiClient.toastError(error?.response?.data?.message ?? "");
       throw error;

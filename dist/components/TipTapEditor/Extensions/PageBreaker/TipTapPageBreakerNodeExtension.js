@@ -1,6 +1,6 @@
 import { Node as n, mergeAttributes as o } from "@tiptap/core";
 import { VueNodeViewRenderer as i } from "@tiptap/vue-3";
-import { _ as p } from "../../../../TipTapPageBreakerNode.vue_vue_type_script_setup_true_lang-HsODQlN_.js";
+import { _ as p } from "../../../../TipTapPageBreakerNode.vue_vue_type_script_setup_true_lang-DmnDMaQB.js";
 const m = n.create({
   name: "TipTapPageBreakerNode",
   group: "block",

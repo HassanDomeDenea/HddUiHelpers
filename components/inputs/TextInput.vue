@@ -4,6 +4,7 @@ import {
   cursorAtStartOfInput,
   useHddBaseInputUtils,
 } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { computed, ref, watch } from "vue";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputSlots, TextInputProps } from "./types";
 

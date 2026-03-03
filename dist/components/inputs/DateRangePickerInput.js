@@ -1,8 +1,9 @@
-import { defineComponent as D, useModel as I, ref as V, resolveComponent as Y, openBlock as v, createBlock as C, mergeProps as d, unref as n, withCtx as m, createVNode as M, isRef as L, mergeModels as k } from "vue";
+import { defineComponent as D, useModel as v, computed as w, ref as I, resolveComponent as V, openBlock as Y, createBlock as C, mergeProps as d, unref as a, withCtx as M, createVNode as L, mergeModels as k } from "vue";
 import { useHddBaseInputUtils as x } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import s from "moment";
-import { _ as A } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const S = /* @__PURE__ */ D({
+import i from "moment";
+import { useI18n as _ } from "vue-i18n";
+import { _ as A } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const K = /* @__PURE__ */ D({
   __name: "DateRangePickerInput",
   props: /* @__PURE__ */ k({
     autocomplete: {},
@@ -49,36 +50,36 @@ const S = /* @__PURE__ */ D({
     modelModifiers: {}
   }),
   emits: ["update:modelValue"],
-  setup(r, { expose: c }) {
-    const f = r, { t: y } = useI18n(), t = I(r, "modelValue"), i = computed({
-      get: () => t.value?.map((e) => e ? s(e).toDate() : null),
+  setup(r, { expose: m }) {
+    const c = r, { t: f } = _(), t = v(r, "modelValue"), p = w({
+      get: () => t.value?.map((e) => e ? i(e).toDate() : null),
       set: (e) => {
-        t.value = e?.map((o) => o ? s(o).format("YYYY-MM-DD") : null);
+        t.value = e?.map((o) => o ? i(o).format("YYYY-MM-DD") : null);
       }
-    }), p = V();
+    }), s = I();
     function u() {
-      p.value.$el.focus();
+      s.value.$el.focus();
     }
-    function b(e) {
+    function y(e) {
       if (e.key === "Enter") {
-        const a = e.target.value;
-        if (a.split("-").length === 3) {
-          const l = s(a);
+        const n = e.target.value;
+        if (n.split("-").length === 3) {
+          const l = i(n);
           l.isValid() && (t.value ? t.value[0] = l.format("YYYY-MM-DD") : t.value = [l.format("YYYY-MM-DD"), null]);
         }
       }
     }
-    const { exposed: B, baseInputForwardedProps: g, fieldUniqueId: h, generalInputProps: w } = x(f);
-    return c({ focus: u, ...B }), (e, o) => {
-      const a = Y("DatePicker");
-      return v(), C(A, d(n(g), { onClick: u }), {
-        default: m(() => [
-          M(a, d(n(w), {
+    const { exposed: b, baseInputForwardedProps: B, fieldUniqueId: g, generalInputProps: h } = x(c);
+    return m({ focus: u, ...b }), (e, o) => {
+      const n = V("DatePicker");
+      return Y(), C(A, d(a(B), { onClick: u }), {
+        default: M(() => [
+          L(n, d(a(h), {
             ref_key: "inputRef",
-            ref: p,
-            modelValue: n(i),
-            "onUpdate:modelValue": o[0] || (o[0] = (l) => L(i) ? i.value = l : null),
-            "input-id": n(h),
+            ref: s,
+            modelValue: p.value,
+            "onUpdate:modelValue": o[0] || (o[0] = (l) => p.value = l),
+            "input-id": a(g),
             "selection-mode": "range",
             "number-of-months": 2,
             variant: "filled",
@@ -87,21 +88,18 @@ const S = /* @__PURE__ */ D({
             class: "w-full",
             "show-icon": "",
             "select-other-months": !0,
-            placeholder: r.placeholder ?? n(y)("Choose Date"),
+            placeholder: r.placeholder ?? a(f)("Choose Date"),
             "manual-input": !0,
             "input-class": "text-center",
             pt: {
               pcInput: {
                 root: {
                   class: "dir-ltr min-w-170px",
-                  onKeydown: b
+                  onKeydown: y
                 }
               }
             }
-          }), {
-            ww: m(() => [...o[1] || (o[1] = [])]),
-            _: 1
-          }, 16, ["modelValue", "input-id", "placeholder", "pt"])
+          }), null, 16, ["modelValue", "input-id", "placeholder", "pt"])
         ]),
         _: 1
       }, 16);
@@ -109,5 +107,5 @@ const S = /* @__PURE__ */ D({
   }
 });
 export {
-  S as default
+  K as default
 };

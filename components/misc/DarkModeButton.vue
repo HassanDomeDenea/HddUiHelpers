@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { useDark, useToggle } from "@vueuse/core";
+import { useDark, usePreferredDark, useToggle } from "@vueuse/core";
+import { watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
 
 const authStore = useBasicAuthStore();
 const { t } = useI18n();
 const isDark = useDark({
-  initialValue: authStore.options.darkMode,
+  initialValue: authStore.options.dark_mode,
   valueLight: "light",
   valueDark: "dark",
 });
 const preferredDark = usePreferredDark({ window });
 
 watch(
-  () => authStore.options.darkMode,
+  () => authStore.options.dark_mode,
   (_value) => {
     console.log("Option Changed Dark Mode", _value);
 
@@ -34,7 +36,6 @@ const toggleDark = useToggle(isDark);
 
 function toggleDarkAndSave() {
   toggleDark();
-  console.log("H");
   authStore.changeOption("dark_mode", isDark.value ? "dark" : "light");
 }
 </script>

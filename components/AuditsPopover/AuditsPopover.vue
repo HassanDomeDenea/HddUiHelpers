@@ -1,13 +1,28 @@
 <script setup lang="ts">
-import type { AuditData } from "@/types/laravel_generated";
 import type { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
 import { useLoader } from "HddUiHelpers/composables/loader.ts";
 import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
 import moment from "moment";
 import Popover from "primevue/popover";
-import { ref } from "vue";
+import {nextTick, ref, useTemplateRef} from "vue";
 import type { ComponentExposed } from "vue-component-type-helpers";
-
+import {useI18n} from "vue-i18n";
+type AuditData  = {
+  id: string | number;
+  event: string;
+  old_value: any;
+  new_value: any;
+  created_at: any;
+  user: {
+    id: string | number;
+    name: string;
+    username: string;
+  } | null;
+  old_values: Array<any> | null;
+  new_values: Array<any> | null;
+  auditable_type: string | null;
+  auditable_id: string | number | null;
+};
 const popoverRef = useTemplateRef<ComponentExposed<typeof Popover>>("popoverRef");
 const audits = ref<AuditData[]>([]);
 const field = ref();

@@ -3,6 +3,9 @@ import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers";
 import { useApiClient } from "HddUiHelpers/stores/apiClient";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
 import type { BasicUserData } from "HddUiHelpers/types/types";
+import { computed, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { Menu } from "primevue";
 import type { MenuItem } from "primevue/menuitem";
 

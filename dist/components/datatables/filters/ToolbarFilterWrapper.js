@@ -1,15 +1,16 @@
-import { defineComponent as N, useModel as $, resolveComponent as D, openBlock as u, createElementBlock as v, createBlock as C, unref as a, withCtx as I, createElementVNode as k, createVNode as q, isRef as j, createCommentVNode as b, normalizeClass as H, withModifiers as F, toDisplayString as E, Fragment as P, renderList as J, withDirectives as O, vShow as B, mergeModels as S } from "vue";
-import { useSortable as K, moveArrayElement as Q } from "@vueuse/integrations/useSortable";
-import X from "HddUiHelpers/components/datatables/filters/ToolbarFilterValue.vue";
-import Y from "HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue";
-import { isToolbarFilterEmpty as c } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
-import { hidePrimevuePopovers as Z } from "HddUiHelpers/plugins/primevue.ts";
-import { pullAt as _, uniqueId as ee } from "lodash-es";
-import te from "primevue/popover";
-import { isToolbarFilterValue as oe } from "../ServerDataTableTypes.js";
-const le = ["title"], re = ["data-custom-id"], ne = ["title"], M = "toolbarFiltersSortedEvent", pe = /* @__PURE__ */ N({
+import { defineComponent as D, useModel as I, useTemplateRef as k, nextTick as g, onMounted as q, ref as j, resolveComponent as H, openBlock as u, createElementBlock as c, createBlock as b, unref as s, withCtx as J, createElementVNode as F, createVNode as K, createCommentVNode as y, normalizeClass as Q, withModifiers as R, toDisplayString as B, Fragment as S, renderList as X, withDirectives as M, vShow as T, mergeModels as V } from "vue";
+import { useSortable as Y, moveArrayElement as Z } from "@vueuse/integrations/useSortable";
+import _ from "HddUiHelpers/components/datatables/filters/ToolbarFilterValue.vue";
+import ee from "HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue";
+import { isToolbarFilterEmpty as v } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import { hidePrimevuePopovers as te } from "HddUiHelpers/plugins/primevue.ts";
+import { pullAt as oe, uniqueId as le } from "lodash-es";
+import re from "primevue/popover";
+import { isToolbarFilterValue as ne } from "../ServerDataTableTypes.js";
+import { useI18n as ie } from "vue-i18n";
+const ae = ["title"], se = ["data-custom-id"], ue = ["title"], W = "toolbarFiltersSortedEvent", be = /* @__PURE__ */ D({
   __name: "ToolbarFilterWrapper",
-  props: /* @__PURE__ */ S({
+  props: /* @__PURE__ */ V({
     operator: {},
     columns: {},
     hideOperator: { type: Boolean },
@@ -20,19 +21,19 @@ const le = ["title"], re = ["data-custom-id"], ne = ["title"], M = "toolbarFilte
     filters: {},
     filtersModifiers: {}
   }),
-  emits: /* @__PURE__ */ S(["filterCallback", "filtersChanged", "remove", "operatorChanged"], ["update:filters"]),
-  setup(l, { expose: V, emit: x }) {
-    const s = x, e = $(l, "filters"), m = useTemplateRef(
+  emits: /* @__PURE__ */ V(["filterCallback", "filtersChanged", "remove", "operatorChanged"], ["update:filters"]),
+  setup(l, { expose: L, emit: U }) {
+    const a = U, e = I(l, "filters"), m = k(
       "filtersRefs"
-    ), { t: d } = useI18n();
-    function R(t) {
+    ), { t: d } = ie();
+    function w(t) {
       let o = !0;
-      c(e.value.fields[t]) && (o = !1);
+      v(e.value.fields[t]) && (o = !1);
       const i = [...e.value.fields];
-      i.splice(t, 1), e.value.fields = i, e.value.fields.length === 0 && s("remove", e.value), o && s("filtersChanged");
+      i.splice(t, 1), e.value.fields = i, e.value.fields.length === 0 && a("remove", e.value), o && a("filtersChanged");
     }
-    const p = useTemplateRef("filtersListWrapperRef");
-    l.isPrinting || K(p, e.value.fields, {
+    const p = k("filtersListWrapperRef");
+    l.isPrinting || Y(p, e.value.fields, {
       group: "toolbar-filters",
       swapThreshold: 0.3,
       invertSwap: !0,
@@ -41,23 +42,23 @@ const le = ["title"], re = ["data-custom-id"], ne = ["title"], M = "toolbarFilte
           if (t.oldIndex === t.newIndex)
             return;
           const o = [...e.value.fields];
-          Q(o, t.oldIndex, t.newIndex, t), nextTick(() => {
+          Z(o, t.oldIndex, t.newIndex, t), g(() => {
             e.value.fields = o;
           });
         } else {
-          const o = [...e.value.fields], [i] = _(o, t.oldIndex), n = new CustomEvent(
-            M,
+          const o = [...e.value.fields], [i] = oe(o, t.oldIndex), n = new CustomEvent(
+            W,
             {
               detail: {
                 toIndex: t.newIndex,
                 item: i,
                 callback: () => {
-                  e.value.fields.length === 0 && s("remove", e.value);
+                  e.value.fields.length === 0 && a("remove", e.value);
                 }
               }
             }
           );
-          t.to.dispatchEvent(n), nextTick(() => {
+          t.to.dispatchEvent(n), g(() => {
             e.value.fields = o;
           });
         }
@@ -65,105 +66,105 @@ const le = ["title"], re = ["data-custom-id"], ne = ["title"], M = "toolbarFilte
       onUpdate() {
       }
     });
-    function y(t) {
-      s("filterCallback", t), s("filtersChanged");
+    function E(t) {
+      a("filterCallback", t), a("filtersChanged");
     }
-    function w(t) {
-      e.value.operator = t, c(e.value) || s("filtersChanged");
+    function P(t) {
+      e.value.operator = t, v(e.value) || a("filtersChanged");
     }
-    function W() {
+    function A() {
       l.isPrinting;
     }
-    function L(t) {
+    function G(t) {
       let o = !0;
       const i = e.value.fields[t];
-      c(i) && (o = !1);
+      v(i) && (o = !1);
       const n = [...e.value.fields];
       n[t] = {
         operator: "and",
         fields: [i],
-        id: ee("toolbar-filter-")
-      }, e.value.fields = n, o && s("filtersChanged");
+        id: le("toolbar-filter-")
+      }, e.value.fields = n, o && a("filtersChanged");
     }
-    onMounted(() => {
+    q(() => {
       p.value.addEventListener(
-        M,
+        W,
         function(t) {
           const { toIndex: o, item: i, callback: n } = t.detail, r = [...e.value.fields];
-          r.splice(o, 0, i), nextTick(() => {
-            p.value.children[o].remove(), e.value.fields = r, c(i) || s("filtersChanged"), n && nextTick(n);
+          r.splice(o, 0, i), g(() => {
+            p.value.children[o].remove(), e.value.fields = r, v(i) || a("filtersChanged"), n && g(n);
           });
         }
       );
     });
-    const g = ref(), h = useTemplateRef("operatorChangerRef");
-    function T(t) {
-      l.isPrinting || (g.value = l.operator, Z(), h.value.toggle(t));
+    const h = j(), C = k("operatorChangerRef");
+    function O(t) {
+      l.isPrinting || (h.value = l.operator, te(), C.value.toggle(t));
     }
-    function U(t) {
-      t && t !== l.operator && s("operatorChanged", t), h.value.hide();
-    }
-    function A() {
-      m.value[0]?.focus?.();
-    }
-    function G(t) {
-      m.value[t]?.focus?.();
+    function x(t) {
+      t && t !== l.operator && a("operatorChanged", t), C.value.hide();
     }
     function z() {
+      m.value[0]?.focus?.();
+    }
+    function N(t) {
+      m.value[t]?.focus?.();
+    }
+    function $() {
       m.value[e.value.fields.length - 1]?.focus?.();
     }
-    return V({
-      focusLast: z,
-      focusFilter: G,
-      focus: A
+    return L({
+      focusLast: $,
+      focusFilter: N,
+      focus: z
     }), (t, o) => {
-      const i = D("SelectButton");
-      return u(), v("div", null, [
-        l.isPrinting ? b("", !0) : (u(), C(a(te), {
+      const i = H("SelectButton");
+      return u(), c("div", null, [
+        l.isPrinting ? y("", !0) : (u(), b(s(re), {
           key: 0,
           ref_key: "operatorChangerRef",
-          ref: h
+          ref: C
         }, {
-          default: I(() => [
-            k("div", null, [
-              q(i, {
-                modelValue: a(g),
-                "onUpdate:modelValue": o[0] || (o[0] = (n) => j(g) ? g.value = n : null),
+          default: J(() => [
+            F("div", null, [
+              K(i, {
+                modelValue: h.value,
+                "onUpdate:modelValue": o[0] || (o[0] = (n) => h.value = n),
                 "option-label": "label",
                 "option-value": "value",
                 size: "small",
                 fluid: "",
                 options: [
-                  { value: "and", label: a(d)("and") },
-                  { value: "or", label: a(d)("or") }
+                  { value: "and", label: s(d)("and") },
+                  { value: "or", label: s(d)("or") }
                 ],
-                onChange: o[1] || (o[1] = (n) => U(n.value))
+                onChange: o[1] || (o[1] = (n) => x(n.value))
               }, null, 8, ["modelValue", "options"])
             ])
           ]),
           _: 1
         }, 512)),
-        k("div", {
-          class: H({
+        F("div", {
+          class: Q({
             "border-1 my-2 me-1 ms-6 rounded-lg border-dashed border-zinc-600 dark:border-zinc-500/75": l.isGrouped
           })
         }, [
-          !l.hideOperator && e.value.fields.length && !l.makeOperatorAfterFields ? (u(), v("span", {
+          !l.hideOperator && e.value.fields.length && !l.makeOperatorAfterFields ? (u(), c("span", {
             key: 0,
-            title: a(d)("Change Filtering Method"),
+            title: s(d)("Change Filtering Method"),
             class: "operator-span mx-2",
-            onClick: F(T, ["stop"])
-          }, E(a(d)(l.operator)) + " :", 9, le)) : b("", !0),
-          k("div", {
+            onClick: R(O, ["stop"])
+          }, B(s(d)(l.operator)) + " :", 9, ae)) : y("", !0),
+          F("div", {
             ref_key: "filtersListWrapperRef",
             ref: p,
             "data-custom-id": e.value.id,
-            onContextmenu: F(W, ["prevent"])
+            onContextmenu: R(A, ["prevent"])
           }, [
-            (u(!0), v(P, null, J(e.value.fields, (n, r) => (u(), v(P, {
+            (u(!0), c(S, null, X(e.value.fields, (n, r) => (u(), c(S, {
               key: n.id
             }, [
-              a(oe)(e.value.fields[r]) ? O((u(), C(X, {
+              s(ne)(e.value.fields[r]) ? M((u(), b(_, {
                 key: 0,
                 ref_for: !0,
                 ref_key: "filtersRefs",
@@ -174,13 +175,13 @@ const le = ["title"], re = ["data-custom-id"], ne = ["title"], M = "toolbarFilte
                 operator: r !== 0 ? e.value.operator : null,
                 columns: l.columns,
                 "can-create-group": e.value.fields.length > 1,
-                onFilterCallback: y,
-                onRemove: (f) => R(r),
-                onOperatorChanged: w,
-                onIsolateIntoGroup: (f) => L(r)
+                onFilterCallback: E,
+                onRemove: (f) => w(r),
+                onOperatorChanged: P,
+                onIsolateIntoGroup: (f) => G(r)
               }, null, 8, ["filter", "onUpdate:filter", "is-printing", "operator", "columns", "can-create-group", "onRemove", "onIsolateIntoGroup"])), [
-                [B, !l.isPrinting || !a(c)(e.value.fields[r])]
-              ]) : O((u(), C(Y, {
+                [T, !l.isPrinting || !s(v)(e.value.fields[r])]
+              ]) : M((u(), b(ee, {
                 key: 1,
                 ref_for: !0,
                 ref_key: "filtersRefs",
@@ -191,26 +192,26 @@ const le = ["title"], re = ["data-custom-id"], ne = ["title"], M = "toolbarFilte
                 operator: e.value.operator,
                 "make-operator-after-fields": r === 0 && e.value.fields.length > 1,
                 columns: l.columns,
-                onRemove: (f) => R(r),
-                onOperatorChanged: w,
-                onFiltersChanged: o[2] || (o[2] = (f) => s("filtersChanged")),
-                onFilterCallback: y
+                onRemove: (f) => w(r),
+                onOperatorChanged: P,
+                onFiltersChanged: o[2] || (o[2] = (f) => a("filtersChanged")),
+                onFilterCallback: E
               }, null, 8, ["filters", "onUpdate:filters", "operator", "make-operator-after-fields", "columns", "onRemove"])), [
-                [B, !l.isPrinting || !a(c)(e.value.fields[r])]
+                [T, !l.isPrinting || !s(v)(e.value.fields[r])]
               ])
             ], 64))), 128))
-          ], 40, re)
+          ], 40, se)
         ], 2),
-        !l.hideOperator && e.value.fields.length && l.makeOperatorAfterFields ? (u(), v("span", {
+        !l.hideOperator && e.value.fields.length && l.makeOperatorAfterFields ? (u(), c("span", {
           key: 1,
           class: "operator-span mx-2",
-          title: a(d)("Change Filtering Method"),
-          onClick: F(T, ["stop"])
-        }, E(a(d)(l.operator)) + " : ", 9, ne)) : b("", !0)
+          title: s(d)("Change Filtering Method"),
+          onClick: R(O, ["stop"])
+        }, B(s(d)(l.operator)) + " : ", 9, ue)) : y("", !0)
       ]);
     };
   }
 });
 export {
-  pe as default
+  be as default
 };

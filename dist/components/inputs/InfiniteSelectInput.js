@@ -1,19 +1,19 @@
-import { defineComponent as J, useModel as S, ref as m, openBlock as b, createBlock as X, mergeProps as T, unref as n, createSlots as Y, withCtx as f, createVNode as Z, createElementVNode as v, createElementBlock as g, createCommentVNode as V, withDirectives as _, renderSlot as y, mergeModels as C } from "vue";
-import { vElementVisibility as ee } from "@vueuse/components";
-import { useHddBaseInputUtils as le } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { useApiClient as te } from "HddUiHelpers/stores/apiClient.ts";
-import { get as M } from "lodash-es";
-import ae from "primevue/select";
-import { _ as oe } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const ne = ["innerHTML"], ie = {
+import { defineComponent as Y, useModel as V, ref as m, computed as T, useTemplateRef as Z, watch as _, nextTick as I, openBlock as b, createBlock as ee, mergeProps as C, unref as f, createSlots as le, withCtx as d, createVNode as ae, createElementVNode as v, createElementBlock as g, createCommentVNode as M, withDirectives as te, renderSlot as y, mergeModels as A } from "vue";
+import { vElementVisibility as oe } from "@vueuse/components";
+import { useHddBaseInputUtils as ne } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { useApiClient as ie } from "HddUiHelpers/stores/apiClient.ts";
+import { get as x } from "lodash-es";
+import re from "primevue/select";
+import { _ as ue } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const se = ["innerHTML"], de = {
   key: 0,
   class: "flex justify-center"
-}, re = ["innerHTML"], ue = ["aria-labelledby", "data-value"], se = ["innerHTML"], de = ["aria-labelledby", "data-value"], fe = ["innerHTML"], pe = { class: "flex justify-center" }, ce = {
+}, fe = ["innerHTML"], pe = ["aria-labelledby", "data-value"], ce = ["innerHTML"], me = ["aria-labelledby", "data-value"], ve = ["innerHTML"], ye = { class: "flex justify-center" }, be = {
   key: 0,
   class: "i-mdi-loading mx-auto my-1 animate-spin"
-}, ge = /* @__PURE__ */ J({
+}, ke = /* @__PURE__ */ Y({
   __name: "InfiniteSelectInput",
-  props: /* @__PURE__ */ C({
+  props: /* @__PURE__ */ A({
     url: {},
     disabled: { type: Boolean },
     searchOnFocus: { type: Boolean, default: !0 },
@@ -80,185 +80,185 @@ const ne = ["innerHTML"], ie = {
     modelValue: { default: null },
     modelModifiers: {}
   }),
-  emits: /* @__PURE__ */ C(["keydown", "blur", "hide", "cleared", "itemSelected"], ["update:item", "update:modelValue"]),
-  setup(u, { expose: x, emit: A }) {
-    const l = u, p = A, o = S(u, "item"), i = S(u, "modelValue"), $ = te(), r = m([]), F = m(0), I = m(), h = m(!1), w = m(!1), k = m(!1), d = computed(
+  emits: /* @__PURE__ */ A(["keydown", "blur", "hide", "cleared", "itemSelected"], ["update:item", "update:modelValue"]),
+  setup(r, { expose: $, emit: j }) {
+    const l = r, p = j, o = V(r, "item"), n = V(r, "modelValue"), q = ie(), i = m([]), k = m(0), P = m(), h = m(!1), w = m(!1), F = m(!1), s = T(
       () => l.valueSameAsLabel ? l.optionLabelProperty : l.optionValueProperty
     );
     async function L(e) {
-      I.value = e.query || "";
-      const a = {
+      P.value = e.query || "";
+      const t = {
         name: e.query || "",
         offset: e.offset || 0,
         limit: e.limit,
         only_id: e.onlyId ? 1 : 0,
-        id_field: d.value
+        id_field: s.value
       };
       if (typeof l.ajaxParams == "object")
-        for (const t in l.ajaxParams)
-          a[t] = l.ajaxParams[t];
-      else typeof l.ajaxParams == "function" && l.ajaxParams(a);
-      return $.request({
+        for (const a in l.ajaxParams)
+          t[a] = l.ajaxParams[a];
+      else typeof l.ajaxParams == "function" && l.ajaxParams(t);
+      return q.request({
         // method: 'get',
         ...typeof l.url == "string" ? { url: l.url } : l.url,
-        params: a
-      }).then((t) => {
-        e.offset ? r.value.push(...t.data.data.items) : r.value = t.data.data.items, F.value = t.data.data.total, h.value = !1, w.value = !1;
+        params: t
+      }).then((a) => {
+        e.offset ? i.value.push(...a.data.data.items) : i.value = a.data.data.items, k.value = a.data.data.total, h.value = !1, w.value = !1;
       });
     }
-    function j(e) {
-      e && F.value > r.value.length && h.value === !1 && (h.value = !0, L({ query: I.value, offset: r.value.length - 1 }));
+    function H(e) {
+      e && k.value > i.value.length && h.value === !1 && (h.value = !0, L({ query: P.value, offset: i.value.length - 1 }));
     }
-    const c = useTemplateRef("inputRef");
-    function P(e = !1) {
+    const c = Z("inputRef");
+    function S(e = !1) {
       l.disabled || (e ? c.value?.show() : c.value?.$refs.focusInput.focus());
     }
-    function q(e) {
+    function D(e) {
       (!c.value).overlayVisible && p("keydown", e);
     }
-    function H(e) {
+    function O(e) {
       l.onKeydown && e.code === "Enter" && c.value?.hide(), p("keydown", e);
     }
-    function D(e) {
+    function E(e) {
       p("blur", e);
     }
-    const O = computed(() => r.value.length > 0 ? Object.keys(r.value[0]) : l.filterFields ?? []);
-    watch(
-      () => i.value,
+    const K = T(() => i.value.length > 0 ? Object.keys(i.value[0]) : l.filterFields ?? []);
+    _(
+      () => n.value,
       () => {
-        if (i.value === null && (o.value = null), o.value?.[d.value] === i.value)
+        if (n.value === null && (o.value = null), o.value?.[s.value] === n.value)
           return;
-        let e = r.value.find(
-          (a) => a[d.value] === i.value
+        let e = i.value.find(
+          (t) => t[s.value] === n.value
         );
-        e ? o.value = e : l.valueSameAsLabel ? nextTick(() => {
+        e ? o.value = e : l.valueSameAsLabel ? I(() => {
           o.value = {
-            [d.value]: i.value,
-            [l.optionLabelProperty]: i.value
+            [s.value]: n.value,
+            [l.optionLabelProperty]: n.value
           };
-        }) : (k.value = !0, L({ query: `${i.value}`, limit: 1, onlyId: !0 }).then(() => {
-          e = r.value.find(
-            (a) => a[d.value] === i.value
-          ), nextTick(() => {
+        }) : (F.value = !0, L({ query: `${n.value}`, limit: 1, onlyId: !0 }).then(() => {
+          e = i.value.find(
+            (t) => t[s.value] === n.value
+          ), I(() => {
             e && (o.value = e);
-          }), k.value = !1;
+          }), F.value = !1;
         }));
       },
       {
         immediate: !0
       }
     );
-    function E() {
-      l.useIdModel && (i.value = null), o.value = null, nextTick(() => {
-        setTimeout(P, 50);
+    function N() {
+      l.useIdModel && (n.value = null), o.value = null, I(() => {
+        setTimeout(S, 50);
       }), p("cleared");
     }
-    function B(e, a) {
-      return l.optionLabelFormatter ? l.optionLabelFormatter(e, a) : l.optionAndValueLabelFormatter ? l.optionAndValueLabelFormatter(e) : e[l.optionLabelProperty] ?? "&nbsp;";
+    function B(e, t) {
+      return l.optionLabelFormatter ? l.optionLabelFormatter(e, t) : l.optionAndValueLabelFormatter ? l.optionAndValueLabelFormatter(e) : e[l.optionLabelProperty] ?? "&nbsp;";
     }
-    function K(e, a) {
-      const t = a ? `<span class="text-muted px-2">${a}</span>` : void 0;
-      return o.value ? l.valueLabelFormatter ? l.valueLabelFormatter(o.value, a) ?? t ?? "&nbsp;" : l.optionAndValueLabelFormatter ? l.optionAndValueLabelFormatter(o.value) ?? t ?? "&nbsp;" : o.value[l.optionLabelProperty] ?? t ?? e ?? "&nbsp;" : t ?? "&nbsp;";
+    function R(e, t) {
+      const a = t ? `<span class="text-muted px-2">${t}</span>` : void 0;
+      return o.value ? l.valueLabelFormatter ? l.valueLabelFormatter(o.value, t) ?? a ?? "&nbsp;" : l.optionAndValueLabelFormatter ? l.optionAndValueLabelFormatter(o.value) ?? a ?? "&nbsp;" : o.value[l.optionLabelProperty] ?? a ?? e ?? "&nbsp;" : a ?? "&nbsp;";
     }
-    function N() {
+    function U() {
       w.value = !0, L({});
     }
-    function R(e) {
-      i.value = e.value, o.value = r.value.find((a) => a[d.value] === e.value) || null, p("itemSelected", o.value);
+    function W(e) {
+      n.value = e.value, o.value = i.value.find((t) => t[s.value] === e.value) || null, p("itemSelected", o.value);
     }
-    function U(e) {
+    function z(e) {
       L({ query: e.value });
     }
-    const { exposed: W, baseInputForwardedProps: z, fieldUniqueId: Q, generalInputProps: G } = le(l);
-    return x({ focus: P, ...W, clear: E, disabled: l.disabled, selectedItem: o }), (e, a) => (b(), X(oe, T(n(z), {
+    const { exposed: Q, baseInputForwardedProps: G, fieldUniqueId: J, generalInputProps: X } = ne(l);
+    return $({ focus: S, ...Q, clear: N, disabled: l.disabled, selectedItem: o }), (e, t) => (b(), ee(ue, C(f(G), {
       "control-component": { selectedItem: o.value },
-      onLabelClicked: a[1] || (a[1] = (t) => n(c)?.show())
-    }), Y({
-      labelText: f(() => [
+      onLabelClicked: t[1] || (t[1] = (a) => c.value?.show())
+    }), le({
+      labelText: d(() => [
         y(e.$slots, "label-text")
       ]),
-      default: f(() => [
-        Z(n(ae), T(n(G), {
+      default: d(() => [
+        ae(f(re), C(f(X), {
           ref_key: "inputRef",
           ref: c,
-          "input-id": n(Q),
-          "model-value": i.value,
-          placeholder: u.placeholder,
+          "input-id": f(J),
+          "model-value": n.value,
+          placeholder: r.placeholder,
           filter: !0,
-          "filter-fields": n(O),
-          "filter-placeholder": u.filterPlaceholder,
-          loading: k.value,
+          "filter-fields": K.value,
+          "filter-placeholder": r.filterPlaceholder,
+          loading: F.value,
           "auto-option-focus": "",
           "auto-filter-focus": !0,
           "reset-filter-on-hide": "",
           checkmark: "",
-          options: r.value,
-          "show-clear": u.clearable,
-          "option-label": u.optionLabelProperty,
-          "option-value": n(d),
-          "option-disabled": u.optionDisabledProperty,
+          options: i.value,
+          "show-clear": r.clearable,
+          "option-label": r.optionLabelProperty,
+          "option-value": s.value,
+          "option-disabled": r.optionDisabledProperty,
           "scroll-height": "18rem",
           pt: {
             pcFilter: {
               root: {
                 class: "p-inputtext-sm",
-                onkeydown: q,
-                onblur: D
+                onkeydown: D,
+                onblur: E
               }
             }
           },
-          onKeydown: H,
-          onBeforeShow: N,
-          onHide: a[0] || (a[0] = (t) => p("hide")),
-          onChange: R,
-          onFilter: U
+          onKeydown: O,
+          onBeforeShow: U,
+          onHide: t[0] || (t[0] = (a) => p("hide")),
+          onChange: W,
+          onFilter: z
         }), {
-          empty: f(() => [
-            w.value ? (b(), g("div", ie, [...a[2] || (a[2] = [
+          empty: d(() => [
+            w.value ? (b(), g("div", de, [...t[2] || (t[2] = [
               v("i", { class: "i-mdi-loading mx-auto my-1 animate-spin" }, null, -1)
-            ])])) : V("", !0)
+            ])])) : M("", !0)
           ]),
-          value: f(({ value: t, placeholder: s }) => [
+          value: d(({ value: a, placeholder: u }) => [
             y(e.$slots, "value", {
-              value: { value: t, placeholder: s }
+              value: { value: a, placeholder: u }
             }, () => [
               v("div", {
-                innerHTML: K(t, s)
-              }, null, 8, re)
+                innerHTML: R(a, u)
+              }, null, 8, fe)
             ])
           ]),
-          option: f(({ option: t, index: s }) => [
-            s + 1 === r.value.length ? _((b(), g("span", {
+          option: d(({ option: a, index: u }) => [
+            u + 1 === i.value.length ? te((b(), g("span", {
               key: 0,
-              "aria-labelledby": B(t, s),
-              "data-value": n(M)(t, n(d))
+              "aria-labelledby": B(a, u),
+              "data-value": f(x)(a, s.value)
             }, [
               y(e.$slots, "option", {
-                option: { option: t, index: s }
+                option: { option: a, index: u }
               }, () => [
                 v("div", {
-                  innerHTML: B(t, s)
-                }, null, 8, se)
+                  innerHTML: B(a, u)
+                }, null, 8, ce)
               ])
-            ], 8, ue)), [
-              [n(ee), j]
+            ], 8, pe)), [
+              [f(oe), H]
             ]) : (b(), g("span", {
               key: 1,
-              "aria-labelledby": B(t, s),
-              "data-value": n(M)(t, n(d))
+              "aria-labelledby": B(a, u),
+              "data-value": f(x)(a, s.value)
             }, [
               y(e.$slots, "option", {
-                option: { option: t, index: s }
+                option: { option: a, index: u }
               }, () => [
                 v("div", {
-                  innerHTML: B(t, s)
-                }, null, 8, fe)
+                  innerHTML: B(a, u)
+                }, null, 8, ve)
               ])
-            ], 8, de))
+            ], 8, me))
           ]),
-          footer: f(() => [
-            v("div", pe, [
-              h.value ? (b(), g("i", ce)) : V("", !0)
+          footer: d(() => [
+            v("div", ye, [
+              h.value ? (b(), g("i", be)) : M("", !0)
             ])
           ]),
           _: 3
@@ -268,16 +268,16 @@ const ne = ["innerHTML"], ie = {
     }, [
       e.$slots.addon ? {
         name: "addon",
-        fn: f(() => [
+        fn: d(() => [
           y(e.$slots, "addon")
         ]),
         key: "0"
       } : void 0,
-      e.$slots.helper || u.helperText ? {
+      e.$slots.helper || r.helperText ? {
         name: "helper",
-        fn: f(() => [
+        fn: d(() => [
           y(e.$slots, "helper", {}, () => [
-            v("div", { innerHTML: u.helperText }, null, 8, ne)
+            v("div", { innerHTML: r.helperText }, null, 8, se)
           ])
         ]),
         key: "1"
@@ -286,5 +286,5 @@ const ne = ["innerHTML"], ie = {
   }
 });
 export {
-  ge as default
+  ke as default
 };

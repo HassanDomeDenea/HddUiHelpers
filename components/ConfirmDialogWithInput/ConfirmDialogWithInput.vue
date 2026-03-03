@@ -5,6 +5,13 @@ import {
   type ConfirmDialogWithInputEventBus,
   ConfirmDialogWithInputKey,
 } from "./confirmDialogWithInputUtilities.ts";
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
+import {useEventBus} from "@vueuse/core";
+import NumberInput from "HddUiHelpers/components/inputs/NumberInput.vue";
+import MathInput from "HddUiHelpers/components/inputs/MathInput.vue";
+import TextAreaInput from "HddUiHelpers/components/inputs/TextAreaInput.vue";
+import DatePickerInput from "HddUiHelpers/components/inputs/DatePickerInput.vue";
+import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
 
 defineProps<{
   draggable?: boolean;
@@ -31,6 +38,7 @@ function busListener({ event, options }: ConfirmDialogWithInputEventBus) {
       inputRef.value?.[0]?.focus?.();
 
       if (options.autoSelectText) {
+        //@ts-ignore
         inputRef.value?.[0]?.select?.();
       }
     }, 250);

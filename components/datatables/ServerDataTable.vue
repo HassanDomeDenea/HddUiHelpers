@@ -26,7 +26,8 @@ import DataTable from "primevue/datatable";
 import type { ComponentExposed } from "vue-component-type-helpers";
 import type {
   FilterMatchModes,
-  PrintPaperForServerDataTableProps,
+  PrintPaperForServerDataTableProps, ReorderRequestData,
+  ResponseData,
   ServerDataTableColumn,
   ServerDataTableColumnType,
   ServerDataTablePaginationResponse,
@@ -40,13 +41,12 @@ import {
   type ServerFormDialogProps,
 } from "./ServerDataTableTypes.ts";
 
-import type { ApiResponseData, ReorderRequestData, ResponseData } from "@/types/laravel_generated";
 import type { GetRecordsResponseType } from "HddUiHelpers/components/primeVueServerTable/types.ts";
 import type { AxiosError, AxiosRequestConfig } from "axios";
 import type { VirtualScrollerProps } from "primevue";
 import type { MenuItem } from "primevue/menuitem";
 
-import type { MaybeElement } from "@vueuse/core";
+import {MaybeElement, useElementSize} from "@vueuse/core";
 import { useDebounceFn } from "@vueuse/core";
 import ServerFormDialog from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
 import { useServerDataTableColumnVisibility } from "HddUiHelpers/components/datatables/visibility.ts";
@@ -54,7 +54,7 @@ import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
 import { cloneDeep, find, get, isFunction, isString, map, reduce, set, unset } from "lodash-es";
 import ContextMenu from "primevue/contextmenu";
 import { useConfirm } from "primevue/useconfirm";
-import { computed, onMounted, ref, watch } from "vue";
+import {computed, nextTick, onActivated, onMounted, Ref, ref, toValue, useTemplateRef, watch} from "vue";
 import { useI18n } from "vue-i18n";
 
 import AuditsPopover from "HddUiHelpers/components/AuditsPopover/AuditsPopover.vue";
@@ -85,6 +85,7 @@ import moment from "moment";
 import Button from "primevue/button";
 import Column from "primevue/column";
 import Popover from "primevue/popover";
+import { ApiResponseData } from "HddUiHelpers/types/types.ts";
 
 type ServerDataTableColumnScoped = ServerDataTableColumn<ServerDataTableColumnType, T> & {
   field: string;

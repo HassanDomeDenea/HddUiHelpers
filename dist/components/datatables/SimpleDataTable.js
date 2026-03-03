@@ -1,6 +1,8 @@
-import { defineComponent as x, resolveComponent as p, openBlock as t, createElementBlock as l, renderSlot as u, createVNode as B, withCtx as S, createElementVNode as a, normalizeClass as c, toDisplayString as r, createCommentVNode as m, Fragment as h, renderList as y, unref as n } from "vue";
-import { pick as z } from "lodash-es";
-const M = { key: 0 }, $ = { key: 0 }, E = ["colspan"], N = ["onClick"], V = { key: 0 }, F = /* @__PURE__ */ x({
+import { defineComponent as p, useTemplateRef as x, computed as B, resolveComponent as S, openBlock as t, createElementBlock as l, renderSlot as i, createVNode as z, withCtx as M, createElementVNode as o, normalizeClass as d, toDisplayString as a, createCommentVNode as c, Fragment as m, renderList as h, unref as k } from "vue";
+import { pick as $ } from "lodash-es";
+import { useI18n as E } from "vue-i18n";
+import { useTemplateRefsList as N } from "@vueuse/core";
+const V = { key: 0 }, q = { key: 0 }, T = ["colspan"], D = ["onClick"], F = { key: 0 }, G = /* @__PURE__ */ p({
   __name: "SimpleDataTable",
   props: {
     values: {},
@@ -16,64 +18,64 @@ const M = { key: 0 }, $ = { key: 0 }, E = ["colspan"], N = ["onClick"], V = { ke
     onRowClick: { type: Function }
   },
   emits: ["rowClick"],
-  setup(e, { emit: C }) {
-    const { t: v } = useI18n(), g = useTemplateRefsList(), f = useTemplateRef("theadRef"), d = computed(() => e.only ? e.values.map((s) => z(s, e.only)) : e.values), b = C;
-    return (s, q) => {
-      const w = p("Message");
+  setup(e, { emit: v }) {
+    const { t: C } = E(), g = N(), y = x("theadRef"), u = B(() => e.only ? e.values.map((s) => $(s, e.only)) : e.values), b = v;
+    return (s, H) => {
+      const w = S("Message");
       return t(), l("div", null, [
-        u(s.$slots, "title", {}, () => [
-          B(w, {
+        i(s.$slots, "title", {}, () => [
+          z(w, {
             severity: e.severity,
             variant: "simple",
             class: "[&_.p-message-text]:w-full"
           }, {
-            default: S(() => [
-              a("div", {
-                class: c(["pb-4 pt-3 text-center text-2xl font-bold", { "pb-2 text-lg": e.size === "small", "pb-4 text-3xl": e.size === "large" }])
-              }, r(e.title), 3)
+            default: M(() => [
+              o("div", {
+                class: d(["pb-4 pt-3 text-center text-2xl font-bold", { "pb-2 text-lg": e.size === "small", "pb-4 text-3xl": e.size === "large" }])
+              }, a(e.title), 3)
             ]),
             _: 1
           }, 8, ["severity"])
         ]),
-        a("table", {
-          class: c(["hdd-simple-table", [e.severity, e.size, { "rounded-table": e.rounded }]])
+        o("table", {
+          class: d(["hdd-simple-table", [e.severity, e.size, { "rounded-table": e.rounded }]])
         }, [
           e.hideHead !== !0 ? (t(), l("thead", {
             key: 0,
             ref_key: "theadRef",
-            ref: f
+            ref: y
           }, [
-            a("tr", null, [
-              e.showSequenceColumn ? (t(), l("th", M, "#")) : m("", !0),
-              u(s.$slots, "header", {}, () => [
-                (t(!0), l(h, null, y(e.headers ?? Object.keys(n(d)[0] ?? {}), (o, i) => (t(), l("th", {
-                  key: i,
+            o("tr", null, [
+              e.showSequenceColumn ? (t(), l("th", V, "#")) : c("", !0),
+              i(s.$slots, "header", {}, () => [
+                (t(!0), l(m, null, h(e.headers ?? Object.keys(u.value[0] ?? {}), (n, r) => (t(), l("th", {
+                  key: r,
                   ref_for: !0,
-                  ref: n(g).set
-                }, r(o), 1))), 128))
+                  ref: k(g).set
+                }, a(n), 1))), 128))
               ])
             ])
-          ], 512)) : m("", !0),
-          a("tbody", null, [
-            e.showEmptyMessage && n(d).length === 0 ? (t(), l("tr", $, [
-              u(s.$slots, "emptyMessage", {}, () => [
-                a("td", {
+          ], 512)) : c("", !0),
+          o("tbody", null, [
+            e.showEmptyMessage && u.value.length === 0 ? (t(), l("tr", q, [
+              i(s.$slots, "emptyMessage", {}, () => [
+                o("td", {
                   class: "font-italic text-muted text-center",
-                  colspan: n(f)?.firstChild?.children?.length || 1
-                }, r(n(v)("No Records")), 9, E)
+                  colspan: y.value?.firstChild?.children?.length || 1
+                }, a(k(C)("No Records")), 9, T)
               ])
-            ])) : (t(!0), l(h, { key: 1 }, y(n(d), (o, i) => (t(), l("tr", {
-              key: i,
-              class: c({ "cursor-pointer": !!e.onRowClick }),
-              onClick: (k) => b("rowClick", o)
+            ])) : (t(!0), l(m, { key: 1 }, h(u.value, (n, r) => (t(), l("tr", {
+              key: r,
+              class: d({ "cursor-pointer": !!e.onRowClick }),
+              onClick: (f) => b("rowClick", n)
             }, [
-              e.showSequenceColumn ? (t(), l("td", V, r(i + 1), 1)) : m("", !0),
-              u(s.$slots, "row", {
-                row: o
+              e.showSequenceColumn ? (t(), l("td", F, a(r + 1), 1)) : c("", !0),
+              i(s.$slots, "row", {
+                row: n
               }, () => [
-                (t(!0), l(h, null, y(o, (k, R) => (t(), l("td", { key: R }, r(k), 1))), 128))
+                (t(!0), l(m, null, h(n, (f, R) => (t(), l("td", { key: R }, a(f), 1))), 128))
               ])
-            ], 10, N))), 128))
+            ], 10, D))), 128))
           ])
         ], 2)
       ]);
@@ -81,5 +83,5 @@ const M = { key: 0 }, $ = { key: 0 }, E = ["colspan"], N = ["onClick"], V = { ke
   }
 });
 export {
-  F as default
+  G as default
 };

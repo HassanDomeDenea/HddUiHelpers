@@ -12,7 +12,8 @@ import {
 import type { RecordItem } from "HddUiHelpers/components/FormWrapper/types.ts";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
 import { printDomWithStyles } from "HddUiHelpers/utils/printDom.ts";
-import { ref } from "vue";
+import {computed, nextTick, Ref, ref, toValue, useTemplateRef} from "vue";
+import { useI18n } from "vue-i18n";
 import type { PrintPaperForServerDataTableProps } from "./ServerDataTableTypes.ts";
 
 const getColumnName = getColumnName2;
@@ -105,7 +106,7 @@ const anyColumnHasFooter = computed(() => {
         <img
           :src="toValue(headerImageUrl)"
           style="width: 100%"
-          :alt="authStore.user.global_options.city_name"
+          :alt="authStore.user.global_options.app_name"
         />
       </div>
       <slot name="printPageHeader" :records="recordsToPrint" :extra="extraDataToPrint">

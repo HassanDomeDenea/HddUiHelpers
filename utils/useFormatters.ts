@@ -3,6 +3,8 @@ import { i18n } from "HddUiHelpers/plugins/i18n.ts";
 import { isLocalListType } from "HddUiHelpers/utils/dynamicListsUtilities.ts";
 import { get } from "lodash-es";
 import moment from "moment";
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 export const useFormatters = () => {
   const { t } = useI18n();
@@ -11,7 +13,7 @@ export const useFormatters = () => {
   const suppressDecimals = ref(false);
 
   function formatPrice(amount: number, currency?: string | { currency?: string }) {
-    if (!amount) {
+    if (!amount || isNaN(amount)) {
       return "0";
     }
 

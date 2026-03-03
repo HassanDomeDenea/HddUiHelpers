@@ -7,7 +7,7 @@ import DataTable from "primevue/datatable";
 import InputText from "primevue/inputtext";
 import vTooltip from "primevue/tooltip";
 import type { InputHTMLAttributes, Ref } from "vue";
-import { computed, onBeforeMount, onMounted, ref } from "vue";
+import { computed, nextTick, onBeforeMount, onMounted, ref, watch } from "vue";
 
 import {
   cloneDeep,
@@ -39,7 +39,6 @@ import { useToast } from "primevue/usetoast";
 import usePrimeVueServerUi from "HddUiHelpers/utils/usePrimeVueServerUi";
 
 import { printDomWithStyles } from "HddUiHelpers/utils/printDom";
-import type { DialogFormWrapperProps } from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
 import DialogFormWrapper from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
 import MultiSelectColumnFilter from "./MultiSelectColumnFilter.vue";
 import SelectColumnFilter from "./SelectColumnFilter.vue";
@@ -755,7 +754,7 @@ const dialogFormWrapperOptions = computed(() => {
     createRecordHeader: props.createRecordHeader,
     editRecordHeader: props.editRecordHeader,
     ...(props.formDialogProps ?? {}),
-  } as DialogFormWrapperProps;
+  } as any;
 });
 
 function showCreateDialog() {

@@ -1,4 +1,4 @@
-import type { EventBusKey } from "@vueuse/core";
+import { EventBusKey, useEventBus } from "@vueuse/core";
 import type { ButtonProps } from "primevue";
 import type { ConfirmationOptions } from "primevue/confirmationoptions";
 

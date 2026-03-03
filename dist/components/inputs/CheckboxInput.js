@@ -1,7 +1,7 @@
-import { defineComponent as L, useModel as v, ref as r, resolveComponent as x, openBlock as I, createBlock as V, mergeProps as d, unref as l, withCtx as _, createVNode as w, mergeModels as p } from "vue";
-import { useHddBaseInputUtils as A } from "HddUiHelpers/components/inputs/inputsUtils.ts";
-import { _ as M } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const $ = /* @__PURE__ */ L({
+import { defineComponent as L, useModel as v, ref as r, onMounted as x, resolveComponent as I, openBlock as V, createBlock as _, mergeProps as d, unref as l, withCtx as w, createVNode as A, mergeModels as p } from "vue";
+import { useHddBaseInputUtils as M } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { _ as q } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const D = /* @__PURE__ */ L({
   __name: "CheckboxInput",
   props: /* @__PURE__ */ p({
     autocomplete: {},
@@ -59,20 +59,20 @@ const $ = /* @__PURE__ */ L({
     function b(o) {
       c("change", o);
     }
-    onMounted(() => {
+    x(() => {
       e.value.$el.children[0].addEventListener("keydown", (o) => {
         o.key === "Enter" && m();
       });
     });
-    const { exposed: y, baseInputForwardedProps: B, fieldUniqueId: g, generalInputProps: h } = A(a);
+    const { exposed: y, baseInputForwardedProps: B, fieldUniqueId: g, generalInputProps: h } = M(a);
     return s({ focus: f, ...y }), (o, i) => {
-      const C = x("Checkbox");
-      return I(), V(M, d(l(B), {
+      const C = I("Checkbox");
+      return V(), _(q, d(l(B), {
         "floating-label": !1,
         "infield-top-aligned-label": !1
       }), {
-        default: _(() => [
-          w(C, d({
+        default: w(() => [
+          A(C, d({
             ref_key: "inputRef",
             ref: e
           }, l(h), {
@@ -89,5 +89,5 @@ const $ = /* @__PURE__ */ L({
   }
 });
 export {
-  $ as default
+  D as default
 };

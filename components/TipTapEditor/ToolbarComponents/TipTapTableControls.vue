@@ -6,6 +6,9 @@ import { Menu } from "primevue";
 import type { MenuItem } from "primevue/menuitem";
 import Popover from "primevue/popover";
 import type { ComponentExposed } from "vue-component-type-helpers";
+import { computed, ref, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+
 const { editor } = defineProps<{
   editor: Editor;
   config?: TipTapEditorConfig;

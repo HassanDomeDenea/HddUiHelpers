@@ -1,8 +1,8 @@
-import { defineComponent as g, useModel as w, ref as V, resolveComponent as C, openBlock as A, createBlock as I, mergeProps as u, unref as a, withCtx as d, createVNode as L, createElementVNode as e, createCommentVNode as k, mergeModels as m } from "vue";
-import { useHddBaseInputUtils as z } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { defineComponent as g, useModel as w, ref as V, computed as C, resolveComponent as A, openBlock as I, createBlock as L, mergeProps as r, unref as u, withCtx as d, createVNode as k, createElementVNode as e, createCommentVNode as z, mergeModels as m } from "vue";
+import { useHddBaseInputUtils as E } from "HddUiHelpers/components/inputs/inputsUtils.ts";
 import t from "quill";
-import { _ as E } from "../../BaseInput.vue_vue_type_script_setup_true_lang-DGVI56PE.js";
-const U = /* @__PURE__ */ g({
+import { _ as M } from "../../BaseInput.vue_vue_type_script_setup_true_lang-C8yTwTDa.js";
+const _ = /* @__PURE__ */ g({
   __name: "EditorInput",
   props: /* @__PURE__ */ m({
     autocomplete: {},
@@ -50,13 +50,13 @@ const U = /* @__PURE__ */ g({
     modelModifiers: {}
   }),
   emits: /* @__PURE__ */ m(["keydown", "change"], ["update:modelValue"]),
-  setup(n, { expose: c, emit: M }) {
-    const b = n, s = w(n, "modelValue"), p = V();
-    function i() {
-      p.value.$el.focus();
+  setup(a, { expose: c, emit: S }) {
+    const b = a, n = w(a, "modelValue"), s = V();
+    function p() {
+      s.value.$el.focus();
     }
-    const r = t.import("attributors/class/font");
-    r.whitelist = ["tajawal", "mirza", "amiri", "aref"], t.register(r, !0);
+    const i = t.import("attributors/class/font");
+    i.whitelist = ["tajawal", "mirza", "amiri", "aref"], t.register(i, !0);
     const l = t.import("attributors/class/size");
     l.whitelist = [
       ...l.whitelist || [],
@@ -77,7 +77,7 @@ const U = /* @__PURE__ */ g({
       "40px",
       "48px"
     ], t.register(l, !0);
-    const f = computed(() => ({
+    const f = C(() => ({
       // toolbar: [{ direction: 'rtl' }, { direction: 'ltr' }],
       /*toolbar: [
             ['bold', 'italic', 'underline', 'strike'], // toggled buttons
@@ -99,20 +99,20 @@ const U = /* @__PURE__ */ g({
       
             ['clean'], // remove formatting button
           ],*/
-    })), { exposed: x, baseInputForwardedProps: y, fieldUniqueId: S, generalInputProps: q } = z(b);
-    return c({ focus: i, ...x }), (j, o) => {
-      const v = C("Editor");
-      return A(), I(E, u(a(y), {
+    })), { exposed: x, baseInputForwardedProps: y, fieldUniqueId: j, generalInputProps: q } = E(b);
+    return c({ focus: p, ...x }), (D, o) => {
+      const v = A("Editor");
+      return I(), L(M, r(u(y), {
         class: "HDD_Quill_Editor",
-        onClick: i
+        onClick: p
       }), {
         default: d(() => [
-          L(v, u({ id: "fieldUniqueId" }, a(q), {
+          k(v, r({ id: "fieldUniqueId" }, u(q), {
             ref_key: "inputRef",
-            ref: p,
-            modelValue: s.value,
-            "onUpdate:modelValue": o[0] || (o[0] = (B) => s.value = B),
-            modules: a(f)
+            ref: s,
+            modelValue: n.value,
+            "onUpdate:modelValue": o[0] || (o[0] = (B) => n.value = B),
+            modules: f.value
           }), {
             toolbar: d(() => [
               o[2] || (o[2] = e("span", { class: "ql-formats" }, [
@@ -177,7 +177,7 @@ const U = /* @__PURE__ */ g({
                   value: "rtl"
                 })
               ], -1)),
-              k("", !0),
+              z("", !0),
               o[6] || (o[6] = e("span", { class: "ql-formats" }, [
                 e("button", {
                   class: "ql-table",
@@ -198,5 +198,5 @@ const U = /* @__PURE__ */ g({
   }
 });
 export {
-  U as default
+  _ as default
 };

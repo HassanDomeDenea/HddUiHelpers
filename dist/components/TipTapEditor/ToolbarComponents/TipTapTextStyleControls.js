@@ -1,5 +1,6 @@
-import { defineComponent as f, resolveComponent as c, openBlock as r, createElementBlock as m, createVNode as e, withCtx as s, unref as o, createBlock as a, createCommentVNode as g } from "vue";
-const v = { class: "inline-flex flex-wrap gap-x-1" }, y = /* @__PURE__ */ f({
+import { defineComponent as g, resolveComponent as c, openBlock as r, createElementBlock as m, createVNode as e, withCtx as s, unref as o, createBlock as a, createCommentVNode as f } from "vue";
+import { useI18n as v } from "vue-i18n";
+const b = { class: "inline-flex flex-wrap gap-x-1" }, C = /* @__PURE__ */ g({
   __name: "TipTapTextStyleControls",
   props: {
     editor: {},
@@ -8,10 +9,10 @@ const v = { class: "inline-flex flex-wrap gap-x-1" }, y = /* @__PURE__ */ f({
     withScripts: { type: Boolean, default: !0 }
   },
   setup(i) {
-    const { t: l } = useI18n();
-    return (b, t) => {
+    const { t: l } = v();
+    return (A, t) => {
       const n = c("Button"), u = c("ButtonGroup");
-      return r(), m("div", v, [
+      return r(), m("div", b, [
         e(u, null, {
           default: s(() => [
             e(n, {
@@ -84,7 +85,7 @@ const v = { class: "inline-flex flex-wrap gap-x-1" }, y = /* @__PURE__ */ f({
             }, null, 8, ["disabled", "title", "outlined"])
           ]),
           _: 1
-        })) : g("", !0),
+        })) : f("", !0),
         i.withAlignments ? (r(), a(u, {
           key: 1,
           style: { display: "inline-block", direction: "ltr" }
@@ -128,11 +129,11 @@ const v = { class: "inline-flex flex-wrap gap-x-1" }, y = /* @__PURE__ */ f({
             }, null, 8, ["disabled", "title", "outlined"])
           ]),
           _: 1
-        })) : g("", !0)
+        })) : f("", !0)
       ]);
     };
   }
 });
 export {
-  y as default
+  C as default
 };

@@ -1,5 +1,4 @@
 <script setup lang="ts" generic="T extends any">
-import type { ApiResponseData, InfiniteScrollResponseData } from "@/types/laravel_generated";
 import { vElementVisibility } from "@vueuse/components";
 import type { UrlObject } from "HddUiHelpers/components/FormWrapper/types.ts";
 import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
@@ -7,10 +6,10 @@ import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
 import { get } from "lodash-es";
 import type { SelectChangeEvent, SelectFilterEvent } from "primevue/select";
 import PSelect from "primevue/select";
-import type { Ref } from "vue";
-import { ref } from "vue";
+import { computed, nextTick, type Ref, ref, useTemplateRef, watch } from "vue";
 import BaseInput from "./BaseInput.vue";
 import type { BaseInputProps, ElementClassType } from "./types";
+import {ApiResponseData, InfiniteScrollResponseData} from "HddUiHelpers/types/types.ts";
 
 const props = withDefaults(
   defineProps<
@@ -138,6 +137,7 @@ function focus(_show: boolean = false) {
     if (_show) {
       inputRef.value?.show();
     } else {
+      //@ts-ignore
       inputRef.value?.$refs.focusInput.focus();
     }
   }

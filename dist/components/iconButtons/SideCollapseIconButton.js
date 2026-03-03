@@ -1,7 +1,8 @@
-import { defineComponent as o, useModel as c, resolveDirective as s, openBlock as d, createElementBlock as n, withDirectives as u, createElementVNode as x, normalizeClass as m, unref as i, mergeModels as v } from "vue";
-const f = { class: "inline-flex items-center" }, g = /* @__PURE__ */ o({
+import { defineComponent as c, useModel as s, ref as i, resolveDirective as d, openBlock as n, createElementBlock as u, withDirectives as m, createElementVNode as x, normalizeClass as v, unref as a, mergeModels as p } from "vue";
+import { useI18n as f } from "vue-i18n";
+const C = { class: "inline-flex items-center" }, k = /* @__PURE__ */ c({
   __name: "SideCollapseIconButton",
-  props: /* @__PURE__ */ v({
+  props: /* @__PURE__ */ p({
     collapseDirection: { default: "start" },
     disabled: { type: Boolean },
     expandText: {},
@@ -14,17 +15,17 @@ const f = { class: "inline-flex items-center" }, g = /* @__PURE__ */ o({
   }),
   emits: ["update:isCollapsed"],
   setup(e) {
-    const l = c(e, "isCollapsed"), { t } = useI18n();
-    ref(), ref(!1);
-    function a() {
+    const l = s(e, "isCollapsed"), { t } = f();
+    i(), i(!1);
+    function r() {
       l.value = !l.value;
     }
-    return (p, C) => {
-      const r = s("tooltip");
-      return d(), n("div", f, [
-        u(x("i", {
+    return (h, g) => {
+      const o = d("tooltip");
+      return n(), u("div", C, [
+        m(x("i", {
           tabindex: "0",
-          class: m({
+          class: v({
             [e.collapsedClass ?? "dark:(text-teal-500 hover:text-teal-400) light:(text-teal-500 hover:text-teal-700)"]: l.value,
             [e.expandedClass ?? "dark:(text-teal-300 hover:text-teal-200) light:(text-teal-500 hover:text-teal-700)"]: !l.value,
             "rtl:i-mdi:arrow-left-circle ltr:i-mdi:arrow-right-circle": l.value && e.collapseDirection === "start",
@@ -33,14 +34,14 @@ const f = { class: "inline-flex items-center" }, g = /* @__PURE__ */ o({
             "rtl:i-mdi:arrow-left-circle ltr:i-mdi:arrow-right-circle 12": !l.value && e.collapseDirection === "end",
             "cursor-pointer": !e.disabled
           }),
-          onClick: a
+          onClick: r
         }, null, 2), [
-          [r, l.value ? e.expandText ?? i(t)("Expand") : e.collapseText ?? i(t)("Collapse")]
+          [o, l.value ? e.expandText ?? a(t)("Expand") : e.collapseText ?? a(t)("Collapse")]
         ])
       ]);
     };
   }
 });
 export {
-  g as default
+  k as default
 };

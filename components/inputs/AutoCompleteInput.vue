@@ -5,8 +5,7 @@ import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils
 import { useLoader } from "HddUiHelpers/composables/loader.ts";
 import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
 import type { AutoCompleteOptionSelectEvent } from "primevue/autocomplete";
-import type { Ref } from "vue";
-import { ref } from "vue";
+import { computed, nextTick, Ref, ref, watch } from "vue";
 import BaseInput from "./BaseInput.vue";
 import type { AutocompleteInputProps } from "./types";
 

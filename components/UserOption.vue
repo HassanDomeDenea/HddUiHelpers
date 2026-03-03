@@ -1,5 +1,4 @@
 <script setup lang="ts" generic="TIsGlobal extends boolean = false">
-import type { GlobalOptionData, UserOptionsData } from "@/types/laravel_generated";
 import TreeSelectInput from "HddUiHelpers/components/inputs/TreeSelectInput.vue";
 import { useApiClient } from "HddUiHelpers/stores/apiClient";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
@@ -9,10 +8,15 @@ import { FileUpload } from "primevue";
 import Select from "primevue/select";
 import { useConfirm } from "primevue/useconfirm";
 import type { ComponentExposed } from "vue-component-type-helpers";
+import { computed, toValue, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
+import {HddGlobalOption, HddUserOption} from "HddUiHelpers/types/types.ts";
+import SelectButtonInput from "HddUiHelpers/components/inputs/SelectButtonInput.vue";
+import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
 
 interface UserOptionProps {
   isGlobal?: TIsGlobal;
-  option: TIsGlobal extends true ? keyof GlobalOptionData : keyof UserOptionsData;
+  option: TIsGlobal extends true ? HddGlobalOption : keyof HddUserOption;
   label?: string;
   size?: "small" | "large" | "";
   fluid?: boolean;
@@ -56,15 +60,15 @@ const localIsGlobal = computed(() => isGlobal !== false);
 const currentValue = computed<any>({
   get() {
     return localIsGlobal.value === true
-      ? authStore.globalOptions?.[option as keyof GlobalOptionData]
-      : authStore.options[option as keyof UserOptionsData];
+      ? authStore.globalOptions?.[option as HddGlobalOption]
+      : authStore.options[option as HddUserOption];
   },
   set(value) {
     let request: Promise<void>;
     if (toValue(localIsGlobal) === true) {
-      request = authStore.changeGlobalOption(option as keyof GlobalOptionData, value);
+      request = authStore.changeGlobalOption(option as HddGlobalOption, value);
     } else {
-      request = authStore.changeOption(option as keyof UserOptionsData, value as any);
+      request = authStore.changeOption(option as HddUserOption, value as any);
     }
 
     request
@@ -91,6 +95,7 @@ const currentValue = computed<any>({
       .catch((error) => {
         console.error(error);
         if (selectInputRef.value) {
+          //@ts-ignore
           selectInputRef.value.d_value = toValue(currentValue);
         }
         if (treeSelectInputRef.value) {
@@ -155,6 +160,7 @@ function removeFile(event: PointerEvent) {
 
 function onLabelClick() {
   if (type === "image") {
+    //@ts-ignore
     fileUploadRef.value?.choose();
   } else if (type === "select") {
     selectInputRef.value.show(true);
@@ -167,7 +173,7 @@ function onLabelClick() {
     <label
       ref="labelRef"
       :for="optionId"
-      :class="[{ 'flex-grow': !controlFluid }]"
+      :class="[{ 'grow': !controlFluid }]"
       class="light:hover:bg-yellow-300/25 cursor-pointer rounded-lg dark:hover:bg-zinc-100/10"
       @click="onLabelClick"
     >
@@ -184,7 +190,7 @@ function onLabelClick() {
       v-else-if="type === 'select_button'"
       v-model="currentValue"
       :input-id="optionId"
-      :class="{ 'flex-grow': controlFluid }"
+      :class="{ 'grow': controlFluid }"
       :option-label="localOptionLabel"
       :option-value="localOptionValue"
       :size="size"
@@ -194,7 +200,7 @@ function onLabelClick() {
       v-else-if="type === 'select'"
       ref="selectInputRef"
       v-model="currentValue"
-      :class="{ 'flex-grow': controlFluid }"
+      :class="{ 'grow': controlFluid }"
       :option-label="localOptionLabel"
       :option-value="localOptionValue"
       :options="computedOptions"
@@ -205,7 +211,7 @@ function onLabelClick() {
       v-else-if="type === 'tree_select'"
       ref="treeSelectInputRef"
       v-model="currentValue"
-      :class="{ 'flex-grow': controlFluid }"
+      :class="{ 'grow': controlFluid }"
       :clearable="clearable"
       :option-label="localOptionLabel"
       :option-value="localOptionValue"
@@ -220,10 +226,10 @@ function onLabelClick() {
       v-model.lazy="currentValue"
       :input-id="optionId"
       lazy
-      :class="{ 'flex-grow': controlFluid }"
+      :class="{ 'grow': controlFluid }"
     />
     <template v-else-if="type === 'image'">
-      <div class="flex items-center gap-2" :class="{ 'flex-grow': controlFluid }">
+      <div class="flex items-center gap-2" :class="{ 'grow': controlFluid }">
         <Image
           v-if="currentValue"
           :src="currentValue"

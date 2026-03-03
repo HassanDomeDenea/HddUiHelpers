@@ -1,6 +1,6 @@
-import { defineComponent as a, resolveComponent as l, resolveDirective as p, openBlock as d, createElementBlock as f, createVNode as r, unref as t, withDirectives as v } from "vue";
-import { uniqueId as y } from "lodash-es";
-const b = { class: "inline-block" }, z = /* @__PURE__ */ a({
+import { defineComponent as a, computed as m, useTemplateRef as v, resolveComponent as i, resolveDirective as p, openBlock as d, createElementBlock as f, createVNode as l, withDirectives as y } from "vue";
+import { uniqueId as b } from "lodash-es";
+const k = { class: "inline-block" }, R = /* @__PURE__ */ a({
   __name: "ButtonMenu",
   props: {
     severity: {},
@@ -11,14 +11,14 @@ const b = { class: "inline-block" }, z = /* @__PURE__ */ a({
     items: {}
   },
   setup(e) {
-    const o = computed(() => y("button-menu-overlay-")), n = useTemplateRef("menuRef");
-    return (k, i) => {
-      const s = l("Menu"), u = l("Button"), c = p("tooltip");
-      return d(), f("div", b, [
-        r(s, {
-          id: t(o),
+    const t = m(() => b("button-menu-overlay-")), o = v("menuRef");
+    return (B, n) => {
+      const u = i("Menu"), r = i("Button"), s = p("tooltip");
+      return d(), f("div", k, [
+        l(u, {
+          id: t.value,
           ref_key: "menuRef",
-          ref: n,
+          ref: o,
           model: e.items,
           popup: !0,
           pt: {
@@ -27,21 +27,21 @@ const b = { class: "inline-block" }, z = /* @__PURE__ */ a({
             }
           }
         }, null, 8, ["id", "model"]),
-        v(r(u, {
+        y(l(r, {
           size: e.size,
           icon: e.icon,
           label: e.label,
           "aria-haspopup": "true",
           severity: e.severity,
-          "aria-controls": t(o),
-          onClick: i[0] || (i[0] = (m) => t(n).toggle(m))
+          "aria-controls": t.value,
+          onClick: n[0] || (n[0] = (c) => o.value.toggle(c))
         }, null, 8, ["size", "icon", "label", "severity", "aria-controls"]), [
-          [c, e.tooltip]
+          [s, e.tooltip]
         ])
       ]);
     };
   }
 });
 export {
-  z as default
+  R as default
 };
