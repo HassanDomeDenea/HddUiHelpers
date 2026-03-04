@@ -1,4 +1,5 @@
 import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers';
+import { router } from 'HddUiHelpers/plugins/router.ts';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient';
 import type { BasicUserData, GlobalOptionsMap, HddGlobalOption, HddPermission, HddUserOption, UserOptionsMap } from 'HddUiHelpers/types/types';
 import { configureEcho, echo, echoIsConfigured } from '@laravel/echo-vue';
@@ -9,13 +10,14 @@ import { defineStore } from 'pinia';
 import { computed, type Ref, ref, watch } from 'vue';
 import { safeRequest } from '../utils/safeTry';
 
+const authorizationTokenFromQuery = consumeQueryParameter('_authorization_token');
 export const useBasicAuthStore = defineStore('basicAuth', () => {
   const user = ref<BasicUserData | null>(null);
   const hddUiHelpers = useHddUiHelpers();
   const connectedUsers = ref<BasicUserData[]>([]);
   const apiClient = useApiClient();
   const cookies = useCookies();
-  const authorizationToken = useStorage<string | null>('authorizationToken', new URLSearchParams(window.location.search).get('_authorization_token'));
+  const authorizationToken = useStorage<string | null>('authorizationToken', authorizationTokenFromQuery);
   const isLoggedIn = computed(() => !!user.value);
 
   const options = ref<UserOptionsMap>(cloneDeep(hddUiHelpers.defaultUserOptions));
@@ -219,4 +221,15 @@ export async function setUserFromToken() {
       authStore.login(data, authStore.authorizationToken);
     }
   }
+}
+
+export function consumeQueryParameter(parameter: string): string | null {
+  const url = new URL(window.location.href);
+
+  const token = url.searchParams.get(parameter);
+  if (!token) return null;
+
+  url.searchParams.delete(parameter);
+  window.history.replaceState({}, '', url.toString());
+  return token;
 }

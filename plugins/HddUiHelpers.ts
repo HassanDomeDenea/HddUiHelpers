@@ -52,7 +52,6 @@ export default {
       defaultUserOptions: options.defaultUserOptions ?? {},
     });
     app.provide(HddUiHelpersSymbol, initiallyProvidedValues);
-    console.log('HddUiHelpersPluginOptions');
 
     if (options.dateArabicMonthNamesAsNumbers === true) {
       primeVueLocales.ar.monthNames = ['شهر 1', 'شهر 2', 'شهر 3', 'شهر 4', 'شهر 5', 'شهر 6', 'شهر 7', 'شهر 8', 'شهر 9', 'شهر 10', 'شهر 11', 'شهر 12'];

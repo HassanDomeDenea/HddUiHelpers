@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DarkModeButton from 'HddUiHelpers/components/misc/DarkModeButton.vue';
+import UserAvatar from 'HddUiHelpers/components/misc/UserAvatar.vue';
 import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
 import { useDimensionsStore } from 'HddUiHelpers/stores/dimensions.ts';
 import type { HddPermission } from 'HddUiHelpers/types/types.ts';

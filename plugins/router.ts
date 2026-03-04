@@ -6,6 +6,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { handleHotUpdate, routes } from 'vue-router/auto-routes';
 
 const MAIN_APP_NAME = import.meta.env.VITE_APP_NAME;
+
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
