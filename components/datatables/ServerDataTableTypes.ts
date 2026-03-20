@@ -408,5 +408,5 @@ export interface ResponseData<TData = any> {
   last_page: number;
   total: number;
   total_without_filters: number;
-  extra: Array<any>;
+  extra: any;
 }

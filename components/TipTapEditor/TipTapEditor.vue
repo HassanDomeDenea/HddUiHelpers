@@ -315,4 +315,9 @@ defineExpose({ editor });
 .tiptap-bubble-menu {
   @apply light:bg-zinc-50 border-1 light:border-gray-200 shadow-inset light:shadow-zinc-500/50 flex rounded-lg shadow dark:border-gray-600 dark:bg-zinc-950 dark:shadow-white/50;
 }
+
+.is-empty.is-editor-empty[data-placeholder]::before{
+  @apply text-zinc-500/35! dark:text-zinc-100/35! px-2;
+
+}
 </style>

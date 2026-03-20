@@ -7,6 +7,7 @@ import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales';
 import type { AxiosInstance } from 'axios';
 import { merge } from 'lodash-es';
 import 'moment/locale/ar';
+import type { UserOptionsMap } from 'HddUiHelpers/types/types.ts';
 import moment from 'moment/moment';
 import type { App, InjectionKey } from 'vue';
 import { inject, shallowReactive } from 'vue';
@@ -33,7 +34,7 @@ export interface HddUiHelpersComposable {
   commonServerDataTableProps: Partial<ServerDataTableProps>;
   withBroadcasting: boolean;
   presenceUsersChannel: string | null;
-  defaultUserOptions: Record<string, any>;
+  defaultUserOptions: Partial<UserOptionsMap>;
 }
 
 export const HddUiHelpersSymbol: InjectionKey<Partial<HddUiHelpersComposable>> = Symbol('HddUiHelpersSymbol');

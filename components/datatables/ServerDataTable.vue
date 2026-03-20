@@ -1,6 +1,6 @@
 // @unocss-include
 
-<script lang="ts" setup generic="T extends RecordItem = RecordItem">
+<script lang="ts" setup generic="T extends RecordItem = RecordItem, TExtraData extends Record<string, unknown> = Record<string, unknown>">
 import type AuditsPopover from 'HddUiHelpers/components/AuditsPopover/AuditsPopover.vue';
 import CellContent from 'HddUiHelpers/components/datatables/CellContent.vue';
 import type ToolbarFilterWrapper from 'HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue';
@@ -30,7 +30,7 @@ import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
 import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts';
 import type { ApiResponseData } from 'HddUiHelpers/types/types.ts';
 import { printDomWithStyles } from 'HddUiHelpers/utils/printDom.ts';
-import { useFormatters } from 'HddUiHelpers/utils/useFormatters.ts';
+import { formatNumberGrouped, useFormatters } from 'HddUiHelpers/utils/useFormatters.ts';
 import { type MaybeElement, useDebounceFn, useElementSize } from '@vueuse/core';
 import type { AxiosError, AxiosRequestConfig } from 'axios';
 import { cloneDeep, filter, find, get, isBoolean, isFunction, isString, map, reduce, set, uniqueId, unset } from 'lodash-es';
@@ -266,7 +266,7 @@ const contextMenuSelectedRecord = ref<T>();
 const perPage = defineModel<number>('perPage', { default: 25 });
 const firstRowIndex = defineModel<number>('firstRowIndex', { default: 0 });
 const currentPage = defineModel<number>('currentPage', { default: 1 });
-const extraData = defineModel<unknown>('extraData');
+const extraData = defineModel<TExtraData>('extraData');
 const isLoading = ref(false);
 const isAllSelected = ref(false);
 
@@ -970,7 +970,7 @@ const localVirtualScrollerOptions = computed(() => {
 async function loadRecordsLazily() {}
 
 // Visibility
-const { checkColumnIsVisible, visibleColumns, visibleColumnsPopoverRef, saveVisibleColumnsState, toggleableColumns } =
+const { checkColumnIsVisible, visibleColumns, visibleColumnsPopoverRef, saveVisibleColumnsState, toggleableColumns, confirmResetColumnsVisibility } =
   useServerDataTableColumnVisibility(tableName, mappedColumns);
 
 // Deletions
@@ -1164,7 +1164,7 @@ const contextMenuModel = computed<MenuItem[]>(() => {
         command: () => (contextMenuSelectedRecord.value ? emits('rowOpen', contextMenuSelectedRecord.value) : undefined),
       });
     }
-    if (printableRows == true || (typeof printableRows === 'function' && printableRows(contextMenuSelectedRecord.value))) {
+    if (printableRows === true || (typeof printableRows === 'function' && printableRows(contextMenuSelectedRecord.value))) {
       list.push({
         label: t('Print'),
         icon: 'i-mdi-printer',
@@ -1739,6 +1739,14 @@ const computedTableHeight = computed(() => {
                       {{ getColumnTitle(column, t) }}
                     </label>
                   </div>
+                  <Divider/>
+                  <Button
+                    :label="t('Reset Columns Visibility')"
+                    icon="i-mdi:refresh"
+                    size="small"
+                    severity="danger"
+                    @click="confirmResetColumnsVisibility"
+                  />
                 </div>
               </Popover>
               <Button
@@ -1883,10 +1891,10 @@ const computedTableHeight = computed(() => {
             <template v-if="hasFilters">
               {{
                 t("Showing start To end From filtered (Filtered From total)", {
-                  start: from,
-                  end: to,
-                  total: totalWithoutFilters,
-                  filtered: totalRecords,
+                  start: formatNumberGrouped(from),
+                  end: formatNumberGrouped(to),
+                  total: formatNumberGrouped(totalWithoutFilters),
+                  filtered: formatNumberGrouped(totalRecords),
                 })
               }}
             </template>
@@ -2034,7 +2042,7 @@ const computedTableHeight = computed(() => {
             :align-frozen="localeAlignToFrozenAlign(column.frozen)"
             :pt="{
               pcSortBadge: {
-                root: computedNoMultiSortBadges ? '!hidden' : '',
+                root: computedNoMultiSortBadges || (sortMode ==='multiple' && multiSorts.length < 2) ? '!hidden' : '',
               },
             }"
           >

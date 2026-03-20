@@ -3,8 +3,10 @@ import { getColumnName } from 'HddUiHelpers/components/datatables/ServerDataTabl
 import { useStorage } from '@vueuse/core';
 import { isBoolean } from 'lodash-es';
 import type Popover from 'primevue/popover';
+import { useConfirm } from 'primevue/useconfirm';
 import type { MaybeRef } from 'vue';
 import { computed, onMounted, ref, toRef, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 export const useServerDataTableColumnVisibility = (tableName: MaybeRef<string>, columns: MaybeRef<ServerDataTableColumn[]>) => {
   const visibleColumns = ref<string[]>([]);
@@ -13,10 +15,32 @@ export const useServerDataTableColumnVisibility = (tableName: MaybeRef<string>, 
   const localColumns = toRef(columns);
   const savedHiddenColumns = useStorage<string[]>('HddSeverDataTableHiddenColumns_' + localTableName.value, []);
   const savedVisibleColumns = useStorage<string[]>('HddSeverDataTableVisibleColumns_' + localTableName.value, []);
-
+  const confirm = useConfirm();
+  const { t } = useI18n();
   onMounted(() => {
     initiateVisibleColumns();
   });
+
+  function resetCachedVisibility() {
+    savedHiddenColumns.value = [];
+    savedVisibleColumns.value = [];
+  }
+
+  function confirmResetColumnsVisibility(event: PointerEvent) {
+    confirm.require({
+      group: 'popup',
+      target: event.currentTarget as HTMLButtonElement,
+      message: t('Are you sure you want to reset the columns visibility?'),
+      header: t('Reset Columns Visibility'),
+      icon: 'pi pi-exclamation-triangle',
+      rejectProps: {
+        severity: 'secondary',
+      },
+      accept: () => {
+        resetCachedVisibility();
+      },
+    });
+  }
 
   function initiateVisibleColumns() {
     visibleColumns.value = localColumns.value
@@ -53,10 +77,12 @@ export const useServerDataTableColumnVisibility = (tableName: MaybeRef<string>, 
   }
 
   const toggleableColumns = computed(() =>
-    localColumns.value.filter((col) => col.visibilityControl !== false && col.disabled !== true && col.type !== 'hidden'),
+    localColumns.value.filter((col) => (col.visible !== false || col.visibilityControl === true) && col.disabled !== true && col.type !== 'hidden'),
   );
 
   return {
+    confirmResetColumnsVisibility,
+    resetCachedVisibility,
     toggleableColumns,
     saveVisibleColumnsState,
     checkColumnIsVisible,

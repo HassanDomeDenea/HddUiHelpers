@@ -210,17 +210,19 @@ Is Loading: جاري التحميل
 Refresh Page: اعادة تحديث الصفحة
 Login: تسجيل الدخول
 Welcome, Please Log In: مرحباً، الرجاء تسجيل الدخول
-Users: Users
-Please select a chat: Please select a chat
-New Files: New Files
-No File Selected: No File Selected
-Rotate Image: Rotate Image
-Remove Selection: Remove Selection
-Use Scanner: Use Scanner
-Choose Image: Choose Image
-Choose another image: Choose another image
-Current Files: Current Files
-Will be deleted: Will be deleted
-Remove File: Remove File
-Restore File: Restore File
-Text Color: Text Color
+Users: المستخدمون
+Please select a chat: الرجاء اختيار محادثة
+New Files: ملفات جديدة
+No File Selected: لم يتم اختيار ملف
+Rotate Image: تدوير الصورة
+Remove Selection: إزالة المحدد
+Use Scanner: استخدام الماسح الضوئي
+Choose Image: اختر صورة
+Choose another image: اختر صورة أخرى
+Current Files: الملفات الحالية
+Will be deleted: سيتم الحذف
+Remove File: إزالة الملف
+Restore File: استعادة الملف
+Text Color: لون النص
+Are you sure you want to reset the columns visibility?: هل أنت متأكد من إعادة تعيين الأعمدة؟
+Reset Columns Visibility: إعادة تعيين الأعمدة

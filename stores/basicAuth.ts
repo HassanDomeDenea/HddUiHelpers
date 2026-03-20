@@ -1,5 +1,4 @@
 import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers';
-import { router } from 'HddUiHelpers/plugins/router.ts';
 import { useApiClient } from 'HddUiHelpers/stores/apiClient';
 import type { BasicUserData, GlobalOptionsMap, HddGlobalOption, HddPermission, HddUserOption, UserOptionsMap } from 'HddUiHelpers/types/types';
 import { configureEcho, echo, echoIsConfigured } from '@laravel/echo-vue';
@@ -50,17 +49,18 @@ export const useBasicAuthStore = defineStore('basicAuth', () => {
     cookies.remove('authorizationToken');
   }
 
-  async function changeOption(option: HddUserOption, value: UserOptionsMap[HddUserOption]) {
+  async function changeOption<TOption extends HddUserOption>(option: TOption, value: UserOptionsMap[TOption]) {
     try {
       await apiClient.request({ method: 'post', url: '/api/change-option' }, { option, value });
-      options.value[option] = value as any;
+
+      options.value[option] = value;
     } catch (error: any) {
       apiClient.toastError(error?.response?.data?.message ?? '');
       throw error;
     }
   }
 
-  async function changeGlobalOption(option: HddGlobalOption, value: GlobalOptionsMap[HddGlobalOption]) {
+  async function changeGlobalOption<TOption extends HddGlobalOption>(option: TOption, value: GlobalOptionsMap[TOption] | File) {
     try {
       // Check if the value is a File
       const urlObject = {

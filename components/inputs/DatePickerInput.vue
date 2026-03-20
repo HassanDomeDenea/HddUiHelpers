@@ -107,7 +107,6 @@ watch(
     :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown"
     @click="focus"
   >
-    {{localValue}}
     <div class="relative !w-full">
       <DatePicker
         v-bind="generalInputProps"

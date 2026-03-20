@@ -1,3 +1,5 @@
+import type { AppPermission, GlobalOptionData, UserOptionsData } from '../../types/laravel_generated';
+
 export interface BasicUserData {
   id: number | string;
   username: string;
@@ -13,12 +15,12 @@ export interface BasicUserData {
 export type ToMap<T extends string> = { [K in T]: true };
 
 export interface RolesMap extends Record<string, any> {}
-export type PermissionsMap = {};
-export interface GlobalOptionsMap {
+export interface PermissionsMap extends ToMap<AppPermission> {}
+export interface GlobalOptionsMap extends Partial<GlobalOptionData> {
   app_name?: any;
 }
-export interface UserOptionsMap {
-  language?: string;
+export interface UserOptionsMap extends Partial<UserOptionsData> {
+  language?: 'en' | 'ar';
   dark_mode?: 'light' | 'dark' | 'auto';
 }
 
