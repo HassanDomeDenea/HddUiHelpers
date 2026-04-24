@@ -49,7 +49,9 @@ watch(
     <slot>
       <div class="grid w-full grid-cols-3">
         <div>&nbsp;</div>
-        <div class="flex justify-center">HDD 2025</div>
+        <div class="flex justify-center">
+          <slot></slot>
+        </div>
         <div class="flex justify-end pe-2">
           <ChatWidget v-if="authStore.isLoggedIn" />
         </div>
