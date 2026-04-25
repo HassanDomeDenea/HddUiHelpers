@@ -97,6 +97,7 @@ const emits = defineEmits<{
   refreshed: [res: GetRecordsResponseType];
   rowChanged: [row: T | T[] | (string | number)[], type: 'create' | 'update' | 'delete'];
   dialogsVisibility: [status: boolean];
+  dataLoaded: [response: ResponseData],
 }>();
 
 const {
@@ -915,6 +916,7 @@ async function refresh() {
             selectedRecords.value = records.value.filter((e) => existingKeys.includes(e[primaryKey]));
           }
           extraData.value = responseData.extra;
+          emits('dataLoaded', responseData);
         })
         .catch((error) => {
           console.error(error);

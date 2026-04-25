@@ -152,6 +152,7 @@ export interface ServerDataTableProps<T extends RecordItem = RecordItem> {
   onRowClick?: (row: T, index: number, original: Event) => void;
   onRowDblClick?: (row: T, index: number, original: Event) => void;
   onRowOpen?: (row: T) => void;
+  onDataLoaded?: (response: ResponseData) => void;
   rowDeletable?: (row: T) => boolean;
   rowEditable?: (row: T) => boolean;
 

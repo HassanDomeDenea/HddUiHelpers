@@ -4,11 +4,15 @@ import { get } from 'lodash-es';
 import { computed, ref } from 'vue';
 import BaseInput from './BaseInput.vue';
 import type { BaseInputProps } from './types';
+import { BadgeProps } from 'primevue';
 
 const props = withDefaults(
   defineProps<
     {
+      badgeSeverity?: BadgeProps['severity'],
+      emptyBadgeSeverity?: BadgeProps['severity'],
       options: any[];
+      badges?: Record<string|number, string|number>;
       optionDisabledProperty?: string;
       optionIconProperty?: string;
       optionLabelProperty?: string;
@@ -18,6 +22,8 @@ const props = withDefaults(
     } & BaseInputProps
   >(),
   {
+    badgeSeverity: 'contrast',
+    emptyBadgeSeverity: 'secondary',
     optionIconProperty: 'icon',
     optionDisabledProperty: 'disabled',
     optionLabelProperty: 'name',
@@ -66,6 +72,7 @@ defineExpose({ focus, ...exposed });
               class="me-1"
             />
             <span>{{ get(option, optionLabelProperty) }}</span>
+            <Badge v-if="badges && badges[option[optionValueProperty]]" size="small" :severity="badges[option[optionValueProperty]] ? badgeSeverity : emptyBadgeSeverity" :value="badges[option[optionValueProperty]]" />
           </div>
         </slot>
       </template>

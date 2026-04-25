@@ -1,5 +1,9 @@
 <script setup lang="ts" generic="TRecord extends RecordItem = RecordItem">
-import { appendToUrl, getColumnTitle, getFieldSlotName } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
+import {
+  appendToUrl,
+  getColumnTitle,
+  getFieldSlotName
+} from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
 import type HddForm from 'HddUiHelpers/components/FormWrapper/HddForm.vue';
 import type { HddFormField, HddFormProps, RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
 import BaseInput from 'HddUiHelpers/components/inputs/BaseInput.vue';
@@ -51,7 +55,7 @@ const {
   submitPayloadTransformer,
   customDefaultValuesOnCreate,
   customDefaultValuesOnEdit,
-  autoAppendIdToEditUrl = false,
+  autoAppendIdToEditUrl = false
 } = defineProps<ServerFormDialogProps<TRecord>>();
 
 const emits = defineEmits<{
@@ -104,7 +108,7 @@ function columnToField(column: ServerDataTableColumn): HddFormField {
     type: formFieldType,
     options: formFieldOptions,
     showable: showable,
-    ...(column.formProps ?? {}),
+    ...(column.formProps ?? {})
   };
 }
 
@@ -121,7 +125,7 @@ const mappedFormFields = computed(() => {
     }),
     ...(columns
       ?.filter((column) => column.inForm !== false && (isEditing.value ? column.editable !== false : column.creatable !== false))
-      .map(columnToField) ?? []),
+      .map(columnToField) ?? [])
   ] as HddFormField[];
 });
 
@@ -165,7 +169,7 @@ const hddFormOptions = computed(() => {
         }
       }
       return {
-        data: multiEditRecords.value,
+        data: multiEditRecords.value
       };
     };
   } else if (submitPayloadTransformer) {
@@ -175,7 +179,7 @@ const hddFormOptions = computed(() => {
   return {
     url: {
       url: urlLink,
-      method: urlMethod,
+      method: urlMethod
     },
     fieldsContainerClass,
     unifyLabelsWidth: autoLabelsWidth,
@@ -211,12 +215,12 @@ const hddFormOptions = computed(() => {
               : t('n Record Updated Successfully!', { n: multiEditRecords.value.length || 1 }, multiEditRecords.value.length || 1)
             : isMultiCreate.value
               ? t('Record Created Successfully!')
-              : t('n Record Created Successfully!', { n: multiCreateRecords.value.length || 1 }, multiCreateRecords.value.length || 1),
+              : t('n Record Created Successfully!', { n: multiCreateRecords.value.length || 1 }, multiCreateRecords.value.length || 1)
         );
       }
 
       withoutDialog.value = false;
-    },
+    }
   } as HddFormProps;
 });
 const form = computed(() => hddFormRef?.value?.form);
@@ -225,9 +229,11 @@ const currentValues = computed(() => hddFormRef.value?.currentValues);
 function setValue(fieldName: string, value: any) {
   form?.value?.setValue(fieldName, value);
 }
+
 function getValue(fieldName: string) {
   return get(currentValues.value, fieldName);
 }
+
 function setValues(_values: { [key: string]: any }) {
   for (const fieldName in _values) {
     form?.value?.setValue(fieldName, _values[fieldName]);
@@ -246,7 +252,7 @@ function create(rowValues = false, specificId?: string | number) {
             field.name.split('.'),
             typeof field.defaultValue === 'function'
               ? field.defaultValue(rowValues ? get(rowValues, field.name) : undefined, rowValues)
-              : field.defaultValue,
+              : field.defaultValue
           );
         }
       }
@@ -305,11 +311,13 @@ function cancel() {
   isVisible.value = false;
 }
 
-function onResetButtonClicked() {}
+function onResetButtonClicked() {
+}
+
 const dialogRef = useTemplateRef('dialogRef');
 const { isClosable, dialogStackIndex } = useStackableDialog({
   dialogVisibilityRef: isVisible,
-  dialogRef: dialogRef,
+  dialogRef: dialogRef
 });
 
 function onDialogHidden() {
@@ -439,7 +447,7 @@ function deleteRecord(item: TRecord | TRecord[]) {
         await apiClient.request({
           url: urlLink,
           method: urlMethod,
-          params: { ids },
+          params: { ids }
         });
         apiClient.toastSuccess(t('Deleted!'), t('n Record Deleted Successfully', { n: cnt }, cnt));
         emits('submitted', item, 'delete');
@@ -454,7 +462,7 @@ function deleteRecord(item: TRecord | TRecord[]) {
     },
     onHide: () => {
       updateDeleteDialogVisibility(false);
-    },
+    }
   });
 }
 
@@ -486,7 +494,7 @@ const generalSlotProps = computed(() => {
   return {
     row: recordToEdit.value ?? initialValues.value,
     submit: form.value?.submitForm,
-    cancel: cancel,
+    cancel: cancel
   };
 });
 
@@ -511,7 +519,7 @@ defineExpose({
   updateDirectly,
   deleteRecord,
   delete: deleteRecord,
-  close,
+  close
 });
 </script>
 
@@ -548,16 +556,16 @@ defineExpose({
             {{
               editRecordHeader ??
               (isMultiEdit
-                ? t("Edit n Records", { n: multiEditRecords.length }, multiEditRecords.length)
-                : t("Edit Record"))
+                ? t('Edit n Records', { n: multiEditRecords.length }, multiEditRecords.length)
+                : t('Edit Record'))
             }}
           </span>
           <span v-else class="font-bold">
             {{
               createRecordHeader ??
               (isMultiCreate
-                ? t("Create n Records", { n: multiCreateRecords.length }, multiCreateRecords.length)
-                : t("Create Record"))
+                ? t('Create n Records', { n: multiCreateRecords.length }, multiCreateRecords.length)
+                : t('Create Record'))
             }}
           </span>
         </template>
@@ -602,7 +610,7 @@ defineExpose({
             :button-addon="undefined"
           >
             <Message severity="secondary" variant="simple" size="small" class="w-full ps-8">
-              {{ t("Unavailable in multi edit") }}
+              {{ t('Unavailable in multi edit') }}
             </Message>
           </BaseInput>
         </template>
@@ -619,7 +627,7 @@ defineExpose({
             :button-addon="undefined"
           >
             <Message severity="secondary" variant="simple" size="small" class="w-full ps-8">
-              <span class="mx-4">{{ t("Different Values") }}</span>
+              <span class="mx-4">{{ t('Different Values') }}</span>
               <Button
                 v-tooltip="t('Edit All')"
                 size="small"
