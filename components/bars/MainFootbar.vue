@@ -50,7 +50,7 @@ watch(
       <div class="grid w-full grid-cols-3">
         <div>&nbsp;</div>
         <div class="flex justify-center">
-          <slot></slot>
+          <slot name="center"></slot>
         </div>
         <div class="flex justify-end pe-2">
           <ChatWidget v-if="authStore.isLoggedIn" />
