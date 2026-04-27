@@ -87,7 +87,7 @@ defineExpose({ focus, ...exposed });
       :invalid="generalInputProps.invalid"
       class="flex flex-wrap gap-x-5"
     >
-      <template v-for="option in mappedOptions" :key="option">
+      <template v-for="(option,optionIndex) in mappedOptions" :key="optionIndex">
         <div class="flex items-center gap-2">
           <RadioButton
             ref="inputRefs"

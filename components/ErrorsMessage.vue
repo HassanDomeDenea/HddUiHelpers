@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { MessageProps } from 'primevue';
+import { computed } from 'vue';
 
 const { severity = 'error', errors } = defineProps<{
   size?: MessageProps['size'];
   severity?: MessageProps['severity'];
-  errors?: ({ message: string; } | string)[] | Record<string, string> | Record<string, { message: string }>;
+  errors?: ({ message: string; } | string)[] | Record<string, string> | Record<string, string[]> | Record<string, { message: string }>;
 }>();
 
 const formattedErrors = computed(() => {

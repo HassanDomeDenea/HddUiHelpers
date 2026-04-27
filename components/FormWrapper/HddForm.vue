@@ -111,7 +111,7 @@ const hddFormOptions = computed(() => {
 
 const containerRef = useTemplateRef('containerRef');
 const fieldsContainerRef = useTemplateRef('fieldsContainerRef');
-const submitButtonRef = useTemplateRef<ComponentExposed<typeof Button>>('submitButtonRef');
+const submitButtonRef = useTemplateRef<ComponentExposed<typeof Button> & {$el: HTMLButtonElement}>('submitButtonRef');
 const form = useHddForm<T>(hddFormOptions.value as UseHddFormOptions<T>);
 
 const isSubmitting = ref(false);
@@ -402,11 +402,11 @@ const fieldNamePaths = computed(() => {
 });
 
 function resolveFieldOptions(_options: MaybeRefOrGetter<any[] | ((form: unknown) => any[])>, _currentValues: unknown) {
-  return typeof _options === 'function' ? _options(_currentValues) : (toValue(_options) ?? []);
+  return typeof _options === 'function' ? (_options(_currentValues) as any[]) : (toValue(_options) ?? []) as any[];
 }
 
 if (formModelValue.value) {
-  syncRef(formModelValue, form.currentValues);
+  syncRef(formModelValue, form.currentValues as any);
 }
 </script>
 
@@ -422,7 +422,7 @@ if (formModelValue.value) {
           icon="i-heroicons-exclamation-triangle-20-solid !size-8 !text-4xl"
         >
           <ul class="list-disc ps-4">
-            <template v-for="error in formState.errors" :key="error">
+            <template v-for="(error,errorIndex) in formState.errors" :key="errorIndex">
               <li>
                 {{ error.message }}
               </li>

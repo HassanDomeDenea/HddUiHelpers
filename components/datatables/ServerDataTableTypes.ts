@@ -336,7 +336,7 @@ export interface ServerFormDialogProps<TRecord extends RecordItem = RecordItem> 
   submitSeverity?: ButtonProps['severity'];
   submitText?: string;
   submitIcon?: string;
-  primaryKey?: string | number;
+  primaryKey?: keyof TRecord;
   inlineFields?: boolean;
   size?: 'small' | 'large' | string;
   columns?: ServerDataTableColumn[];

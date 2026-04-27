@@ -97,6 +97,7 @@ export type FormFieldType =
   | 'math'
   | 'phone'
   | 'listbox'
+  | 'color'
   | 'divider'
   | 'form'
   | 'separator'
@@ -170,6 +171,8 @@ export type HddFormField<N extends string = string, T extends FormFieldType = Fo
   fields?: HddFormField[];
   imageUrlKey?: string;
   imageClearKey?: string;
+  lazy?: boolean;
+  currency?: string;
   teleport?: MaybeRefOrGetter<string | HTMLElement | Component>;
   //rules?:HddFormFieldSchema<T>
   // rules?: Schema

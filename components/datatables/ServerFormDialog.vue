@@ -257,7 +257,7 @@ function create(rowValues = false, specificId?: string | number) {
         }
       }
     }
-    idToCreate.value = specificId ?? (initialValues.value[primaryKey as keyof TRecord] as string | number);
+    idToCreate.value = specificId ?? (initialValues.value[primaryKey] as string | number);
 
     if (customDefaultValuesOnCreate) {
       setDefaultValues(customDefaultValuesOnCreate);
