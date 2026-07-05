@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import DatePickerInput from 'HddUiHelpers/components/inputs/DatePickerInput.vue';
-import MathInput from 'HddUiHelpers/components/inputs/MathInput.vue';
-import NumberInput from 'HddUiHelpers/components/inputs/NumberInput.vue';
-import TextAreaInput from 'HddUiHelpers/components/inputs/TextAreaInput.vue';
-import TextInput from 'HddUiHelpers/components/inputs/TextInput.vue';
-import { useEventBus } from '@vueuse/core';
-import { usePrimeVue } from 'primevue';
-import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
+import { useEventBus } from "@vueuse/core";
+import DatePickerInput from "HddUiHelpers/components/inputs/DatePickerInput.vue";
+import MathInput from "HddUiHelpers/components/inputs/MathInput.vue";
+import NumberInput from "HddUiHelpers/components/inputs/NumberInput.vue";
+import TextAreaInput from "HddUiHelpers/components/inputs/TextAreaInput.vue";
+import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
+import { usePrimeVue } from "primevue";
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from "vue";
+
 import {
   type ConfirmDialogWithInputConfirmationOptions,
   type ConfirmDialogWithInputEventBus,
   ConfirmDialogWithInputKey,
-} from './confirmDialogWithInputUtilities.ts';
+} from "./confirmDialogWithInputUtilities.ts";
 
 defineProps<{
   draggable?: boolean;
@@ -22,15 +23,17 @@ const bus = useEventBus(ConfirmDialogWithInputKey);
 const visible = ref(false);
 const inputValue = ref([]);
 const primeVue = usePrimeVue();
-const inputRef = useTemplateRef('inputRef');
+const inputRef = useTemplateRef("inputRef");
 const confirmation = ref<ConfirmDialogWithInputConfirmationOptions>(null);
 
 function busListener({ event, options }: ConfirmDialogWithInputEventBus) {
-  if (event === 'show') {
-    window.document.addEventListener('keydown', onEscapeKeydown, { capture: true });
+  if (event === "show") {
+    window.document.addEventListener("keydown", onEscapeKeydown, { capture: true });
 
     confirmation.value = options;
-    inputValue.value = Array.isArray(options.initialValue) ? options.initialValue : [options.initialValue];
+    inputValue.value = Array.isArray(options.initialValue)
+      ? options.initialValue
+      : [options.initialValue];
     visible.value = true;
     setTimeout(() => {
       inputRef.value?.[0]?.focus?.();
@@ -40,7 +43,7 @@ function busListener({ event, options }: ConfirmDialogWithInputEventBus) {
         inputRef.value?.[0]?.select?.();
       }
     }, 250);
-  } else if (event === 'hide') {
+  } else if (event === "hide") {
     visible.value = false;
   }
 }
@@ -53,36 +56,55 @@ onBeforeUnmount(() => {
   bus.off(busListener);
 });
 
-const appendTo = computed(() => (confirmation.value ? confirmation.value.appendTo : 'body'));
+const appendTo = computed(() => (confirmation.value ? confirmation.value.appendTo : "body"));
 // const target = computed(() => (confirmation.value ? confirmation.value.target : null));
-const modal = computed(() => (confirmation.value ? (confirmation.value.modal == null ? true : confirmation.value.modal) : true));
+const modal = computed(() =>
+  confirmation.value ? (confirmation.value.modal == null ? true : confirmation.value.modal) : true,
+);
 const header = computed(() => (confirmation.value ? confirmation.value.header : null));
 const message = computed(() => (confirmation.value ? confirmation.value.message : null));
 const blockScroll = computed(() => (confirmation.value ? confirmation.value.blockScroll : true));
 const position = computed(() => (confirmation.value ? confirmation.value.position : null));
 const acceptLabel = computed(() =>
   confirmation.value
-    ? confirmation.value.acceptLabel || confirmation.value.acceptProps?.label || primeVue.config.locale.accept
+    ? confirmation.value.acceptLabel ||
+      confirmation.value.acceptProps?.label ||
+      primeVue.config.locale.accept
     : primeVue.config.locale.accept,
 );
 const rejectLabel = computed(() =>
   confirmation.value
-    ? confirmation.value.rejectLabel || confirmation.value.rejectProps?.label || primeVue.config.locale.reject
+    ? confirmation.value.rejectLabel ||
+      confirmation.value.rejectProps?.label ||
+      primeVue.config.locale.reject
     : primeVue.config.locale.reject,
 );
 const acceptIcon = computed(() =>
-  confirmation.value ? confirmation.value.acceptIcon : confirmation.value?.acceptProps ? confirmation.value.acceptProps.icon : null,
+  confirmation.value
+    ? confirmation.value.acceptIcon
+    : confirmation.value?.acceptProps
+      ? confirmation.value.acceptProps.icon
+      : null,
 );
 const rejectIcon = computed(() =>
-  confirmation.value ? confirmation.value.rejectIcon : confirmation.value?.rejectProps ? confirmation.value.rejectProps.icon : null,
+  confirmation.value
+    ? confirmation.value.rejectIcon
+    : confirmation.value?.rejectProps
+      ? confirmation.value.rejectProps.icon
+      : null,
 );
-const autoFocusAccept = computed(() => confirmation.value?.defaultFocus === undefined || confirmation.value?.defaultFocus === 'accept');
-const autoFocusReject = computed(() => confirmation.value?.defaultFocus === 'reject');
+const autoFocusAccept = computed(
+  () =>
+    confirmation.value?.defaultFocus === undefined || confirmation.value?.defaultFocus === "accept",
+);
+const autoFocusReject = computed(() => confirmation.value?.defaultFocus === "reject");
 const closeOnEscape = computed(() => confirmation.value?.closeOnEscape ?? true);
 
 function accept() {
   if (confirmation.value.accept) {
-    confirmation.value.accept(isMultiInputsConfirmation.value ? inputValue.value : inputValue.value[0]);
+    confirmation.value.accept(
+      isMultiInputsConfirmation.value ? inputValue.value : inputValue.value[0],
+    );
   }
 
   visible.value = false;
@@ -97,14 +119,14 @@ function reject() {
 }
 
 function onHide() {
-  window.document.removeEventListener('keydown', onEscapeKeydown, { capture: true });
+  window.document.removeEventListener("keydown", onEscapeKeydown, { capture: true });
   if (confirmation.value.onHide) {
     confirmation.value.onHide();
   }
 }
 
 function onEscapeKeydown(event: KeyboardEvent) {
-  if (event.code === 'Escape') {
+  if (event.code === "Escape") {
     event.stopImmediatePropagation();
     event.preventDefault();
     if (closeOnEscape.value) {
@@ -116,10 +138,14 @@ function onEscapeKeydown(event: KeyboardEvent) {
 const isMultiInputsConfirmation = computed(() => confirmation.value?.inputsCount > 1);
 
 const inputsProps = computed(() => {
-  return Array.isArray(confirmation.value.inputProps) ? confirmation.value.inputProps : [confirmation.value.inputProps];
+  return Array.isArray(confirmation.value.inputProps)
+    ? confirmation.value.inputProps
+    : [confirmation.value.inputProps];
 });
 const inputsType = computed(() => {
-  return Array.isArray(confirmation.value.inputType) ? confirmation.value.inputType : [confirmation.value.inputType];
+  return Array.isArray(confirmation.value.inputType)
+    ? confirmation.value.inputType
+    : [confirmation.value.inputType];
 });
 </script>
 

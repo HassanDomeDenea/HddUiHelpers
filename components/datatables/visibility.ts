@@ -1,20 +1,31 @@
-import type { ServerDataTableColumn } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
-import { getColumnName } from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
-import { useStorage } from '@vueuse/core';
-import { isBoolean } from 'lodash-es';
-import type Popover from 'primevue/popover';
-import { useConfirm } from 'primevue/useconfirm';
-import type { MaybeRef } from 'vue';
-import { computed, onMounted, ref, toRef, useTemplateRef } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useStorage } from "@vueuse/core";
+import type { ServerDataTableColumn } from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
+import { getColumnName } from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import { isBoolean } from "lodash-es";
+import type Popover from "primevue/popover";
+import { useConfirm } from "primevue/useconfirm";
+import type { MaybeRef } from "vue";
+import { computed, onMounted, ref, toRef, useTemplateRef } from "vue";
+import { useI18n } from "vue-i18n";
 
-export const useServerDataTableColumnVisibility = (tableName: MaybeRef<string>, columns: MaybeRef<ServerDataTableColumn[]>) => {
+export const useServerDataTableColumnVisibility = (
+  tableName: MaybeRef<string>,
+  columns: MaybeRef<ServerDataTableColumn[]>,
+) => {
   const visibleColumns = ref<string[]>([]);
-  const visibleColumnsPopoverRef = useTemplateRef<InstanceType<typeof Popover>>('visibleColumnsPopoverRef');
+  const visibleColumnsPopoverRef = useTemplateRef<InstanceType<typeof Popover>>(
+    "visibleColumnsPopoverRef",
+  );
   const localTableName = toRef(tableName);
   const localColumns = toRef(columns);
-  const savedHiddenColumns = useStorage<string[]>('HddSeverDataTableHiddenColumns_' + localTableName.value, []);
-  const savedVisibleColumns = useStorage<string[]>('HddSeverDataTableVisibleColumns_' + localTableName.value, []);
+  const savedHiddenColumns = useStorage<string[]>(
+    "HddSeverDataTableHiddenColumns_" + localTableName.value,
+    [],
+  );
+  const savedVisibleColumns = useStorage<string[]>(
+    "HddSeverDataTableVisibleColumns_" + localTableName.value,
+    [],
+  );
   const confirm = useConfirm();
   const { t } = useI18n();
   onMounted(() => {
@@ -28,13 +39,13 @@ export const useServerDataTableColumnVisibility = (tableName: MaybeRef<string>, 
 
   function confirmResetColumnsVisibility(event: PointerEvent) {
     confirm.require({
-      group: 'popup',
+      group: "popup",
       target: event.currentTarget as HTMLButtonElement,
-      message: t('Are you sure you want to reset the columns visibility?'),
-      header: t('Reset Columns Visibility'),
-      icon: 'pi pi-exclamation-triangle',
+      message: t("Are you sure you want to reset the columns visibility?"),
+      header: t("Reset Columns Visibility"),
+      icon: "pi pi-exclamation-triangle",
       rejectProps: {
-        severity: 'secondary',
+        severity: "secondary",
       },
       accept: () => {
         resetCachedVisibility();
@@ -58,7 +69,12 @@ export const useServerDataTableColumnVisibility = (tableName: MaybeRef<string>, 
       .map((col) => col.name || col.field)
       .filter((columnName) => visibleColumns.value.indexOf(columnName) < 0);
     const visible = localColumns.value
-      .filter((col) => col.visibilityControl !== false && col.visible === false && visibleColumns.value.indexOf(col.name || col.field) > -1)
+      .filter(
+        (col) =>
+          col.visibilityControl !== false &&
+          col.visible === false &&
+          visibleColumns.value.indexOf(col.name || col.field) > -1,
+      )
       .map((col) => col.name || col.field);
 
     savedHiddenColumns.value = hidden;
@@ -67,7 +83,7 @@ export const useServerDataTableColumnVisibility = (tableName: MaybeRef<string>, 
 
   function checkColumnIsVisible(column: ServerDataTableColumn) {
     return (
-      column.type !== 'hidden' &&
+      column.type !== "hidden" &&
       (column.visibilityControl !== false
         ? visibleColumns.value.indexOf(getColumnName(column)) > -1
         : isBoolean(column.visible)
@@ -77,7 +93,12 @@ export const useServerDataTableColumnVisibility = (tableName: MaybeRef<string>, 
   }
 
   const toggleableColumns = computed(() =>
-    localColumns.value.filter((col) => (col.visible !== false || col.visibilityControl === true) && col.disabled !== true && col.type !== 'hidden'),
+    localColumns.value.filter(
+      (col) =>
+        (col.visible !== false || col.visibilityControl === true) &&
+        col.disabled !== true &&
+        col.type !== "hidden",
+    ),
   );
 
   return {

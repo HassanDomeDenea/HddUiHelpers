@@ -1,13 +1,23 @@
 <script setup lang="ts" generic="T extends RecordItem = RecordItem">
-import type DialogFormWrapper from 'HddUiHelpers/components/datatables/ServerFormDialog.vue';
-import { printDomWithStyles } from 'HddUiHelpers/utils/printDom';
-import usePrimeVueServerUi from 'HddUiHelpers/utils/usePrimeVueServerUi';
-import { cloneDeep, debounce, filter, isBoolean, get as lodashGet, map, reduce, upperFirst as ucFirst, unset } from 'lodash-es';
-import moment from 'moment';
-import Button from 'primevue/button';
-import type { ColumnProps } from 'primevue/column';
-import Column from 'primevue/column';
-import ContextMenu from 'primevue/contextmenu';
+import type DialogFormWrapper from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
+import { printDomWithStyles } from "HddUiHelpers/utils/printDom";
+import usePrimeVueServerUi from "HddUiHelpers/utils/usePrimeVueServerUi";
+import {
+  cloneDeep,
+  debounce,
+  filter,
+  isBoolean,
+  get as lodashGet,
+  map,
+  reduce,
+  upperFirst as ucFirst,
+  unset,
+} from "lodash-es";
+import moment from "moment";
+import Button from "primevue/button";
+import type { ColumnProps } from "primevue/column";
+import Column from "primevue/column";
+import ContextMenu from "primevue/contextmenu";
 import type {
   DataTablePageEvent,
   DataTableRowClickEvent,
@@ -18,18 +28,19 @@ import type {
   DataTableSelectAllChangeEvent,
   DataTableSortEvent,
   DataTableSortMeta,
-} from 'primevue/datatable';
-import DataTable from 'primevue/datatable';
-import DatePicker from 'primevue/datepicker';
-import InputText from 'primevue/inputtext';
-import type { MenuItem } from 'primevue/menuitem';
-import vTooltip from 'primevue/tooltip';
-import { useConfirm } from 'primevue/useconfirm';
-import { useToast } from 'primevue/usetoast';
-import type { InputHTMLAttributes, Ref } from 'vue';
-import { computed, nextTick, onBeforeMount, onMounted, ref, watch } from 'vue';
-import MultiSelectColumnFilter from './MultiSelectColumnFilter.vue';
-import SelectColumnFilter from './SelectColumnFilter.vue';
+} from "primevue/datatable";
+import DataTable from "primevue/datatable";
+import DatePicker from "primevue/datepicker";
+import InputText from "primevue/inputtext";
+import type { MenuItem } from "primevue/menuitem";
+import vTooltip from "primevue/tooltip";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
+import type { InputHTMLAttributes, Ref } from "vue";
+import { computed, nextTick, onBeforeMount, onMounted, ref, watch } from "vue";
+
+import MultiSelectColumnFilter from "./MultiSelectColumnFilter.vue";
+import SelectColumnFilter from "./SelectColumnFilter.vue";
 import type {
   ColumnType,
   FieldsOptionsList,
@@ -42,8 +53,8 @@ import type {
   RecordItem,
   RecordsServiceType,
   RequestDataPayloadType,
-} from './types';
-import { FilterMatchMode } from './types';
+} from "./types";
+import { FilterMatchMode } from "./types";
 
 export interface PrimeVueServerTableProps<R extends RecordItem = RecordItem> {
   url?: string;
@@ -77,7 +88,7 @@ export interface PrimeVueServerTableProps<R extends RecordItem = RecordItem> {
   defaultDateMatchMode?: FilterMatchModeType;
   defaultNumericMatchMode?: FilterMatchModeType;
   autoI18nColumnsHeader?: boolean;
-  sortMode?: 'single' | 'multiple';
+  sortMode?: "single" | "multiple";
   toolsColumn?: boolean;
   toolsColumnProps?: ColumnProps;
   columnVisibilityButton?: boolean;
@@ -87,7 +98,7 @@ export interface PrimeVueServerTableProps<R extends RecordItem = RecordItem> {
   multiEditable?: boolean;
   creatable?: boolean;
   createButtonLabel?: string;
-  printDirection?: 'rtl' | 'ltr';
+  printDirection?: "rtl" | "ltr";
   compact?: boolean;
   openable?: boolean;
   printable?: boolean;
@@ -115,15 +126,15 @@ export interface PrimeVueServerTableProps<R extends RecordItem = RecordItem> {
 
 // Props
 const props = withDefaults(defineProps<PrimeVueServerTableProps<T>>(), {
-  dataKeyId: 'id',
+  dataKeyId: "id",
   columns: () => [],
   defaultMatchMode: FilterMatchMode.CONTAINS as FilterMatchModeType,
   defaultDateMatchMode: FilterMatchMode.DATE_IS as FilterMatchModeType,
   defaultNumericMatchMode: FilterMatchMode.EQUALS as FilterMatchModeType,
   hasContextMenu: true,
   autoI18nColumnsHeader: true,
-  sortMode: 'multiple',
-  scrollHeight: 'flex',
+  sortMode: "multiple",
+  scrollHeight: "flex",
   showLoadingIndication: true,
   refreshAfterFormSubmit: true,
   toolsColumn: true,
@@ -145,32 +156,41 @@ const props = withDefaults(defineProps<PrimeVueServerTableProps<T>>(), {
 });
 
 const emits = defineEmits<{
-  (e: 'rowClick', row: T, index: number, original: Event);
-  (e: 'rowOpen', row: T);
-  (e: 'rowEdit', row: T);
-  (e: 'multiRowsEdit', rows: T[]);
-  (e: 'rowCreated', row: T | T[]);
-  (e: 'rowUpdated', row: T | T[]);
-  (e: 'rowDeleted', row: string | number | (string | number)[]);
-  (e: 'rowChanged', row: T | T[] | (string | number | (string | number)[]), type: 'create' | 'update' | 'delete');
-  (e: 'refreshed', res: GetRecordsResponseType);
-  (e: 'rowExpand', row: T);
-  (e: 'rowCollapse', row: T);
-  (e: 'rowReorder', event: DataTableRowReorderEvent);
+  (e: "rowClick", row: T, index: number, original: Event);
+  (e: "rowOpen", row: T);
+  (e: "rowEdit", row: T);
+  (e: "multiRowsEdit", rows: T[]);
+  (e: "rowCreated", row: T | T[]);
+  (e: "rowUpdated", row: T | T[]);
+  (e: "rowDeleted", row: string | number | (string | number)[]);
+  (
+    e: "rowChanged",
+    row: T | T[] | (string | number | (string | number)[]),
+    type: "create" | "update" | "delete",
+  );
+  (e: "refreshed", res: GetRecordsResponseType);
+  (e: "rowExpand", row: T);
+  (e: "rowCollapse", row: T);
+  (e: "rowReorder", event: DataTableRowReorderEvent);
 }>();
 
-const { axios: axiosInstance, routeNameResolver, t, dataTableRecordsService } = usePrimeVueServerUi();
+const {
+  axios: axiosInstance,
+  routeNameResolver,
+  t,
+  dataTableRecordsService,
+} = usePrimeVueServerUi();
 
 function isMultipleFilterType(value: any): value is MultipleFilterType {
   return (value as MultipleFilterType)?.operator !== undefined;
 }
 
-const rowsPerPage = defineModel('rowsPerPage', { default: 25, required: false });
-const sorts = defineModel<(DataTableSortMeta & { source?: ColumnType<T>['source'] })[]>('sorts', {
+const rowsPerPage = defineModel("rowsPerPage", { default: 25, required: false });
+const sorts = defineModel<(DataTableSortMeta & { source?: ColumnType<T>["source"] })[]>("sorts", {
   default: () => [],
   required: false,
 });
-const isCollapsed = defineModel<boolean>('isCollapsed', { default: false });
+const isCollapsed = defineModel<boolean>("isCollapsed", { default: false });
 // Definitions
 
 const getRecordsAbortController = ref<AbortController>();
@@ -190,7 +210,7 @@ const recordsService = {
     let path: string;
     if (props.url) path = props.url;
     else if (props.routeName) path = routeNameResolver(props.routeName);
-    else return Promise.reject(new Error('Invalid Url or Route Name'));
+    else return Promise.reject(new Error("Invalid Url or Route Name"));
 
     getRecordsAbortController.value = new AbortController();
     return (
@@ -215,7 +235,7 @@ const recordsService = {
     let path: string;
     if (props.url) path = `${props.url}/${id}`;
     else if (props.routeName) path = routeNameResolver(props.routeName, id);
-    else return Promise.reject(new Error('Invalid Url or Route Name'));
+    else return Promise.reject(new Error("Invalid Url or Route Name"));
 
     return (await axiosInstance.delete(path)).data;
   },
@@ -242,21 +262,21 @@ const recordsService = {
     } else if (props.routeName) {
       path = routeNameResolver(props.routeName, id);
     } else {
-      return Promise.reject(new Error('Invalid Url or Route Name'));
+      return Promise.reject(new Error("Invalid Url or Route Name"));
     }
 
     return (await axiosInstance.delete(path, { params: { ids } })).data;
   },
 } as RecordsServiceType;
 
-const filters = ref<FiltersList>({ global: { value: null, matchMode: 'contains' } });
+const filters = ref<FiltersList>({ global: { value: null, matchMode: "contains" } });
 const toast = useToast();
 const confirm = useConfirm();
 const dtRef = ref();
 const loading = ref(false);
 const totalRecords = ref(0);
 const totalWithoutFilters = ref(0);
-const records = defineModel<T[]>('records', { default: () => [] });
+const records = defineModel<T[]>("records", { default: () => [] });
 const selectedRecords = ref<T[]>([]) as Ref<T[]>;
 const expandedRecords = ref<{ [n in string]: boolean }>({});
 const selectAll = ref(false);
@@ -266,7 +286,7 @@ const contextMenuSelectedProduct = ref<T>();
 // Computed
 
 const cssStart = computed(() => {
-  return t('dir') === 'rtl' ? 'right' : 'left';
+  return t("dir") === "rtl" ? "right" : "left";
 });
 
 const hasFilters = computed(() => {
@@ -287,14 +307,18 @@ const hasFilters = computed(() => {
 
 const rowsPerPageOptions = computed(() => {
   const options = [5, 10, 25, 50, 100, 500];
-  if (!options.includes(rowsPerPage.value) && rowsPerPage.value !== -1) options.push(rowsPerPage.value);
+  if (!options.includes(rowsPerPage.value) && rowsPerPage.value !== -1)
+    options.push(rowsPerPage.value);
 
-  return [...options.map((i: number) => ({ value: i, label: i })), { value: -1, label: t('All') }];
+  return [...options.map((i: number) => ({ value: i, label: i })), { value: -1, label: t("All") }];
 });
 
 const globalFilterFields = computed(() => {
   return map(
-    filter<ColumnType>(props.columns, (i) => i.global !== false && (i.filterable !== false || i.global === true)),
+    filter<ColumnType>(
+      props.columns,
+      (i) => i.global !== false && (i.filterable !== false || i.global === true),
+    ),
     (e) => e.filterField ?? e.name,
   );
 });
@@ -308,7 +332,7 @@ const fieldsOptions = computed<FieldsOptionsList[]>(() => {
         name: column.name,
         filterField: column.filterField ?? column.name,
         sortField: column.sortField ?? column.name,
-        source: column.source || 'main',
+        source: column.source || "main",
       } as FieldsOptionsList;
       carry.push(item);
       return carry;
@@ -345,24 +369,31 @@ const contextMenuModel = computed<MenuItem[]>(() => {
   const list: MenuItem[] = [];
   if (props.openable) {
     list.push({
-      label: t('Open'),
-      icon: 'i-mdi-open-in-app',
-      command: () => (contextMenuSelectedProduct.value ? emits('rowOpen', contextMenuSelectedProduct.value) : undefined),
+      label: t("Open"),
+      icon: "i-mdi-open-in-app",
+      command: () =>
+        contextMenuSelectedProduct.value
+          ? emits("rowOpen", contextMenuSelectedProduct.value)
+          : undefined,
     });
   }
   if (props.editable) {
     list.push({
-      label: t('Edit'),
-      icon: 'i-mdi-edit',
-      command: () => (contextMenuSelectedProduct.value ? editRecord(contextMenuSelectedProduct.value) : undefined),
+      label: t("Edit"),
+      icon: "i-mdi-edit",
+      command: () =>
+        contextMenuSelectedProduct.value ? editRecord(contextMenuSelectedProduct.value) : undefined,
     });
   }
 
   if (props.deletable) {
     list.push({
-      label: t('Delete'),
-      icon: 'i-mdi-trash',
-      command: () => (contextMenuSelectedProduct.value ? deleteRecords(contextMenuSelectedProduct.value) : undefined),
+      label: t("Delete"),
+      icon: "i-mdi-trash",
+      command: () =>
+        contextMenuSelectedProduct.value
+          ? deleteRecords(contextMenuSelectedProduct.value)
+          : undefined,
     });
   }
   if (props.extraContextMenuOptions?.length > 0) {
@@ -372,7 +403,7 @@ const contextMenuModel = computed<MenuItem[]>(() => {
           e.command2 = e.command;
           e.command = () => e.command2(contextMenuSelectedProduct.value);
         }
-        if (typeof e.labelFn === 'function') {
+        if (typeof e.labelFn === "function") {
           e.label = e.labelFn(contextMenuSelectedProduct.value);
         }
         return e;
@@ -386,27 +417,27 @@ const contextMenuModel = computed<MenuItem[]>(() => {
 const matchModesForColumnType = computed(() => {
   return {
     text: [
-      { label: t('startsWith'), value: 'startsWith' },
-      { label: t('contains'), value: 'contains' },
-      { label: t('containsAll'), value: 'containsAll' },
-      { label: t('notContains'), value: 'notContains' },
-      { label: t('endsWith'), value: 'endsWith' },
-      { label: t('equals'), value: 'equals' },
-      { label: t('notEquals'), value: 'notEquals' },
+      { label: t("startsWith"), value: "startsWith" },
+      { label: t("contains"), value: "contains" },
+      { label: t("containsAll"), value: "containsAll" },
+      { label: t("notContains"), value: "notContains" },
+      { label: t("endsWith"), value: "endsWith" },
+      { label: t("equals"), value: "equals" },
+      { label: t("notEquals"), value: "notEquals" },
     ],
     numeric: [
-      { label: t('equals'), value: 'equals' },
-      { label: t('notEquals'), value: 'notEquals' },
-      { label: t('lt'), value: 'lt' },
-      { label: t('lte'), value: 'lte' },
-      { label: t('gt'), value: 'gt' },
-      { label: t('gte'), value: 'gte' },
+      { label: t("equals"), value: "equals" },
+      { label: t("notEquals"), value: "notEquals" },
+      { label: t("lt"), value: "lt" },
+      { label: t("lte"), value: "lte" },
+      { label: t("gt"), value: "gt" },
+      { label: t("gte"), value: "gte" },
     ],
     date: [
-      { label: t('dateIs'), value: 'dateIs' },
-      { label: t('dateIsNot'), value: 'dateIsNot' },
-      { label: t('dateBefore'), value: 'dateBefore' },
-      { label: t('dateAfter'), value: 'dateAfter' },
+      { label: t("dateIs"), value: "dateIs" },
+      { label: t("dateIsNot"), value: "dateIsNot" },
+      { label: t("dateBefore"), value: "dateBefore" },
+      { label: t("dateAfter"), value: "dateAfter" },
     ],
   };
 });
@@ -422,10 +453,10 @@ function createFilters(): FiltersList {
         matchMode = column.filterMatchMode;
       } else {
         switch (column.type) {
-          case 'date':
+          case "date":
             matchMode = props.defaultDateMatchMode;
             break;
-          case 'numeric':
+          case "numeric":
             matchMode = props.defaultNumericMatchMode;
             break;
           default:
@@ -434,7 +465,7 @@ function createFilters(): FiltersList {
       }
       // Always add operator due to defect in PrimeVue
       carry[column.filterField ?? column.name] = {
-        operator: 'and',
+        operator: "and",
         constraints: [{ value: null, matchMode }],
       };
       /* if (column.multipleFilters) {
@@ -453,8 +484,8 @@ function createFilters(): FiltersList {
     },
     {
       global: {
-        value: '',
-        matchMode: 'contains',
+        value: "",
+        matchMode: "contains",
       },
     },
   );
@@ -479,19 +510,19 @@ async function getData() {
           records.value = res.data.data;
           totalRecords.value = res.data.total;
           totalWithoutFilters.value = res.data.total_without_filters;
-          emits('refreshed', res);
+          emits("refreshed", res);
         } else {
           throw new Error(`Unable to get records from ${props.url}`);
         }
       })
       .catch((err) => {
         console.error(err);
-        const msg = err.response?.data?.message || t('Error Occurred');
+        const msg = err.response?.data?.message || t("Error Occurred");
         toast.add({
-          severity: 'error',
+          severity: "error",
           summary: msg,
           life: 3000,
-          group: 'notifications',
+          group: "notifications",
         });
       })
       .finally(() => {
@@ -503,7 +534,9 @@ async function getData() {
   }
 }
 
-async function getDataIntoVariable(perPage?: number): Promise<GetRecordsResponseType['data'] | false> {
+async function getDataIntoVariable(
+  perPage?: number,
+): Promise<GetRecordsResponseType["data"] | false> {
   if (props.url || props.routeName) {
     try {
       const res = await recordsService.getRecords({
@@ -514,16 +547,16 @@ async function getDataIntoVariable(perPage?: number): Promise<GetRecordsResponse
         return res.data;
       }
     } catch (error) {
-      if (error.code === 'ERR_CANCELED') {
-        console.log('Cancelled');
+      if (error.code === "ERR_CANCELED") {
+        console.log("Cancelled");
       } else {
         console.error(error);
-        const msg = error.response?.data?.message || t('Error Occurred');
+        const msg = error.response?.data?.message || t("Error Occurred");
         toast.add({
-          severity: 'error',
+          severity: "error",
           summary: msg,
           life: 3000,
-          group: 'notifications',
+          group: "notifications",
         });
       }
     }
@@ -537,17 +570,21 @@ async function getDataIntoVariable(perPage?: number): Promise<GetRecordsResponse
 async function onPage(event: DataTablePageEvent) {
   first.value = event.first;
   await getData();
-  selectAll.value = selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
+  selectAll.value =
+    selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
 }
 
 async function onSort(event: DataTableSortEvent) {
-  if (props.sortMode === 'multiple' && event.multiSortMeta) {
+  if (props.sortMode === "multiple" && event.multiSortMeta) {
     sorts.value = event.multiSortMeta;
   } else {
-    sorts.value = [{ field: typeof event.sortField === 'string' ? event.sortField : '', order: event.sortOrder }];
+    sorts.value = [
+      { field: typeof event.sortField === "string" ? event.sortField : "", order: event.sortOrder },
+    ];
   }
   await getData();
-  selectAll.value = selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
+  selectAll.value =
+    selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
 }
 
 async function onFilter() {
@@ -570,7 +607,8 @@ function onRowContextMenu(event: DataTableRowContextMenuEvent) {
 }
 
 function onRowSelect() {
-  selectAll.value = selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
+  selectAll.value =
+    selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
 }
 
 function onRowUnselect() {
@@ -578,14 +616,14 @@ function onRowUnselect() {
 }
 
 function editRecord(item: T) {
-  emits('rowEdit', item);
+  emits("rowEdit", item);
   if (props.useFormForEdit || props.fields?.length > 0) {
     showEditDialog(item);
   }
 }
 
 function editMultiRecords(items: T[]) {
-  emits('multiRowsEdit', items);
+  emits("multiRowsEdit", items);
   if (props.useFormForEdit || props.fields?.length > 0) {
     showEditDialog(items);
   }
@@ -606,14 +644,14 @@ function deleteRecords(item: T | T[]) {
     cnt = item.length;
   }
   confirm.require({
-    message: t('Are you sure to delete n records?', { n: cnt }, cnt),
-    header: t('Confirmation'),
-    icon: 'pi pi-info-circle',
-    group: cnt === 1 ? 'popup' : 'dialog',
-    rejectLabel: t('Cancel'),
-    acceptLabel: t('Delete'),
-    rejectClass: 'p-button-secondary p-button-outlined',
-    acceptClass: 'p-button-danger',
+    message: t("Are you sure to delete n records?", { n: cnt }, cnt),
+    header: t("Confirmation"),
+    icon: "pi pi-info-circle",
+    group: cnt === 1 ? "popup" : "dialog",
+    rejectLabel: t("Cancel"),
+    acceptLabel: t("Delete"),
+    rejectClass: "p-button-secondary p-button-outlined",
+    acceptClass: "p-button-danger",
     accept: async () => {
       const ids = Array.isArray(item) ? item.map((i) => i.id) : [item.id];
       try {
@@ -624,23 +662,23 @@ function deleteRecords(item: T | T[]) {
           // TODO: Local Table
         }
         toast.add({
-          severity: 'success',
-          summary: t('Deleted!'),
-          detail: t('n Record Deleted Successfully', { n: cnt }, cnt),
+          severity: "success",
+          summary: t("Deleted!"),
+          detail: t("n Record Deleted Successfully", { n: cnt }, cnt),
           life: 3000,
         });
-        emits('rowDeleted', Array.isArray(item) ? ids : item.id);
-        emits('rowChanged', Array.isArray(item) ? ids : item.id, 'delete');
+        emits("rowDeleted", Array.isArray(item) ? ids : item.id);
+        emits("rowChanged", Array.isArray(item) ? ids : item.id, "delete");
         selectedRecords.value = selectedRecords.value.filter((i) => !ids.includes(i.id));
         refresh();
       } catch (err: any) {
-        const msg = err?.response?.data?.message || t('Error Occurred');
+        const msg = err?.response?.data?.message || t("Error Occurred");
 
         toast.add({
-          severity: 'error',
+          severity: "error",
           summary: msg,
           life: 3000,
-          group: 'notifications',
+          group: "notifications",
         });
       }
     },
@@ -683,7 +721,7 @@ async function printTable() {
 
 // Components Methods
 function calendarInputProps(filterCallback: () => void): InputHTMLAttributes {
-  return { onKeydown: (e: KeyboardEvent) => (e.key === 'Enter' ? filterCallback() : null) };
+  return { onKeydown: (e: KeyboardEvent) => (e.key === "Enter" ? filterCallback() : null) };
 }
 
 const hasRowClickEventListener = computed(() => {
@@ -714,7 +752,7 @@ const dialogFormWrapperOptions = computed(() => {
     onSubmitted: onFormSubmitted,
     createRecordHeader: props.createRecordHeader,
     editRecordHeader: props.editRecordHeader,
-    ...(props.formDialogProps ?? {}),
+    ...props.formDialogProps,
   } as any;
 });
 
@@ -730,13 +768,13 @@ function showEditDialog(item: T | T[]) {
   }
 }
 
-function onFormSubmitted(type: 'create' | 'update', item: T | T[]) {
-  if (type === 'create') {
-    emits('rowCreated', item);
+function onFormSubmitted(type: "create" | "update", item: T | T[]) {
+  if (type === "create") {
+    emits("rowCreated", item);
   } else {
-    emits('rowUpdated', item);
+    emits("rowUpdated", item);
   }
-  emits('rowChanged', item, type);
+  emits("rowChanged", item, type);
   if (props.refreshAfterFormSubmit) {
     refresh();
   }
@@ -747,13 +785,13 @@ function onRowClick(evt: DataTableRowClickEvent) {
     return;
   }
   const path = evt.originalEvent.composedPath();
-  const toggleButton = path.find((e) => e.classList?.contains('p-datatable-row-toggle-button'));
-  const editableColumn = path.find((e) => e.classList?.contains('p-editable-column'));
-  const checkboxColumn = path.find((e) => e.classList?.contains('p-selection-column'));
+  const toggleButton = path.find((e) => e.classList?.contains("p-datatable-row-toggle-button"));
+  const editableColumn = path.find((e) => e.classList?.contains("p-editable-column"));
+  const checkboxColumn = path.find((e) => e.classList?.contains("p-selection-column"));
   if (toggleButton || editableColumn || checkboxColumn) {
     return;
   }
-  emits('rowClick', evt.data, evt.index, evt.originalEvent);
+  emits("rowClick", evt.data, evt.index, evt.originalEvent);
   if (props.expandOnRowClick) {
     toggleRowExpansion(evt.data);
   }
@@ -762,7 +800,7 @@ function onRowClick(evt: DataTableRowClickEvent) {
 const listToObjectFormatted = computed(() => {
   const obj = {};
   props.columns.forEach((column: ColumnType<T>) => {
-    if (column.type === 'select') {
+    if (column.type === "select") {
       if (column.selectOptionsKeyed) {
         obj[column.name] = column.selectOptionsKeyed;
       } else if (column.selectOptions) {
@@ -770,7 +808,8 @@ const listToObjectFormatted = computed(() => {
           obj[column.name] = column.selectOptions.object;
         } else {
           obj[column.name] = column.selectOptions.reduce((carry: any, currentValue) => {
-            carry[currentValue[column.selectValueProperty ?? 'id']] = currentValue[column.selectLabelProperty ?? 'name'];
+            carry[currentValue[column.selectValueProperty ?? "id"]] =
+              currentValue[column.selectLabelProperty ?? "name"];
             return carry;
           }, {});
         }
@@ -816,22 +855,22 @@ function toggleRowExpansion(row: T) {
 
 function onRowExpand(event: DataTableRowExpandEvent) {
   // toast.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 })
-  emits('rowExpand', event.data);
+  emits("rowExpand", event.data);
 }
 
 function onRowCollapse(event: DataTableRowCollapseEvent) {
   // toast.add({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 })
-  emits('rowCollapse', event.data);
+  emits("rowCollapse", event.data);
 }
 
 function onRowReorder(event: DataTableRowReorderEvent) {
   // toast.add({ severity: 'success', summary: 'Product Collapsed', detail: event.value, life: 3000 })
-  emits('rowReorder', event);
+  emits("rowReorder", event);
 }
 
 function formatColumn(column: ColumnType<T>, row: T): string {
   let fieldName = column.name;
-  if (typeof column.formatter === 'string') {
+  if (typeof column.formatter === "string") {
     fieldName = column.formatter;
   }
 
@@ -843,11 +882,13 @@ function formatColumn(column: ColumnType<T>, row: T): string {
         {{ lodashGet(data, column.name) === true ? t("Yes") : (lodashGet(data, column.name) === false ? t("No") : "")
       }}
       </template> */
-  if (typeof column.formatter === 'function') {
+  if (typeof column.formatter === "function") {
     return column.formatter(lodashGet(row, fieldName), row);
   } else {
-    if (column.type === 'select') {
-      let result = listToObjectFormatted.value[fieldName]?.[lodashGet(row, fieldName)] || lodashGet(row, fieldName);
+    if (column.type === "select") {
+      let result =
+        listToObjectFormatted.value[fieldName]?.[lodashGet(row, fieldName)] ||
+        lodashGet(row, fieldName);
       if (!result && column.emptyValuePlaceholder) {
         if (column.html) {
           result = `<span class="italic text-muted">${column.emptyValuePlaceholder}</span>`;
@@ -857,9 +898,9 @@ function formatColumn(column: ColumnType<T>, row: T): string {
       }
       return result;
     }
-    if (column.type === 'boolean') {
+    if (column.type === "boolean") {
       const value = lodashGet(row, fieldName);
-      return value === true ? t('Yes') : value === false ? t('No') : '';
+      return value === true ? t("Yes") : value === false ? t("No") : "";
     }
     return lodashGet(row, column.name);
   }
@@ -876,27 +917,50 @@ function initiateVisibleColumns() {
   let savedHiddenCols = [],
     savedVisibleCols = [];
   try {
-    savedHiddenCols = JSON.parse(localStorage.getItem('PrimeVueTableHiddenColumns_' + props.tableName || props.routeName || props.url) || '[]');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    savedHiddenCols = JSON.parse(
+      localStorage.getItem(
+        "PrimeVueTableHiddenColumns_" + props.tableName || props.routeName || props.url,
+      ) || "[]",
+    );
   } catch (__) {}
   try {
-    savedVisibleCols = JSON.parse(localStorage.getItem('PrimeVueTableVisibleColumns_' + props.tableName || props.routeName || props.url) || '[]');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    savedVisibleCols = JSON.parse(
+      localStorage.getItem(
+        "PrimeVueTableVisibleColumns_" + props.tableName || props.routeName || props.url,
+      ) || "[]",
+    );
   } catch (__) {}
   visibleColumns.value = props.columns
-    .filter((col) => savedVisibleCols.indexOf(col.name) > -1 || (col.visible !== false && savedHiddenCols.indexOf(col.name) < 0))
+    .filter(
+      (col) =>
+        savedVisibleCols.indexOf(col.name) > -1 ||
+        (col.visible !== false && savedHiddenCols.indexOf(col.name) < 0),
+    )
     .map((col) => col.name);
 }
 
 function saveVisibleColumnsState() {
-  const columns = props.columns.filter((col) => col.visibilityControl !== false).map((col) => col.name);
+  const columns = props.columns
+    .filter((col) => col.visibilityControl !== false)
+    .map((col) => col.name);
   const hidden = columns.filter((col) => visibleColumns.value.indexOf(col) < 0);
   const visible = props.columns
-    .filter((col) => col.visibilityControl !== false && col.visible === false && visibleColumns.value.indexOf(col.field) > -1)
+    .filter(
+      (col) =>
+        col.visibilityControl !== false &&
+        col.visible === false &&
+        visibleColumns.value.indexOf(col.field) > -1,
+    )
     .map((col) => col.name);
 
-  localStorage.setItem('PrimeVueTableHiddenColumns_' + props.tableName || props.routeName || props.url, JSON.stringify(hidden));
-  localStorage.setItem('PrimeVueTableVisibleColumns_' + props.tableName || props.routeName || props.url, JSON.stringify(visible));
+  localStorage.setItem(
+    "PrimeVueTableHiddenColumns_" + props.tableName || props.routeName || props.url,
+    JSON.stringify(hidden),
+  );
+  localStorage.setItem(
+    "PrimeVueTableVisibleColumns_" + props.tableName || props.routeName || props.url,
+    JSON.stringify(visible),
+  );
 }
 
 const localItemSize = ref();
@@ -939,7 +1003,10 @@ async function loadRecordsLazily(event) {
     const newRecords: T[] = Array.from({ length: result.total });
     totalRecords.value = result.total;
     totalWithoutFilters.value = result.total_without_filters;
-    Array.prototype.splice.apply(newRecords, [...[event.first, event.last - event.first], ...result.data]);
+    Array.prototype.splice.apply(newRecords, [
+      ...[event.first, event.last - event.first],
+      ...result.data,
+    ]);
     records.value = newRecords;
   } else {
     // records.value = [...(records.value || [])]
@@ -949,8 +1016,12 @@ async function loadRecordsLazily(event) {
 
 function checkColumnIsVisible(column) {
   return (
-    column.type !== 'hidden' &&
-    !(column.visibilityControl !== false ? visibleColumns.value.indexOf(column.name) < 0 : isBoolean(column.visible) ? !column.visible : false)
+    column.type !== "hidden" &&
+    !(column.visibilityControl !== false
+      ? visibleColumns.value.indexOf(column.name) < 0
+      : isBoolean(column.visible)
+        ? !column.visible
+        : false)
   );
 }
 

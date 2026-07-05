@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import type { Moment } from 'moment';
-import moment from 'moment';
-import type DatePicker from 'primevue/datepicker';
-import { computed, useTemplateRef } from 'vue';
-import type { ComponentExposed } from 'vue-component-type-helpers';
-import { useI18n } from 'vue-i18n';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import type { Moment } from "moment";
+import moment from "moment";
+import type DatePicker from "primevue/datepicker";
+import { computed, useTemplateRef } from "vue";
+import type { ComponentExposed } from "vue-component-type-helpers";
+import { useI18n } from "vue-i18n";
+
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
@@ -20,8 +21,8 @@ const props = withDefaults(
       dateFormat?: string;
       formatAsString?: boolean;
       stringFormat?: string;
-      startingView?: 'date' | 'month' | 'year';
-      view?: string | 'date' | 'month' | 'year' | undefined;
+      startingView?: "date" | "month" | "year";
+      view?: string | "date" | "month" | "year" | undefined;
     } & BaseInputProps
   >(),
   {
@@ -31,9 +32,9 @@ const props = withDefaults(
     formatAsString: true,
   },
 );
-const value = defineModel<any>('modelValue');
+const value = defineModel<any>("modelValue");
 const { t } = useI18n();
-const inputRef = useTemplateRef<ComponentExposed<typeof DatePicker>>('inputRef');
+const inputRef = useTemplateRef<ComponentExposed<typeof DatePicker>>("inputRef");
 
 function focus() {
   inputRef.value.input?.focus();
@@ -42,17 +43,17 @@ function focus() {
 const localValue = computed({
   get: () => {
     if (props.isYearOnly) {
-      return value.value ? moment(value.value).format('YYYY') : null;
+      return value.value ? moment(value.value).format("YYYY") : null;
     } else {
       return value.value;
     }
   },
   set: (val) => {
     if (props.isYearOnly) {
-      value.value = val ? moment(val).format('YYYY') : null;
+      value.value = val ? moment(val).format("YYYY") : null;
     } else {
       if (val && props.formatAsString) {
-        value.value = moment(val).format(props.stringFormat ?? 'YYYY-MM-DD HH:mm:ss');
+        value.value = moment(val).format(props.stringFormat ?? "YYYY-MM-DD HH:mm:ss");
       } else {
         value.value = val;
       }
@@ -67,10 +68,13 @@ function onDateLocalEnterKeyDown(event: KeyboardEvent) {
   }
 }
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props);
 
-const localDateFormat = computed(() => (props.isYearOnly ? 'yy' : (props.dateFormat ?? 'yy-mm-dd')));
-const localView = computed(() => (props.isYearOnly ? 'year' : props.view));
+const localDateFormat = computed(() =>
+  props.isYearOnly ? "yy" : (props.dateFormat ?? "yy-mm-dd"),
+);
+const localView = computed(() => (props.isYearOnly ? "year" : props.view));
 
 const selectDate = (date: string | Date | Moment) => {
   localValue.value = date;
@@ -80,10 +84,10 @@ const selectDate = (date: string | Date | Moment) => {
 };
 
 function onShow() {
-  if (props.startingView === 'year') {
-    inputRef.value.switchToYearView(new Event('year'));
-  } else if (props.startingView === 'month') {
-    inputRef.value.switchToMonthView(new Event('month'));
+  if (props.startingView === "year") {
+    inputRef.value.switchToYearView(new Event("year"));
+  } else if (props.startingView === "month") {
+    inputRef.value.switchToMonthView(new Event("month"));
   }
 }
 defineExpose({ focus, inputRef, ...exposed });
@@ -92,7 +96,7 @@ watch(
   localValue,
   (newValue?: string | Date | null) => {
     if (props.formatAsString && newValue instanceof Date) {
-      value.value = moment(newValue).format(props.stringFormat ?? 'YYYY-MM-DD HH:mm:ss');
+      value.value = moment(newValue).format(props.stringFormat ?? "YYYY-MM-DD HH:mm:ss");
     }
   },
   {

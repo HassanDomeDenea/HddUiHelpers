@@ -2,24 +2,29 @@
 import {
   appendToUrl,
   getColumnTitle,
-  getFieldSlotName
-} from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
-import type HddForm from 'HddUiHelpers/components/FormWrapper/HddForm.vue';
-import type { HddFormField, HddFormProps, RecordItem } from 'HddUiHelpers/components/FormWrapper/types.ts';
-import BaseInput from 'HddUiHelpers/components/inputs/BaseInput.vue';
-import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
-import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts';
-import type { HddFormComposer } from 'HddUiHelpers/utils/useHddForm.ts';
-import { cloneDeep, get, isEqual, set, startCase } from 'lodash-es';
-import { useConfirm } from 'primevue/useconfirm';
-import { computed, nextTick, ref, toValue, useTemplateRef } from 'vue';
-import type { ComponentExposed } from 'vue-component-type-helpers';
-import { useI18n } from 'vue-i18n';
-import type { ServerDataTableColumn, ServerFormDialogProps } from './ServerDataTableTypes.ts';
+  getFieldSlotName,
+} from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import type HddForm from "HddUiHelpers/components/FormWrapper/HddForm.vue";
+import type {
+  HddFormField,
+  HddFormProps,
+  RecordItem,
+} from "HddUiHelpers/components/FormWrapper/types.ts";
+import BaseInput from "HddUiHelpers/components/inputs/BaseInput.vue";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
+import { useStackableDialog } from "HddUiHelpers/stores/stackableDialogs.ts";
+import type { HddFormComposer } from "HddUiHelpers/utils/useHddForm.ts";
+import { cloneDeep, get, isEqual, set, startCase } from "lodash-es";
+import { useConfirm } from "primevue/useconfirm";
+import { computed, nextTick, ref, toValue, useTemplateRef } from "vue";
+import type { ComponentExposed } from "vue-component-type-helpers";
+import { useI18n } from "vue-i18n";
+
+import type { ServerDataTableColumn, ServerFormDialogProps } from "./ServerDataTableTypes.ts";
 
 const {
   url,
-  createUrlMethod = 'post',
+  createUrlMethod = "post",
   editUrl,
   deleteUrl,
   singleEditUrl,
@@ -35,8 +40,8 @@ const {
   submitAndOpenProps,
   submitAndOpenButton,
   submitAndOpenText,
-  submitAndOpenIcon = 'i-garden:check-double-fill-12',
-  submitAndOpenSeverity = 'info',
+  submitAndOpenIcon = "i-garden:check-double-fill-12",
+  submitAndOpenSeverity = "info",
   successMessageTitle,
   successMessageText,
   submitSeverity,
@@ -44,7 +49,7 @@ const {
   submitIcon,
   fields,
   inlineFields = true,
-  primaryKey = 'id' as keyof TRecord,
+  primaryKey = "id" as keyof TRecord,
   autoLabelsWidth = true,
   focusFieldOnShown,
   focusFirstOnEdit = true,
@@ -55,15 +60,18 @@ const {
   submitPayloadTransformer,
   customDefaultValuesOnCreate,
   customDefaultValuesOnEdit,
-  autoAppendIdToEditUrl = false
+  autoAppendIdToEditUrl = false,
 } = defineProps<ServerFormDialogProps<TRecord>>();
 
 const emits = defineEmits<{
   hidden: [];
   shown: [];
   visible: [isVisible: boolean];
-  submitted: [row: TRecord | TRecord[] | (string | number)[], type: 'create' | 'update' | 'delete'];
-  submitAndOpen: [row: TRecord | TRecord[] | (string | number)[], type: 'create' | 'update' | 'delete'];
+  submitted: [row: TRecord | TRecord[] | (string | number)[], type: "create" | "update" | "delete"];
+  submitAndOpen: [
+    row: TRecord | TRecord[] | (string | number)[],
+    type: "create" | "update" | "delete",
+  ];
 }>();
 
 const { t } = useI18n();
@@ -82,21 +90,21 @@ function columnToField(column: ServerDataTableColumn): HddFormField {
   let formFieldType;
   let formFieldOptions;
   let showable;
-  if (column.type === 'select') {
-    formFieldType = column.isMultiSelect ? 'multiselect' : 'select';
+  if (column.type === "select") {
+    formFieldType = column.isMultiSelect ? "multiselect" : "select";
     if (Array.isArray(column.selectOptions)) {
       formFieldOptions = column.selectOptions;
     } else if (Array.isArray(column.selectOptions?.list)) {
       formFieldOptions = column.selectOptions.list;
     }
-  } else if (column.type === 'numeric') {
-    formFieldType = 'number';
-  } else if (column.type === 'date') {
-    formFieldType = 'date';
-  } else if (column.type === 'textarea') {
-    formFieldType = 'textarea';
-  } else if (column.type === 'boolean') {
-    formFieldType = 'checkbox';
+  } else if (column.type === "numeric") {
+    formFieldType = "number";
+  } else if (column.type === "date") {
+    formFieldType = "date";
+  } else if (column.type === "textarea") {
+    formFieldType = "textarea";
+  } else if (column.type === "boolean") {
+    formFieldType = "checkbox";
   }
   if (column.showable) {
     showable = column.showable;
@@ -108,12 +116,12 @@ function columnToField(column: ServerDataTableColumn): HddFormField {
     type: formFieldType,
     options: formFieldOptions,
     showable: showable,
-    ...(column.formProps ?? {})
+    ...column.formProps,
   };
 }
 
 const apiClient = useApiClient();
-const hddFormRef = useTemplateRef<ComponentExposed<typeof HddForm>>('hddFormRef');
+const hddFormRef = useTemplateRef<ComponentExposed<typeof HddForm>>("hddFormRef");
 
 const mappedFormFields = computed(() => {
   return [
@@ -124,26 +132,31 @@ const mappedFormFields = computed(() => {
       return field;
     }),
     ...(columns
-      ?.filter((column) => column.inForm !== false && (isEditing.value ? column.editable !== false : column.creatable !== false))
-      .map(columnToField) ?? [])
+      ?.filter(
+        (column) =>
+          column.inForm !== false &&
+          (isEditing.value ? column.editable !== false : column.creatable !== false),
+      )
+      .map(columnToField) ?? []),
   ] as HddFormField[];
 });
 
 const hddFormOptions = computed(() => {
-  let urlLink = typeof url === 'function' ? url(idToCreate.value).url : typeof url === 'object' ? url.url : url;
+  let urlLink =
+    typeof url === "function" ? url(idToCreate.value).url : typeof url === "object" ? url.url : url;
 
   let urlMethod = createUrlMethod;
   if (isEditing.value) {
-    urlMethod = 'put';
+    urlMethod = "put";
     if (singleEditUrl && idToEdit.value) {
       urlLink = singleEditUrl(idToEdit.value).url;
     } else if (editUrl) {
-      if (typeof editUrl === 'function') {
+      if (typeof editUrl === "function") {
         const _tempUrl = editUrl(idToEdit.value);
         urlLink = _tempUrl.url;
         urlMethod = _tempUrl.method;
       } else {
-        urlLink = typeof editUrl === 'object' ? editUrl.url : editUrl;
+        urlLink = typeof editUrl === "object" ? editUrl.url : editUrl;
       }
       if (autoAppendIdToEditUrl && idToEdit.value) {
         urlLink = appendToUrl(urlLink, idToEdit.value);
@@ -163,13 +176,15 @@ const hddFormOptions = computed(() => {
           for (const index in multiEditRecords.value) {
             set(multiEditRecords.value[index], fieldName, newValue);
             if (submitPayloadTransformer) {
-              multiEditRecords.value[index] = submitPayloadTransformer(multiEditRecords.value[index]);
+              multiEditRecords.value[index] = submitPayloadTransformer(
+                multiEditRecords.value[index],
+              );
             }
           }
         }
       }
       return {
-        data: multiEditRecords.value
+        data: multiEditRecords.value,
       };
     };
   } else if (submitPayloadTransformer) {
@@ -179,17 +194,17 @@ const hddFormOptions = computed(() => {
   return {
     url: {
       url: urlLink,
-      method: urlMethod
+      method: urlMethod,
     },
     fieldsContainerClass,
     unifyLabelsWidth: autoLabelsWidth,
     autoFocusFirstOnMount: false,
-    submitSeverity: submitSeverity ?? (isEditing.value ? 'success' : 'primary'),
-    submitText: submitText ?? (isEditing.value ? t('Update') : t('Create')),
-    submitIcon: submitIcon ?? (isEditing.value ? 'i-material-symbols:save' : 'i-mdi-check'),
+    submitSeverity: submitSeverity ?? (isEditing.value ? "success" : "primary"),
+    submitText: submitText ?? (isEditing.value ? t("Update") : t("Create")),
+    submitIcon: submitIcon ?? (isEditing.value ? "i-material-symbols:save" : "i-mdi-check"),
     initialValues: initialValues.value,
     submitPayloadTransformer: localSubmitPayloadTransformer,
-    size: 'small',
+    size: "small",
     inlineFields: inlineFields,
     fields: mappedFormFields,
     autoComplete: autoComplete,
@@ -200,7 +215,7 @@ const hddFormOptions = computed(() => {
       }
     },
     onSuccess: (data: any) => {
-      emits('submitted', data.data, isEditing.value ? 'update' : 'create');
+      emits("submitted", data.data, isEditing.value ? "update" : "create");
       if (isEditing.value || !keepFormOpenAfterCreate) {
         isVisible.value = false;
       }
@@ -208,19 +223,27 @@ const hddFormOptions = computed(() => {
         apiClient.toastSuccess(successMessageTitle, successMessageText);
       } else {
         apiClient.toastSuccess(
-          isEditing.value ? t('Updated!') : t('Created!'),
+          isEditing.value ? t("Updated!") : t("Created!"),
           isEditing.value
             ? isMultiEdit.value
-              ? t('Record Updated Successfully!')
-              : t('n Record Updated Successfully!', { n: multiEditRecords.value.length || 1 }, multiEditRecords.value.length || 1)
+              ? t("Record Updated Successfully!")
+              : t(
+                  "n Record Updated Successfully!",
+                  { n: multiEditRecords.value.length || 1 },
+                  multiEditRecords.value.length || 1,
+                )
             : isMultiCreate.value
-              ? t('Record Created Successfully!')
-              : t('n Record Created Successfully!', { n: multiCreateRecords.value.length || 1 }, multiCreateRecords.value.length || 1)
+              ? t("Record Created Successfully!")
+              : t(
+                  "n Record Created Successfully!",
+                  { n: multiCreateRecords.value.length || 1 },
+                  multiCreateRecords.value.length || 1,
+                ),
         );
       }
 
       withoutDialog.value = false;
-    }
+    },
   } as HddFormProps;
 });
 const form = computed(() => hddFormRef?.value?.form);
@@ -242,17 +265,17 @@ function setValues(_values: { [key: string]: any }) {
 
 function create(rowValues = false, specificId?: string | number) {
   if (rowValues || customDefaultValuesOnCreate) {
-    initialValues.value = typeof rowValues === 'object' ? rowValues : {};
+    initialValues.value = typeof rowValues === "object" ? rowValues : {};
 
     if (mappedFormFields.value) {
       for (const field of mappedFormFields.value) {
         if (field.defaultValue !== undefined) {
           set(
             initialValues.value,
-            field.name.split('.'),
-            typeof field.defaultValue === 'function'
+            field.name.split("."),
+            typeof field.defaultValue === "function"
               ? field.defaultValue(rowValues ? get(rowValues, field.name) : undefined, rowValues)
-              : field.defaultValue
+              : field.defaultValue,
           );
         }
       }
@@ -292,7 +315,13 @@ function edit(row: TRecord, showDialog = true) {
     for (const field of mappedFormFields.value) {
       if (field.customEditGetter) {
         const currentValue = get(row, field.name);
-        set(initialValues.value, field.name, typeof field.customEditGetter === 'function' ? field.customEditGetter(currentValue, row) : currentValue);
+        set(
+          initialValues.value,
+          field.name,
+          typeof field.customEditGetter === "function"
+            ? field.customEditGetter(currentValue, row)
+            : currentValue,
+        );
       }
     }
   }
@@ -311,13 +340,12 @@ function cancel() {
   isVisible.value = false;
 }
 
-function onResetButtonClicked() {
-}
+function onResetButtonClicked() {}
 
-const dialogRef = useTemplateRef('dialogRef');
+const dialogRef = useTemplateRef("dialogRef");
 const { isClosable, dialogStackIndex } = useStackableDialog({
   dialogVisibilityRef: isVisible,
-  dialogRef: dialogRef
+  dialogRef: dialogRef,
 });
 
 function onDialogHidden() {
@@ -328,8 +356,8 @@ function onDialogHidden() {
   recordToEdit.value = undefined;
   isMultiEdit.value = false;
   multiEditRecords.value = [];
-  emits('hidden');
-  emits('visible', false);
+  emits("hidden");
+  emits("visible", false);
 }
 
 function onDialogShown() {
@@ -346,8 +374,8 @@ function onDialogShown() {
   } else {
     focusField(focusFieldOnShown, 100);
   }
-  emits('shown');
-  emits('visible', true);
+  emits("shown");
+  emits("visible", true);
 }
 
 function isMultiEditableField(field: HddFormField) {
@@ -358,23 +386,26 @@ function isDifferentValuesField(field: HddFormField) {
   if (multiEditRecords.value.length === 0) return false;
   const firstValue = get(multiEditRecords.value[0], field.name);
 
-  const allSame = multiEditRecords.value.every((record) => isEqual(get(record, field.name), firstValue));
+  const allSame = multiEditRecords.value.every((record) =>
+    isEqual(get(record, field.name), firstValue),
+  );
 
   return !allSame;
 }
 
 function setDefaultValues(_values: { [key: string]: any }) {
   for (const fieldName in _values) {
-    set(initialValues.value, fieldName.split('.'), _values[fieldName]);
+    set(initialValues.value, fieldName.split("."), _values[fieldName]);
   }
 }
 
 function restoreFieldDefault(field: HddFormField) {
-  const defaultValue = typeof field.defaultValue === 'function' ? field.defaultValue() : field.defaultValue;
+  const defaultValue =
+    typeof field.defaultValue === "function" ? field.defaultValue() : field.defaultValue;
 
-  set(currentValues.value, field.name.split('.'), defaultValue);
+  set(currentValues.value, field.name.split("."), defaultValue);
   for (let i = 0; i < multiEditRecords.value.length; i++) {
-    set(multiEditRecords.value[i], field.name.split('.'), defaultValue);
+    set(multiEditRecords.value[i], field.name.split("."), defaultValue);
   }
   nextTick(() => {
     hddFormRef.value?.fieldRefs[field.name]?.focus();
@@ -407,39 +438,42 @@ function deleteRecord(item: TRecord | TRecord[]) {
     cnt = item.length;
   }
   const _popupTarget = toValue(popupTarget);
-  emits('visible', true);
+  emits("visible", true);
   updateDeleteDialogVisibility(true);
   confirm.require({
-    message: deleteRecordMessage ?? t('Are you sure to delete n records?', { n: cnt }, cnt),
-    header: deleteRecordHeader ?? t('Confirmation'),
+    message: deleteRecordMessage ?? t("Are you sure to delete n records?", { n: cnt }, cnt),
+    header: deleteRecordHeader ?? t("Confirmation"),
     target: _popupTarget,
-    icon: 'pi pi-info-circle',
-    rejectLabel: t('Cancel'),
-    acceptLabel: t('Delete'),
-    group: _popupTarget ? 'popup' : 'dismissable',
-    rejectClass: 'p-button-secondary p-button-outlined',
-    acceptClass: 'p-button-danger',
+    icon: "pi pi-info-circle",
+    rejectLabel: t("Cancel"),
+    acceptLabel: t("Delete"),
+    group: _popupTarget ? "popup" : "dismissable",
+    rejectClass: "p-button-secondary p-button-outlined",
+    acceptClass: "p-button-danger",
     accept: async () => {
-      const ids = (Array.isArray(item) ? item.map((i) => i[primaryKey]) : [item[primaryKey]]) as (string | number)[];
+      const ids = (Array.isArray(item) ? item.map((i) => i[primaryKey]) : [item[primaryKey]]) as (
+        | string
+        | number
+      )[];
       try {
         if (!url && !deleteUrl) {
-          throw new Error('No Url');
+          throw new Error("No Url");
         }
         let urlLink;
-        let urlMethod = 'delete';
+        let urlMethod = "delete";
         if (deleteUrl) {
-          if (typeof deleteUrl === 'function') {
+          if (typeof deleteUrl === "function") {
             const _tempUrl = deleteUrl(ids[0]);
             urlLink = _tempUrl.url;
             urlMethod = _tempUrl.method;
-          } else if (typeof deleteUrl === 'object') {
+          } else if (typeof deleteUrl === "object") {
             urlLink = deleteUrl.url;
             urlMethod = deleteUrl.method;
           } else {
             urlLink = deleteUrl;
           }
         } else {
-          urlLink = typeof url === 'object' ? url.url : url;
+          urlLink = typeof url === "object" ? url.url : url;
           if (cnt === 1) {
             urlLink = appendToUrl(urlLink, ids[0]);
           }
@@ -447,10 +481,10 @@ function deleteRecord(item: TRecord | TRecord[]) {
         await apiClient.request({
           url: urlLink,
           method: urlMethod,
-          params: { ids }
+          params: { ids },
         });
-        apiClient.toastSuccess(t('Deleted!'), t('n Record Deleted Successfully', { n: cnt }, cnt));
-        emits('submitted', item, 'delete');
+        apiClient.toastSuccess(t("Deleted!"), t("n Record Deleted Successfully", { n: cnt }, cnt));
+        emits("submitted", item, "delete");
       } catch (error: any) {
         console.error(error);
         apiClient.toastRequestError(error);
@@ -462,7 +496,7 @@ function deleteRecord(item: TRecord | TRecord[]) {
     },
     onHide: () => {
       updateDeleteDialogVisibility(false);
-    }
+    },
   });
 }
 
@@ -494,14 +528,14 @@ const generalSlotProps = computed(() => {
   return {
     row: recordToEdit.value ?? initialValues.value,
     submit: form.value?.submitForm,
-    cancel: cancel
+    cancel: cancel,
   };
 });
 
 function submitAndOpen() {
   form.value.submitForm().then((response) => {
     if (response) {
-      emits('submitAndOpen', response.data ?? response, isEditing.value ? 'update' : 'create');
+      emits("submitAndOpen", response.data ?? response, isEditing.value ? "update" : "create");
     }
   });
 }
@@ -519,7 +553,7 @@ defineExpose({
   updateDirectly,
   deleteRecord,
   delete: deleteRecord,
-  close
+  close,
 });
 </script>
 
@@ -556,16 +590,16 @@ defineExpose({
             {{
               editRecordHeader ??
               (isMultiEdit
-                ? t('Edit n Records', { n: multiEditRecords.length }, multiEditRecords.length)
-                : t('Edit Record'))
+                ? t("Edit n Records", { n: multiEditRecords.length }, multiEditRecords.length)
+                : t("Edit Record"))
             }}
           </span>
           <span v-else class="font-bold">
             {{
               createRecordHeader ??
               (isMultiCreate
-                ? t('Create n Records', { n: multiCreateRecords.length }, multiCreateRecords.length)
-                : t('Create Record'))
+                ? t("Create n Records", { n: multiCreateRecords.length }, multiCreateRecords.length)
+                : t("Create Record"))
             }}
           </span>
         </template>
@@ -610,7 +644,7 @@ defineExpose({
             :button-addon="undefined"
           >
             <Message severity="secondary" variant="simple" size="small" class="w-full ps-8">
-              {{ t('Unavailable in multi edit') }}
+              {{ t("Unavailable in multi edit") }}
             </Message>
           </BaseInput>
         </template>
@@ -627,7 +661,7 @@ defineExpose({
             :button-addon="undefined"
           >
             <Message severity="secondary" variant="simple" size="small" class="w-full ps-8">
-              <span class="mx-4">{{ t('Different Values') }}</span>
+              <span class="mx-4">{{ t("Different Values") }}</span>
               <Button
                 v-tooltip="t('Edit All')"
                 size="small"

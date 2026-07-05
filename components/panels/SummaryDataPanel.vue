@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { ButtonProps } from 'primevue';
-import type ContextMenu from 'primevue/contextmenu';
-import type { MenuItem } from 'primevue/menuitem';
-import { ref, useTemplateRef } from 'vue';
-import type { ComponentExposed } from 'vue-component-type-helpers';
+import type { ButtonProps } from "primevue";
+import type ContextMenu from "primevue/contextmenu";
+import type { MenuItem } from "primevue/menuitem";
+import { ref, useTemplateRef } from "vue";
+import type { ComponentExposed } from "vue-component-type-helpers";
 
 export interface SummaryDataPanelItem {
   label: string;
   value: string | number | boolean | null;
   labelClass?: any;
-  type?: 'divider' | 'price' | 'formatted_number' | 'number' | 'text';
+  type?: "divider" | "price" | "formatted_number" | "number" | "text";
   valueClass?: any;
   wrapperClass?: any;
   hidden?: boolean;
@@ -18,14 +18,14 @@ export interface SummaryDataPanelItem {
   appendContextMenu?: MenuItem[];
 }
 
-const { labelWidth = 150, severity = 'contrast' } = defineProps<{
+const { labelWidth = 150, severity = "contrast" } = defineProps<{
   title?: string;
   labelWidth?: number | true;
-  severity?: ButtonProps['severity'];
+  severity?: ButtonProps["severity"];
   items?: SummaryDataPanelItem[];
   minimumAfterLabelSpace?: number;
 }>();
-const itemLabelRefs = useTemplateRef<HTMLSpanElement[]>('itemLabelRefs');
+const itemLabelRefs = useTemplateRef<HTMLSpanElement[]>("itemLabelRefs");
 const itemContextMenusRefs = ref<Record<number, ComponentExposed<typeof ContextMenu>>>({});
 /*const maxLabelWidth = ref();
 watch(

@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { HddPermission } from 'HddUiHelpers/types/types.ts';
-import type { MenuItem } from 'primevue/menuitem';
+import type { HddPermission } from "HddUiHelpers/types/types.ts";
+import type { MenuItem } from "primevue/menuitem";
 
 export type SideTabularPanelItem = MenuItem & {
   name: string;
@@ -10,8 +10,8 @@ export type SideTabularPanelItem = MenuItem & {
 </script>
 
 <script setup lang="ts">
-import { isBoolean, isString } from "lodash-es";
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
+import { isBoolean, isString } from "lodash-es";
 import { computed, onActivated, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";

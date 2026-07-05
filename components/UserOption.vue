@@ -1,23 +1,23 @@
 <script setup lang="ts" generic="TIsGlobal extends boolean = false">
-import SelectButtonInput from 'HddUiHelpers/components/inputs/SelectButtonInput.vue';
-import TextInput from 'HddUiHelpers/components/inputs/TextInput.vue';
-import type TreeSelectInput from 'HddUiHelpers/components/inputs/TreeSelectInput.vue';
-import { useApiClient } from 'HddUiHelpers/stores/apiClient';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
-import type { HddGlobalOption, HddUserOption } from 'HddUiHelpers/types/types.ts';
-import { map, uniqueId } from 'lodash-es';
-import type { FileUpload, FileUploadUploadEvent } from 'primevue';
-import type Select from 'primevue/select';
-import { useConfirm } from 'primevue/useconfirm';
-import { computed, toValue, useTemplateRef } from 'vue';
-import type { ComponentExposed } from 'vue-component-type-helpers';
-import { useI18n } from 'vue-i18n';
+import SelectButtonInput from "HddUiHelpers/components/inputs/SelectButtonInput.vue";
+import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
+import type TreeSelectInput from "HddUiHelpers/components/inputs/TreeSelectInput.vue";
+import { useApiClient } from "HddUiHelpers/stores/apiClient";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
+import type { HddGlobalOption, HddUserOption } from "HddUiHelpers/types/types.ts";
+import { map, uniqueId } from "lodash-es";
+import type { FileUpload, FileUploadUploadEvent } from "primevue";
+import type Select from "primevue/select";
+import { useConfirm } from "primevue/useconfirm";
+import { computed, toValue, useTemplateRef } from "vue";
+import type { ComponentExposed } from "vue-component-type-helpers";
+import { useI18n } from "vue-i18n";
 
 interface UserOptionProps {
   isGlobal?: TIsGlobal;
   option: TIsGlobal extends true ? HddGlobalOption : keyof HddUserOption;
   label?: string;
-  size?: 'small' | 'large' | '';
+  size?: "small" | "large" | "";
   fluid?: boolean;
   binds?: any;
   controlFluid?: boolean;
@@ -28,7 +28,7 @@ interface UserOptionProps {
   optionValue?: string;
   showAfterLabelDots?: boolean;
   successToastMessage?: string;
-  type?: 'switch' | 'checkbox' | 'text' | 'select' | 'image' | 'tree_select' | 'select_button';
+  type?: "switch" | "checkbox" | "text" | "select" | "image" | "tree_select" | "select_button";
 }
 
 const {
@@ -37,11 +37,11 @@ const {
   option,
   options,
   showAfterLabelDots = true,
-  optionLabel = 'label',
-  optionValue = 'value',
+  optionLabel = "label",
+  optionValue = "value",
   fluid = false,
-  type = 'switch',
-  size = 'small',
+  type = "switch",
+  size = "small",
   showSuccess = true,
   controlFluid = false,
   successToastMessage,
@@ -49,15 +49,18 @@ const {
 
 const authStore = useBasicAuthStore();
 const apiClient = useApiClient();
-const selectInputRef = useTemplateRef<InstanceType<typeof Select>>('selectInputRef');
-const treeSelectInputRef = useTemplateRef<InstanceType<typeof TreeSelectInput>>('treeSelectInputRef');
+const selectInputRef = useTemplateRef<InstanceType<typeof Select>>("selectInputRef");
+const treeSelectInputRef =
+  useTemplateRef<InstanceType<typeof TreeSelectInput>>("treeSelectInputRef");
 const { t } = useI18n();
-const labelRef = useTemplateRef<HTMLLabelElement>('labelRef');
-const fileUploadRef = useTemplateRef<ComponentExposed<typeof FileUpload>>('fileUploadRef');
+const labelRef = useTemplateRef<HTMLLabelElement>("labelRef");
+const fileUploadRef = useTemplateRef<ComponentExposed<typeof FileUpload>>("fileUploadRef");
 const localIsGlobal = computed(() => isGlobal !== false);
 const currentValue = computed<any>({
   get() {
-    return localIsGlobal.value === true ? authStore.globalOptions?.[option as HddGlobalOption] : authStore.options[option as HddUserOption];
+    return localIsGlobal.value === true
+      ? authStore.globalOptions?.[option as HddGlobalOption]
+      : authStore.options[option as HddUserOption];
   },
   set(value) {
     let request: Promise<void>;
@@ -72,14 +75,18 @@ const currentValue = computed<any>({
         if (!showSuccess) {
           return;
         }
-        if (type === 'checkbox' || type === 'switch') {
-          apiClient.toastSuccess(label || labelRef.value?.innerHTML, value ? t('Enabled') : t('Disabled'), {
-            life: 2000,
-            contentStyleClass: '[&_.p-toast-detail]:!font-bold',
-            severity: value ? 'success' : 'warn',
-          });
+        if (type === "checkbox" || type === "switch") {
+          apiClient.toastSuccess(
+            label || labelRef.value?.innerHTML,
+            value ? t("Enabled") : t("Disabled"),
+            {
+              life: 2000,
+              contentStyleClass: "[&_.p-toast-detail]:!font-bold",
+              severity: value ? "success" : "warn",
+            },
+          );
         } else {
-          apiClient.toastSuccess(successToastMessage ?? t('Option Changed Successfully'), '', {
+          apiClient.toastSuccess(successToastMessage ?? t("Option Changed Successfully"), "", {
             life: 1000,
           });
         }
@@ -96,10 +103,10 @@ const currentValue = computed<any>({
       });
   },
 });
-const optionId = computed(() => uniqueId('user-option'));
+const optionId = computed(() => uniqueId("user-option"));
 
 const computedOptions = computed<any[]>(() => {
-  if (typeof options === 'object' && !Array.isArray(options)) {
+  if (typeof options === "object" && !Array.isArray(options)) {
     return map(options, (label, value) => {
       return {
         value,
@@ -110,8 +117,16 @@ const computedOptions = computed<any[]>(() => {
     return options ?? [];
   }
 });
-const localOptionLabel = computed(() => (computedOptions.value.length > 0 && typeof computedOptions.value[0] === 'string' ? undefined : optionLabel));
-const localOptionValue = computed(() => (computedOptions.value.length > 0 && typeof computedOptions.value[0] === 'string' ? undefined : optionValue));
+const localOptionLabel = computed(() =>
+  computedOptions.value.length > 0 && typeof computedOptions.value[0] === "string"
+    ? undefined
+    : optionLabel,
+);
+const localOptionValue = computed(() =>
+  computedOptions.value.length > 0 && typeof computedOptions.value[0] === "string"
+    ? undefined
+    : optionValue,
+);
 
 function uploadFile(event: FileUploadUploadEvent) {
   if (event.files[0]) {
@@ -124,17 +139,17 @@ const confirm = useConfirm();
 function removeFile(event: PointerEvent) {
   confirm.require({
     target: event.currentTarget as HTMLButtonElement,
-    group: 'popup',
-    message: t('Are you sure to delete this image?'),
-    icon: 'pi pi-info-circle',
+    group: "popup",
+    message: t("Are you sure to delete this image?"),
+    icon: "pi pi-info-circle",
     rejectProps: {
-      label: t('Cancel'),
-      severity: 'secondary',
+      label: t("Cancel"),
+      severity: "secondary",
       outlined: true,
     },
     acceptProps: {
-      label: t('Delete'),
-      severity: 'danger',
+      label: t("Delete"),
+      severity: "danger",
     },
     accept: () => {
       currentValue.value = null;
@@ -143,10 +158,10 @@ function removeFile(event: PointerEvent) {
 }
 
 function onLabelClick() {
-  if (type === 'image') {
+  if (type === "image") {
     //@ts-expect-error
     fileUploadRef.value?.choose();
-  } else if (type === 'select') {
+  } else if (type === "select") {
     selectInputRef.value.show(true);
   }
 }
@@ -157,7 +172,7 @@ function onLabelClick() {
     <label
       ref="labelRef"
       :for="optionId"
-      :class="[{ 'grow': !controlFluid }]"
+      :class="[{ grow: !controlFluid }]"
       class="light:hover:bg-yellow-300/25 cursor-pointer rounded-lg dark:hover:bg-zinc-100/10"
       @click="onLabelClick"
     >
@@ -174,7 +189,7 @@ function onLabelClick() {
       v-else-if="type === 'select_button'"
       v-model="currentValue"
       :input-id="optionId"
-      :class="{ 'grow': controlFluid }"
+      :class="{ grow: controlFluid }"
       :option-label="localOptionLabel"
       :option-value="localOptionValue"
       :size="size"
@@ -184,7 +199,7 @@ function onLabelClick() {
       v-else-if="type === 'select'"
       ref="selectInputRef"
       v-model="currentValue"
-      :class="{ 'grow': controlFluid }"
+      :class="{ grow: controlFluid }"
       :option-label="localOptionLabel"
       :option-value="localOptionValue"
       :options="computedOptions"
@@ -195,7 +210,7 @@ function onLabelClick() {
       v-else-if="type === 'tree_select'"
       ref="treeSelectInputRef"
       v-model="currentValue"
-      :class="{ 'grow': controlFluid }"
+      :class="{ grow: controlFluid }"
       :clearable="clearable"
       :option-label-property="localOptionLabel"
       :option-value-property="localOptionValue"
@@ -210,10 +225,10 @@ function onLabelClick() {
       v-model.lazy="currentValue"
       :input-id="optionId"
       lazy
-      :class="{ 'grow': controlFluid }"
+      :class="{ grow: controlFluid }"
     />
     <template v-else-if="type === 'image'">
-      <div class="flex items-center gap-2" :class="{ 'grow': controlFluid }">
+      <div class="flex items-center gap-2" :class="{ grow: controlFluid }">
         <Image
           v-if="currentValue"
           :src="currentValue"

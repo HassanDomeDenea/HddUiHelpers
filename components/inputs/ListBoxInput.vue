@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import { groupBy, reduce } from 'lodash-es';
-import type { SelectChangeEvent } from 'primevue/select';
-import { computed, ref } from 'vue';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import { groupBy, reduce } from "lodash-es";
+import type { SelectChangeEvent } from "primevue/select";
+import { computed, ref } from "vue";
+
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = withDefaults(
   defineProps<
@@ -23,16 +24,16 @@ const props = withDefaults(
     } & BaseInputProps
   >(),
   {
-    optionLabelProperty: 'name',
-    optionValueProperty: 'id',
-    optionGroupChildren: 'items',
+    optionLabelProperty: "name",
+    optionValueProperty: "id",
+    optionGroupChildren: "items",
     checkmark: true,
   },
 );
 const emits = defineEmits<{
   change: [event: SelectChangeEvent];
 }>();
-const value = defineModel<any>('modelValue');
+const value = defineModel<any>("modelValue");
 const computedOptions = computed(() =>
   props.groupItemsBy
     ? reduce(

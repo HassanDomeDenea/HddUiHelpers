@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import DarkModeButton from 'HddUiHelpers/components/misc/DarkModeButton.vue';
-import UserAvatar from 'HddUiHelpers/components/misc/UserAvatar.vue';
-import { useBasicAuthStore } from 'HddUiHelpers/stores/basicAuth';
-import { useDimensionsStore } from 'HddUiHelpers/stores/dimensions.ts';
-import type { HddPermission } from 'HddUiHelpers/types/types.ts';
-import { useElementSize } from '@vueuse/core';
-import { Menubar } from 'primevue';
-import { computed, useTemplateRef, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useElementSize } from "@vueuse/core";
+import DarkModeButton from "HddUiHelpers/components/misc/DarkModeButton.vue";
+import UserAvatar from "HddUiHelpers/components/misc/UserAvatar.vue";
+import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth";
+import { useDimensionsStore } from "HddUiHelpers/stores/dimensions.ts";
+import type { HddPermission } from "HddUiHelpers/types/types.ts";
+import { Menubar } from "primevue";
+import { computed, useTemplateRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 const authStore = useBasicAuthStore();
 
@@ -26,8 +26,8 @@ export interface NavbarMenuItemInterface {
 }
 
 const {
-  navbarClass = 'light:!bg-sky-200 light:!border-b-sky-300 ',
-  activeItemClass = 'light:bg-sky-100 dark:bg-gray-800 rounded-lg font-bold',
+  navbarClass = "light:!bg-sky-200 light:!border-b-sky-300 ",
+  activeItemClass = "light:bg-sky-100 dark:bg-gray-800 rounded-lg font-bold",
   withDarkModeButton = true,
   items,
 } = defineProps<{
@@ -37,7 +37,7 @@ const {
   activeItemClass?: any;
 }>();
 const { t } = useI18n();
-const menuBarRef = useTemplateRef('menuBarRef');
+const menuBarRef = useTemplateRef("menuBarRef");
 
 const filteredItems = computed(() => {
   const mainItems = [];
@@ -78,7 +78,7 @@ const filteredItems = computed(() => {
 
   if (otherItems.length > 0) {
     mainItems.push({
-      label: t('Others'),
+      label: t("Others"),
       items: otherItems,
     });
   }
@@ -86,13 +86,17 @@ const filteredItems = computed(() => {
   return mainItems;
 });
 const dimensionsStore = useDimensionsStore();
-const menuBarStartAreaElement = computed(() => menuBarRef.value?.$el?.querySelector('.p-menubar-start'));
-const menuBarEndAreaElement = computed(() => menuBarRef.value?.$el?.querySelector('.p-menubar-end'));
+const menuBarStartAreaElement = computed(() =>
+  menuBarRef.value?.$el?.querySelector(".p-menubar-start"),
+);
+const menuBarEndAreaElement = computed(() =>
+  menuBarRef.value?.$el?.querySelector(".p-menubar-end"),
+);
 const { width: menuBarWidth, height: menuBarHeight } = useElementSize(
   menuBarRef,
   {},
   {
-    box: 'border-box',
+    box: "border-box",
   },
 );
 const { width: menuBarStartAreaWidth } = useElementSize(menuBarStartAreaElement);

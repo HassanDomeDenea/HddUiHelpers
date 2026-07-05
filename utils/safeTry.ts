@@ -1,4 +1,6 @@
-export const safeTry = async <TResponse, TError = unknown>(fn: () => Promise<TResponse>): Promise<[TResponse, undefined] | [undefined, TError]> => {
+export const safeTry = async <TResponse, TError = unknown>(
+  fn: () => Promise<TResponse>,
+): Promise<[TResponse, undefined] | [undefined, TError]> => {
   try {
     const data = await fn();
     return [data, undefined];

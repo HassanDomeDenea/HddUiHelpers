@@ -1,11 +1,20 @@
 // @unocss-include
 
-<script lang="ts" setup generic="T extends RecordItem = RecordItem, TExtraData extends Record<string, unknown> = Record<string, unknown>">
-import type AuditsPopover from 'HddUiHelpers/components/AuditsPopover/AuditsPopover.vue';
-import CellContent from 'HddUiHelpers/components/datatables/CellContent.vue';
-import type ToolbarFilterWrapper from 'HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue';
-import InlineCellEdit from 'HddUiHelpers/components/datatables/InlineCellEdit.vue';
-import type PrintPaperForServerDataTable from 'HddUiHelpers/components/datatables/PrintPaperForServerDataTable.vue';
+<script
+  lang="ts"
+  setup
+  generic="
+    T extends RecordItem = RecordItem,
+    TExtraData extends Record<string, unknown> = Record<string, unknown>
+  "
+>
+import { type MaybeElement, useDebounceFn, useElementSize } from "@vueuse/core";
+import type { AxiosError, AxiosRequestConfig } from "axios";
+import type AuditsPopover from "HddUiHelpers/components/AuditsPopover/AuditsPopover.vue";
+import CellContent from "HddUiHelpers/components/datatables/CellContent.vue";
+import type ToolbarFilterWrapper from "HddUiHelpers/components/datatables/filters/ToolbarFilterWrapper.vue";
+import InlineCellEdit from "HddUiHelpers/components/datatables/InlineCellEdit.vue";
+import type PrintPaperForServerDataTable from "HddUiHelpers/components/datatables/PrintPaperForServerDataTable.vue";
 import {
   appendToUrl,
   getColumnCanShowAddButton,
@@ -20,25 +29,39 @@ import {
   isToolbarFilterEmpty,
   localeAlignToFrozenAlign,
   snakeCasePreserveDots,
-} from 'HddUiHelpers/components/datatables/ServerDataTableUtilities.ts';
-import type ServerFormDialog from 'HddUiHelpers/components/datatables/ServerFormDialog.vue';
-import { useServerDataTableColumnVisibility } from 'HddUiHelpers/components/datatables/visibility.ts';
-import type { RecordItem, ServerDataTableColumnPayload } from 'HddUiHelpers/components/FormWrapper/types.ts';
-import type { GetRecordsResponseType } from 'HddUiHelpers/components/primeVueServerTable/types.ts';
-import { useHddUiHelpers } from 'HddUiHelpers/plugins/HddUiHelpers.ts';
-import { useApiClient } from 'HddUiHelpers/stores/apiClient.ts';
-import { useStackableDialog } from 'HddUiHelpers/stores/stackableDialogs.ts';
-import type { ApiResponseData } from 'HddUiHelpers/types/types.ts';
-import { printDomWithStyles } from 'HddUiHelpers/utils/printDom.ts';
-import { formatNumberGrouped, useFormatters } from 'HddUiHelpers/utils/useFormatters.ts';
-import { type MaybeElement, useDebounceFn, useElementSize } from '@vueuse/core';
-import type { AxiosError, AxiosRequestConfig } from 'axios';
-import { cloneDeep, filter, find, get, isBoolean, isFunction, isString, map, reduce, set, uniqueId, unset } from 'lodash-es';
-import moment from 'moment';
-import type { VirtualScrollerProps } from 'primevue';
-import Button from 'primevue/button';
-import Column from 'primevue/column';
-import type ContextMenu from 'primevue/contextmenu';
+} from "HddUiHelpers/components/datatables/ServerDataTableUtilities.ts";
+import type ServerFormDialog from "HddUiHelpers/components/datatables/ServerFormDialog.vue";
+import { useServerDataTableColumnVisibility } from "HddUiHelpers/components/datatables/visibility.ts";
+import type {
+  RecordItem,
+  ServerDataTableColumnPayload,
+} from "HddUiHelpers/components/FormWrapper/types.ts";
+import type { GetRecordsResponseType } from "HddUiHelpers/components/primeVueServerTable/types.ts";
+import { useHddUiHelpers } from "HddUiHelpers/plugins/HddUiHelpers.ts";
+import { useApiClient } from "HddUiHelpers/stores/apiClient.ts";
+import { useStackableDialog } from "HddUiHelpers/stores/stackableDialogs.ts";
+import type { ApiResponseData } from "HddUiHelpers/types/types.ts";
+import { printDomWithStyles } from "HddUiHelpers/utils/printDom.ts";
+import { formatNumberGrouped, useFormatters } from "HddUiHelpers/utils/useFormatters.ts";
+import {
+  cloneDeep,
+  filter,
+  find,
+  get,
+  isBoolean,
+  isFunction,
+  isString,
+  map,
+  reduce,
+  set,
+  uniqueId,
+  unset,
+} from "lodash-es";
+import moment from "moment";
+import type { VirtualScrollerProps } from "primevue";
+import Button from "primevue/button";
+import Column from "primevue/column";
+import type ContextMenu from "primevue/contextmenu";
 import type {
   DataTableCellEditCompleteEvent,
   DataTableFilterMeta,
@@ -53,14 +76,25 @@ import type {
   DataTableRowReorderEvent,
   DataTableSelectAllChangeEvent,
   DataTableSortMeta,
-} from 'primevue/datatable';
-import DataTable from 'primevue/datatable';
-import type { MenuItem } from 'primevue/menuitem';
-import type Popover from 'primevue/popover';
-import { useConfirm } from 'primevue/useconfirm';
-import { computed, nextTick, onActivated, onMounted, type Ref, ref, toValue, useTemplateRef, watch } from 'vue';
-import type { ComponentExposed } from 'vue-component-type-helpers';
-import { useI18n } from 'vue-i18n';
+} from "primevue/datatable";
+import DataTable from "primevue/datatable";
+import type { MenuItem } from "primevue/menuitem";
+import type Popover from "primevue/popover";
+import { useConfirm } from "primevue/useconfirm";
+import {
+  computed,
+  nextTick,
+  onActivated,
+  onMounted,
+  type Ref,
+  ref,
+  toValue,
+  useTemplateRef,
+  watch,
+} from "vue";
+import type { ComponentExposed } from "vue-component-type-helpers";
+import { useI18n } from "vue-i18n";
+
 import type {
   FilterMatchModes,
   PrintPaperForServerDataTableProps,
@@ -72,8 +106,12 @@ import type {
   ServerDataTableProps,
   ServerDataTableStandardSort,
   ServerDataTableToolbarFilter,
-} from './ServerDataTableTypes.ts';
-import { isToolbarFilterValue, type ServerDataTableToolbarFilterWrapper, type ServerFormDialogProps } from './ServerDataTableTypes.ts';
+} from "./ServerDataTableTypes.ts";
+import {
+  isToolbarFilterValue,
+  type ServerDataTableToolbarFilterWrapper,
+  type ServerFormDialogProps,
+} from "./ServerDataTableTypes.ts";
 
 type ServerDataTableColumnScoped = ServerDataTableColumn<ServerDataTableColumnType, T> & {
   field: string;
@@ -95,9 +133,9 @@ const emits = defineEmits<{
   rowCollapse: [row: T];
   rowReorder: [event: DataTableRowReorderEvent];
   refreshed: [res: GetRecordsResponseType];
-  rowChanged: [row: T | T[] | (string | number)[], type: 'create' | 'update' | 'delete'];
+  rowChanged: [row: T | T[] | (string | number)[], type: "create" | "update" | "delete"];
   dialogsVisibility: [status: boolean];
-  dataLoaded: [response: ResponseData],
+  dataLoaded: [response: ResponseData];
 }>();
 
 const {
@@ -114,25 +152,25 @@ const {
   fixedToolbarFilters = [],
   initialToolbarFilters = [],
   hasPagination = true,
-  primaryKey = 'id' as keyof T,
-  scrollHeight = 'flex',
+  primaryKey = "id" as keyof T,
+  scrollHeight = "flex",
   scrollable,
 
-  initialSortDirection = 'asc',
+  initialSortDirection = "asc",
   initialSortField,
   initialSorts,
   fixedFilters,
   refreshOnMount = true,
   refreshOnActivated = false,
-  defaultDateMatchMode = 'dateBetween',
-  defaultNumericMatchMode = 'equals',
-  defaultMatchMode = 'contains',
-  defaultFiltersOperator = 'and',
+  defaultDateMatchMode = "dateBetween",
+  defaultNumericMatchMode = "equals",
+  defaultMatchMode = "contains",
+  defaultFiltersOperator = "and",
   defaultShowFilterMatchModes = true,
   defaultColumnMultipleFilters = true,
   defaultColumnShowFilterAddButton = true,
   defaultColumnShowFilterClearButton = true,
-  selectionMode = 'multiple',
+  selectionMode = "multiple",
   hasGlobalFilter = true,
   hasRefreshButton = true,
   url,
@@ -174,7 +212,7 @@ const {
   firstPageHeaderImageUrl,
   headerImageUrl,
   footerImageUrl,
-  orderableColumnName = 'order_sequence' as keyof T,
+  orderableColumnName = "order_sequence" as keyof T,
   oneExpansionAtATime = false,
   hasExpanderColumn = true,
   withExpansion = false,
@@ -201,14 +239,16 @@ const {
   noMultiSortBadges,
   rounded = true,
   columnVisibilityButton = undefined,
-  tableSeverity = 'info',
-  inlineEditMode = 'none',
-  rowGroupMode = 'subheader',
+  tableSeverity = "info",
+  inlineEditMode = "none",
+  rowGroupMode = "subheader",
   onlyRequestedColumns = undefined,
   transformResponseData,
 } = defineProps<ServerDataTableProps<T>>();
 
-const tableName = computed(() => 'HddServerDataTable_' + (name ?? (typeof url === 'object' ? url.url : url)));
+const tableName = computed(
+  () => "HddServerDataTable_" + (name ?? (typeof url === "object" ? url.url : url)),
+);
 
 const hddUiHelpers = useHddUiHelpers();
 
@@ -222,12 +262,22 @@ const computedOnlyRequestedColumns = computed(() =>
       ? globalConfig.value.onlyRequestedColumns
       : true,
 );
-const computedExtraGetDataPayload = computed(() => extraGetDataPayload ?? globalConfig.value.extraGetDataPayload ?? {});
-const computedNoMultiSortBadges = computed(() => noMultiSortBadges ?? globalConfig.value.noMultiSortBadges ?? false);
-const computedColumnVisibilityButton = computed(() => columnVisibilityButton ?? globalConfig.value.columnVisibilityButton);
-const computedWithToolbarFilters = computed(() => withToolbarFilters ?? globalConfig.value.withToolbarFilters);
-const computedFilterDisplayLayout = computed(() => filterDisplayLayout ?? globalConfig.value.filterDisplayLayout ?? 'menu');
-const computedSortMode = computed(() => sortMode ?? globalConfig.value.sortMode ?? 'multiple');
+const computedExtraGetDataPayload = computed(
+  () => extraGetDataPayload ?? globalConfig.value.extraGetDataPayload ?? {},
+);
+const computedNoMultiSortBadges = computed(
+  () => noMultiSortBadges ?? globalConfig.value.noMultiSortBadges ?? false,
+);
+const computedColumnVisibilityButton = computed(
+  () => columnVisibilityButton ?? globalConfig.value.columnVisibilityButton,
+);
+const computedWithToolbarFilters = computed(
+  () => withToolbarFilters ?? globalConfig.value.withToolbarFilters,
+);
+const computedFilterDisplayLayout = computed(
+  () => filterDisplayLayout ?? globalConfig.value.filterDisplayLayout ?? "menu",
+);
+const computedSortMode = computed(() => sortMode ?? globalConfig.value.sortMode ?? "multiple");
 
 onActivated(() => {
   if (refreshOnActivated) {
@@ -253,21 +303,21 @@ const selectedRecords = ref<T[]>([]) as Ref<T[]>;
 const selectedRecord = ref<T>();
 const selectedRecordOrRecords = computed({
   get() {
-    if (selectionMode === 'multiple') return selectedRecords.value;
+    if (selectionMode === "multiple") return selectedRecords.value;
     return selectedRecord.value;
   },
   set(val) {
-    if (selectionMode === 'multiple') selectedRecords.value = val as T[];
+    if (selectionMode === "multiple") selectedRecords.value = val as T[];
     else selectedRecord.value = val as T;
   },
 });
 const expandedRecords = ref<{ [n in string]: boolean }>({});
 
 const contextMenuSelectedRecord = ref<T>();
-const perPage = defineModel<number>('perPage', { default: 25 });
-const firstRowIndex = defineModel<number>('firstRowIndex', { default: 0 });
-const currentPage = defineModel<number>('currentPage', { default: 1 });
-const extraData = defineModel<TExtraData>('extraData');
+const perPage = defineModel<number>("perPage", { default: 25 });
+const firstRowIndex = defineModel<number>("firstRowIndex", { default: 0 });
+const currentPage = defineModel<number>("currentPage", { default: 1 });
+const extraData = defineModel<TExtraData>("extraData");
 const isLoading = ref(false);
 const isAllSelected = ref(false);
 
@@ -278,9 +328,9 @@ const apiClient = useApiClient();
 const confirm = useConfirm();
 
 // Template Refs
-const wrapperRef = useTemplateRef<HTMLDivElement>('wrapperRef');
-const headerSegmentRef = useTemplateRef<MaybeElement>('headerSegmentRef');
-const datatableRef = useTemplateRef<MaybeElement>('datatableRef');
+const wrapperRef = useTemplateRef<HTMLDivElement>("wrapperRef");
+const headerSegmentRef = useTemplateRef<MaybeElement>("headerSegmentRef");
+const datatableRef = useTemplateRef<MaybeElement>("datatableRef");
 
 // Columns
 
@@ -289,10 +339,11 @@ const mappedColumns = computed(() => {
   if (Array.isArray(columns)) {
     toRenderColumnsList = columns;
   } else {
-    toRenderColumnsList = columns === '*' && records.value?.length ? Object.keys(records.value[0]) : [columns];
+    toRenderColumnsList =
+      columns === "*" && records.value?.length ? Object.keys(records.value[0]) : [columns];
   }
   return toRenderColumnsList.map((column) => {
-    if (typeof column === 'string') {
+    if (typeof column === "string") {
       return { name: column, field: column, label: column, fullFieldName: column };
     }
     if (!column.field) {
@@ -300,33 +351,33 @@ const mappedColumns = computed(() => {
     }
     if (column.relation) {
       column.relation = snakeCasePreserveDots(column.relation);
-      column.fullFieldName = column.relation + '.' + column.field;
+      column.fullFieldName = column.relation + "." + column.field;
     } else {
       column.fullFieldName = column.field;
     }
-    if ((!column.type || column.type === 'select') && column.selectOptions !== undefined) {
-      column.type = 'select';
+    if ((!column.type || column.type === "select") && column.selectOptions !== undefined) {
+      column.type = "select";
       if (column.renderTypeProps && !column.renderType) {
-        column.renderType = 'tag';
+        column.renderType = "tag";
       }
     }
     if (true === column.hiddenButCanBeVisible) {
       column.visibilityControl = true;
       column.visible = false;
     }
-    if (column.type === 'date') {
+    if (column.type === "date") {
       if (column.dateFormat) {
-        if (column.dateFormat === 'date') {
-          column.dateFormat = 'YYYY-MM-DD';
-        } else if (column.dateFormat === 'datetime') {
-          column.dateFormat = 'YYYY-MM-DD hh:mmA';
+        if (column.dateFormat === "date") {
+          column.dateFormat = "YYYY-MM-DD";
+        } else if (column.dateFormat === "datetime") {
+          column.dateFormat = "YYYY-MM-DD hh:mmA";
         }
       } else {
-        column.dateFormat = 'YYYY-MM-DD';
+        column.dateFormat = "YYYY-MM-DD";
       }
     }
     if (!column.type) {
-      column.type = 'text';
+      column.type = "text";
     }
     return column;
   }) as ServerDataTableColumnScoped[];
@@ -340,19 +391,21 @@ const mappedColumnsListToObject = computed(() => {
   const obj: { [k1 in string]: { [k2 in string]: string } } = {};
   mappedColumns.value.forEach((column) => {
     const name = column.fullFieldName as string;
-    if (column.type === 'select') {
+    if (column.type === "select") {
       if (column.selectOptionsKeyed) {
         obj[name] = column.selectOptionsKeyed;
       } else if (column.selectOptions) {
         if (!Array.isArray(column.selectOptions)) {
           obj[name] = column.selectOptions.object;
         } else {
-          obj[name] = column.selectOptions.reduce((carry: { [k2 in string]: string }, currentValue) => {
-            carry[currentValue[(column.selectValueProperty ?? 'id') as 'id'] as string] = currentValue[
-              (column.selectLabelProperty ?? 'name') as 'name'
-            ] as string;
-            return carry;
-          }, {});
+          obj[name] = column.selectOptions.reduce(
+            (carry: { [k2 in string]: string }, currentValue) => {
+              carry[currentValue[(column.selectValueProperty ?? "id") as "id"] as string] =
+                currentValue[(column.selectLabelProperty ?? "name") as "name"] as string;
+              return carry;
+            },
+            {},
+          );
         }
       }
     }
@@ -360,10 +413,14 @@ const mappedColumnsListToObject = computed(() => {
   return obj;
 });
 
-function getColumnBody(rowData: T, column: ServerDataTableColumn<ServerDataTableColumnType, T>): string | string[] {
-  const _showable = typeof column.showable === 'function' ? column.showable : toValue(column.showable);
-  if (typeof _showable === 'function' || isBoolean(_showable)) {
-    const showableValue = typeof _showable === 'function' ? _showable({ row: rowData }) : _showable;
+function getColumnBody(
+  rowData: T,
+  column: ServerDataTableColumn<ServerDataTableColumnType, T>,
+): string | string[] {
+  const _showable =
+    typeof column.showable === "function" ? column.showable : toValue(column.showable);
+  if (typeof _showable === "function" || isBoolean(_showable)) {
+    const showableValue = typeof _showable === "function" ? _showable({ row: rowData }) : _showable;
     if (showableValue === false) {
       return `<span class="italic text-muted">--</span>`;
     } else if (showableValue !== true) {
@@ -371,14 +428,14 @@ function getColumnBody(rowData: T, column: ServerDataTableColumn<ServerDataTable
     }
   }
   let fieldName = column.fullFieldName as string;
-  if (typeof column.formatter === 'string') {
+  if (typeof column.formatter === "string") {
     fieldName = column.formatter;
   }
   const value = get(rowData, fieldName);
-  if (typeof column.formatter === 'function') {
+  if (typeof column.formatter === "function") {
     return column.formatter(value, rowData, fieldName);
   }
-  if (column.type === 'select') {
+  if (column.type === "select") {
     let result: unknown;
     if (column.isMultiSelect) {
       result = value.map((i: string) => mappedColumnsListToObject.value[fieldName]?.[i] || i);
@@ -390,20 +447,24 @@ function getColumnBody(rowData: T, column: ServerDataTableColumn<ServerDataTable
     }
     return result as string | string[];
   }
-  if (column.type === 'price') {
+  if (column.type === "price") {
     return formatters.formatPrice(
       value,
-      typeof column.currency === 'string' ? column.currency : column.currency ? (rowData as T & { currency: string }) : undefined,
+      typeof column.currency === "string"
+        ? column.currency
+        : column.currency
+          ? (rowData as T & { currency: string })
+          : undefined,
     );
   }
-  if (column.type === 'date' && column.dateFormat) {
-    return value ? moment(value).format(column.dateFormat) : '';
+  if (column.type === "date" && column.dateFormat) {
+    return value ? moment(value).format(column.dateFormat) : "";
   }
-  if (column.type === 'boolean') {
-    if (column.renderType === 'yesNoIconBadge') return value;
-    let result = value === true ? t('Yes') : value === false ? t('No') : '';
+  if (column.type === "boolean") {
+    if (column.renderType === "yesNoIconBadge") return value;
+    let result = value === true ? t("Yes") : value === false ? t("No") : "";
     if (!result) {
-      result = `<span class="italic text-muted">${column.emptyValuePlaceholder ?? 'null'}</span>`;
+      result = `<span class="italic text-muted">${column.emptyValuePlaceholder ?? "null"}</span>`;
     }
     return result;
   }
@@ -414,7 +475,8 @@ function getColumnBody(rowData: T, column: ServerDataTableColumn<ServerDataTable
 // Selections:
 
 function recheckIfAllIsSelected() {
-  isAllSelected.value = selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
+  isAllSelected.value =
+    selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
 }
 
 function onSelectAllRecordsButtonClick() {
@@ -440,7 +502,8 @@ function onSelectAllChange(event: DataTableSelectAllChangeEvent) {
 
 function onRowSelect() {
   // Params: (event: DataTableRowSelectEvent)
-  isAllSelected.value = selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
+  isAllSelected.value =
+    selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
 }
 
 function onRowUnselect() {
@@ -465,22 +528,25 @@ function isSelectedRow(row: T): boolean {
 }
 
 function toggleRowSelection(row: T) {
-  if (selectionMode === 'single') {
+  if (selectionMode === "single") {
     selectedRecord.value = selectedRecord.value === row ? undefined : row;
   } else {
     if (isSelectedRow(row)) {
-      selectedRecords.value = selectedRecords.value.filter((e) => e[primaryKey] !== row[primaryKey]);
+      selectedRecords.value = selectedRecords.value.filter(
+        (e) => e[primaryKey] !== row[primaryKey],
+      );
     } else {
       selectedRecords.value = [...selectedRecords.value, row];
     }
-    isAllSelected.value = selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
+    isAllSelected.value =
+      selectedRecords.value.length === totalRecords.value && selectedRecords.value.length !== 0;
   }
 }
 
 // Sorting
 
-function sortDirectionToOrder(direction?: 'asc' | 'desc'): 1 | -1 | undefined {
-  return direction === 'asc' ? 1 : direction === 'desc' ? -1 : undefined;
+function sortDirectionToOrder(direction?: "asc" | "desc"): 1 | -1 | undefined {
+  return direction === "asc" ? 1 : direction === "desc" ? -1 : undefined;
 }
 
 const globalSortable = computed(() => {
@@ -496,14 +562,14 @@ const sortField = ref(initialSortField);
 const sortOrder = ref<-1 | 1 | undefined>(sortDirectionToOrder(initialSortDirection));
 
 const mappedSorts = computed<ServerDataTableStandardSort[]>(() => {
-  if (computedSortMode.value === 'single' && sortField.value) {
-    return [{ field: sortField.value, direction: sortOrder.value === -1 ? 'desc' : 'asc' }];
-  } else if (computedSortMode.value === 'multiple' && multiSorts.value?.length) {
+  if (computedSortMode.value === "single" && sortField.value) {
+    return [{ field: sortField.value, direction: sortOrder.value === -1 ? "desc" : "asc" }];
+  } else if (computedSortMode.value === "multiple" && multiSorts.value?.length) {
     return multiSorts.value.map(
       (item: DataTableSortMeta) =>
         ({
           field: item.field,
-          direction: item.order === -1 ? 'desc' : 'asc',
+          direction: item.order === -1 ? "desc" : "asc",
         }) as ServerDataTableStandardSort,
     );
   }
@@ -533,7 +599,7 @@ const globalFilterValue = computed({
     return filters.value._global?.value;
   },
   set(value) {
-    set(filters.value, '_global.value', value);
+    set(filters.value, "_global.value", value);
   },
 });
 const defaultColumnFilterable = ref(true);
@@ -551,26 +617,26 @@ const hasFilters = computed(() => {
     const filter = filters.value[key];
 
     if (isMultipleFilterType(filter)) {
-      const index = filter.constraints?.findIndex((x) => x.value !== null && x.value !== '');
+      const index = filter.constraints?.findIndex((x) => x.value !== null && x.value !== "");
       if (index > -1) return true;
-    } else if (typeof filter === 'string') {
-      return filters.value[key] !== null && filters.value[key] !== '';
+    } else if (typeof filter === "string") {
+      return filters.value[key] !== null && filters.value[key] !== "";
     } else {
-      if (filter?.value !== null && filter?.value !== '') return true;
+      if (filter?.value !== null && filter?.value !== "") return true;
     }
   }
   return false;
 });
 const hasFilledGlobalFilter = computed(() => {
-  const filter = filters.value['_global'];
+  const filter = filters.value["_global"];
   if (!filter) {
     return false;
   }
   if (isMultipleFilterType(filter)) {
-    const index = filter.constraints?.findIndex((x) => x.value !== null && x.value !== '');
+    const index = filter.constraints?.findIndex((x) => x.value !== null && x.value !== "");
     if (index > -1) return true;
   } else {
-    if (filter?.value !== null && filter?.value !== '') return true;
+    if (filter?.value !== null && filter?.value !== "") return true;
   }
   return false;
 });
@@ -584,15 +650,15 @@ function clearFilters() {
 function getDefaultMatchModeForColumnType(columnType?: ServerDataTableColumnType) {
   let matchMode: FilterMatchModes;
   switch (columnType) {
-    case 'date':
+    case "date":
       matchMode = defaultDateMatchMode;
       break;
-    case 'price':
-    case 'numeric':
+    case "price":
+    case "numeric":
       matchMode = defaultNumericMatchMode;
       break;
-    case 'boolean':
-      matchMode = 'equals';
+    case "boolean":
+      matchMode = "equals";
 
       break;
     default:
@@ -602,9 +668,13 @@ function getDefaultMatchModeForColumnType(columnType?: ServerDataTableColumnType
 }
 
 function clearFilterFor(columnName: string | ServerDataTableColumn): void {
-  const column = typeof columnName === 'object' ? columnName : mappedColumns.value.find((e) => (e.filterField ?? e.field ?? e.name) === columnName);
+  const column =
+    typeof columnName === "object"
+      ? columnName
+      : mappedColumns.value.find((e) => (e.filterField ?? e.field ?? e.name) === columnName);
   if (column) {
-    filters.value[(column.filterField ?? column.fullFieldName) as string] = createFilterForColumn(column);
+    filters.value[(column.filterField ?? column.fullFieldName) as string] =
+      createFilterForColumn(column);
   }
 }
 
@@ -625,7 +695,7 @@ function createFilterForColumn(
     };
   } else {
     return {
-      operator: 'and',
+      operator: "and",
       constraints: [{ value: null, matchMode }],
     };
   }
@@ -640,15 +710,15 @@ function createFilters() {
     },
     {
       _global: {
-        value: '',
-        matchMode: 'contains',
+        value: "",
+        matchMode: "contains",
       },
     },
   );
 }
 
 watch(
-  () => mappedColumns.value.map((e) => e.filterField ?? e.name ?? e.field).join(','),
+  () => mappedColumns.value.map((e) => e.filterField ?? e.name ?? e.field).join(","),
   (val, oldValue) => {
     if (val !== oldValue) {
       createFilters();
@@ -667,7 +737,7 @@ const filtersListOfPrimeVueColumnFilters = computed<ServerDataTableToolbarFilter
   };
   for (const fieldName in filters.value) {
     const filter = filters.value[fieldName];
-    if (typeof filter === 'string') {
+    if (typeof filter === "string") {
       list.fields.push({
         field: fieldName,
         value: filter,
@@ -675,7 +745,7 @@ const filtersListOfPrimeVueColumnFilters = computed<ServerDataTableToolbarFilter
       });
     } else if (isMultipleFilterType(filter)) {
       list.fields.push({
-        operator: filter.operator as 'and' | 'or',
+        operator: filter.operator as "and" | "or",
         fields: filter.constraints.map((constraint) => {
           return {
             field: fieldName,
@@ -701,13 +771,19 @@ async function onFilter() {
 
 // Toolbar Filters:
 // TODO: Finish It
-const toolbarFiltersPopoverRef = useTemplateRef<ComponentExposed<typeof Popover>>('toolbarFiltersPopoverRef');
-const toolbarFiltersWrapperRef = useTemplateRef<ComponentExposed<typeof ToolbarFilterWrapper>>('toolbarFiltersWrapperRef');
+const toolbarFiltersPopoverRef = useTemplateRef<ComponentExposed<typeof Popover>>(
+  "toolbarFiltersPopoverRef",
+);
+const toolbarFiltersWrapperRef = useTemplateRef<ComponentExposed<typeof ToolbarFilterWrapper>>(
+  "toolbarFiltersWrapperRef",
+);
 const toolbarFilterableColumns = computed(() => {
   return filterableColumns.value;
 });
 const filledToolbarColumnNames = computed(() => {
-  return toolbarFilters.value.fields.filter((e) => isToolbarFilterValue(e)).map((filter) => filter.field);
+  return toolbarFilters.value.fields
+    .filter((e) => isToolbarFilterValue(e))
+    .map((filter) => filter.field);
 });
 
 /*
@@ -730,15 +806,17 @@ function makeToolbarFiltersFixed(_filters: ServerDataTableToolbarFilter[]) {
 }
 */
 
-function addMissingIds<TFilters extends ServerDataTableToolbarFilter>(_filters: TFilters): TFilters {
+function addMissingIds<TFilters extends ServerDataTableToolbarFilter>(
+  _filters: TFilters,
+): TFilters {
   if (isToolbarFilterValue(_filters)) {
     if (!_filters.id) {
-      _filters.id = uniqueId('toolbar-filter-');
+      _filters.id = uniqueId("toolbar-filter-");
     }
     return _filters;
   } else {
     if (!_filters.id) {
-      _filters.id = uniqueId('toolbar-filter-');
+      _filters.id = uniqueId("toolbar-filter-");
     }
     _filters.fields = _filters.fields.map(addMissingIds);
     return _filters;
@@ -754,7 +832,7 @@ const toolbarFilters = ref<ServerDataTableToolbarFilterWrapper>(
 
 function addToolbarFilter(column: ServerDataTableColumnScoped) {
   toolbarFilters.value.fields.push({
-    id: uniqueId('toolbar-filter-'),
+    id: uniqueId("toolbar-filter-"),
     field: column.filterField ?? column.fullFieldName,
     value: null,
     matchMode: getDefaultMatchModeForColumnType(column.type),
@@ -814,7 +892,7 @@ const rowsPerPageOptions = computed(() => {
   const options = [5, 10, 15, 25, 50, 100, 500, 1000];
   if (!options.includes(perPage.value) && perPage.value !== -1) options.push(perPage.value);
 
-  return [...options.map((i: number) => ({ value: i, label: i })), { value: -1, label: t('All') }];
+  return [...options.map((i: number) => ({ value: i, label: i })), { value: -1, label: t("All") }];
 });
 
 const columnsRequestPayloadMapped = computed(() => {
@@ -841,7 +919,10 @@ const columnsRequestPayloadMapped = computed(() => {
 });
 const customGetDataConfig = ref<AxiosRequestConfig>({});
 
-function setCustomGetDataConfig(config: AxiosRequestConfig, autoRefresh: boolean = false): Promise<void> {
+function setCustomGetDataConfig(
+  config: AxiosRequestConfig,
+  autoRefresh: boolean = false,
+): Promise<void> {
   customGetDataConfig.value = config;
   if (autoRefresh) {
     return refresh();
@@ -850,7 +931,11 @@ function setCustomGetDataConfig(config: AxiosRequestConfig, autoRefresh: boolean
   }
 }
 
-async function getData(specificPerPage: number | null = null, specificPage: number | null = null, requestConfig: AxiosRequestConfig = {}) {
+async function getData(
+  specificPerPage: number | null = null,
+  specificPage: number | null = null,
+  requestConfig: AxiosRequestConfig = {},
+) {
   const payload = {
     globalFilters: hasFilledGlobalFilter.value ? globalFilterNames.value : [],
     page: specificPage || currentPage.value,
@@ -862,7 +947,7 @@ async function getData(specificPerPage: number | null = null, specificPage: numb
     fixedFilters: fixedFilters,
     groupedFilters: toolbarFilters.value,
     fixedGroupedFilters: {
-      operator: 'and',
+      operator: "and",
       fields: fixedToolbarFilters,
     },
     options: {
@@ -871,11 +956,11 @@ async function getData(specificPerPage: number | null = null, specificPage: numb
     },
     ...computedExtraGetDataPayload.value,
   };
-  const urlObject = typeof url === 'object' ? url : { url, method: 'get' };
+  const urlObject = typeof url === "object" ? url : { url, method: "get" };
   return apiClient.request<ApiResponseData<ResponseData>>({
     ...urlObject,
-    params: urlObject.method === 'get' ? payload : undefined,
-    data: urlObject.method === 'post' ? payload : undefined,
+    params: urlObject.method === "get" ? payload : undefined,
+    data: urlObject.method === "post" ? payload : undefined,
     ...requestConfig,
     ...customGetDataConfig.value,
   });
@@ -913,10 +998,12 @@ async function refresh() {
           to.value = responseData.to ?? 0;
           if (selectedRecords.value.length > 0) {
             const existingKeys = selectedRecords.value.map((e) => e[primaryKey]);
-            selectedRecords.value = records.value.filter((e) => existingKeys.includes(e[primaryKey]));
+            selectedRecords.value = records.value.filter((e) =>
+              existingKeys.includes(e[primaryKey]),
+            );
           }
           extraData.value = responseData.extra;
-          emits('dataLoaded', responseData);
+          emits("dataLoaded", responseData);
         })
         .catch((error) => {
           console.error(error);
@@ -972,8 +1059,14 @@ const localVirtualScrollerOptions = computed(() => {
 async function loadRecordsLazily() {}
 
 // Visibility
-const { checkColumnIsVisible, visibleColumns, visibleColumnsPopoverRef, saveVisibleColumnsState, toggleableColumns, confirmResetColumnsVisibility } =
-  useServerDataTableColumnVisibility(tableName, mappedColumns);
+const {
+  checkColumnIsVisible,
+  visibleColumns,
+  visibleColumnsPopoverRef,
+  saveVisibleColumnsState,
+  toggleableColumns,
+  confirmResetColumnsVisibility,
+} = useServerDataTableColumnVisibility(tableName, mappedColumns);
 
 // Deletions
 const isDeleting = ref(false);
@@ -988,23 +1081,26 @@ function deleteRecords(item: T | T[]) {
   }
   updateDeleteDialogVisibility(true);
   confirm.require({
-    message: t('Are you sure to delete n records?', { n: cnt }, cnt),
-    header: t('Confirmation'),
-    icon: 'pi pi-info-circle',
-    rejectLabel: t('Cancel'),
-    acceptLabel: t('Delete'),
-    group: 'dismissable',
-    rejectClass: 'p-button-secondary p-button-outlined',
-    acceptClass: 'p-button-danger',
+    message: t("Are you sure to delete n records?", { n: cnt }, cnt),
+    header: t("Confirmation"),
+    icon: "pi pi-info-circle",
+    rejectLabel: t("Cancel"),
+    acceptLabel: t("Delete"),
+    group: "dismissable",
+    rejectClass: "p-button-secondary p-button-outlined",
+    acceptClass: "p-button-danger",
     accept: async () => {
       isDeleting.value = true;
-      const ids = (Array.isArray(item) ? item.map((i) => i[primaryKey]) : [item[primaryKey]]) as (string | number)[];
+      const ids = (Array.isArray(item) ? item.map((i) => i[primaryKey]) : [item[primaryKey]]) as (
+        | string
+        | number
+      )[];
       try {
         if (!url) {
-          throw new Error('No Url');
+          throw new Error("No Url");
         }
 
-        let urlLink = typeof url === 'object' ? url.url : url;
+        let urlLink = typeof url === "object" ? url.url : url;
         if (cnt === 1) {
           if (singleDeleteUrl) {
             urlLink = singleDeleteUrl(ids[0]).url;
@@ -1012,14 +1108,16 @@ function deleteRecords(item: T | T[]) {
             urlLink = appendToUrl(urlLink, ids[0]);
           }
         } else if (deleteUrl) {
-          urlLink = typeof deleteUrl === 'object' ? deleteUrl.url : deleteUrl;
+          urlLink = typeof deleteUrl === "object" ? deleteUrl.url : deleteUrl;
         }
         idsBeingDeleted.value = ids;
         await apiClient.delete(urlLink, { params: { ids } });
-        apiClient.toastSuccess(t('Deleted!'), t('n Record Deleted Successfully', { n: cnt }, cnt));
-        emits('rowDeleted', Array.isArray(item) ? ids : (item[primaryKey] as string | number));
-        emits('rowChanged', item, 'delete');
-        selectedRecords.value = selectedRecords.value.filter((i) => !ids.includes(i[primaryKey] as string | number));
+        apiClient.toastSuccess(t("Deleted!"), t("n Record Deleted Successfully", { n: cnt }, cnt));
+        emits("rowDeleted", Array.isArray(item) ? ids : (item[primaryKey] as string | number));
+        emits("rowChanged", item, "delete");
+        selectedRecords.value = selectedRecords.value.filter(
+          (i) => !ids.includes(i[primaryKey] as string | number),
+        );
         await refresh();
       } catch (error: unknown) {
         console.error(error);
@@ -1040,7 +1138,8 @@ function deleteRecords(item: T | T[]) {
 
 //Server Form Dialog For Edit And Create
 
-const ServerFormDialogRef = useTemplateRef<ComponentExposed<typeof ServerFormDialog>>('ServerFormDialogRef');
+const ServerFormDialogRef =
+  useTemplateRef<ComponentExposed<typeof ServerFormDialog>>("ServerFormDialogRef");
 const ServerFormDialogOptions = computed(() => {
   return {
     url: createUrl ?? url,
@@ -1054,20 +1153,25 @@ const ServerFormDialogOptions = computed(() => {
     size: toValue(computedSize),
     columns: mappedColumns.value.filter((e) => e.inForm === true),
     onSubmitted: onFormSubmitted,
-    onVisible: (status) => emits('dialogsVisibility', status),
+    onVisible: (status) => emits("dialogsVisibility", status),
     ...(formProps ?? {}),
   } as ServerFormDialogProps<T>;
 });
 
-function onFormSubmitted(item: T | T[], type: 'create' | 'update' | 'delete') {
-  if (type === 'create') {
-    emits('rowCreated', item);
-  } else if (type === 'update') {
-    emits('rowUpdated', item);
+function onFormSubmitted(item: T | T[], type: "create" | "update" | "delete") {
+  if (type === "create") {
+    emits("rowCreated", item);
+  } else if (type === "update") {
+    emits("rowUpdated", item);
   } else {
-    emits('rowDeleted', item instanceof Array ? (item.map((i) => i[primaryKey]) as (string | number)[]) : (item[primaryKey] as string | number));
+    emits(
+      "rowDeleted",
+      item instanceof Array
+        ? (item.map((i) => i[primaryKey]) as (string | number)[])
+        : (item[primaryKey] as string | number),
+    );
   }
-  emits('rowChanged', item, type);
+  emits("rowChanged", item, type);
   if (refreshAfterFormSubmit) {
     refresh();
   }
@@ -1080,14 +1184,14 @@ function showCreateDialog() {
 // Row Editing Editions
 
 function editRecord(item: T) {
-  emits('rowEdit', item);
+  emits("rowEdit", item);
   if (useFormForEdit) {
     showEditDialog(item);
   }
 }
 
 function editMultiRecords(items: T[]) {
-  emits('multiRowsEdit', items);
+  emits("multiRowsEdit", items);
   if (useFormForEdit) {
     showEditDialog(items);
   }
@@ -1117,7 +1221,7 @@ const hasRowClickEventListener = computed(() => {
 
 function onLocalRowDblClick(evt: DataTableRowDoubleClickEvent) {
   if (onRowDblClick) {
-    emits('rowDblClick', evt.data, evt.index, evt.originalEvent);
+    emits("rowDblClick", evt.data, evt.index, evt.originalEvent);
   }
 }
 
@@ -1126,30 +1230,35 @@ function onLocalRowClick(evt: DataTableRowClickEvent) {
     return;
   }
   const path = evt.originalEvent.composedPath() as HTMLElement[];
-  const toggleButton = path.find((e) => e.classList?.contains('p-datatable-row-toggle-button'));
-  const editableColumn = path.find((e) => e?.getAttribute?.('data-p-editable-column') === 'true');
-  const checkboxColumn = path.find((e) => e.classList?.contains('p-selection-column'));
+  const toggleButton = path.find((e) => e.classList?.contains("p-datatable-row-toggle-button"));
+  const editableColumn = path.find((e) => e?.getAttribute?.("data-p-editable-column") === "true");
+  const checkboxColumn = path.find((e) => e.classList?.contains("p-selection-column"));
 
-  const anyButton = path.find((e) => e.classList?.contains('p-button'));
+  const anyButton = path.find((e) => e.classList?.contains("p-button"));
   if (toggleButton || editableColumn || checkboxColumn || anyButton) {
     return;
   }
 
-  emits('rowClick', evt.data, evt.index, evt.originalEvent);
+  emits("rowClick", evt.data, evt.index, evt.originalEvent);
   const onRowClickOrOpenEnabled = onRowClick || (onRowOpen && openOnClick);
-  const isClickedOnCheckboxCell = (evt.originalEvent.target as HTMLDivElement).getAttribute('data-p-selection-column') === 'true';
+  const isClickedOnCheckboxCell =
+    (evt.originalEvent.target as HTMLDivElement).getAttribute("data-p-selection-column") === "true";
 
   if (!onRowClickOrOpenEnabled && withExpansion && expandOnRowClick) {
     toggleRowExpansion(evt.data);
-  } else if ((isClickedOnCheckboxCell || !onRowClickOrOpenEnabled) && selectable && selectOnRowClick) {
+  } else if (
+    (isClickedOnCheckboxCell || !onRowClickOrOpenEnabled) &&
+    selectable &&
+    selectOnRowClick
+  ) {
     toggleRowSelection(evt.data);
   } else if (!onRowClick && openOnClick && openable) {
-    emits('rowOpen', evt.data);
+    emits("rowOpen", evt.data);
   }
 }
 
 //Context Menu
-const contextMenuRef = useTemplateRef<InstanceType<typeof ContextMenu>>('contextMenuRef');
+const contextMenuRef = useTemplateRef<InstanceType<typeof ContextMenu>>("contextMenuRef");
 
 function onRowContextMenu(event: DataTableRowContextMenuEvent) {
   contextMenuRef.value?.show(event.originalEvent);
@@ -1160,33 +1269,46 @@ const contextMenuModel = computed<MenuItem[]>(() => {
   if (contextMenuSelectedRecord.value) {
     if (openable) {
       list.push({
-        label: openButtonLabel ?? openButtonTitle ?? t('Open'),
-        icon: openButtonIcon ?? 'i-material-symbols:open-jam-outline-rounded',
+        label: openButtonLabel ?? openButtonTitle ?? t("Open"),
+        icon: openButtonIcon ?? "i-material-symbols:open-jam-outline-rounded",
         url: openButtonUrl ? openButtonUrl(contextMenuSelectedRecord.value) : undefined,
-        command: () => (contextMenuSelectedRecord.value ? emits('rowOpen', contextMenuSelectedRecord.value) : undefined),
+        command: () =>
+          contextMenuSelectedRecord.value
+            ? emits("rowOpen", contextMenuSelectedRecord.value)
+            : undefined,
       });
     }
-    if (printableRows === true || (typeof printableRows === 'function' && printableRows(contextMenuSelectedRecord.value))) {
+    if (
+      printableRows === true ||
+      (typeof printableRows === "function" && printableRows(contextMenuSelectedRecord.value))
+    ) {
       list.push({
-        label: t('Print'),
-        icon: 'i-mdi-printer',
-        command: () => (contextMenuSelectedRecord.value ? emits('rowPrint', contextMenuSelectedRecord.value) : undefined),
+        label: t("Print"),
+        icon: "i-mdi-printer",
+        command: () =>
+          contextMenuSelectedRecord.value
+            ? emits("rowPrint", contextMenuSelectedRecord.value)
+            : undefined,
       });
     }
     if (editable && (!rowEditable || rowEditable(contextMenuSelectedRecord.value))) {
       list.push({
-        label: t('Edit'),
-        icon: 'i-mdi-edit',
-        command: () => (contextMenuSelectedRecord.value ? editRecord(contextMenuSelectedRecord.value) : undefined),
+        label: t("Edit"),
+        icon: "i-mdi-edit",
+        command: () =>
+          contextMenuSelectedRecord.value ? editRecord(contextMenuSelectedRecord.value) : undefined,
       });
     }
 
     if (deletable && (!rowDeletable || rowDeletable(contextMenuSelectedRecord.value))) {
       list.push({
-        label: t('Delete'),
-        icon: 'i-mdi-trash',
+        label: t("Delete"),
+        icon: "i-mdi-trash",
         disabled: isLoading.value || isDeleting.value,
-        command: () => (contextMenuSelectedRecord.value ? deleteRecords(contextMenuSelectedRecord.value) : undefined),
+        command: () =>
+          contextMenuSelectedRecord.value
+            ? deleteRecords(contextMenuSelectedRecord.value)
+            : undefined,
       });
     }
   }
@@ -1198,21 +1320,24 @@ const contextMenuModel = computed<MenuItem[]>(() => {
           e.command2 = e.command;
           e.command = () => e.command2(contextMenuSelectedRecord.value);
         }
-        if (typeof e.visible === 'function') {
+        if (typeof e.visible === "function") {
           e.visible2 = e.visible;
           e.visible = () => e.visible2(contextMenuSelectedRecord.value);
         }
-        if (typeof e.icon === 'function') {
+        if (typeof e.icon === "function") {
           e.icon2 = e.icon;
           e.icon = () => e.icon2(contextMenuSelectedRecord.value);
         }
 
-        const badgeResult = isFunction(e.badge) ? e.badge(contextMenuSelectedRecord.value) : e.badge;
-        if (typeof e.label === 'function') {
+        const badgeResult = isFunction(e.badge)
+          ? e.badge(contextMenuSelectedRecord.value)
+          : e.badge;
+        if (typeof e.label === "function") {
           e.label2 = e.label;
-          e.label = () => e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : '');
+          e.label = () =>
+            e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : "");
         } else {
-          e.label = e.label + (badgeResult ? ` (${badgeResult})` : '');
+          e.label = e.label + (badgeResult ? ` (${badgeResult})` : "");
         }
         return e as MenuItem;
       }),
@@ -1221,7 +1346,7 @@ const contextMenuModel = computed<MenuItem[]>(() => {
   if (extraContextMenuOptions && extraContextMenuOptions.length > 0) {
     list.push(
       ...cloneDeep(extraContextMenuOptions).map((e) => {
-        if (typeof e.visible === 'function') {
+        if (typeof e.visible === "function") {
           e.visible2 = e.visible;
           e.visible = () => e.visible2(contextMenuSelectedRecord.value);
         }
@@ -1229,19 +1354,22 @@ const contextMenuModel = computed<MenuItem[]>(() => {
           e.command2 = e.command;
           e.command = () => e.command2(contextMenuSelectedRecord.value);
         }
-        if (typeof e.labelFn === 'function') {
+        if (typeof e.labelFn === "function") {
           e.label = e.labelFn(contextMenuSelectedRecord.value);
         }
-        if (typeof e.icon === 'function') {
+        if (typeof e.icon === "function") {
           e.icon2 = e.icon;
           e.icon = () => e.icon2(contextMenuSelectedRecord.value);
         }
-        const badgeResult = isFunction(e.badge) ? e.badge(contextMenuSelectedRecord.value) : e.badge;
-        if (typeof e.label === 'function') {
+        const badgeResult = isFunction(e.badge)
+          ? e.badge(contextMenuSelectedRecord.value)
+          : e.badge;
+        if (typeof e.label === "function") {
           e.label2 = e.label;
-          e.label = () => e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : '');
+          e.label = () =>
+            e.label2(contextMenuSelectedRecord.value) + (badgeResult ? ` (${badgeResult})` : "");
         } else {
-          e.label = e.label + (badgeResult ? ` (${badgeResult})` : '');
+          e.label = e.label + (badgeResult ? ` (${badgeResult})` : "");
         }
         return e as MenuItem;
       }),
@@ -1290,12 +1418,12 @@ function onRowExpand(event: DataTableRowExpandEvent) {
     };
   }
   // toast.add({ severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000 })
-  emits('rowExpand', event.data);
+  emits("rowExpand", event.data);
 }
 
 function onRowCollapse(event: DataTableRowCollapseEvent) {
   // toast.add({ severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000 })
-  emits('rowCollapse', event.data);
+  emits("rowCollapse", event.data);
 }
 
 const isReordering = ref(false);
@@ -1303,11 +1431,11 @@ const isReordering = ref(false);
 async function onRowReorder(event: DataTableRowReorderEvent) {
   isReordering.value = true;
 
-  let urlLink = (typeof url === 'object' ? url.url : url) + '/reorder';
-  let urlMethod = 'put';
+  let urlLink = (typeof url === "object" ? url.url : url) + "/reorder";
+  let urlMethod = "put";
   if (reorderUrl) {
-    urlLink = typeof reorderUrl === 'object' ? reorderUrl.url : reorderUrl;
-    urlMethod = typeof reorderUrl === 'object' ? reorderUrl.method : 'put';
+    urlLink = typeof reorderUrl === "object" ? reorderUrl.url : reorderUrl;
+    urlMethod = typeof reorderUrl === "object" ? reorderUrl.method : "put";
   }
 
   return apiClient
@@ -1333,19 +1461,21 @@ async function onRowReorder(event: DataTableRowReorderEvent) {
 
 // Printing
 
-const printTableContextMenuRef = useTemplateRef<InstanceType<typeof ContextMenu>>('printTableContextMenuRef');
+const printTableContextMenuRef = useTemplateRef<InstanceType<typeof ContextMenu>>(
+  "printTableContextMenuRef",
+);
 const printTableContextMenuItems = computed(() => {
   return [
     {
-      label: t('Print Current Page'),
-      icon: 'i-mdi:printer-pos',
+      label: t("Print Current Page"),
+      icon: "i-mdi:printer-pos",
       command: () => {
         printTable();
       },
     },
     {
-      label: t('Print All Pages'),
-      icon: 'i-mdi:printer-pos-star',
+      label: t("Print All Pages"),
+      icon: "i-mdi:printer-pos-star",
       command: () => {
         printTable(true);
       },
@@ -1372,7 +1502,7 @@ const printPaperProps = computed(() => {
     toolbarFilters: isToolbarFilterEmpty(fixedToolbarFilters)
       ? toolbarFilters.value
       : {
-          operator: 'and',
+          operator: "and",
           fields: [...fixedToolbarFilters, toolbarFilters.value],
         },
     filters: filters.value,
@@ -1385,7 +1515,9 @@ const printPaperProps = computed(() => {
 });
 
 const isPrinting = ref(false);
-const printPaperForServerDataTableRef = useTemplateRef<ComponentExposed<typeof PrintPaperForServerDataTable>>('printPaperForServerDataTableRef');
+const printPaperForServerDataTableRef = useTemplateRef<
+  ComponentExposed<typeof PrintPaperForServerDataTable>
+>("printPaperForServerDataTableRef");
 
 function printTable(allPage: boolean = false) {
   if (customPrintMethod) {
@@ -1446,7 +1578,7 @@ defineExpose({
 
 const dataTableComputedClass = computed(() => {
   const classList = [];
-  if (tableSeverity && tableSeverity !== 'none') {
+  if (tableSeverity && tableSeverity !== "none") {
     classList.push(`p-datatable-${tableSeverity}`);
     classList.push(`p-datatable-header-${tableSeverity}`);
   }
@@ -1463,7 +1595,7 @@ function onCellEditComplete(event: DataTableCellEditCompleteEvent) {
   }
 }
 
-const auditsPopoverRef = useTemplateRef<InstanceType<typeof AuditsPopover>>('auditsPopoverRef');
+const auditsPopoverRef = useTemplateRef<InstanceType<typeof AuditsPopover>>("auditsPopoverRef");
 
 function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumnScoped, row: T) {
   if (column.auditHistory) {
@@ -1474,8 +1606,11 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumnSco
         event,
         url,
         column.fullFieldName,
-        (_value) => (typeof column.formatter === 'function' ? column.formatter(_value, row, column.fullFieldName) : _value),
-        () => (column.type === 'textarea' ? 'whitespace-pre-wrap' : ''),
+        (_value) =>
+          typeof column.formatter === "function"
+            ? column.formatter(_value, row, column.fullFieldName)
+            : _value,
+        () => (column.type === "textarea" ? "whitespace-pre-wrap" : ""),
         `${get(row, primaryKey)}/audits`,
       );
     }
@@ -1486,7 +1621,7 @@ function onCellContextMenu(event: PointerEvent, column: ServerDataTableColumnSco
 const wrapperSize = useElementSize(wrapperRef);
 const headerSegmentSize = useElementSize(headerSegmentRef);
 const computedTableHeight = computed(() => {
-  return scrollable ? wrapperSize.height.value - headerSegmentSize.height.value + 'px' : undefined;
+  return scrollable ? wrapperSize.height.value - headerSegmentSize.height.value + "px" : undefined;
 });
 </script>
 
@@ -1741,7 +1876,7 @@ const computedTableHeight = computed(() => {
                       {{ getColumnTitle(column, t) }}
                     </label>
                   </div>
-                  <Divider/>
+                  <Divider />
                   <Button
                     :label="t('Reset Columns Visibility')"
                     icon="i-mdi:refresh"
@@ -2044,7 +2179,10 @@ const computedTableHeight = computed(() => {
             :align-frozen="localeAlignToFrozenAlign(column.frozen)"
             :pt="{
               pcSortBadge: {
-                root: computedNoMultiSortBadges || (sortMode ==='multiple' && multiSorts.length < 2) ? '!hidden' : '',
+                root:
+                  computedNoMultiSortBadges || (sortMode === 'multiple' && multiSorts.length < 2)
+                    ? '!hidden'
+                    : '',
               },
             }"
           >

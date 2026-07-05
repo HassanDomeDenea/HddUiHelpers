@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import type { ServerDataTableColumn, ServerDataTableColumnType } from 'HddUiHelpers/components/datatables/ServerDataTableTypes.ts';
-import type { HddFormField } from 'HddUiHelpers/components/FormWrapper/types.ts';
-import CheckboxInput from 'HddUiHelpers/components/inputs/CheckboxInput.vue';
-import TextInput from 'HddUiHelpers/components/inputs/TextInput.vue';
-import { useLoader } from 'HddUiHelpers/composables/loader.ts';
-import { set } from 'lodash-es';
-import get from 'lodash-es/get';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import type {
+  ServerDataTableColumn,
+  ServerDataTableColumnType,
+} from "HddUiHelpers/components/datatables/ServerDataTableTypes.ts";
+import type { HddFormField } from "HddUiHelpers/components/FormWrapper/types.ts";
+import CheckboxInput from "HddUiHelpers/components/inputs/CheckboxInput.vue";
+import TextInput from "HddUiHelpers/components/inputs/TextInput.vue";
+import { useLoader } from "HddUiHelpers/composables/loader.ts";
+import { set } from "lodash-es";
+import get from "lodash-es/get";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 const { type, row, field, column, fieldName, submitCallback, cancelCallback } = defineProps<{
   row: { [k: string]: unknown };
@@ -17,14 +20,14 @@ const { type, row, field, column, fieldName, submitCallback, cancelCallback } = 
   column: ServerDataTableColumn;
   submitCallback?: (event: Event) => void;
   cancelCallback?: (event: Event) => void;
-  size?: 'small' | 'large' | 'normal';
+  size?: "small" | "large" | "normal";
 }>();
 
 const { t } = useI18n();
 
 const { startLoading, isLoading } = useLoader();
 
-const computedType = computed(() => type ?? 'text');
+const computedType = computed(() => type ?? "text");
 
 /*const computedLabel = computed(() => {
   return field?.label ?? column.label ?? t(startCase(fieldName));
@@ -40,22 +43,22 @@ const computedModal = computed({
 });
 
 function submit() {
-  submitCallback?.(new Event('submit'));
+  submitCallback?.(new Event("submit"));
 }
 
 function cancel() {
-  cancelCallback?.(new Event('submit'));
+  cancelCallback?.(new Event("submit"));
 }
 
 const onTextAreaKeyDown: (e: KeyboardEvent) => void = (e) => {
-  if (!e.ctrlKey && e.key === 'Enter') {
+  if (!e.ctrlKey && e.key === "Enter") {
     e.stopPropagation();
   }
 };
 
 const computedBinds = computed(() => {
   return {
-    ...(column.inlineEditableBinds ?? {}),
+    ...column.inlineEditableBinds,
   };
 });
 </script>

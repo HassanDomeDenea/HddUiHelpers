@@ -1,8 +1,14 @@
-import { cloneDeep, filter, flatten, map, set } from 'lodash-es';
-import type { MaybeRef, WatchHandle } from 'vue';
-import { computed, onMounted, ref, toRef, toValue, watch } from 'vue';
-import { ValidationError } from 'yup';
-import type { FieldError, FormFieldType, HddFormField, ValidationModeType } from '../components/FormWrapper/types';
+import { cloneDeep, filter, flatten, map, set } from "lodash-es";
+import type { MaybeRef, WatchHandle } from "vue";
+import { computed, onMounted, ref, toRef, toValue, watch } from "vue";
+import { ValidationError } from "yup";
+
+import type {
+  FieldError,
+  FormFieldType,
+  HddFormField,
+  ValidationModeType,
+} from "../components/FormWrapper/types";
 
 export interface UseHddFormOptions<T extends string> {
   staticInitialValues?: MaybeRef<Record<T, any>>;
@@ -52,13 +58,13 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     return (
       toValue(options.fields)
         ?.filter((e) => {
-          if (typeof e === 'object' && ['separator', 'divider'].includes(e.type)) {
+          if (typeof e === "object" && ["separator", "divider"].includes(e.type)) {
             return false;
           }
           return true;
         })
         .map((e) => {
-          if (typeof e === 'string') {
+          if (typeof e === "string") {
             return { name: e };
           } else {
             return e;
@@ -71,17 +77,17 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
 
   const globalErrors = ref<FieldError[]>([]);
 
-  const defaultValidationMode: ValidationModeType = options.defaultValidationMode ?? 'onSubmit';
+  const defaultValidationMode: ValidationModeType = options.defaultValidationMode ?? "onSubmit";
 
-  const validationRules = computed<Partial<Record<T, HddFormField['rules']>>>(() => {
-    return fields.value.reduce<Partial<Record<T, HddFormField['rules']>>>(
+  const validationRules = computed<Partial<Record<T, HddFormField["rules"]>>>(() => {
+    return fields.value.reduce<Partial<Record<T, HddFormField["rules"]>>>(
       (cumulativeValue, field) => {
         if (field.rules) {
           cumulativeValue[field.name] = field.rules.label(field.label ?? field.name);
         }
         return cumulativeValue;
       },
-      {} as Record<T, HddFormField['rules']>,
+      {} as Record<T, HddFormField["rules"]>,
     );
   });
   const fieldNames = computed<T[]>(() => {
@@ -109,7 +115,9 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
   const requiredFieldsNames = computed<Record<T, boolean>>(() => {
     return fields.value.reduce<Record<T, boolean>>(
       (cumulativeValue, field) => {
-        cumulativeValue[field.name] = !!field.rules?.tests.find((e: any) => e.OPTIONS?.name === 'required');
+        cumulativeValue[field.name] = !!field.rules?.tests.find(
+          (e: any) => e.OPTIONS?.name === "required",
+        );
         return cumulativeValue;
       },
       {} as Record<T, boolean>,
@@ -122,7 +130,11 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     }
     return fields.value.reduce<Record<T, any | undefined>>(
       (cumulativeValue, field) => {
-        set(cumulativeValue, field.name.split('.'), typeof field.defaultValue === 'function' ? field.defaultValue() : field.defaultValue);
+        set(
+          cumulativeValue,
+          field.name.split("."),
+          typeof field.defaultValue === "function" ? field.defaultValue() : field.defaultValue,
+        );
         return cumulativeValue;
       },
       {} as Record<T, any | undefined>,
@@ -161,17 +173,17 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     formState.value.pristine = false;
     fieldsStates.value[fieldName].dirty = value !== initialValues.value[fieldName];
 
-    if (validationModes.value[fieldName] === 'onValueUpdate') {
+    if (validationModes.value[fieldName] === "onValueUpdate") {
       validateField(fieldName);
     }
   }
 
   function setValue(fieldName: string, value: any) {
-    set(currentValues.value, fieldName.split('.'), value);
+    set(currentValues.value, fieldName.split("."), value);
   }
 
   function validateField(fieldName: T, validateFormAlso = true) {
-    const rules = validationRules.value[fieldName] as HddFormField['rules'];
+    const rules = validationRules.value[fieldName] as HddFormField["rules"];
     if (rules) {
       try {
         rules.validateSync(currentValues.value[fieldName], {
@@ -203,7 +215,10 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
   }
 
   function updateFormState() {
-    formState.value.errors = [...globalErrors.value, ...flatten(map(fieldsStates.value, (e) => e.errors))];
+    formState.value.errors = [
+      ...globalErrors.value,
+      ...flatten(map(fieldsStates.value, (e) => e.errors)),
+    ];
     formState.value.error = formState.value.errors[0];
     formState.value.valid = formState.value.errors.length === 0;
     formState.value.invalid = !formState.value.valid;
@@ -225,7 +240,7 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
 
   function onBlur(fieldName: T) {
     fieldsStates.value[fieldName].touched = true;
-    if (validationModes.value[fieldName] === 'onBlur') {
+    if (validationModes.value[fieldName] === "onBlur") {
       validateField(fieldName);
     } else {
       formState.value.touched = true;
@@ -264,14 +279,16 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
   });
 
   function setFieldErrors(fieldName: T, errors: FieldError[] | string[]) {
-    fieldsStates.value[fieldName] = errors.map((e) => (typeof e === 'string' ? { message: e } : e));
+    fieldsStates.value[fieldName] = errors.map((e) => (typeof e === "string" ? { message: e } : e));
 
     updateFieldStatusAfterErrorsChanged(fieldName, true);
   }
 
   function setMultiFieldsErrors(fieldErrors: Record<T, FieldError[] | string[]>) {
     for (const fieldName in fieldErrors) {
-      const mappedErrors = fieldErrors[fieldName].map((e) => (typeof e === 'string' ? { message: e } : e));
+      const mappedErrors = fieldErrors[fieldName].map((e) =>
+        typeof e === "string" ? { message: e } : e,
+      );
       if (fieldsStates.value[fieldName]) {
         fieldsStates.value[fieldName].errors = mappedErrors;
         updateFieldStatusAfterErrorsChanged(fieldName, false);
@@ -285,13 +302,15 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
   }
 
   function addFieldError(fieldName: T, error: FieldError | string) {
-    fieldsStates.value[fieldName].errors.push(typeof error === 'string' ? { message: error } : error);
+    fieldsStates.value[fieldName].errors.push(
+      typeof error === "string" ? { message: error } : error,
+    );
 
     updateFieldStatusAfterErrorsChanged(fieldName, true);
   }
 
   function addGlobalError(error: FieldError | string, autoValidateForm: boolean = true) {
-    globalErrors.value.push(typeof error === 'string' ? { message: error } : error);
+    globalErrors.value.push(typeof error === "string" ? { message: error } : error);
     if (autoValidateForm) {
       updateFormState();
     }
@@ -342,7 +361,7 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
   async function submitForm(): Promise<any> {
     let shouldValidateForm = false;
     for (const i in validationModes.value) {
-      if (validationModes.value[i] === 'onSubmit') {
+      if (validationModes.value[i] === "onSubmit") {
         if (validateField(i, false) !== null) {
           shouldValidateForm = true;
         }
@@ -351,7 +370,7 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
     if (shouldValidateForm) {
       updateFormState();
     }
-    if (typeof options?.onSubmit === 'function' && !shouldValidateForm) {
+    if (typeof options?.onSubmit === "function" && !shouldValidateForm) {
       return options.onSubmit(currentValues.value, context);
     }
     return Promise.resolve(formState.value.valid);
@@ -363,15 +382,15 @@ export function useHddForm<T extends string>(options: UseHddFormOptions<T> = {})
 export function objectIntoFields<T extends Record<string, any>>(fieldsObject: T) {
   const carry: HddFormField<keyof T & string>[] = [];
   for (const itemKey in fieldsObject) {
-    let type: FormFieldType = 'text';
+    let type: FormFieldType = "text";
     const value: any = fieldsObject[itemKey];
     const typeofValue = typeof fieldsObject[itemKey];
-    if (typeofValue === 'number' || typeofValue === 'bigint') {
-      type = 'number';
-    } else if (typeof value === 'boolean') {
-      type = 'checkbox';
-    } else if (typeof value === 'object' && value instanceof Date) {
-      type = 'date';
+    if (typeofValue === "number" || typeofValue === "bigint") {
+      type = "number";
+    } else if (typeof value === "boolean") {
+      type = "checkbox";
+    } else if (typeof value === "object" && value instanceof Date) {
+      type = "date";
     }
 
     carry.push({

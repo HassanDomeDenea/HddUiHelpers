@@ -1,4 +1,8 @@
-import type { AppPermission, GlobalOptionData, UserOptionsData } from '../../types/laravel_generated';
+import type {
+  AppPermission,
+  GlobalOptionData,
+  UserOptionsData,
+} from "../../types/laravel_generated";
 
 export interface BasicUserData {
   id: number | string;
@@ -20,8 +24,8 @@ export interface GlobalOptionsMap extends Partial<GlobalOptionData> {
   app_name?: any;
 }
 export interface UserOptionsMap extends Partial<UserOptionsData> {
-  language?: 'en' | 'ar';
-  dark_mode?: 'light' | 'dark' | 'auto';
+  language?: "en" | "ar";
+  dark_mode?: "light" | "dark" | "auto";
 }
 
 export type HddRole = keyof RolesMap & string;
@@ -29,7 +33,7 @@ export type HddPermission = keyof PermissionsMap;
 export type HddGlobalOption = keyof GlobalOptionsMap;
 export type HddUserOption = keyof UserOptionsMap;
 
-declare module 'vue-router' {
+declare module "vue-router" {
   interface RouteMeta {
     roles?: HddRole | HddRole[];
     permissions?: HddPermission | HddPermission[];

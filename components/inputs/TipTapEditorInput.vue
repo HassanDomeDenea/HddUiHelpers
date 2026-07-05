@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { useHddBaseInputUtils } from 'HddUiHelpers/components/inputs/inputsUtils.ts';
-import type { TipTapEditorConfig } from 'HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts';
-import { computed, ref } from 'vue';
-import BaseInput from './BaseInput.vue';
-import type { BaseInputProps } from './types';
+import { useHddBaseInputUtils } from "HddUiHelpers/components/inputs/inputsUtils.ts";
+import type { TipTapEditorConfig } from "HddUiHelpers/components/TipTapEditor/TipTapEditorTypes.ts";
+import { computed, ref } from "vue";
+
+import BaseInput from "./BaseInput.vue";
+import type { BaseInputProps } from "./types";
 
 const props = defineProps<
   BaseInputProps & {
@@ -11,13 +12,14 @@ const props = defineProps<
   }
 >();
 
-const value = defineModel<any>('modelValue');
+const value = defineModel<any>("modelValue");
 
 const inputRef = ref();
 
 function focus() {}
 
-const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } = useHddBaseInputUtils(props);
+const { exposed, baseInputForwardedProps, fieldUniqueId, generalInputProps } =
+  useHddBaseInputUtils(props);
 
 const tipTapConfig = computed(() => {
   return {

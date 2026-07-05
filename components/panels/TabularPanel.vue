@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { HddPermission } from 'HddUiHelpers/types/types.ts';
+import type { HddPermission } from "HddUiHelpers/types/types.ts";
 
 export interface HddPanelTabItem {
   name: string;
@@ -13,10 +13,9 @@ export interface HddPanelTabItem {
 }
 </script>
 <script setup lang="ts">
-import PrimeVueTabs from "primevue/tabs";
-
 import { useBasicAuthStore } from "HddUiHelpers/stores/basicAuth.ts";
 import { isBoolean, isString, startCase } from "lodash-es";
+import PrimeVueTabs from "primevue/tabs";
 import { computed, onActivated, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";

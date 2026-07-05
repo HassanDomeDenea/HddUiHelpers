@@ -1,11 +1,10 @@
-import Aura from '@primeuix/themes/aura';
-
-import type { App } from 'vue';
+import Aura from "@primeuix/themes/aura";
+import { ConfirmationService, DialogService, FocusTrap, ToastService } from "primevue";
 // import primeVueLocales from 'HddUiHelpers/utils/primeVueLocales';
 
-import '../css/primevueFixes.css';
-import { ConfirmationService, DialogService, FocusTrap, ToastService, Tooltip } from 'primevue';
-import PrimeVue from 'primevue/config';
+import "../css/primevueFixes.css";
+import PrimeVue from "primevue/config";
+import type { App } from "vue";
 export default {
   install(app: App) {
     app
@@ -14,7 +13,7 @@ export default {
         theme: {
           preset: Aura,
           options: {
-            darkModeSelector: '.dark',
+            darkModeSelector: ".dark",
           },
         },
       })
@@ -22,12 +21,12 @@ export default {
       .use(ConfirmationService)
       .use(DialogService);
 
-    app.directive('focustrap', FocusTrap);
+    app.directive("focustrap", FocusTrap);
   },
 };
 
 export function hidePrimevuePopovers() {
-  const clickEvent = new MouseEvent('click', {
+  const clickEvent = new MouseEvent("click", {
     bubbles: true,
     cancelable: true,
   });
