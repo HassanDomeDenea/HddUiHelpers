@@ -40,7 +40,7 @@ import {
   unset,
 } from "lodash-es";
 import type Button from "primevue/button";
-import type { MaybeRefOrGetter } from "vue";
+import type { MaybeRefOrGetter, Ref } from "vue";
 import { computed, nextTick, onMounted, ref, toValue, useTemplateRef, watch } from "vue";
 import type { ComponentExposed } from "vue-component-type-helpers";
 import { useI18n } from "vue-i18n";
@@ -414,7 +414,11 @@ function focusField(name: string) {
   fieldRefs.value[name]?.focus();
 }
 
-defineExpose({ form, currentValues, fieldRefs, isSubmitting, focusFirst, focusField });
+function getFieldRef(name: string): Ref | null {
+  return fieldRefs.value[name];
+}
+
+defineExpose({ getFieldRef, form, currentValues, fieldRefs, isSubmitting, focusFirst, focusField });
 
 const fieldNamePaths = computed(() => {
   return reduce(

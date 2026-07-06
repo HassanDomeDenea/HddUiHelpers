@@ -422,6 +422,10 @@ function focusFirst() {
   }, 100);
 }
 
+function getFieldRef(name:string){
+  return hddFormRef.value?.getFieldRef(name);
+}
+
 function focusField(name: string, waitFor: number = 0) {
   setTimeout(() => {
     hddFormRef.value?.focusField(name);
@@ -541,6 +545,7 @@ function submitAndOpen() {
 }
 
 defineExpose({
+  getFieldRef,
   mappedFormFields,
   currentValues,
   setDefaultValues,

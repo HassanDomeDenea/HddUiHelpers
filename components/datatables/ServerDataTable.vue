@@ -1559,8 +1559,13 @@ function endLoading() {
   isLoading.value = false;
 }
 
+function getFieldRef(name: string) {
+  return ServerFormDialogRef.value?.getFieldRef(name);
+}
+
 defineExpose({
   records,
+  getFieldRef,
   selectedRecord,
   selectedRecords,
   refresh,

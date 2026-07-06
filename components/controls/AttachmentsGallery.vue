@@ -24,6 +24,7 @@ const props = withDefaults(
     idProperty?: string;
     descriptionInputPlaceholder?: string;
     withDescription?: boolean;
+    expectedCount?: number;
     withDateInput?: boolean;
     canEditDate?: boolean;
     canEditDescription?: boolean;
@@ -546,7 +547,7 @@ defineExpose({ resetTransformation });
             class="border-inset light:border-teal-800 group relative flex items-center justify-center rounded-lg border-2 border-solid p-1 dark:border-teal-200"
             :style="{ width: (thumbnailSize || 60) + 'px', height: (thumbnailSize || 60) + 'px' }"
           >
-            <div v-if="deletable" class="z-2 absolute top-0 ltr:right-0 rtl:left-0">
+            <div v-if="deletable" class="z-2 absolute top-1 ltr:right-1 rtl:left-1">
               <Button
                 v-tooltip="t('Delete')"
                 icon="i-mdi-trash"
@@ -596,7 +597,7 @@ defineExpose({ resetTransformation });
         </div>
       </template>
       <div
-        v-if="loading"
+        v-if="loading && expectedCount > 0"
         class="border-inset light:border-teal-800/50 group relative flex items-center justify-center rounded-lg border-2 border-dashed p-1 dark:border-teal-200/50"
         :style="{ width: (thumbnailSize || 60) + 'px', height: (thumbnailSize || 60) + 'px' }"
       >

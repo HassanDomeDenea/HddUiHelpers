@@ -111,7 +111,7 @@ watch(
     :on-local-enter-key-down="onLocalEnterKeyDown ?? onDateLocalEnterKeyDown"
     @click="focus"
   >
-    <div class="relative !w-full">
+    <div class="relative !w-full HddDatePickerControl">
       <DatePicker
         v-bind="generalInputProps"
         ref="inputRef"
@@ -201,6 +201,12 @@ watch(
 </style>
 
 <style lang="scss">
+.HddDatePickerControl{
+  button.p-datepicker-dropdown{
+    border-start-end-radius: var(--p-datepicker-dropdown-border-radius);
+    border-end-end-radius: var(--p-datepicker-dropdown-border-radius);
+  }
+}
 .HddDatePickerPanel {
   .p-datepicker-calendar-container {
     .p-datepicker-header {
