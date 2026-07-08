@@ -443,6 +443,13 @@ function resolveFieldOptions(
 if (formModelValue.value) {
   syncRef(formModelValue, form.currentValues as any);
 }
+
+function forceObject(data: any){
+  if(typeof data === 'object' && data !== null && Array.isArray(data) === false)
+    return data;
+  return {};
+}
+
 </script>
 
 <template>
@@ -746,7 +753,7 @@ if (formModelValue.value) {
                         </template>
                         <template v-else-if="field.type === 'form'">
                           <FormObjectInput
-                            :model-value="get(currentValues, field.name)"
+                            :model-value="forceObject(get(currentValues, field.name))"
                             v-bind="{
                               ...omit(generalInputsProps, ['onKeydown']),
                               ...generalInputBindsByField(field),
